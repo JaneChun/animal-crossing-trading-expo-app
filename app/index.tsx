@@ -15,6 +15,7 @@ import NewPost from '@/screens/NewPost';
 import Search from '@/screens/Search';
 import Login from '@/screens/Login';
 import MyPage from '@/screens/MyPage';
+import { Colors } from '@/constants/Color';
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -36,17 +37,24 @@ export default function Index() {
 					headerShown: false,
 					tabBarStyle: {
 						height: 60,
-						paddingHorizontal: 8,
-						paddingTop: 8,
+						paddingBottom: 0,
 					},
 					tabBarShowLabel: false,
+					tabBarActiveBackgroundColor: Colors.base,
+					tabBarIconStyle: { flex: 1 },
 				}}
 			>
 				<BottomTab.Screen
 					name='Home'
 					component={HomeStack}
 					options={{
-						tabBarIcon: ({ focused }) => <Entypo name='home' size={24} />,
+						tabBarIcon: ({ focused }) => (
+							<Entypo
+								name='home'
+								size={24}
+								color={focused ? Colors.primary : Colors.dark_gray}
+							/>
+						),
 					}}
 				/>
 				<BottomTab.Screen
@@ -54,7 +62,11 @@ export default function Index() {
 					component={MyChat}
 					options={{
 						tabBarIcon: ({ focused }) => (
-							<MaterialCommunityIcons name='chat' size={24} />
+							<MaterialCommunityIcons
+								name='chat'
+								size={24}
+								color={focused ? Colors.primary : Colors.dark_gray}
+							/>
 						),
 					}}
 				/>
@@ -63,7 +75,11 @@ export default function Index() {
 					component={NewPost}
 					options={{
 						tabBarIcon: ({ focused }) => (
-							<FontAwesome6 name='circle-plus' size={20} />
+							<FontAwesome6
+								name='circle-plus'
+								size={20}
+								color={focused ? Colors.primary : Colors.dark_gray}
+							/>
 						),
 					}}
 				/>
@@ -72,7 +88,11 @@ export default function Index() {
 					component={Search}
 					options={{
 						tabBarIcon: ({ focused }) => (
-							<FontAwesome name='search' size={22} />
+							<FontAwesome
+								name='search'
+								size={22}
+								color={focused ? Colors.primary : Colors.dark_gray}
+							/>
 						),
 					}}
 				/>
@@ -80,18 +100,28 @@ export default function Index() {
 					name='Login'
 					component={Login}
 					options={{
-						tabBarIcon: ({ focused }) => <Entypo name='login' size={24} />,
+						tabBarIcon: ({ focused }) => (
+							<Entypo
+								name='login'
+								size={24}
+								color={focused ? Colors.primary : Colors.dark_gray}
+							/>
+						),
 					}}
 				/>
-				{/* <BottomTab.Screen 
+				{/* <BottomTab.Screen
 					name='MyPage'
 					component={MyPage}
 					options={{
 						tabBarIcon: ({ focused }) => (
-							<FontAwesome6 name='user-large' size={21} />
+							<FontAwesome6
+								name='user-large'
+								size={21}
+								color={focused ? Colors.primary : Colors.dark_gray}
+							/>
 						),
 					}}
-				/>*/}
+				/> */}
 			</BottomTab.Navigator>
 		</>
 	);
