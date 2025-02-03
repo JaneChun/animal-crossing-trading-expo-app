@@ -5,6 +5,7 @@ export const Colors = {
 
 	//border
 	border_gray: '#e8eaee',
+	border_dark_gray: '#ebedf0',
 
 	// font
 	font_black: '#000000',
