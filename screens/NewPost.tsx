@@ -32,6 +32,7 @@ import CartItem from '../components/NewPost/CartItem';
 import Button from '../components/ui/Button';
 import useToggle from '../hooks/useToggle';
 import { Colors } from '@/constants/Color';
+import { Entypo, MaterialIcons } from '@expo/vector-icons';
 
 const NewPost = () => {
 	const navigation = useNavigation<TabNavigation>();
@@ -96,6 +97,27 @@ const NewPost = () => {
 		if (!result.canceled) {
 			setImages(result.assets);
 		}
+	};
+
+	const deleteImage = (assetId: string) => {
+		Alert.alert('사진 삭제', '사진을 삭제하시겠습니까?', [
+			{
+				text: '확인',
+				onPress: () => {
+					return setImages((currentImages) =>
+						currentImages.filter((image) => image.assetId !== assetId),
+					);
+				},
+				style: 'default',
+			},
+			{
+				text: '취소',
+				onPress: () => {
+					return;
+				},
+				style: 'cancel',
+			},
+		]);
 	};
 
 	const onSubmit = async () => {
@@ -210,42 +232,40 @@ const NewPost = () => {
 			<View style={styles.inputGroup}>
 				<Text style={styles.label}>사진</Text>
 
-				{images.length ? (
-					<ScrollView horizontal style={styles.imagesContainer}>
-						{images.map((image, index) => (
-							<Image
-								key={index}
-								source={{ uri: image.uri }}
-								style={styles.photoPreview}
-							/>
-						))}
-						<TouchableOpacity
-							style={[
-								styles.photoPreview,
-								{
-									padding: 8,
-									backgroundColor: Colors.base,
-									borderWidth: 1,
-									borderColor: Colors.border_gray,
-								},
-							]}
-							onPress={pickImages}
-						>
-							<Text style={styles.photoPlaceholder}>사진을 추가하세요.</Text>
-						</TouchableOpacity>
-					</ScrollView>
-				) : (
-					<TouchableOpacity style={styles.photoInput} onPress={pickImages}>
-						<Text style={styles.photoPlaceholder}>사진을 추가하세요.</Text>
+				<ScrollView horizontal style={styles.imagesContainer}>
+					<TouchableOpacity
+						style={[styles.PreviewContainer, styles.addImageButtonContainer]}
+						activeOpacity={0.5}
+						onPress={pickImages}
+					>
+						<MaterialIcons
+							name='photo-library'
+							color={Colors.font_gray}
+							size={48}
+						/>
+						<View style={styles.itemCountTextContainer}>
+							<Text style={styles.highlightedImageCountText}>
+								{images.length}
+							</Text>
+							<Text style={styles.imageCountText}> / 10</Text>
+						</View>
 					</TouchableOpacity>
-				)}
-
-				{/* <TouchableOpacity
-					onPress={() => setImages([])}
-					style={styles.deletePhotoButton}
-				>
-					<Text style={styles.deletePhotoText}>사진 삭제</Text>
-				</TouchableOpacity> */}
+					{images.map((image) => (
+						<View key={image.assetId}>
+							<TouchableOpacity
+								style={styles.deleteButton}
+								onPress={() => deleteImage(image.assetId!)}
+								activeOpacity={0.7}
+							>
+								<Text style={styles.deleteButtonText}>✕</Text>
+							</TouchableOpacity>
+							<Image
+								source={{ uri: image.uri }}
+								style={styles.PreviewContainer}
+							/>
+						</View>
+					))}
+				</ScrollView>
 			</View>
 
 			{/* ItemSelect */}
@@ -329,23 +349,48 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		backgroundColor: Colors.base,
 	},
-	photoPreview: {
+	PreviewContainer: {
 		width: 100,
 		height: 100,
 		margin: 6,
 		borderRadius: 12,
 	},
-	photoPlaceholder: {
-		color: Colors.font_gray,
-		fontSize: 14,
-	},
-	deletePhotoButton: {
-		marginTop: 8,
+	addImageButtonContainer: {
+		padding: 8,
+		backgroundColor: Colors.base,
+		borderWidth: 1,
+		borderColor: Colors.border_gray,
+		justifyContent: 'center',
 		alignItems: 'center',
 	},
-	deletePhotoText: {
-		color: '#d32f2f',
-		fontSize: 14,
+	deleteButton: {
+		position: 'absolute',
+		zIndex: 2,
+		top: 0,
+		right: 0,
+		backgroundColor: 'black',
+		borderRadius: 12,
+		width: 24,
+		height: 24,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	deleteButtonText: {
+		color: '#fff',
+		fontSize: 16,
+		fontWeight: 'bold',
+	},
+	itemCountTextContainer: {
+		flexDirection: 'row',
+		marginTop: 4,
+	},
+	highlightedImageCountText: {
+		color: Colors.primary,
+		fontWeight: 'bold',
+	},
+	imageCountText: {
+		color: Colors.font_gray,
+		fontWeight: 'semibold',
 	},
 });
 
