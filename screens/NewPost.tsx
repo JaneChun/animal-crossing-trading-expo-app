@@ -1,38 +1,29 @@
 import { useState } from 'react';
 import {
-	View,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	Image,
 	StyleSheet,
 	FlatList,
 	Alert,
 	KeyboardAvoidingView,
 	ScrollView,
-	Keyboard,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import {
-	launchImageLibraryAsync,
-	ImagePickerAsset,
-	useMediaLibraryPermissions,
-} from 'expo-image-picker';
-import { collection, doc, serverTimestamp } from 'firebase/firestore';
+import { ImagePickerAsset } from 'expo-image-picker';
+import { serverTimestamp } from 'firebase/firestore';
 import type { TabNavigation } from '@/types/navigation';
 import { useAuthContext } from '../contexts/AuthContext';
-import { db, auth } from '../fbase';
-import {
-	addDataToFirestore,
-	setDataToFirestore,
-} from '../utilities/firebaseApi';
+import { auth } from '../fbase';
+import { addDataToFirestore } from '../utilities/firebaseApi';
 import { uploadFiles } from '../utilities/uploadFiles';
-import ItemSelect from '../components/NewPost/ItemSelect';
+import { Colors } from '@/constants/Color';
+
+import TypeSelect from '@/components/NewPost/TypeSelect';
+import TitleInput from '@/components/NewPost/TitleInput';
+import BodyInput from '@/components/NewPost/BodyInput';
+import ImageInput from '@/components/NewPost/ImageInput';
 import CartItem from '../components/NewPost/CartItem';
+import ItemSelect from '../components/NewPost/ItemSelect';
 import Button from '../components/ui/Button';
 import useToggle from '../hooks/useToggle';
-import { Colors } from '@/constants/Color';
-import { Entypo, MaterialIcons } from '@expo/vector-icons';
 
 const NewPost = () => {
 	const navigation = useNavigation<TabNavigation>();
@@ -43,7 +34,6 @@ const NewPost = () => {
 	const [images, setImages] = useState<ImagePickerAsset[]>([]);
 	const [cart, setCart] = useState([]);
 	const [isDropdownOpen, toggleIsDropdownOpen] = useToggle(false);
-	const [, requestPermission, getPermission] = useMediaLibraryPermissions();
 
 	const validateUser = () => {
 		if (!userInfo || !auth.currentUser) {
@@ -59,65 +49,6 @@ const NewPost = () => {
 			return false;
 		}
 		return true;
-	};
-
-	const verifyPermissions = async () => {
-		let currentPermission = await getPermission();
-
-		if (currentPermission.status === 'undetermined') {
-			currentPermission = await requestPermission();
-		}
-
-		if (currentPermission.status === 'denied') {
-			Alert.alert(
-				'권한 필요',
-				'이미지를 업로드하려면 사진 접근 권한이 필요합니다.',
-			);
-			return false;
-		}
-		return currentPermission.status === 'granted';
-	};
-
-	const pickImages = async () => {
-		Keyboard.dismiss(); // 키보드 닫기
-
-		const hasPermission = await verifyPermissions(); // 사진 권한 확인
-		if (!hasPermission) {
-			return;
-		}
-
-		let result = await launchImageLibraryAsync({
-			mediaTypes: 'images',
-			allowsMultipleSelection: true,
-			selectionLimit: 10,
-			aspect: [1, 1],
-			quality: 0,
-		});
-
-		if (!result.canceled) {
-			setImages(result.assets);
-		}
-	};
-
-	const deleteImage = (assetId: string) => {
-		Alert.alert('사진 삭제', '사진을 삭제하시겠습니까?', [
-			{
-				text: '확인',
-				onPress: () => {
-					return setImages((currentImages) =>
-						currentImages.filter((image) => image.assetId !== assetId),
-					);
-				},
-				style: 'default',
-			},
-			{
-				text: '취소',
-				onPress: () => {
-					return;
-				},
-				style: 'cancel',
-			},
-		]);
 	};
 
 	const onSubmit = async () => {
@@ -178,219 +109,75 @@ const NewPost = () => {
 
 	return (
 		<KeyboardAvoidingView style={styles.container}>
-			{/* Type */}
-			<View style={styles.typeContainer}>
-				<TouchableOpacity
-					style={[styles.typeButton, type === 'buy' && styles.typeButtonActive]}
-					onPress={() => setType('buy')}
-				>
-					<Text
-						style={[styles.typeText, type === 'buy' && styles.typeTextActive]}
-					>
-						구해요
-					</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={[
-						styles.typeButton,
-						type === 'sell' && styles.typeButtonActive,
-					]}
-					onPress={() => setType('sell')}
-				>
-					<Text
-						style={[styles.typeText, type === 'sell' && styles.typeTextActive]}
-					>
-						팔아요
-					</Text>
-				</TouchableOpacity>
-			</View>
-
-			{/* Title */}
-			<View style={styles.inputGroup}>
-				<Text style={styles.label}>제목</Text>
-				<TextInput
-					value={title}
-					onChangeText={(text) => setTitle(text)}
-					placeholder='DIY 작업대 레시피 구해요 :)'
-					style={styles.input}
+			<ScrollView nestedScrollEnabled={true}>
+				<TypeSelect type={type} setType={setType} />
+				<TitleInput
+					title={title}
+					setTitle={setTitle}
+					containerStyle={styles.inputContainer}
+					labelStyle={styles.label}
+					inputStyle={styles.input}
 				/>
-			</View>
 
-			{/* Body */}
-			<View style={styles.inputGroup}>
-				<Text style={styles.label}>내용</Text>
-				<TextInput
-					value={body}
-					onChangeText={setBody}
-					placeholder='2마일에 구매하고 싶어요. 채팅 주세요!'
-					style={[styles.input, styles.textarea]}
-					multiline
+				<BodyInput
+					body={body}
+					setBody={setBody}
+					containerStyle={styles.inputContainer}
+					labelStyle={styles.label}
+					inputStyle={styles.input}
 				/>
-			</View>
 
-			{/* Photo */}
-			<View style={styles.inputGroup}>
-				<Text style={styles.label}>사진</Text>
+				<ImageInput
+					images={images}
+					setImages={setImages}
+					containerStyle={styles.inputContainer}
+					labelStyle={styles.label}
+				/>
 
-				<ScrollView horizontal style={styles.imagesContainer}>
-					<TouchableOpacity
-						style={[styles.PreviewContainer, styles.addImageButtonContainer]}
-						activeOpacity={0.5}
-						onPress={pickImages}
-					>
-						<MaterialIcons
-							name='photo-library'
-							color={Colors.font_gray}
-							size={48}
-						/>
-						<View style={styles.itemCountTextContainer}>
-							<Text style={styles.highlightedImageCountText}>
-								{images.length}
-							</Text>
-							<Text style={styles.imageCountText}> / 10</Text>
-						</View>
-					</TouchableOpacity>
-					{images.map((image) => (
-						<View key={image.assetId}>
-							<TouchableOpacity
-								style={styles.deleteButton}
-								onPress={() => deleteImage(image.assetId!)}
-								activeOpacity={0.7}
-							>
-								<Text style={styles.deleteButtonText}>✕</Text>
-							</TouchableOpacity>
-							<Image
-								source={{ uri: image.uri }}
-								style={styles.PreviewContainer}
-							/>
-						</View>
-					))}
-				</ScrollView>
-			</View>
+				{/* <ItemSelect
+					isDropdownOpen={isDropdownOpen}
+					toggleIsDropdownOpen={toggleIsDropdownOpen}
+					cart={cart}
+					setCart={setCart}
+				/> */}
 
-			{/* ItemSelect */}
-			<ItemSelect
-				isDropdownOpen={isDropdownOpen}
-				toggleIsDropdownOpen={toggleIsDropdownOpen}
-				cart={cart}
-				setCart={setCart}
-			/>
+				{/* <FlatList
+					data={cart}
+					keyExtractor={(item) => item.UniqueEntryID}
+					renderItem={({ item }) => (
+						<CartItem item={item} cart={cart} setCart={setCart} />
+					)}
+				/> */}
 
-			{/* Item List */}
-			<FlatList
-				data={cart}
-				keyExtractor={(item) => item.UniqueEntryID}
-				renderItem={({ item }) => (
-					<CartItem item={item} cart={cart} setCart={setCart} />
-				)}
-			/>
-
-			<Button color='mint' size='lg' onPress={onSubmit}>
-				작성
-			</Button>
+				<Button color='mint' size='lg' onPress={onSubmit}>
+					작성
+				</Button>
+			</ScrollView>
 		</KeyboardAvoidingView>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
-		padding: 16,
+		padding: 24,
 		backgroundColor: 'white',
 	},
-	typeContainer: {
-		flexDirection: 'row',
-		marginBottom: 16,
-	},
-	typeButton: {
-		flex: 1,
-		padding: 12,
-		alignItems: 'center',
-		borderRadius: 4,
-	},
-	typeButtonActive: {
-		backgroundColor: Colors.border_gray,
-	},
-	typeText: {
-		fontSize: 16,
-		color: Colors.font_gray,
-	},
-	typeTextActive: {
-		color: Colors.primary,
-	},
-	inputGroup: {
-		marginBottom: 16,
+	inputContainer: {
+		marginVertical: 16,
 	},
 	label: {
-		fontSize: 14,
-		marginBottom: 8,
+		fontSize: 16,
+		fontWeight: 'semibold',
+		marginBottom: 12,
 		color: Colors.font_black,
 	},
 	input: {
-		borderWidth: 1,
-		borderColor: Colors.border_gray,
-		borderRadius: 4,
-		padding: 12,
-		fontSize: 14,
-		backgroundColor: Colors.base,
-	},
-	textarea: {
-		height: 120,
-		textAlignVertical: 'top',
-	},
-	imagesContainer: {
-		paddingVertical: 16,
-	},
-	photoInput: {
-		height: 200,
-		borderWidth: 1,
-		borderColor: Colors.border_gray,
-		borderRadius: 4,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: Colors.base,
-	},
-	PreviewContainer: {
-		width: 100,
-		height: 100,
-		margin: 6,
-		borderRadius: 12,
-	},
-	addImageButtonContainer: {
-		padding: 8,
-		backgroundColor: Colors.base,
-		borderWidth: 1,
-		borderColor: Colors.border_gray,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	deleteButton: {
-		position: 'absolute',
-		zIndex: 2,
-		top: 0,
-		right: 0,
-		backgroundColor: 'black',
-		borderRadius: 12,
-		width: 24,
-		height: 24,
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	deleteButtonText: {
-		color: '#fff',
 		fontSize: 16,
-		fontWeight: 'bold',
-	},
-	itemCountTextContainer: {
-		flexDirection: 'row',
-		marginTop: 4,
-	},
-	highlightedImageCountText: {
-		color: Colors.primary,
-		fontWeight: 'bold',
-	},
-	imageCountText: {
-		color: Colors.font_gray,
-		fontWeight: 'semibold',
+		padding: 12,
+		borderWidth: 1,
+		borderColor: Colors.border_gray,
+		borderRadius: 8,
+		backgroundColor: Colors.base,
 	},
 });
 
