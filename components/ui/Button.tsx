@@ -7,7 +7,7 @@ import {
 	GestureResponderEvent,
 } from 'react-native';
 
-type Color = 'mint' | 'white-hover-mint' | 'white' | 'gray';
+type Color = 'mint' | 'white' | 'gray';
 type Size = 'sm' | 'md' | 'md2' | 'lg';
 
 interface ButtonProps {
@@ -33,10 +33,21 @@ const Button = ({
 				return styles.mint;
 			case 'white':
 				return styles.white;
-			case 'white-hover-mint':
-				return styles.whiteHoverMint;
 			case 'gray':
 				return styles.gray;
+			default:
+				return {};
+		}
+	};
+
+	const getTextStyles = (color: Color) => {
+		switch (color) {
+			case 'mint':
+				return { color: 'white' };
+			case 'white':
+				return { color: Colors.primary };
+			case 'gray':
+				return { color: Colors.font_gray };
 			default:
 				return {};
 		}
@@ -58,6 +69,7 @@ const Button = ({
 	};
 
 	const colorStyles = getColorStyles(color);
+	const textStyles = getTextStyles(color);
 	const sizeStyles = getSizeStyles(size);
 
 	return (
@@ -65,9 +77,7 @@ const Button = ({
 			onPress={onPress}
 			style={[styles.button, colorStyles, sizeStyles, style]}
 		>
-			<Text style={[styles.text, color === 'gray' ? styles.grayText : {}]}>
-				{children}
-			</Text>
+			<Text style={[styles.text, textStyles]}>{children}</Text>
 		</TouchableOpacity>
 	);
 };
@@ -77,9 +87,6 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 		justifyContent: 'center',
 		alignItems: 'center',
-	},
-	text: {
-		fontWeight: '600',
 	},
 	mint: {
 		backgroundColor: Colors.primary,
@@ -91,18 +98,15 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: Colors.primary,
 	},
-	whiteHoverMint: {
-		backgroundColor: 'transparent',
-		borderWidth: 1,
-		borderColor: Colors.primary,
-	},
+
 	gray: {
-		backgroundColor: '#f5f5f5',
+		backgroundColor: Colors.border_gray,
 		borderWidth: 1,
-		borderColor: '#dcdcdc',
+		borderColor: Colors.border_gray,
 	},
-	grayText: {
-		color: '#555',
+	text: {
+		fontWeight: 'bold',
+		fontSize: 16,
 	},
 	sm: {
 		paddingVertical: 6,

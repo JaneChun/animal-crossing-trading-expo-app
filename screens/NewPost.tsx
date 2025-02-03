@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import {
 	StyleSheet,
-	FlatList,
 	Alert,
 	KeyboardAvoidingView,
 	ScrollView,
+	View,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
@@ -20,10 +20,18 @@ import TypeSelect from '@/components/NewPost/TypeSelect';
 import TitleInput from '@/components/NewPost/TitleInput';
 import BodyInput from '@/components/NewPost/BodyInput';
 import ImageInput from '@/components/NewPost/ImageInput';
-import CartItem from '../components/NewPost/CartItem';
 import ItemSelect from '../components/NewPost/ItemSelect';
 import Button from '../components/ui/Button';
-import useToggle from '../hooks/useToggle';
+import ItemList from '../components/NewPost/ItemList';
+
+export type CartItem = {
+	UniqueEntryID: string;
+	color: string;
+	imageUrl: string;
+	name: string;
+	quantity: number;
+	price: number;
+};
 
 const NewPost = () => {
 	const navigation = useNavigation<TabNavigation>();
@@ -32,8 +40,7 @@ const NewPost = () => {
 	const [title, setTitle] = useState('');
 	const [body, setBody] = useState('');
 	const [images, setImages] = useState<ImagePickerAsset[]>([]);
-	const [cart, setCart] = useState([]);
-	const [isDropdownOpen, toggleIsDropdownOpen] = useToggle(false);
+	const [cart, setCart] = useState<CartItem[]>([]);
 
 	const validateUser = () => {
 		if (!userInfo || !auth.currentUser) {
@@ -63,8 +70,7 @@ const NewPost = () => {
 			title: string;
 			body: string;
 			images: string[];
-			// cart: CartItem[];
-			// cartList: string[];
+			cart: CartItem[];
 			createdAt: ReturnType<typeof serverTimestamp>;
 			creatorDisplayName?: string;
 			creatorId?: string;
@@ -73,11 +79,11 @@ const NewPost = () => {
 			title,
 			body,
 			images: [],
-			// cart,
-			// cartList: cart.map(({ name }) => name.replaceAll(' ', '')),
+			cart,
 			createdAt: serverTimestamp(),
 			creatorDisplayName: userInfo?.displayName,
 			creatorId: userInfo?.uid,
+			//  cartList: cart.map(({ name }) => name),
 			// 	creatorIslandName: userInfo?.islandName,
 			// 	done: false,
 			// 	comments: 0,
@@ -111,6 +117,7 @@ const NewPost = () => {
 		<KeyboardAvoidingView style={styles.container}>
 			<ScrollView nestedScrollEnabled={true}>
 				<TypeSelect type={type} setType={setType} />
+
 				<TitleInput
 					title={title}
 					setTitle={setTitle}
@@ -134,24 +141,20 @@ const NewPost = () => {
 					labelStyle={styles.label}
 				/>
 
-				{/* <ItemSelect
-					isDropdownOpen={isDropdownOpen}
-					toggleIsDropdownOpen={toggleIsDropdownOpen}
+				<ItemSelect
 					cart={cart}
 					setCart={setCart}
-				/> */}
+					containerStyle={styles.inputContainer}
+					labelStyle={styles.label}
+				/>
 
-				{/* <FlatList
-					data={cart}
-					keyExtractor={(item) => item.UniqueEntryID}
-					renderItem={({ item }) => (
-						<CartItem item={item} cart={cart} setCart={setCart} />
-					)}
-				/> */}
+				<ItemList cart={cart} setCart={setCart} />
 
-				<Button color='mint' size='lg' onPress={onSubmit}>
-					작성
-				</Button>
+				<View style={styles.buttonContainer}>
+					<Button color='white' size='lg' onPress={onSubmit}>
+						작성
+					</Button>
+				</View>
 			</ScrollView>
 		</KeyboardAvoidingView>
 	);
@@ -178,6 +181,10 @@ const styles = StyleSheet.create({
 		borderColor: Colors.border_gray,
 		borderRadius: 8,
 		backgroundColor: Colors.base,
+	},
+	buttonContainer: {
+		flex: 1,
+		justifyContent: 'flex-end',
 	},
 });
 
