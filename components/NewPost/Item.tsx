@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { CartItem } from '@/screens/NewPost';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import {
 	Dispatch,
 	SetStateAction,
@@ -74,7 +74,7 @@ const Item = ({ item, cart, setCart }: CartItemProps) => {
 					onPress={deleteItemFromCart}
 					style={styles.deleteButton}
 				>
-					<Text style={styles.deleteButtonIcon}>✕</Text>
+					<Ionicons name='close' color={Colors.font_gray} size={16} />
 				</TouchableOpacity>
 				<Image source={{ uri: item.imageUrl }} style={styles.image} />
 				<Text style={styles.itemName}>{item.name}</Text>
@@ -183,18 +183,13 @@ const styles = StyleSheet.create({
 	deleteButton: {
 		position: 'absolute',
 		zIndex: 2,
-		top: 0,
-		right: 0,
+		top: 6,
+		right: 6,
 		borderRadius: 12,
-		width: 24,
-		height: 24,
+		width: 20,
+		height: 20,
 		alignItems: 'center',
 		justifyContent: 'center',
-	},
-	deleteButtonIcon: {
-		color: 'white',
-		fontSize: 16,
-		fontWeight: 'bold',
 	},
 	infoContainer: {
 		marginTop: 10,
