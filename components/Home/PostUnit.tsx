@@ -4,6 +4,8 @@ import { useNavigation } from '@react-navigation/native';
 import { elapsedTime } from '../../utilities/elapsedTime';
 import { FontAwesome } from '@expo/vector-icons';
 import { Colors } from '@/constants/Color';
+import { StackNavigation } from '@/types/navigation';
+import TypeBadge from './TypeBadge';
 
 interface PostUnitProps {
 	id: string;
@@ -26,10 +28,10 @@ const PostUnit = ({
 	creatorDisplayName,
 	creatorId,
 }: PostUnitProps) => {
-	const navigation = useNavigation();
+	const navigation = useNavigation<StackNavigation>();
 
 	const navigateToPost = () => {
-		// navigation.navigate('PostDetail', { id });
+		navigation.navigate('PostDetail', { id });
 	};
 
 	return (
@@ -53,11 +55,10 @@ const PostUnit = ({
 			{/* 콘텐츠 */}
 			<View style={styles.contentContainer}>
 				<View style={styles.titleContainer}>
-					{/* <Text style={[styles.badge, styles.completedBadge]}>거래 완료</Text> */}
 					{type === 'sell' ? (
-						<Text style={[styles.badge, styles.sellBadge]}>팔아요</Text>
+						<TypeBadge type='sell' />
 					) : (
-						<Text style={[styles.badge, styles.buyBadge]}>구해요</Text>
+						<TypeBadge type='buy' />
 					)}
 					<Text style={styles.title} numberOfLines={1}>
 						{title}
@@ -111,30 +112,8 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		fontSize: 16,
-		fontWeight: 'bold',
+		fontWeight: 600,
 		color: Colors.font_black,
-	},
-	badge: {
-		marginRight: 6,
-		paddingVertical: 4,
-		paddingHorizontal: 8,
-		fontSize: 14,
-		fontWeight: '500',
-		borderRadius: 4,
-	},
-	// completedBadge: {
-	// 	backgroundColor: '#FFF',
-	// 	color: '#555',
-	// 	borderWidth: 1,
-	// 	borderColor: '#DDD',
-	// },
-	sellBadge: {
-		backgroundColor: Colors.blue_background,
-		color: Colors.blue_text,
-	},
-	buyBadge: {
-		backgroundColor: Colors.green_background,
-		color: Colors.green_text,
 	},
 	infoText: {
 		fontSize: 14,
