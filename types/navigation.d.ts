@@ -10,4 +10,12 @@ export type RootTabParamList = {
 	MyPage: undefined;
 };
 
+export type RootStackParamList = {
+	Post: undefined;
+	PostDetail: { id: string };
+};
+
 export type TabNavigation = BottomTabNavigationProp<RootTabParamList>;
+export type StackNavigation = NativeStackNavigationProp<RootStackParamList>;
+
+export type PostDetailRouteProp = RouteProp<RootStackParamList, 'PostDetail'>;
