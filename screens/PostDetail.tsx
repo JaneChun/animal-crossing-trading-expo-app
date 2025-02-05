@@ -1,23 +1,18 @@
 import { PostDetailRouteProp, StackNavigation } from '@/types/navigation';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
 	ActivityIndicator,
-	Alert,
 	Image,
 	ScrollView,
 	Text,
-	TouchableOpacity,
 	View,
 	StyleSheet,
-	FlatList,
-	Dimensions,
 } from 'react-native';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
 import { useNavigation, useRoute } from '@react-navigation/native';
 // import Comment from '../Components/PostDetail/Comment';
 import { useAuthContext } from '../contexts/AuthContext';
-import { elapsedTime } from '../utilities/elapsedTime';
 import { updateDataToFirestore } from '../utilities/firebaseApi';
 // import useGetComment from '../Hooks/useGetComment';
 import useGetPostDetail from '../hooks/useGetPostDetail';
@@ -25,13 +20,13 @@ import { db, storage } from '../fbase';
 // import spinner from '../Images/loading.jpg';
 import { Colors } from '@/constants/Color';
 import TypeBadge from '@/components/Home/TypeBadge';
-import { Ionicons } from '@expo/vector-icons';
-import Carousel, {
-	Pagination,
-	PaginationProps,
-} from 'react-native-snap-carousel';
-
-const { width, height } = Dimensions.get('window');
+import UserInfo from '@/components/PostDetail/UserInfo';
+import ImageCarousel from '@/components/PostDetail/ImageCarousel';
+import ItemSummaryList from '@/components/PostDetail/ItemSummaryList';
+import Title from '@/components/PostDetail/Title';
+import CreatedAt from '@/components/PostDetail/CreatedAt';
+import Body from '@/components/PostDetail/Body';
+import Total from '@/components/PostDetail/Total';
 
 const PostDetail = () => {
 	const navigation = useNavigation<StackNavigation>();
@@ -40,7 +35,6 @@ const PostDetail = () => {
 	// const { userInfo } = useAuthContext();
 	const [isUpdated, setIsUpdated] = useState(false);
 	const { post, error, loading } = useGetPostDetail(id, isUpdated);
-	const [activeIndex, setActiveIndex] = React.useState(0);
 
 	console.log(post);
 	// const [isCommentsUpdated, setIsCommentsUpdated] = useState(false);
@@ -97,6 +91,11 @@ const PostDetail = () => {
 	// 		},
 	// 	]);
 	// };
+	const totalPrice = post.cart?.reduce(
+		(acc: number, cur: { quantity: number; price: number }) =>
+			acc + Number(cur.quantity) * Number(cur.price),
+		0,
+	);
 
 	return (
 		<ScrollView style={styles.container}>
@@ -109,78 +108,8 @@ const PostDetail = () => {
 			) : (
 				<View style={styles.content}>
 					<View style={styles.header}>
-						{/* 거래 타입 */}
-						<View style={styles.typeBadgeContainer}>
-							<TypeBadge type={post.type} />
-						</View>
-
-						{/* 타이틀 */}
-						<Text style={styles.title}>{post.title}</Text>
-
-						{/* 유저 정보 */}
-						<View style={styles.userInfoContainer}>
-							<Text style={styles.creatorDisplayName}>
-								{post.creatorDisplayName}
-							</Text>
-							<View style={styles.creatorIslandInfo}>
-								<Image
-									source={{
-										uri: 'https://firebasestorage.googleapis.com/v0/b/animal-crossing-trade-app.appspot.com/o/Src%2FCoconut_Tree_NH_Inv_Icon.png?alt=media&token=cd997010-694e-49b0-9390-483772cdad8a',
-									}}
-									style={styles.islandImage}
-								/>
-								<Text style={styles.islandName}>
-									{post.creatorIslandName || '지지섬'}
-								</Text>
-							</View>
-						</View>
-
-						{/* 시간 */}
-						<Text style={styles.date}>
-							{elapsedTime(post.createdAt?.toDate())}
-						</Text>
-
-						{/* 사진 */}
-						{post.images && (
-							<>
-								<Carousel
-									data={post.images}
-									renderItem={({ item }) => (
-										<Image
-											source={{ uri: item as string }}
-											style={styles.carouselImage}
-										/>
-									)}
-									sliderWidth={width}
-									itemWidth={width * 0.8}
-									onSnapToItem={(index) => setActiveIndex(index)}
-									inactiveSlideScale={0.95}
-									containerCustomStyle={{
-										marginStart: -30,
-									}}
-								/>
-								<Pagination
-									dotsLength={post.images.length}
-									activeDotIndex={activeIndex}
-									containerStyle={{ paddingVertical: 10 }}
-									dotStyle={{
-										width: 8,
-										height: 8,
-										backgroundColor: Colors.primary,
-									}}
-									inactiveDotOpacity={0.4}
-									inactiveDotScale={0.8}
-									animatedTension={10}
-								/>
-							</>
-						)}
-					</View>
-
-					{/* 본문 */}
-					<Text style={styles.body}>{post.body}</Text>
-
-					{/* 수정, 삭제, 거래 완료 버튼 */}
-					{/* {post.creatorId === userInfo?.uid && (
+						{/* 수정, 삭제, 거래 완료 버튼 */}
+						{/* {post.creatorId === userInfo?.uid && (
 						<View style={styles.actionsContainer}>
 							{!post.done && (
 								<TouchableOpacity onPress={editPost}>
@@ -198,54 +127,46 @@ const PostDetail = () => {
 						</View>
 					)} */}
 
-					{/* 아이템 목록 */}
-					<FlatList
-						data={post.cart}
-						keyExtractor={({ UniqueEntryID }) => UniqueEntryID}
-						renderItem={({ item }) => (
-							<View style={styles.itemContainer}>
-								<View style={styles.itemDetails}>
-									<Image
-										source={{ uri: item.imageUrl }}
-										style={styles.itemImage}
-									/>
-									<Text style={styles.itemName}>{item.name}</Text>
-									{item.color && (
-										<Text style={styles.itemColor}>{item.color}</Text>
-									)}
-								</View>
-								<View style={styles.itemPriceContainer}>
-									<Text style={styles.quantity}>{item.quantity}개</Text>
-									<Ionicons name='close' size={14} />
-									<Image
-										source={{
-											uri: 'https://firebasestorage.googleapis.com/v0/b/animal-crossing-trade-app.appspot.com/o/Src%2FMilesTicket.png?alt=media&token=f8e4f60a-1546-4084-9498-0f6f9e765859',
-										}}
-										style={styles.ticketIcon}
-									/>
-									<Text>{item.price}</Text>
-								</View>
-							</View>
-						)}
-					/>
+						<TypeBadge
+							type={post.type}
+							containerStyle={styles.typeBadgeContainer}
+						/>
 
-					<View style={styles.totalContainer}>
-						<Text style={styles.totalLabel}>일괄</Text>
-						<View style={styles.totalPriceContainer}>
-							<Image
-								source={{
-									uri: 'https://firebasestorage.googleapis.com/v0/b/animal-crossing-trade-app.appspot.com/o/Src%2FMilesTicket.png?alt=media&token=f8e4f60a-1546-4084-9498-0f6f9e765859',
-								}}
-								style={styles.ticketIcon}
-							/>
-							<Text style={styles.totalPrice}>
-								{post.cart?.reduce(
-									(acc: number, cur: { quantity: number; price: number }) =>
-										acc + Number(cur.quantity) * Number(cur.price),
-									0,
-								)}
-							</Text>
-						</View>
+						<Title title={post.title} containerStyle={{ marginBottom: 8 }} />
+
+						<UserInfo
+							displayName={post.creatorDisplayName}
+							islandName={post.creatorIslandName}
+							containerStyle={{ marginBottom: 8 }}
+						/>
+
+						<CreatedAt
+							createdAt={post.createdAt}
+							containerStyle={{ marginBottom: 16 }}
+						/>
+					</View>
+
+					<View style={styles.body}>
+						{/* 사진 */}
+						<ImageCarousel
+							images={post.images}
+							containerStyle={{ marginBottom: 16 }}
+						/>
+
+						{/* 본문 */}
+						<Body body={post.body} containerStyle={{ marginBottom: 32 }} />
+
+						{/* 아이템 목록 */}
+						<ItemSummaryList
+							cart={post.cart}
+							containerStyle={{ marginBottom: 8 }}
+						/>
+
+						{/* 총계 */}
+						<Total
+							totalPrice={totalPrice}
+							containerStyle={{ marginBottom: 16 }}
+						/>
 					</View>
 
 					{/* <Comment
@@ -275,9 +196,14 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	content: {
-		paddingHorizontal: 4,
+		paddingHorizontal: 2,
 	},
 	header: {
+		borderBottomWidth: 1,
+		borderColor: Colors.border_gray,
+		marginBottom: 16,
+	},
+	body: {
 		borderBottomWidth: 1,
 		borderColor: Colors.border_gray,
 		marginBottom: 16,
@@ -286,120 +212,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		marginLeft: -2,
 		marginBottom: 12,
-	},
-	title: {
-		fontSize: 20,
-		fontWeight: 'bold',
-		marginBottom: 8,
-	},
-	userInfoContainer: {
-		flexDirection: 'row',
-		justifyContent: 'flex-start',
-		alignItems: 'center',
-		marginBottom: 8,
-	},
-	creatorDisplayName: {
-		fontSize: 16,
-		fontWeight: 600,
-		color: Colors.font_gray,
-	},
-	creatorIslandInfo: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	islandImage: {
-		width: 20,
-		height: 20,
-		marginLeft: 8,
-	},
-	islandName: {
-		color: Colors.font_gray,
-		marginLeft: 1,
-	},
-	date: {
-		color: Colors.font_gray,
-		marginBottom: 16,
-	},
-	carouselImage: {
-		width: '100%',
-		height: 250,
-		borderRadius: 10,
-		marginBottom: 10,
-	},
-	image: {
-		width: '100%',
-		height: 200,
-		borderRadius: 10,
-		marginBottom: 10,
-	},
-	body: {
-		fontSize: 16,
-		color: Colors.font_gray,
-		marginBottom: 32,
-	},
-	itemContainer: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		paddingVertical: 8,
-		paddingHorizontal: 16,
-		backgroundColor: Colors.base,
-		borderRadius: 10,
-		marginBottom: 8,
-	},
-	itemDetails: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	itemImage: {
-		width: 30,
-		height: 30,
-		borderRadius: 6,
-	},
-	itemName: {
-		fontSize: 16,
-		fontWeight: 600,
-		marginLeft: 8,
-	},
-	itemColor: {
-		fontSize: 14,
-		color: Colors.font_gray,
-		marginLeft: 8,
-	},
-	itemPriceContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	quantity: {
-		fontSize: 14,
-		marginRight: 6,
-	},
-	ticketIcon: {
-		width: 20,
-		height: 20,
-		marginLeft: 6,
-		marginRight: 2,
-	},
-	totalContainer: {
-		flexDirection: 'row',
-		justifyContent: 'flex-end',
-		alignItems: 'center',
-		borderBottomWidth: 1,
-		borderColor: Colors.border_gray,
-		paddingRight: 16,
-		paddingVertical: 16,
-	},
-	totalLabel: {
-		fontSize: 14,
-		fontWeight: 600,
-		marginRight: 8,
-	},
-	totalPriceContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	totalPrice: {
-		fontSize: 16,
-		fontWeight: 'bold',
 	},
 	// actionsContainer: {
 	// 	flexDirection: 'row',

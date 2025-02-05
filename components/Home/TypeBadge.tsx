@@ -1,13 +1,13 @@
 import { Colors } from '@/constants/Color';
-import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 type TypeBadgeProps = {
 	type: 'buy' | 'sell' | 'done';
+	containerStyle: ViewStyle;
 };
-const TypeBadge = ({ type }: TypeBadgeProps) => {
+const TypeBadge = ({ type, containerStyle }: TypeBadgeProps) => {
 	return (
-		<>
+		<View style={containerStyle}>
 			{type === 'buy' && (
 				<Text style={[styles.badge, styles.buyBadge]}>구해요</Text>
 			)}
@@ -17,7 +17,7 @@ const TypeBadge = ({ type }: TypeBadgeProps) => {
 			{type === 'done' && (
 				<Text style={[styles.badge, styles.doneBadge]}>거래완료</Text>
 			)}
-		</>
+		</View>
 	);
 };
 
