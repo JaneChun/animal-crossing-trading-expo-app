@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 type TypeBadgeProps = {
 	type: 'buy' | 'sell' | 'done';
-	containerStyle: ViewStyle;
+	containerStyle?: ViewStyle;
 };
 const TypeBadge = ({ type, containerStyle }: TypeBadgeProps) => {
 	return (
