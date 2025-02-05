@@ -9,7 +9,8 @@
 		"ios": "expo run:ios",
 		"web": "expo start --web",
 		"test": "jest --watchAll",
-		"lint": "expo lint"
+		"lint": "expo lint",
+		"postinstall": "patch-package"
 	},
 	"jest": {
 		"preset": "jest-expo"
@@ -22,6 +23,7 @@
 		"@react-navigation/bottom-tabs": "^7.2.0",
 		"@react-navigation/native": "^7.0.14",
 		"@react-navigation/native-stack": "^7.2.0",
+		"@types/react-native-snap-carousel": "^3.8.11",
 		"axios": "^1.7.9",
 		"expo": "~52.0.28",
 		"expo-blur": "~14.0.3",
@@ -39,6 +41,8 @@
 		"expo-system-ui": "~4.0.7",
 		"expo-web-browser": "~14.0.2",
 		"firebase": "^10.14.1",
+		"patch-package": "^8.0.0",
+		"postinstall-postinstall": "^2.1.0",
 		"react": "18.3.1",
 		"react-dom": "18.3.1",
 		"react-native": "0.76.6",

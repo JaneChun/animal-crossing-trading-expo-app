@@ -10,6 +10,7 @@ import {
 	View,
 	StyleSheet,
 	FlatList,
+	Dimensions,
 } from 'react-native';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { deleteObject, ref } from 'firebase/storage';
@@ -25,7 +26,12 @@ import { db, storage } from '../fbase';
 import { Colors } from '@/constants/Color';
 import TypeBadge from '@/components/Home/TypeBadge';
 import { Ionicons } from '@expo/vector-icons';
-import Carousel from 'react-native-snap-carousel';
+import Carousel, {
+	Pagination,
+	PaginationProps,
+} from 'react-native-snap-carousel';
+
+const { width, height } = Dimensions.get('window');
 
 const PostDetail = () => {
 	const navigation = useNavigation<StackNavigation>();
@@ -34,6 +40,8 @@ const PostDetail = () => {
 	// const { userInfo } = useAuthContext();
 	const [isUpdated, setIsUpdated] = useState(false);
 	const { post, error, loading } = useGetPostDetail(id, isUpdated);
+	const [activeIndex, setActiveIndex] = React.useState(0);
+
 	console.log(post);
 	// const [isCommentsUpdated, setIsCommentsUpdated] = useState(false);
 	// const { comments, commentsError, commentsLoading } = useGetComment(
@@ -133,21 +141,39 @@ const PostDetail = () => {
 						</Text>
 
 						{/* 사진 */}
-						{/* {post.images && (
-							<Carousel
-								data={post.images}
-								renderItem={({ item }) => (
-									<Image
-										source={{ uri: item as string }}
-										style={styles.carouselImage}
-									/>
-								)}
-								sliderWidth={400}
-								itemWidth={400 * 0.8}
-								loop
-								autoplay
-							/>
-						)} */}
+						{post.images && (
+							<>
+								<Carousel
+									data={post.images}
+									renderItem={({ item }) => (
+										<Image
+											source={{ uri: item as string }}
+											style={styles.carouselImage}
+										/>
+									)}
+									sliderWidth={width}
+									itemWidth={width * 0.8}
+									onSnapToItem={(index) => setActiveIndex(index)}
+									inactiveSlideScale={0.95}
+									containerCustomStyle={{
+										marginStart: -30,
+									}}
+								/>
+								<Pagination
+									dotsLength={post.images.length}
+									activeDotIndex={activeIndex}
+									containerStyle={{ paddingVertical: 10 }}
+									dotStyle={{
+										width: 8,
+										height: 8,
+										backgroundColor: Colors.primary,
+									}}
+									inactiveDotOpacity={0.4}
+									inactiveDotScale={0.8}
+									animatedTension={10}
+								/>
+							</>
+						)}
 					</View>
 
 					{/* 본문 */}
