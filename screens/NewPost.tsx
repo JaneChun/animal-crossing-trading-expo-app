@@ -12,7 +12,7 @@ import { serverTimestamp } from 'firebase/firestore';
 import type { TabNavigation } from '@/types/navigation';
 import { useAuthContext } from '../contexts/AuthContext';
 import { auth } from '../fbase';
-import { addDataToFirestore } from '../utilities/firebaseApi';
+import { addDocToFirestore } from '../utilities/firebaseApi';
 import { uploadFiles } from '../utilities/uploadFiles';
 import { Colors } from '@/constants/Color';
 
@@ -98,7 +98,7 @@ const NewPost = () => {
 		}
 
 		try {
-			await addDataToFirestore({ directory: 'Boards', requestData });
+			await addDocToFirestore({ directory: 'Boards', requestData });
 			Alert.alert('작성 완료', '글이 작성되었습니다.');
 			setType('buy');
 			setTitle('');

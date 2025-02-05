@@ -1,6 +1,6 @@
-import { DocumentData, doc, getDoc } from 'firebase/firestore';
+import { DocumentData } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { db } from '../fbase';
+import { getDocFromFirestore } from '@/utilities/firebaseApi';
 
 function useGetPostDetail(id: string, isUpdated?: boolean) {
 	const [data, setData] = useState<DocumentData>({});
@@ -14,15 +14,12 @@ function useGetPostDetail(id: string, isUpdated?: boolean) {
 
 		const getData = async () => {
 			try {
-				const docRef = doc(db, 'Boards', id);
-				const docSnap = await getDoc(docRef);
+				const docData = await getDocFromFirestore({ collection: 'Boards', id });
+				if (!docData) return;
 
-				if (docSnap.exists()) {
-					const docData = docSnap.data();
-					setData({ ...docData, id });
-				}
-			} catch (error: unknown) {
-				setError(error as Error);
+				setData(docData);
+			} catch (e) {
+				setError(e as Error);
 			} finally {
 				setLoading(false);
 			}
