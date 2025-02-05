@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import {
 	FlatList,
 	StyleSheet,
 	Text,
 	View,
-	Image,
 	ActivityIndicator,
-	TouchableOpacity,
 } from 'react-native';
 import {
 	collection,
@@ -21,6 +19,7 @@ import { db } from '../fbase';
 import PostUnit from '../components/Home/PostUnit';
 import { CartItem } from './NewPost';
 import { Colors } from '@/constants/Color';
+import { useFocusEffect } from '@react-navigation/native';
 
 export interface doc {
 	id: string;
@@ -41,10 +40,6 @@ const Home = () => {
 	const [lastestDoc, setLastestDoc] = useState<any>();
 	const [isEnd, setIsEnd] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
-
-	useEffect(() => {
-		getData();
-	}, []);
 
 	let q = query(
 		collection(db, 'Boards'),
@@ -70,10 +65,18 @@ const Home = () => {
 			return { id: doc.id, ...docData }; // doc 인터페이스의 필수 속성 유지
 		});
 
-		setData((prevData) => [...prevData, ...data]);
+		setData(data);
 		setLastestDoc(querySnapshot.docs[querySnapshot.docs.length - 1]);
 		setIsLoading(false);
 	};
+
+	// Home이 포커스될 때마다 실행
+	useFocusEffect(
+		useCallback(() => {
+			setData([]);
+			getData();
+		}, []),
+	);
 
 	const nextPage = () => {
 		if (lastestDoc) {
