@@ -6,7 +6,7 @@ import {
 	TouchableOpacity,
 	Alert,
 } from 'react-native';
-import { StackNavigation } from '@/types/navigation';
+import { TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { deleteDocFromFirestore } from '../../utilities/firebaseApi';
 import { Colors } from '@/constants/Color';
@@ -15,8 +15,9 @@ type ActionButtonsProps = {
 	id: string;
 	containerStyles?: ViewStyle;
 };
+
 const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
-	const navigation = useNavigation<StackNavigation>();
+	const navigation = useNavigation<TabNavigation>();
 
 	const showAlert = (title: string, message: string, onPress?: () => void) => {
 		Alert.alert(title, message, [{ text: '확인', onPress }]);
@@ -24,7 +25,7 @@ const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
 
 	const editPost = () => {
 		// if (post.done) return;
-		// navigation.navigate('PostEdit', { id });
+		navigation.navigate('NewPost', { id });
 	};
 
 	const deletePost = async () => {
@@ -46,24 +47,24 @@ const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
 		}
 	};
 
-	const closePost = async () => {
-		// if (!userInfo || !id || post.done) return;
-		// Alert.alert('거래 완료', '거래 완료로 변경하겠습니까?', [
-		// 	{ text: '취소', style: 'cancel' },
-		// 	{
-		// 		text: '확인',
-		// 		onPress: async () => {
-		// 			try {
-		// 				const docRef = doc(db, 'Boards', id);
-		// 				await updateDataToFirestore(docRef, { done: true });
-		// 				setIsUpdated(!isUpdated);
-		// 			} catch (error) {
-		// 				console.log(error);
-		// 			}
-		// 		},
-		// 	},
-		// ]);
-	};
+	// const closePost = async () => {
+	// if (!userInfo || !id || post.done) return;
+	// Alert.alert('거래 완료', '거래 완료로 변경하겠습니까?', [
+	// 	{ text: '취소', style: 'cancel' },
+	// 	{
+	// 		text: '확인',
+	// 		onPress: async () => {
+	// 			try {
+	// 				const docRef = doc(db, 'Boards', id);
+	// 				await updateDataToFirestore(docRef, { done: true });
+	// 				setIsUpdated(!isUpdated);
+	// 			} catch (error) {
+	// 				console.log(error);
+	// 			}
+	// 		},
+	// 	},
+	// ]);
+	// };
 
 	return (
 		<View style={containerStyles}>
@@ -71,6 +72,7 @@ const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
 				<TouchableOpacity onPress={editPost}>
 					<Text style={[styles.editButton, styles.buttonText]}>수정</Text>
 				</TouchableOpacity>
+				<Text style={styles.divider}>|</Text>
 				<TouchableOpacity onPress={deletePost}>
 					<Text style={[styles.deleteButton, styles.buttonText]}>삭제</Text>
 				</TouchableOpacity>
@@ -96,13 +98,16 @@ const styles = StyleSheet.create({
 		right: 0,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		// borderWidth: 1,
+		alignItems: 'center',
 		gap: 12,
 		padding: 6,
 	},
 	buttonText: {
 		color: Colors.font_gray,
 		fontSize: 14,
+	},
+	divider: {
+		color: Colors.border_gray,
 	},
 	editButton: {},
 	deleteButton: {},

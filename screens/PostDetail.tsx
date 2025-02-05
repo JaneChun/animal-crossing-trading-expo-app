@@ -1,7 +1,7 @@
 import { PostDetailRouteProp } from '@/types/navigation';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, ScrollView, View, StyleSheet } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import useGetPostDetail from '../hooks/useGetPostDetail';
 // import Comment from '../Components/PostDetail/Comment';
 // import useGetComment from '../Hooks/useGetComment';
@@ -25,7 +25,6 @@ const PostDetail = () => {
 	const [isUpdated, setIsUpdated] = useState(false);
 	const { post, error, loading } = useGetPostDetail(id, isUpdated);
 
-	console.log(post);
 	// const [isCommentsUpdated, setIsCommentsUpdated] = useState(false);
 	// const { comments, commentsError, commentsLoading } = useGetComment(
 	// 	id,
@@ -35,57 +34,66 @@ const PostDetail = () => {
 	// if (error) console.log(error);
 	// if (commentsError) console.log(commentsError);
 
-	const totalPrice = post.cart?.reduce(
-		(acc: number, cur: { quantity: number; price: number }) =>
-			acc + Number(cur.quantity) * Number(cur.price),
-		0,
+	useFocusEffect(
+		useCallback(() => {
+			setIsUpdated((prev) => !prev);
+		}, [id]),
 	);
+
+	const totalPrice =
+		post.cart?.reduce(
+			(acc: number, cur: { quantity: number; price: number }) =>
+				acc + Number(cur.quantity) * Number(cur.price),
+			0,
+		) ?? 0;
+
+	if (loading) {
+		return (
+			<View style={styles.loadingContainer}>
+				{/* <Image source={spinner} style={{ height: 80, width: 80 }} /> */}
+				<ActivityIndicator size='large' color={Colors.primary} />
+			</View>
+		);
+	}
 
 	return (
 		<ScrollView style={styles.container}>
-			{/* {loading || commentsLoading ? ( */}
-			{loading ? (
-				<View style={styles.loadingContainer}>
-					{/* <Image source={spinner} style={{ height: 80, width: 80 }} /> */}
-					<ActivityIndicator size='large' color={Colors.primary} />
+			<View style={styles.content}>
+				<View style={styles.header}>
+					{post.creatorId === userInfo?.uid && <ActionButtons id={post.id} />}
+					<TypeBadge
+						type={post.type}
+						containerStyle={styles.typeBadgeContainer}
+					/>
+					<Title title={post.title} containerStyle={{ marginBottom: 8 }} />
+					<UserInfo
+						displayName={post.creatorDisplayName}
+						islandName={post.creatorIslandName}
+						containerStyle={{ marginBottom: 8 }}
+					/>
+					<CreatedAt
+						createdAt={post.createdAt}
+						containerStyle={{ marginBottom: 16 }}
+					/>
 				</View>
-			) : (
-				<View style={styles.content}>
-					<View style={styles.header}>
-						{post.creatorId === userInfo?.uid && <ActionButtons id={post.id} />}
-						<TypeBadge
-							type={post.type}
-							containerStyle={styles.typeBadgeContainer}
-						/>
-						<Title title={post.title} containerStyle={{ marginBottom: 8 }} />
-						<UserInfo
-							displayName={post.creatorDisplayName}
-							islandName={post.creatorIslandName}
-							containerStyle={{ marginBottom: 8 }}
-						/>
-						<CreatedAt
-							createdAt={post.createdAt}
-							containerStyle={{ marginBottom: 16 }}
-						/>
-					</View>
 
-					<View style={styles.body}>
-						<ImageCarousel
-							images={post.images}
-							containerStyle={{ marginBottom: 16 }}
-						/>
-						<Body body={post.body} containerStyle={{ marginBottom: 32 }} />
-						<ItemSummaryList
-							cart={post.cart}
-							containerStyle={{ marginBottom: 8 }}
-						/>
-						<Total
-							totalPrice={totalPrice}
-							containerStyle={{ marginBottom: 16 }}
-						/>
-					</View>
+				<View style={styles.body}>
+					<ImageCarousel
+						images={post.images}
+						containerStyle={{ marginBottom: 16 }}
+					/>
+					<Body body={post.body} containerStyle={{ marginBottom: 32 }} />
+					<ItemSummaryList
+						cart={post.cart}
+						containerStyle={{ marginBottom: 8 }}
+					/>
+					<Total
+						totalPrice={totalPrice}
+						containerStyle={{ marginBottom: 16 }}
+					/>
+				</View>
 
-					{/* <Comment
+				{/* <Comment
 							done={post.done}
 							postCreatorId={post.creatorId}
 							comments={comments}
@@ -93,8 +101,7 @@ const PostDetail = () => {
 							isCommentsUpdated={isCommentsUpdated}
 							setIsCommentsUpdated={setIsCommentsUpdated}
 					/> */}
-				</View>
-			)}
+			</View>
 		</ScrollView>
 	);
 };
@@ -107,9 +114,10 @@ const styles = StyleSheet.create({
 		padding: 24,
 	},
 	loadingContainer: {
-		alignItems: 'center',
-		justifyContent: 'center',
+		backgroundColor: 'white',
 		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	content: {
 		paddingHorizontal: 2,

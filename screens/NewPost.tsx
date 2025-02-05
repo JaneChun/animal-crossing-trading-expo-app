@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	StyleSheet,
 	Alert,
@@ -6,14 +6,18 @@ import {
 	ScrollView,
 	View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { serverTimestamp } from 'firebase/firestore';
-import type { TabNavigation } from '@/types/navigation';
+import { type NewPostRouteProp, type TabNavigation } from '@/types/navigation';
 import { useAuthContext } from '../contexts/AuthContext';
 import { auth } from '../fbase';
-import { addDocToFirestore } from '../utilities/firebaseApi';
-import { uploadFiles } from '../utilities/uploadFiles';
+import {
+	addDocToFirestore,
+	updateDocToFirestore,
+	uploadObjectToStorage,
+	deleteObjectFromStorage,
+} from '../utilities/firebaseApi';
 import { Colors } from '@/constants/Color';
 
 import TypeSelect from '@/components/NewPost/TypeSelect';
@@ -23,6 +27,7 @@ import ImageInput from '@/components/NewPost/ImageInput';
 import ItemSelect from '../components/NewPost/ItemSelect';
 import Button from '../components/ui/Button';
 import ItemList from '../components/NewPost/ItemList';
+import useGetPostDetail from '@/hooks/useGetPostDetail';
 
 export type CartItem = {
 	UniqueEntryID: string;
@@ -34,13 +39,34 @@ export type CartItem = {
 };
 
 const NewPost = () => {
-	const navigation = useNavigation<TabNavigation>();
+	const tabNavigation = useNavigation<TabNavigation>();
 	const { userInfo } = useAuthContext();
 	const [type, setType] = useState('buy');
 	const [title, setTitle] = useState('');
 	const [body, setBody] = useState('');
-	const [images, setImages] = useState<ImagePickerAsset[]>([]);
+	const [images, setImages] = useState<ImagePickerAsset[]>([]); // ImagePicker로 추가한 이미지
 	const [cart, setCart] = useState<CartItem[]>([]);
+	const [originalImageUrls, setOriginalImageUrls] = useState<string[]>([]); // Firestore에서 가져온 기존 이미지
+
+	const route = useRoute<NewPostRouteProp>();
+	const { id: editingId } = route?.params ?? {};
+
+	const [isUpdated, setIsUpdated] = useState(false);
+	const { post, error, loading } = useGetPostDetail(editingId, isUpdated);
+
+	useEffect(() => {
+		if (post) {
+			setType(post.type || 'buy');
+			setTitle(post.title || '');
+			setBody(post.body || '');
+			setCart(post.cart || []);
+
+			if (post.images?.length) {
+				setOriginalImageUrls(post.images);
+				setImages(post.images.map((url: string) => ({ uri: url }))); // UI 표시에 필요하므로 images에도 변환하여 추가
+			}
+		}
+	}, [post]);
 
 	const validateUser = () => {
 		if (!userInfo || !auth.currentUser) {
@@ -58,58 +84,105 @@ const NewPost = () => {
 		return true;
 	};
 
+	const resetForm = () => {
+		setType('buy');
+		setTitle('');
+		setBody('');
+		setImages([]);
+		setCart([]);
+		setOriginalImageUrls([]);
+	};
+
 	const onSubmit = async () => {
 		if (!validateUser()) {
-			return navigation.navigate('Login');
+			return tabNavigation.navigate('Login');
 		}
 
 		if (!validateForm()) return;
 
-		let requestData: {
-			type: string;
-			title: string;
-			body: string;
-			images: string[];
-			cart: CartItem[];
-			createdAt: ReturnType<typeof serverTimestamp>;
-			creatorDisplayName?: string;
-			creatorId?: string;
-		} = {
-			type,
-			title,
-			body,
-			images: [],
-			cart,
-			createdAt: serverTimestamp(),
-			creatorDisplayName: userInfo?.displayName,
-			creatorId: userInfo?.uid,
-			//  cartList: cart.map(({ name }) => name),
-			// 	creatorIslandName: userInfo?.islandName,
-			// 	done: false,
-			// 	comments: 0,
-		};
+		// 기존 이미지, 새로 추가된 이미지, 삭제된 이미지 구분
+		const newImages: ImagePickerAsset[] = images.filter(
+			({ uri }) => !originalImageUrls.includes(uri),
+		);
+		const deletedImageUrls: string[] = originalImageUrls.filter(
+			(url) => !images.some(({ uri }) => uri === url),
+		);
 
-		if (images.length) {
-			const imageUrls: string[] = await uploadFiles({
-				directory: 'Boards',
-				images,
-			});
-			requestData.images = imageUrls;
-		}
-
+		let createdId;
 		try {
-			await addDocToFirestore({ directory: 'Boards', requestData });
-			Alert.alert('작성 완료', '글이 작성되었습니다.');
-			setType('buy');
-			setTitle('');
-			setBody('');
-			setImages([]);
-			setCart([]);
-			navigation.navigate('Home');
-			// navigation.navigate('PostDetail', { id: docId });
+			let uploadedImageUrls: string[] = [];
+
+			// 새 이미지가 있으면 스토리지에 업로드
+			if (newImages.length) {
+				uploadedImageUrls = await uploadObjectToStorage({
+					directory: 'Boards',
+					images: newImages,
+				});
+			}
+
+			let requestData: {
+				type: string;
+				title: string;
+				body: string;
+				images: string[];
+				cart: CartItem[];
+				createdAt: ReturnType<typeof serverTimestamp>;
+				creatorDisplayName?: string;
+				creatorId?: string;
+			} = {
+				type,
+				title,
+				body,
+				images: [...originalImageUrls, ...uploadedImageUrls].filter(
+					(url) => !deletedImageUrls.includes(url), // 기존 이미지 + 새 이미지 - 삭제된 이미지
+				),
+				cart,
+				createdAt: serverTimestamp(),
+				creatorDisplayName: userInfo?.displayName,
+				creatorId: userInfo?.uid,
+				//  cartList: cart.map(({ name }) => name),
+				// 	creatorIslandName: userInfo?.islandName,
+				// 	done: false,
+				// 	comments: 0,
+			};
+
+			if (editingId) {
+				await updateDocToFirestore({
+					collection: 'Boards',
+					id: editingId,
+					requestData,
+				});
+
+				// 삭제된 이미지가 있으면 스토리지에서도 삭제
+				if (deletedImageUrls.length) {
+					await Promise.all(deletedImageUrls.map(deleteObjectFromStorage));
+				}
+			} else {
+				createdId = await addDocToFirestore({
+					directory: 'Boards',
+					requestData,
+				});
+
+				Alert.alert(
+					`${editingId ? '수정' : '작성'} 완료`,
+					`글이 ${editingId ? '수정' : '작성'}되었습니다.`,
+				);
+			}
 		} catch (error) {
-			Alert.alert('오류', '글을 작성하는 중 오류가 발생했습니다.');
+			Alert.alert(
+				'오류',
+				`글을 ${editingId ? '수정' : '작성'}하는 중 오류가 발생했습니다.`,
+			);
 			console.log(error);
+		} finally {
+			resetForm();
+
+			tabNavigation.navigate('Home', {
+				screen: 'PostDetail',
+				params: {
+					id: editingId ? editingId : createdId,
+				},
+			});
 		}
 	};
 

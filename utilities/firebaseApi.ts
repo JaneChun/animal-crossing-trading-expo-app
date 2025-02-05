@@ -10,8 +10,15 @@ import {
 	setDoc,
 	updateDoc,
 } from 'firebase/firestore';
-import { deleteObject, ref } from 'firebase/storage';
+import {
+	deleteObject,
+	ref,
+	getDownloadURL,
+	uploadBytes,
+} from 'firebase/storage';
+import { ImagePickerAsset } from 'expo-image-picker';
 
+// DATABASE
 export const getDocFromFirestore = async ({
 	collection,
 	id,
@@ -39,7 +46,7 @@ export const addDocToFirestore = async ({
 }: {
 	directory: string;
 	requestData: any;
-}) => {
+}): Promise<string> => {
 	const docRef = await addDoc(collection(db, directory), requestData);
 	return docRef.id;
 };
@@ -59,6 +66,54 @@ export const deleteDocFromFirestore = async ({ id }: { id: string }) => {
 	await deleteDoc(doc(db, 'Boards', id));
 };
 
+// export async function setDataToFirestore(
+// 	ref: DocumentReference,
+// 	requestData: any,
+// ) {
+// 	await setDoc(ref, requestData);
+// }
+
+export async function updateDocToFirestore({
+	id,
+	collection,
+	requestData,
+}: {
+	id: string;
+	collection: string;
+	requestData: any;
+}) {
+	await updateDoc(doc(db, collection, id), requestData);
+}
+
+// STORAGE
+export const uploadObjectToStorage = async ({
+	images,
+	directory,
+}: {
+	images: ImagePickerAsset[];
+	directory: string;
+}): Promise<string[]> => {
+	try {
+		const uploadPromises = images.map(async (image) => {
+			const fileName = `${Date.now()}_${image.fileName || 'image.jpg'}`;
+			const storageRef = ref(storage, `${directory}/${fileName}`);
+
+			const response = await fetch(image.uri); // 이미지 URL을 fetch하여 Blob 변환
+			const blob = await response.blob(); // Blob(바이너리) 형태로 변환
+
+			await uploadBytes(storageRef, blob); // Firebase Storage에 Blob 파일 업로드
+			return getDownloadURL(storageRef); // 업로드 후 다운로드 URL 반환
+		});
+
+		const downloadURLs = await Promise.all(uploadPromises);
+		console.log('이미지 업로드 완료');
+		return downloadURLs;
+	} catch (e) {
+		console.log('이미지 업로드 실패:', e);
+		return [];
+	}
+};
+
 export const deleteObjectFromStorage = async (imageUrl: string) => {
 	const imageRef = ref(storage, imageUrl);
 	try {
@@ -67,17 +122,3 @@ export const deleteObjectFromStorage = async (imageUrl: string) => {
 		console.log('이미지 삭제 실패:', e);
 	}
 };
-
-// export async function setDataToFirestore(
-// 	ref: DocumentReference,
-// 	requestData: any,
-// ) {
-// 	await setDoc(ref, requestData);
-// }
-
-export async function updateDataToFirestore(
-	ref: DocumentReference,
-	requestData: any,
-) {
-	await updateDoc(ref, requestData);
-}
