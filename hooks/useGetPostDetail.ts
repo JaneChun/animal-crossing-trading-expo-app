@@ -2,10 +2,21 @@ import { DocumentData } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { getDocFromFirestore } from '@/utilities/firebaseApi';
 
-function useGetPostDetail(id: string, isUpdated?: boolean) {
+type UseGetPostDetailReturnType = {
+	post: DocumentData | null;
+	error: Error | null;
+	loading: boolean;
+};
+
+function useGetPostDetail(
+	id: string,
+	isUpdated?: boolean,
+): UseGetPostDetailReturnType {
 	const [data, setData] = useState<DocumentData>({});
 	const [error, setError] = useState<Error | null>(null);
 	const [loading, setLoading] = useState<boolean>(true);
+
+	if (!id) return { post: null, error: null, loading: false };
 
 	useEffect(() => {
 		setLoading(true);
