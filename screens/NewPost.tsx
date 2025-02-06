@@ -6,6 +6,7 @@ import {
 	ScrollView,
 	View,
 } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { serverTimestamp } from 'firebase/firestore';
@@ -28,6 +29,7 @@ import ItemSelect from '../components/NewPost/ItemSelect';
 import Button from '../components/ui/Button';
 import ItemList from '../components/NewPost/ItemList';
 import useGetPostDetail from '@/hooks/useGetPostDetail';
+import React from 'react';
 
 export type CartItem = {
 	UniqueEntryID: string;
@@ -49,7 +51,7 @@ const NewPost = () => {
 	const [originalImageUrls, setOriginalImageUrls] = useState<string[]>([]); // Firestore에서 가져온 기존 이미지
 
 	const route = useRoute<NewPostRouteProp>();
-	const { id: editingId } = route?.params ?? {};
+	const { id: editingId = '' } = route?.params ?? {};
 
 	const [isUpdated, setIsUpdated] = useState(false);
 	const { post, error, loading } = useGetPostDetail(editingId, isUpdated);
@@ -188,47 +190,53 @@ const NewPost = () => {
 
 	return (
 		<KeyboardAvoidingView style={styles.container}>
-			<ScrollView nestedScrollEnabled={true}>
-				<TypeSelect type={type} setType={setType} />
+			<FlatList
+				data={[]}
+				renderItem={null}
+				ListEmptyComponent={
+					<>
+						<TypeSelect type={type} setType={setType} />
 
-				<TitleInput
-					title={title}
-					setTitle={setTitle}
-					containerStyle={styles.inputContainer}
-					labelStyle={styles.label}
-					inputStyle={styles.input}
-				/>
+						<TitleInput
+							title={title}
+							setTitle={setTitle}
+							containerStyle={styles.inputContainer}
+							labelStyle={styles.label}
+							inputStyle={styles.input}
+						/>
 
-				<BodyInput
-					body={body}
-					setBody={setBody}
-					containerStyle={styles.inputContainer}
-					labelStyle={styles.label}
-					inputStyle={styles.input}
-				/>
+						<BodyInput
+							body={body}
+							setBody={setBody}
+							containerStyle={styles.inputContainer}
+							labelStyle={styles.label}
+							inputStyle={styles.input}
+						/>
 
-				<ImageInput
-					images={images}
-					setImages={setImages}
-					containerStyle={styles.inputContainer}
-					labelStyle={styles.label}
-				/>
+						<ImageInput
+							images={images}
+							setImages={setImages}
+							containerStyle={styles.inputContainer}
+							labelStyle={styles.label}
+						/>
 
-				<ItemSelect
-					cart={cart}
-					setCart={setCart}
-					containerStyle={styles.inputContainer}
-					labelStyle={styles.label}
-				/>
+						<ItemSelect
+							cart={cart}
+							setCart={setCart}
+							containerStyle={styles.inputContainer}
+							labelStyle={styles.label}
+						/>
 
-				<ItemList cart={cart} setCart={setCart} />
+						<ItemList cart={cart} setCart={setCart} />
 
-				<View style={styles.buttonContainer}>
-					<Button color='white' size='lg' onPress={onSubmit}>
-						작성
-					</Button>
-				</View>
-			</ScrollView>
+						<View style={styles.buttonContainer}>
+							<Button color='white' size='lg' onPress={onSubmit}>
+								작성
+							</Button>
+						</View>
+					</>
+				}
+			></FlatList>
 		</KeyboardAvoidingView>
 	);
 };

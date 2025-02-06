@@ -3,7 +3,6 @@ import {
 	View,
 	Text,
 	TextInput,
-	FlatList,
 	TouchableOpacity,
 	Image,
 	StyleSheet,
@@ -11,8 +10,8 @@ import {
 	StyleProp,
 	TextStyle,
 	ViewStyle,
-	ScrollView,
 } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import axios from 'axios';
 import type { CartItem } from '@/screens/NewPost';
 import { Colors } from '@/constants/Color';
@@ -85,7 +84,7 @@ const ItemSelect = ({
 	};
 
 	return (
-		<View style={containerStyle}>
+		<View style={[styles.container, containerStyle]}>
 			<Text style={labelStyle}>아이템 선택</Text>
 			<View style={styles.categoriesContainer}>
 				{categories.map((item) => (
@@ -125,7 +124,9 @@ const ItemSelect = ({
 					) : (
 						<FlatList
 							data={searchInput ? searchedItemData : itemData}
-							keyExtractor={({ UniqueEntryID }) => UniqueEntryID}
+							keyExtractor={(item, index) =>
+								item.UniqueEntryID ?? index.toString()
+							}
 							style={styles.itemList}
 							renderItem={({ item }) => (
 								<TouchableOpacity
@@ -158,6 +159,7 @@ const ItemSelect = ({
 };
 
 const styles = StyleSheet.create({
+	container: {},
 	categoriesContainer: {
 		flexDirection: 'row',
 		flexWrap: 'wrap',
@@ -186,7 +188,7 @@ const styles = StyleSheet.create({
 		color: Colors.font_gray,
 	},
 	listContainer: {
-		height: 500,
+		height: 400,
 	},
 	searchInput: {
 		marginTop: 16,

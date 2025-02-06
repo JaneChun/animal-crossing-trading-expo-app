@@ -1,18 +1,18 @@
 import type { CartItem } from '@/screens/NewPost';
 import { Dispatch, SetStateAction } from 'react';
-import { FlatList } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import Item from './Item';
 
-type CartItemProps = {
+type ItemListProps = {
 	cart: CartItem[];
 	setCart: Dispatch<SetStateAction<CartItem[]>>;
 };
 
-const ItemList = ({ cart, setCart }: CartItemProps) => {
+const ItemList = ({ cart, setCart }: ItemListProps) => {
 	return (
 		<FlatList
 			data={cart}
-			keyExtractor={({ UniqueEntryID }) => UniqueEntryID}
+			keyExtractor={(item, index) => item.UniqueEntryID ?? index.toString()}
 			renderItem={({ item }) => (
 				<Item item={item} cart={cart} setCart={setCart} />
 			)}

@@ -1,14 +1,8 @@
 import { Colors } from '@/constants/Color';
 import { CartItem } from '@/screens/NewPost';
 import { Ionicons } from '@expo/vector-icons';
-import {
-	View,
-	Text,
-	FlatList,
-	Image,
-	StyleSheet,
-	ViewStyle,
-} from 'react-native';
+import { View, Text, Image, StyleSheet, ViewStyle } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 
 type ItemSummaryListProps = {
 	cart: CartItem[];
@@ -19,7 +13,7 @@ const ItemSummaryList = ({ cart, containerStyle }: ItemSummaryListProps) => {
 	return (
 		<FlatList
 			data={cart}
-			keyExtractor={({ UniqueEntryID }) => UniqueEntryID}
+			keyExtractor={(item, index) => item.UniqueEntryID ?? index.toString()}
 			style={containerStyle}
 			renderItem={({ item }) => (
 				<View style={styles.itemContainer}>
