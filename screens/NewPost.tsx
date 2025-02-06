@@ -5,6 +5,7 @@ import {
 	KeyboardAvoidingView,
 	ScrollView,
 	View,
+	ActivityIndicator,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -43,9 +44,10 @@ export type CartItem = {
 const NewPost = () => {
 	const tabNavigation = useNavigation<TabNavigation>();
 	const { userInfo } = useAuthContext();
-	const [type, setType] = useState('buy');
-	const [title, setTitle] = useState('');
-	const [body, setBody] = useState('');
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [type, setType] = useState<'buy' | 'sell' | 'done'>('buy');
+	const [title, setTitle] = useState<string>('');
+	const [body, setBody] = useState<string>('');
 	const [images, setImages] = useState<ImagePickerAsset[]>([]); // ImagePicker로 추가한 이미지
 	const [cart, setCart] = useState<CartItem[]>([]);
 	const [originalImageUrls, setOriginalImageUrls] = useState<string[]>([]); // Firestore에서 가져온 기존 이미지
@@ -112,6 +114,7 @@ const NewPost = () => {
 
 		let createdId;
 		try {
+			setIsLoading(true);
 			let uploadedImageUrls: string[] = [];
 
 			// 새 이미지가 있으면 스토리지에 업로드
@@ -178,6 +181,7 @@ const NewPost = () => {
 			console.log(error);
 		} finally {
 			resetForm();
+			setIsLoading(false);
 
 			tabNavigation.navigate('Home', {
 				screen: 'PostDetail',
@@ -187,6 +191,14 @@ const NewPost = () => {
 			});
 		}
 	};
+
+	if (isLoading) {
+		return (
+			<View style={styles.loadingContainer}>
+				<ActivityIndicator size='large' color={Colors.primary} />
+			</View>
+		);
+	}
 
 	return (
 		<KeyboardAvoidingView style={styles.container}>
@@ -266,6 +278,11 @@ const styles = StyleSheet.create({
 	buttonContainer: {
 		flex: 1,
 		justifyContent: 'flex-end',
+	},
+	loadingContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 });
 
