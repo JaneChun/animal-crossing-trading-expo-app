@@ -183,12 +183,16 @@ const NewPost = () => {
 			resetForm();
 			setIsLoading(false);
 
-			tabNavigation.navigate('Home', {
-				screen: 'PostDetail',
-				params: {
-					id: editingId ? editingId : createdId,
-				},
-			});
+			if (editingId) {
+				tabNavigation.goBack();
+			} else {
+				tabNavigation.navigate('Home', {
+					screen: 'PostDetail',
+					params: {
+						id: editingId ? editingId : createdId,
+					},
+				});
+			}
 		}
 	};
 
@@ -243,7 +247,7 @@ const NewPost = () => {
 
 						<View style={styles.buttonContainer}>
 							<Button color='white' size='lg' onPress={onSubmit}>
-								작성
+								등록
 							</Button>
 						</View>
 					</>

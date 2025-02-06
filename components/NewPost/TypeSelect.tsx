@@ -4,8 +4,8 @@ import { StyleSheet } from 'react-native';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 type TypeSelectProps = {
-	type: string;
-	setType: Dispatch<SetStateAction<string>>;
+	type: 'buy' | 'sell' | 'done';
+	setType: Dispatch<SetStateAction<'buy' | 'sell' | 'done'>>;
 };
 
 const TypeSelect = ({ type, setType }: TypeSelectProps) => {

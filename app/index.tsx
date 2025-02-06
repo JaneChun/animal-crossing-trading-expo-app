@@ -18,15 +18,28 @@ import MyPage from '@/screens/MyPage';
 import { Colors } from '@/constants/Color';
 
 import { AuthContextProvider, useAuthContext } from '../contexts/AuthContext';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
 
 const HomeStack = () => {
 	return (
-		<Stack.Navigator screenOptions={{ title: '🏝️ 모동숲 마켓' }}>
+		<Stack.Navigator
+			screenOptions={{
+				title: '모동숲 마켓',
+				headerRight: () => (
+					<FontAwesome name='leaf' color={Colors.primary} size={24} />
+				),
+			}}
+		>
 			<Stack.Screen name='Post' component={Home} />
 			<Stack.Screen name='PostDetail' component={PostDetail} />
+			<Stack.Screen
+				name='NewPost'
+				component={NewPost}
+				options={{ presentation: 'modal', title: '글 수정' }}
+			/>
 		</Stack.Navigator>
 	);
 };
@@ -135,7 +148,9 @@ const BottomTabNavigator = () => {
 export default function Index() {
 	return (
 		<AuthContextProvider>
-			<BottomTabNavigator />
+			<GestureHandlerRootView>
+				<BottomTabNavigator />
+			</GestureHandlerRootView>
 		</AuthContextProvider>
 	);
 }

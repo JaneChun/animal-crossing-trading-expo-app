@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import React from 'react';
 import { useState } from 'react';
 import { Dimensions, Image, StyleSheet, View, ViewStyle } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
