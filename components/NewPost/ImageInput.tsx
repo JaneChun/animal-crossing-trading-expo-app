@@ -19,6 +19,8 @@ import {
 	ImagePickerAsset,
 	useMediaLibraryPermissions,
 } from 'expo-image-picker';
+import { FlatList } from 'react-native-gesture-handler';
+import React from 'react';
 
 type ImageInputProps = {
 	images: ImagePickerAsset[];
@@ -83,35 +85,45 @@ const ImageInput = ({
 		<View style={containerStyle}>
 			<Text style={labelStyle}>사진</Text>
 
-			<ScrollView horizontal style={styles.scrollViewContainer}>
-				<TouchableOpacity
-					style={[styles.addImageButtonContainer, styles.imageContainer]}
-					activeOpacity={0.5}
-					onPress={pickImages}
-				>
-					<MaterialIcons
-						name='photo-library'
-						color={Colors.font_gray}
-						size={48}
-					/>
-					<View style={styles.textContainer}>
-						<Text style={styles.currentCountText}>{images.length}</Text>
-						<Text style={styles.totalCountText}> / 10</Text>
-					</View>
-				</TouchableOpacity>
-				{images.map((image) => (
-					<View key={image.assetId}>
-						<TouchableOpacity
-							style={styles.deleteButton}
-							onPress={() => deleteImage(image.assetId!)}
-							activeOpacity={0.7}
-						>
-							<Text style={styles.deleteButtonIcon}>✕</Text>
-						</TouchableOpacity>
-						<Image source={{ uri: image.uri }} style={styles.imageContainer} />
-					</View>
-				))}
-			</ScrollView>
+			<FlatList
+				data={images}
+				horizontal
+				style={styles.flatListContainer}
+				ListHeaderComponent={
+					<TouchableOpacity
+						style={[styles.addImageButtonContainer, styles.imageContainer]}
+						activeOpacity={0.5}
+						onPress={pickImages}
+					>
+						<MaterialIcons
+							name='photo-library'
+							color={Colors.font_gray}
+							size={48}
+						/>
+						<View style={styles.textContainer}>
+							<Text style={styles.currentCountText}>{images.length}</Text>
+							<Text style={styles.totalCountText}> / 10</Text>
+						</View>
+					</TouchableOpacity>
+				}
+				renderItem={({ item: image }) => (
+					<>
+						<View key={image.assetId}>
+							<TouchableOpacity
+								style={styles.deleteButton}
+								onPress={() => deleteImage(image.assetId!)}
+								activeOpacity={0.7}
+							>
+								<Text style={styles.deleteButtonIcon}>✕</Text>
+							</TouchableOpacity>
+							<Image
+								source={{ uri: image.uri }}
+								style={styles.imageContainer}
+							/>
+						</View>
+					</>
+				)}
+			></FlatList>
 		</View>
 	);
 };
@@ -119,7 +131,7 @@ const ImageInput = ({
 export default ImageInput;
 
 const styles = StyleSheet.create({
-	scrollViewContainer: {
+	flatListContainer: {
 		paddingBottom: 16,
 	},
 	imageContainer: {
@@ -149,7 +161,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 	deleteButtonIcon: {
-		color: '#fff',
+		color: 'white',
 		fontSize: 16,
 		fontWeight: 'bold',
 	},
