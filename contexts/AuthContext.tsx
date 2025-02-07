@@ -20,11 +20,18 @@ import {
 	logout as kakaoLogout,
 } from '@react-native-kakao/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+	getUserInfoFromFirestore,
+	saveUserToFirestore,
+} from '@/utilities/firebaseApi';
 
-type UserInfo = {
+export type UserInfo = {
 	uid: string;
 	displayName: string;
-	photoUrl: string;
+	islandName: string;
+	photoURL: string;
+	createdAt: Date;
+	lastLogin: Date;
 } | null;
 
 type AuthContextType = {
@@ -50,16 +57,11 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			if (user) {
-				const { uid, displayName, photoURL } = user;
-
-				const loginUserInfo = {
-					uid,
-					displayName: displayName ?? '',
-					photoUrl: photoURL ?? '',
-				};
-
-				setUserInfo(loginUserInfo);
-				await AsyncStorage.setItem('@user', JSON.stringify(loginUserInfo));
+				const userInfo: UserInfo = await getUserInfoFromFirestore({
+					uid: user.uid,
+				});
+				setUserInfo(userInfo);
+				await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
 			} else {
 				setUserInfo(null);
 				await AsyncStorage.removeItem('@user');
@@ -91,19 +93,27 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
 			const result = await signInWithCredential(auth, credential);
 
-			const {
-				user: { uid, displayName, photoURL },
-			} = result;
+			const { user } = result;
 
-			const loginUserInfo = {
-				uid,
-				displayName: displayName ?? '',
-				photoUrl: photoURL ?? '',
-			};
+			// Firestore에서 유저 정보 가져오기
+			let userInfo: UserInfo = await getUserInfoFromFirestore({
+				uid: user.uid,
+			});
+
+			// Firestore에 없으면 새로 저장
+			if (!userInfo) {
+				await saveUserToFirestore({
+					uid: user.uid,
+					displayName: user.displayName ?? '',
+					photoURL: user.photoURL ?? '',
+				});
+
+				userInfo = await getUserInfoFromFirestore({ uid: user.uid });
+			}
 
 			// 상태 업데이트 & AsyncStorage에서 삭제
-			setUserInfo(loginUserInfo);
-			await AsyncStorage.setItem('@user', JSON.stringify(loginUserInfo));
+			setUserInfo(userInfo);
+			await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
 
 			return true;
 		} catch (error) {

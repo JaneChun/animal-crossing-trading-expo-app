@@ -17,6 +17,7 @@ import {
 	uploadBytes,
 } from 'firebase/storage';
 import { ImagePickerAsset } from 'expo-image-picker';
+import { UserInfo } from '@/contexts/AuthContext';
 
 // DATABASE
 export const getDocFromFirestore = async ({
@@ -84,6 +85,53 @@ export async function updateDocToFirestore({
 }) {
 	await updateDoc(doc(db, collection, id), requestData);
 }
+
+// DATABASE - USER
+export const saveUserToFirestore = async ({
+	uid,
+	displayName,
+	photoURL,
+}: {
+	uid: string;
+	displayName: string;
+	photoURL: string;
+}) => {
+	await setDoc(
+		doc(db, 'Users', uid),
+		{
+			displayName: displayName ?? '',
+			photoURL: photoURL ?? '',
+			islandName: '', // 기본값
+			createdAt: new Date(),
+			lastLogin: new Date(),
+		},
+		{ merge: true },
+	);
+};
+
+export const getUserInfoFromFirestore = async ({
+	uid,
+}: {
+	uid: string;
+}): Promise<UserInfo> => {
+	try {
+		const userRef = doc(db, 'Users', uid);
+		const userSnap = await getDoc(userRef);
+
+		if (userSnap.exists()) {
+			const fullUserInfo = userSnap.data(); // Firestore에 저장된 유저 데이터 반환
+			const { displayName, photoURL, islandName, createdAt, lastLogin } =
+				fullUserInfo;
+
+			return { uid, displayName, photoURL, islandName, createdAt, lastLogin };
+		} else {
+			return null; // Firestore에 데이터 없음
+		}
+	} catch (e) {
+		console.log('Firestore에서 유저 정보 가져오기 실패:', e);
+		return null;
+	}
+};
 
 // STORAGE
 export const uploadObjectToStorage = async ({
