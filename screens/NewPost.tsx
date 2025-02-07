@@ -59,6 +59,16 @@ const NewPost = () => {
 	const { post, error, loading } = useGetPostDetail(editingId, isUpdated);
 
 	useEffect(() => {
+		tabNavigation.setOptions({
+			headerRight: () => (
+				<Button color='white' size='md2' onPress={onSubmit}>
+					등록
+				</Button>
+			),
+		});
+	}, []);
+
+	useEffect(() => {
 		if (post) {
 			setType(post.type || 'buy');
 			setTitle(post.title || '');
@@ -185,11 +195,13 @@ const NewPost = () => {
 
 			if (editingId) {
 				tabNavigation.goBack();
-			} else {
+			}
+
+			if (createdId) {
 				tabNavigation.navigate('Home', {
 					screen: 'PostDetail',
 					params: {
-						id: editingId ? editingId : createdId,
+						id: createdId,
 					},
 				});
 			}
