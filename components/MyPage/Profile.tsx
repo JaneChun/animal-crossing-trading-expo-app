@@ -5,13 +5,10 @@ import { View, Text, Image, StyleSheet } from 'react-native';
 import Button from '../ui/Button';
 import { useNavigation } from '@react-navigation/native';
 import { ProfileStackNavigation } from '@/types/navigation';
+import { FontAwesome } from '@expo/vector-icons';
 
-type ProfileProps = {
-	userInfo: UserInfo;
-};
-const Profile = ({ userInfo }: ProfileProps) => {
-	console.log('USERINFO', userInfo);
-	const { logout } = useAuthContext();
+const Profile = () => {
+	const { userInfo, logout } = useAuthContext();
 	const navigation = useNavigation<ProfileStackNavigation>();
 
 	const editProfile = () => {
@@ -21,7 +18,13 @@ const Profile = ({ userInfo }: ProfileProps) => {
 	return (
 		<>
 			<View style={styles.imageContainer}>
-				<Image source={{ uri: userInfo?.photoURL }} style={styles.image} />
+				{userInfo?.photoURL ? (
+					<Image source={{ uri: userInfo?.photoURL }} style={styles.image} />
+				) : (
+					<View style={[styles.image, styles.emptyImage]}>
+						<FontAwesome name='leaf' color={Colors.font_light_gray} size={42} />
+					</View>
+				)}
 			</View>
 			<Text style={styles.displayName}>{userInfo?.displayName}</Text>
 			<View style={styles.islandInfoContainer}>
@@ -58,6 +61,11 @@ const styles = StyleSheet.create({
 		height: 100,
 		borderRadius: 50,
 		marginBottom: 16,
+	},
+	emptyImage: {
+		backgroundColor: Colors.border_gray,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	displayName: {
 		fontSize: 20,

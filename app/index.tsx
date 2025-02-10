@@ -5,7 +5,6 @@ import {
 	FontAwesome,
 	FontAwesome6,
 	MaterialCommunityIcons,
-	MaterialIcons,
 } from '@expo/vector-icons';
 
 import Home from '@/screens/Home';
@@ -19,9 +18,13 @@ import { Colors } from '@/constants/Color';
 
 import { AuthContextProvider, useAuthContext } from '../contexts/AuthContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Button from '@/components/ui/Button';
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
+import EditProfile from '@/screens/EditProfile';
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
+const ProfileStack = createNativeStackNavigator();
 
 const HomeStack = () => {
 	return (
@@ -38,9 +41,34 @@ const HomeStack = () => {
 			<Stack.Screen
 				name='NewPost'
 				component={NewPost}
-				options={{ presentation: 'modal', title: '글 수정' }}
+				options={{
+					presentation: 'modal',
+					title: '글 수정',
+					headerRight: () => (
+						<Button color='white' size='md2'>
+							등록
+						</Button>
+					),
+				}}
 			/>
 		</Stack.Navigator>
+	);
+};
+
+const MyPageStack = () => {
+	return (
+		<ProfileStack.Navigator screenOptions={{ headerShown: false }}>
+			<ProfileStack.Screen name='MyPage' component={MyPage} />
+			<ProfileStack.Screen
+				name='EditProfile'
+				component={EditProfile}
+				options={{
+					headerShown: true,
+					presentation: 'modal',
+					title: '프로필 수정',
+				}}
+			/>
+		</ProfileStack.Navigator>
 	);
 };
 
@@ -115,7 +143,7 @@ const BottomTabNavigator = () => {
 			{userInfo ? (
 				<BottomTab.Screen
 					name='MyPage'
-					component={MyPage}
+					component={MyPageStack}
 					options={{
 						tabBarIcon: ({ focused }) => (
 							<FontAwesome6
@@ -148,9 +176,11 @@ const BottomTabNavigator = () => {
 export default function Index() {
 	return (
 		<AuthContextProvider>
-			<GestureHandlerRootView>
-				<BottomTabNavigator />
-			</GestureHandlerRootView>
+			<ActionSheetProvider>
+				<GestureHandlerRootView>
+					<BottomTabNavigator />
+				</GestureHandlerRootView>
+			</ActionSheetProvider>
 		</AuthContextProvider>
 	);
 }

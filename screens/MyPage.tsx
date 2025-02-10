@@ -79,7 +79,7 @@ const MyPage = () => {
 
 					{/* Profile Info */}
 					<View style={styles.profileContent}>
-						<Profile userInfo={userInfo} />
+						<Profile />
 					</View>
 				</View>
 			)}
