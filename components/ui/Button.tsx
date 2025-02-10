@@ -15,6 +15,7 @@ interface ButtonProps {
 	color: Color;
 	size: Size;
 	style?: object;
+	disabled?: boolean;
 	onPress?: (event: GestureResponderEvent) => void;
 	children: React.ReactNode;
 }
@@ -24,6 +25,7 @@ const Button = ({
 	color,
 	size,
 	style,
+	disabled,
 	onPress,
 	children,
 }: ButtonProps) => {
@@ -47,7 +49,7 @@ const Button = ({
 			case 'white':
 				return { color: Colors.primary };
 			case 'gray':
-				return { color: Colors.font_gray };
+				return { color: Colors.font_black };
 			default:
 				return {};
 		}
@@ -72,12 +74,18 @@ const Button = ({
 	const textStyles = getTextStyles(color);
 	const sizeStyles = getSizeStyles(size);
 
-	return (
+	return !disabled ? (
 		<TouchableOpacity
 			onPress={onPress}
 			style={[styles.button, colorStyles, sizeStyles, style]}
 		>
 			<Text style={[styles.text, textStyles]}>{children}</Text>
+		</TouchableOpacity>
+	) : (
+		<TouchableOpacity
+			style={[styles.button, styles.disabledStyle, sizeStyles, style]}
+		>
+			<Text style={[styles.text, styles.disabledText]}>{children}</Text>
 		</TouchableOpacity>
 	);
 };
@@ -87,6 +95,14 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 		justifyContent: 'center',
 		alignItems: 'center',
+	},
+	disabledStyle: {
+		backgroundColor: Colors.border_gray,
+		borderWidth: 1,
+		borderColor: Colors.border_gray,
+	},
+	disabledText: {
+		color: Colors.font_gray,
 	},
 	mint: {
 		backgroundColor: Colors.primary,
@@ -98,9 +114,8 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: Colors.primary,
 	},
-
 	gray: {
-		backgroundColor: Colors.border_gray,
+		backgroundColor: 'transparent',
 		borderWidth: 1,
 		borderColor: Colors.border_gray,
 	},

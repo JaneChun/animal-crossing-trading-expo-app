@@ -1,7 +1,7 @@
 export const Colors = {
 	base: '#f9fafc',
 	dark_gray: '#4B5563',
-	primary: '#4BC0C0',
+	primary: '#07c6b8',
 
 	//border
 	border_gray: '#e8eaee',
