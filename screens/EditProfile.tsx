@@ -17,6 +17,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { EditProfileRouteProp } from '@/types/navigation';
 import Button from '@/components/ui/Button';
 import { UserInfo } from '@/contexts/AuthContext';
+import ValidationInput from '@/components/MyPage/ValidationInput';
 
 const EditProfile = () => {
 	const route = useRoute<EditProfileRouteProp>();
@@ -34,11 +35,13 @@ const EditProfile = () => {
 	const { showActionSheetWithOptions } = useActionSheet();
 	const navigation = useNavigation();
 
+	const isValid = displayNameInput.length > 0 && islandNameInput.length > 0;
+
 	useEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
 				<Button
-					disabled={displayNameInput === '' || islandNameInput === ''}
+					disabled={!isValid}
 					color='white'
 					size='md2'
 					onPress={() => onSubmit()}
@@ -97,12 +100,10 @@ const EditProfile = () => {
 		let requestData: Record<string, string> = {};
 
 		try {
-			// 닉네임 변경
 			if (displayNameInput !== userInfo.displayName) {
 				requestData.displayName = displayNameInput;
 			}
 
-			// 섬 이름 변경
 			if (islandNameInput !== userInfo.islandName) {
 				requestData.islandName = islandNameInput;
 			}
@@ -177,34 +178,18 @@ const EditProfile = () => {
 			<View style={styles.info}>
 				{/* 닉네임 */}
 				<View>
-					<View style={styles.inputContainer}>
-						<Text style={styles.label}>닉네임</Text>
-						<TextInput
-							value={displayNameInput}
-							onChangeText={(text) => setDisplayNameInput(text)}
-							placeholder='닉네임을 입력해주세요.'
-							placeholderTextColor={Colors.font_gray}
-							style={styles.input}
-						/>
-					</View>
-
-					{/* 섬 이름 */}
-					<View style={styles.inputContainer}>
-						{/* <Image
-						source={{
-							uri: 'https://firebasestorage.googleapis.com/v0/b/animal-crossing-trade-app.appspot.com/o/Src%2FCoconut_Tree_NH_Inv_Icon.png?alt=media&token=cd997010-694e-49b0-9390-483772cdad8a',
-						}}
-						style={styles.islandIcon}
-					/> */}
-						<Text style={styles.label}>섬 이름</Text>
-						<TextInput
-							value={islandNameInput}
-							onChangeText={(text) => setIslandNameInput(text)}
-							placeholder='섬 이름을 입력해주세요.'
-							placeholderTextColor={Colors.font_gray}
-							style={styles.input}
-						/>
-					</View>
+					<ValidationInput
+						label='닉네임'
+						value={displayNameInput}
+						onChangeText={setDisplayNameInput}
+						placeholder='닉네임을 입력해주세요.'
+					/>
+					<ValidationInput
+						label='섬 이름'
+						value={islandNameInput}
+						onChangeText={setIslandNameInput}
+						placeholder='섬 이름을 입력해주세요.'
+					/>
 				</View>
 			</View>
 		</View>
@@ -245,23 +230,5 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 		justifyContent: 'center',
 		alignItems: 'center',
-	},
-	inputContainer: {
-		width: '100%',
-		marginBottom: 24,
-		gap: 16,
-	},
-	label: {
-		fontSize: 16,
-		fontWeight: 600,
-		color: Colors.font_black,
-	},
-	input: {
-		fontSize: 16,
-		padding: 12,
-		borderWidth: 1,
-		borderColor: Colors.border_gray,
-		borderRadius: 8,
-		backgroundColor: Colors.base,
 	},
 });
