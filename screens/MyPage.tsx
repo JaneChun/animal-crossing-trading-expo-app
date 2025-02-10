@@ -14,16 +14,12 @@ import {
 import { deleteUser, signOut } from 'firebase/auth';
 import { updateDocToFirestore } from '../utilities/firebaseApi';
 import { auth } from '../fbase';
-import useToggle from '@/hooks/useToggle';
 import Profile from '@/components/MyPage/Profile';
 // import MyPosts from '../Components/MyPosts';
 
 const MyPage = () => {
 	const navigation = useNavigation<TabNavigation>();
 	const { userInfo } = useAuthContext();
-	// const [isEditing, toggleIsEditing] = useToggle(false);
-	const [isModalOpen, toggleIsModalOpen] = useToggle(false);
-	// const [error, setError] = useState<string | null>(null);
 
 	const onLogOutClick = async () => {
 		await signOut(auth);
@@ -50,12 +46,8 @@ const MyPage = () => {
 							await deleteUser(user);
 							Alert.alert('탈퇴되었습니다.');
 							// navigation.navigate('Home');
-						} catch (error: any) {
-							// if (error.code === 'auth/requires-recent-login') {
-							// 	setError('다시 로그인 후 시도해주세요.');
-							// } else {
-							// 	setError('탈퇴 중 오류가 발생했습니다.');
-							// }
+						} catch (e: any) {
+							Alert.alert('탈퇴 중 오류가 발생했습니다.');
 						}
 					},
 				},
@@ -67,14 +59,6 @@ const MyPage = () => {
 		<ScrollView contentContainerStyle={styles.container}>
 			{userInfo && (
 				<View style={styles.profileCard}>
-					{/* Dots Button */}
-					<TouchableOpacity
-						onPress={toggleIsModalOpen}
-						style={styles.dotsButton}
-					>
-						<Text style={styles.dotsText}>⋮</Text>
-					</TouchableOpacity>
-
 					{/* Modal */}
 					{/* <Modal isVisible={isModalOpen} onBackdropPress={toggleIsModalOpen}>
 						<View style={styles.modalContainer}>

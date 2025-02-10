@@ -7,7 +7,7 @@ import {
 	Alert,
 	TextInput,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ImagePickerAsset, launchImageLibraryAsync } from 'expo-image-picker';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { updateDocToFirestore } from '@/utilities/firebaseApi';
@@ -19,46 +19,35 @@ import Button from '@/components/ui/Button';
 import { UserInfo } from '@/contexts/AuthContext';
 
 const EditProfile = () => {
-	const [displayNameInput, setDisplayNameInput] = useState<string>('');
-	const [islandNameInput, setIslandNameInput] = useState<string>('');
+	const route = useRoute<EditProfileRouteProp>();
+	const { userInfo }: { userInfo: UserInfo } = route?.params ?? {};
+
+	const [displayNameInput, setDisplayNameInput] = useState<string>(
+		userInfo?.displayName ?? '',
+	);
+	const [islandNameInput, setIslandNameInput] = useState<string>(
+		userInfo?.islandName ?? '',
+	);
 	const [image, setImage] = useState<ImagePickerAsset | null>(null);
 	// const [originalImageUrl, setOriginalImageUrl] = useState<string>('');
 
 	const { showActionSheetWithOptions } = useActionSheet();
 	const navigation = useNavigation();
-	const route = useRoute<EditProfileRouteProp>();
-
-	const { userInfo }: { userInfo: UserInfo } = route?.params ?? {};
 
 	useEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
-				<Button color='white' size='md2' onPress={onSubmit}>
+				<Button
+					disabled={displayNameInput === '' || islandNameInput === ''}
+					color='white'
+					size='md2'
+					onPress={() => onSubmit()}
+				>
 					완료
 				</Button>
 			),
 		});
-	}, []);
-
-	useEffect(() => {
-		if (userInfo) {
-			setDisplayNameInput(userInfo.displayName || '');
-			setIslandNameInput(userInfo.islandName || '');
-
-			// if (userInfo.photoURL) {
-			// 	setOriginalImageUrl(userInfo.photoURL);
-			// 	// setImage({ uri: userInfo.photoURL });
-			// }
-		}
-	}, [userInfo]);
-
-	if (!userInfo) {
-		return (
-			<View style={styles.container}>
-				<Text>유저 정보를 불러오는 중...</Text>
-			</View>
-		);
-	}
+	}, [displayNameInput, islandNameInput]);
 
 	const showImageEditOptions = () => {
 		const options = ['앨범에서 사진 선택', '기본 이미지 적용', '취소'];
@@ -103,9 +92,6 @@ const EditProfile = () => {
 	};
 
 	const onSubmit = async () => {
-		console.log('ON SUBMIT', userInfo);
-		console.log('INPUT', displayNameInput, islandNameInput);
-
 		if (!userInfo) return;
 
 		let requestData: Record<string, string> = {};
@@ -113,30 +99,11 @@ const EditProfile = () => {
 		try {
 			// 닉네임 변경
 			if (displayNameInput !== userInfo.displayName) {
-				if (displayNameInput === '') {
-					return Alert.alert('오류', '닉네임을 입력해주세요.');
-				}
-				if (displayNameInput.includes(' ')) {
-					return Alert.alert(
-						'오류',
-						'닉네임에 공백 및 특수문자가 포함될 수 없습니다.',
-					);
-				}
 				requestData.displayName = displayNameInput;
 			}
 
 			// 섬 이름 변경
 			if (islandNameInput !== userInfo.islandName) {
-				if (islandNameInput === '') {
-					return Alert.alert('오류', '섬 이름을 입력해주세요.');
-				}
-				if (islandNameInput.includes(' ')) {
-					return Alert.alert(
-						'오류',
-						'섬 이름에 공백 및 특수문자가 포함될 수 없습니다.',
-					);
-				}
-
 				requestData.islandName = islandNameInput;
 			}
 
@@ -144,41 +111,49 @@ const EditProfile = () => {
 
 			if (Object.keys(requestData).length === 0) {
 				console.log('변경된 데이터가 없습니다.');
-				return;
+			} else {
+				requestData = { ...requestData, islandName: islandNameInput };
+
+				await updateDocToFirestore({
+					id: userInfo.uid,
+					collection: 'Users',
+					requestData,
+				});
+
+				// 프로필 사진 변경
+				// if (image) {
+				// 	const [uploadedImageUrl] = await uploadObjectToStorage({
+				// 		directory: 'Users',
+				// 		images: [image],
+				// 	});
+
+				// 	requestData = { ...requestData, photoURL: uploadedImageUrl };
+				// }
+
+				// // 이전 이미지 삭제
+				// if (userInfo?.photoURL) {
+				// 	await deleteObjectFromStorage(userInfo.photoURL);
+				// }
 			}
 
-			requestData = { ...requestData, islandName: islandNameInput };
-
-			await updateDocToFirestore({
-				id: userInfo.uid,
-				collection: 'Users',
-				requestData,
-			});
-
-			// 프로필 사진 변경
-			// if (image) {
-			// 	const [uploadedImageUrl] = await uploadObjectToStorage({
-			// 		directory: 'Users',
-			// 		images: [image],
-			// 	});
-
-			// 	requestData = { ...requestData, photoURL: uploadedImageUrl };
-			// }
-
-			// // 이전 이미지 삭제
-			// if (userInfo?.photoURL) {
-			// 	await deleteObjectFromStorage(userInfo.photoURL);
-			// }
+			resetForm();
+			navigation.goBack();
 
 			Alert.alert('성공', '프로필이 성공적으로 변경되었습니다.');
 		} catch (e) {
 			Alert.alert('오류', '프로필 업데이트 중 오류가 발생했습니다.');
-			console.log(e);
-		} finally {
-			resetForm();
 			navigation.goBack();
+			console.log(e);
 		}
 	};
+
+	if (!userInfo) {
+		return (
+			<View style={styles.container}>
+				<Text>유저 정보를 불러오는 중...</Text>
+			</View>
+		);
+	}
 
 	return (
 		<View style={styles.container}>

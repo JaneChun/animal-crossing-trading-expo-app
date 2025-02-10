@@ -111,7 +111,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 				userInfo = await getUserInfoFromFirestore({ uid: user.uid });
 			}
 
-			// 상태 업데이트 & AsyncStorage에서 삭제
+			// 상태 업데이트 & AsyncStorage에 저장
 			setUserInfo(userInfo);
 			await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
 
