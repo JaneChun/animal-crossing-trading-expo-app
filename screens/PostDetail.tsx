@@ -5,7 +5,6 @@ import { useFocusEffect, useRoute } from '@react-navigation/native';
 import useGetPostDetail from '../hooks/useGetPostDetail';
 // import Comment from '../Components/PostDetail/Comment';
 // import useGetComment from '../Hooks/useGetComment';
-// import spinner from '../Images/loading.jpg';
 import { Colors } from '@/constants/Color';
 import TypeBadge from '@/components/Home/TypeBadge';
 import UserInfo from '@/components/PostDetail/UserInfo';
@@ -18,6 +17,7 @@ import Total from '@/components/PostDetail/Total';
 import ActionButtons from '@/components/PostDetail/ActionButtons';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { FlatList } from 'react-native-gesture-handler';
+import useLoading from '@/hooks/useLoading';
 
 const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
@@ -25,6 +25,7 @@ const PostDetail = () => {
 	const { userInfo } = useAuthContext();
 	const [isUpdated, setIsUpdated] = useState(false);
 	const { post, error, loading } = useGetPostDetail(id, isUpdated);
+	const { LoadingIndicator } = useLoading();
 
 	// const [isCommentsUpdated, setIsCommentsUpdated] = useState(false);
 	// const { comments, commentsError, commentsLoading } = useGetComment(
@@ -49,12 +50,7 @@ const PostDetail = () => {
 		) ?? 0;
 
 	if (loading) {
-		return (
-			<View style={styles.loadingContainer}>
-				{/* <Image source={spinner} style={{ height: 80, width: 80 }} /> */}
-				<ActivityIndicator size='large' color={Colors.primary} />
-			</View>
-		);
+		return <LoadingIndicator />;
 	}
 
 	if (!post) {
@@ -126,12 +122,6 @@ const styles = StyleSheet.create({
 	container: {
 		backgroundColor: 'white',
 		padding: 24,
-	},
-	loadingContainer: {
-		backgroundColor: 'white',
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
 	},
 	content: {
 		paddingHorizontal: 2,

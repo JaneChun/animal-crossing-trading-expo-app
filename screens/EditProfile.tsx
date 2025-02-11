@@ -14,13 +14,14 @@ import { useAuthContext, UserInfo } from '@/contexts/AuthContext';
 import ValidationInput from '@/components/MyPage/ValidationInput';
 import ProfileImageInput from '@/components/MyPage/ProfileImageInput';
 import { FontAwesome } from '@expo/vector-icons';
+import useLoading from '@/hooks/useLoading';
 
 const EditProfile = () => {
 	const route = useRoute<EditProfileRouteProp>();
 	const navigation = useNavigation();
 	const { userInfo }: { userInfo: UserInfo } = route?.params ?? {};
 	const { setUserInfo } = useAuthContext();
-	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
 
 	const [displayNameInput, setDisplayNameInput] = useState<string>('');
 	const [islandNameInput, setIslandNameInput] = useState<string>('');
@@ -147,11 +148,7 @@ const EditProfile = () => {
 	}
 
 	if (isLoading) {
-		return (
-			<View style={styles.loadingContainer}>
-				<ActivityIndicator size='large' color={Colors.primary} />
-			</View>
-		);
+		return <LoadingIndicator />;
 	}
 
 	return (
@@ -208,10 +205,5 @@ const styles = StyleSheet.create({
 		color: Colors.primary,
 		fontSize: 14,
 		marginBottom: 16,
-	},
-	loadingContainer: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
 	},
 });

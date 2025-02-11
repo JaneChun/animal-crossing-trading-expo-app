@@ -31,6 +31,7 @@ import Button from '../components/ui/Button';
 import ItemList from '../components/NewPost/ItemList';
 import useGetPostDetail from '@/hooks/useGetPostDetail';
 import React from 'react';
+import useLoading from '@/hooks/useLoading';
 
 export type CartItem = {
 	UniqueEntryID: string;
@@ -44,7 +45,8 @@ export type CartItem = {
 const NewPost = () => {
 	const tabNavigation = useNavigation<TabNavigation>();
 	const { userInfo } = useAuthContext();
-	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
+
 	const [type, setType] = useState<'buy' | 'sell' | 'done'>('buy');
 	const [title, setTitle] = useState<string>('');
 	const [body, setBody] = useState<string>('');
@@ -209,11 +211,7 @@ const NewPost = () => {
 	};
 
 	if (isLoading) {
-		return (
-			<View style={styles.loadingContainer}>
-				<ActivityIndicator size='large' color={Colors.primary} />
-			</View>
-		);
+		return <LoadingIndicator />;
 	}
 
 	return (
@@ -294,11 +292,6 @@ const styles = StyleSheet.create({
 	buttonContainer: {
 		flex: 1,
 		justifyContent: 'flex-end',
-	},
-	loadingContainer: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
 	},
 });
 

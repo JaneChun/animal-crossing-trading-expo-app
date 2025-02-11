@@ -20,6 +20,7 @@ import PostUnit from '../components/Home/PostUnit';
 import { CartItem } from './NewPost';
 import { Colors } from '@/constants/Color';
 import { useFocusEffect } from '@react-navigation/native';
+import useLoading from '@/hooks/useLoading';
 
 export interface doc {
 	id: string;
@@ -39,7 +40,7 @@ const Home = () => {
 	const [data, setData] = useState<doc[]>([]);
 	const [lastestDoc, setLastestDoc] = useState<any>();
 	const [isEnd, setIsEnd] = useState(false);
-	const [isLoading, setIsLoading] = useState(true);
+	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
 
 	let q = query(
 		collection(db, 'Boards'),
@@ -97,9 +98,7 @@ const Home = () => {
 
 			{/* 로딩 또는 데이터 */}
 			{isLoading ? (
-				<View style={styles.loadingContainer}>
-					<ActivityIndicator size='large' color={Colors.primary} />
-				</View>
+				<LoadingIndicator />
 			) : (
 				<FlatList
 					data={data}
@@ -150,11 +149,6 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		marginBottom: 8,
 		color: Colors.font_black,
-	},
-	loadingContainer: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
 	},
 	footerText: {
 		textAlign: 'center',
