@@ -68,7 +68,7 @@ const NewPost = () => {
 				</Button>
 			),
 		});
-	}, []);
+	}, [title, body, images, cart]);
 
 	useEffect(() => {
 		if (post) {
