@@ -4,17 +4,25 @@ import { Colors } from '@/constants/Color';
 import useLoading from '@/hooks/useLoading';
 import useGetPosts from '@/hooks/useGetPosts';
 import { useFocusEffect } from 'expo-router';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 const Home = () => {
 	const { LoadingIndicator, InlineLoadingIndicator } = useLoading();
 	const { data, isLoading, isEnd, loadMore, refresh } = useGetPosts({}, 10);
+	const [isRefreshing, setIsRefreshing] = useState(false); // 새로고침 상태
 
 	useFocusEffect(
 		useCallback(() => {
 			refresh();
 		}, []),
 	);
+
+	const onRefresh = useCallback(async () => {
+		setIsRefreshing(true);
+		await refresh();
+		setIsRefreshing(false);
+	}, []);
 
 	if (isLoading && data.length === 0) {
 		return <LoadingIndicator />;
@@ -40,6 +48,14 @@ const Home = () => {
 						// done={item.done}
 					/>
 				)}
+				refreshControl={
+					<RefreshControl
+						tintColor={Colors.border_gray}
+						titleColor={Colors.primary}
+						refreshing={isRefreshing}
+						onRefresh={onRefresh}
+					/>
+				}
 				onEndReached={!isEnd ? loadMore : undefined}
 				onEndReachedThreshold={0.5}
 				ListFooterComponent={
