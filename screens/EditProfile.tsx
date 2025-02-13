@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { ImagePickerAsset } from 'expo-image-picker';
 import {
@@ -20,7 +20,7 @@ const EditProfile = () => {
 	const route = useRoute<EditProfileRouteProp>();
 	const navigation = useNavigation();
 	const { userInfo }: { userInfo: UserInfo } = route?.params ?? {};
-	const { setUserInfo } = useAuthContext();
+	const { setUserInfo, deleteAccount } = useAuthContext();
 	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
 
 	const [displayNameInput, setDisplayNameInput] = useState<string>('');
@@ -139,6 +139,34 @@ const EditProfile = () => {
 		}
 	};
 
+	const onDeleteAccount = async () => {
+		if (!userInfo) return;
+
+		Alert.alert(
+			'회원 탈퇴',
+			'정말로 탈퇴하시겠습니까?\n탈퇴한 계정은 삭제되며 복구되지 않습니다.',
+			[
+				{ text: '취소', style: 'cancel' },
+				{
+					text: '네, 동의합니다.',
+					onPress: async () => {
+						try {
+							await deleteAccount(userInfo.uid);
+
+							Alert.alert(
+								'탈퇴 완료',
+								'탈퇴 처리가 성공적으로 완료되었습니다.',
+							);
+							navigation.goBack();
+						} catch (e: any) {
+							Alert.alert('탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.');
+						}
+					},
+				},
+			],
+		);
+	};
+
 	if (!userInfo) {
 		return (
 			<View style={styles.container}>
@@ -157,28 +185,32 @@ const EditProfile = () => {
 			<ProfileImageInput image={image} setImage={setImage} />
 
 			<View style={styles.info}>
-				{/* 닉네임 */}
-				<View>
-					<ValidationInput
-						label='닉네임'
-						value={displayNameInput}
-						onChangeText={setDisplayNameInput}
-						placeholder='닉네임을 입력해주세요.'
-					/>
-					<ValidationInput
-						label='섬 이름'
-						value={islandNameInput}
-						onChangeText={setIslandNameInput}
-						placeholder='섬 이름을 입력해주세요.'
-					/>
+				{/* 닉네임, 섬 이름 */}
+				<ValidationInput
+					label='닉네임'
+					value={displayNameInput}
+					onChangeText={setDisplayNameInput}
+					placeholder='닉네임을 입력해주세요.'
+				/>
+				<ValidationInput
+					label='섬 이름'
+					value={islandNameInput}
+					onChangeText={setIslandNameInput}
+					placeholder='섬 이름을 입력해주세요.'
+				/>
 
-					<View style={styles.messageContainer}>
-						<FontAwesome name='leaf' color={Colors.primary} size={14} />
-						<Text style={styles.infoText}>
-							닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
-						</Text>
-					</View>
+				<View style={styles.messageContainer}>
+					<FontAwesome name='leaf' color={Colors.primary} size={14} />
+					<Text style={styles.infoText}>
+						닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
+					</Text>
 				</View>
+			</View>
+
+			<View style={styles.deleteAccountContainer}>
+				<TouchableOpacity onPress={onDeleteAccount}>
+					<Text style={styles.deleteAccountText}>회원 탈퇴</Text>
+				</TouchableOpacity>
 			</View>
 		</View>
 	);
@@ -205,5 +237,15 @@ const styles = StyleSheet.create({
 		color: Colors.primary,
 		fontSize: 14,
 		marginBottom: 16,
+	},
+	deleteAccountContainer: {
+		flex: 1,
+		width: '100%',
+		marginBottom: 48,
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+	},
+	deleteAccountText: {
+		color: 'red',
 	},
 });
