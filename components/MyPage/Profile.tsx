@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Color';
-import { useAuthContext, UserInfo } from '@/contexts/AuthContext';
+import { useAuthContext } from '@/contexts/AuthContext';
 import React from 'react';
 import { View, Text, Image, StyleSheet, Alert } from 'react-native';
 import Button from '../ui/Button';
@@ -30,7 +30,7 @@ const Profile = () => {
 	};
 
 	return (
-		<>
+		<View style={styles.container}>
 			<View style={styles.imageContainer}>
 				{userInfo?.photoURL ? (
 					<Image source={{ uri: userInfo?.photoURL }} style={styles.image} />
@@ -62,13 +62,30 @@ const Profile = () => {
 					로그아웃
 				</Button>
 			</View>
-		</>
+		</View>
 	);
 };
 
 export default Profile;
 
 const styles = StyleSheet.create({
+	container: {
+		width: '100%',
+		paddingVertical: 40,
+		alignItems: 'center',
+		backgroundColor: 'white',
+		borderRadius: 10,
+		borderWidth: 1,
+		borderColor: Colors.border_gray,
+		elevation: 5,
+		shadowColor: Colors.border_gray,
+		shadowOffset: {
+			width: 0,
+			height: 0,
+		},
+		shadowOpacity: 1,
+		shadowRadius: 2,
+	},
 	imageContainer: {},
 	image: {
 		width: 100,

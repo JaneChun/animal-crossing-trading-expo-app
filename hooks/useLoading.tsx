@@ -11,11 +11,19 @@ const useLoading = () => {
 				source={require('../assets/images/spinner.gif')}
 				style={{ height: 150, width: 150 }}
 			/>
-			{/* <ActivityIndicator size='large' color={Colors.primary} /> */}
 		</View>
 	);
 
-	return { isLoading, setIsLoading, LoadingIndicator };
+	const InlineLoadingIndicator = () => (
+		<View style={styles.inlineLoadingContainer}>
+			<Image
+				source={require('../assets/images/spinner.gif')}
+				style={{ height: 100, width: 100 }}
+			/>
+		</View>
+	);
+
+	return { isLoading, setIsLoading, LoadingIndicator, InlineLoadingIndicator };
 };
 
 export default useLoading;
@@ -26,5 +34,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		backgroundColor: 'white',
+	},
+	inlineLoadingContainer: {
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 });

@@ -221,7 +221,7 @@ export default EditProfile;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: Colors.base,
+		backgroundColor: 'white',
 		alignItems: 'center',
 		gap: 4,
 	},
