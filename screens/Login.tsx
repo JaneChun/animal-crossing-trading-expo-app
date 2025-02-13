@@ -12,14 +12,17 @@ import type { TabNavigation } from '@/types/navigation';
 import { useAuthContext } from '@/contexts/AuthContext';
 
 const Login = () => {
-	const { userInfo, login } = useAuthContext();
+	const { login } = useAuthContext();
 	const navigation = useNavigation<TabNavigation>();
 
 	const handleLogin = async () => {
 		const isSuccess: boolean | void = await login();
 
 		if (Boolean(isSuccess)) {
-			navigation.navigate('Home');
+			navigation.reset({
+				index: 0,
+				routes: [{ name: 'Home' }],
+			});
 		} else {
 			Alert.alert('로그인 실패', '다시 시도해주세요.');
 		}

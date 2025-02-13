@@ -128,7 +128,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 		}
 	};
 
-	const logout = async () => {
+	const logout = async (): Promise<boolean> => {
 		try {
 			await kakaoLogout(); // 카카오 로그아웃
 			await auth.signOut(); // Firebase auth 로그아웃
@@ -136,8 +136,12 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			// 상태 업데이트 & AsyncStorage에서 삭제
 			setUserInfo(null);
 			await AsyncStorage.removeItem('@user');
+
+			return true;
 		} catch (e) {
 			console.log('로그아웃 실패:', e);
+
+			return false;
 		}
 	};
 

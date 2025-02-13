@@ -1,18 +1,32 @@
 import { Colors } from '@/constants/Color';
 import { useAuthContext, UserInfo } from '@/contexts/AuthContext';
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Alert } from 'react-native';
 import Button from '../ui/Button';
 import { useNavigation } from '@react-navigation/native';
-import { ProfileStackNavigation } from '@/types/navigation';
+import { ProfileStackNavigation, TabNavigation } from '@/types/navigation';
 import { FontAwesome } from '@expo/vector-icons';
 
 const Profile = () => {
 	const { userInfo, logout } = useAuthContext();
-	const navigation = useNavigation<ProfileStackNavigation>();
+	const stackNavigation = useNavigation<ProfileStackNavigation>();
+	const tabNavigation = useNavigation<TabNavigation>();
 
 	const editProfile = () => {
-		navigation.navigate('EditProfile', { userInfo });
+		stackNavigation.navigate('EditProfile', { userInfo });
+	};
+
+	const handleLogout = async () => {
+		const isSuccess: boolean | void = await logout();
+
+		if (Boolean(isSuccess)) {
+			tabNavigation.reset({
+				index: 0,
+				routes: [{ name: 'Home' }],
+			});
+		} else {
+			Alert.alert('로그아웃 실패', '다시 시도해주세요.');
+		}
 	};
 
 	return (
@@ -44,7 +58,7 @@ const Profile = () => {
 				<Button color='gray' size='md' onPress={editProfile}>
 					프로필 수정
 				</Button>
-				<Button color='gray' size='md' onPress={logout}>
+				<Button color='gray' size='md' onPress={handleLogout}>
 					로그아웃
 				</Button>
 			</View>
