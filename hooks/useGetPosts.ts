@@ -97,12 +97,16 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 
 	// 초기 로드
 	useEffect(() => {
+		refresh();
+	}, [memoizedFilter, pageSize]);
+
+	const refresh = useCallback(() => {
+		setIsEnd(false);
 		setData([]);
 		lastestDocRef.current = null;
-		setIsEnd(false);
 
 		fetchData(false);
-	}, [memoizedFilter, pageSize]);
+	}, [fetchData]);
 
 	const loadMore = useCallback(() => {
 		if (isLoading || isEnd) return;
@@ -110,7 +114,7 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 		fetchData(true);
 	}, [fetchData, isLoading, isEnd]);
 
-	return { data, isLoading, isEnd, loadMore };
+	return { data, isLoading, isEnd, loadMore, refresh };
 };
 
 export default useGetPosts;

@@ -3,10 +3,18 @@ import PostUnit from '../components/Home/PostUnit';
 import { Colors } from '@/constants/Color';
 import useLoading from '@/hooks/useLoading';
 import useGetPosts from '@/hooks/useGetPosts';
+import { useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
 
 const Home = () => {
 	const { LoadingIndicator, InlineLoadingIndicator } = useLoading();
-	const { data, isLoading, isEnd, loadMore } = useGetPosts({}, 10);
+	const { data, isLoading, isEnd, loadMore, refresh } = useGetPosts({}, 10);
+
+	useFocusEffect(
+		useCallback(() => {
+			refresh();
+		}, []),
+	);
 
 	if (isLoading && data.length === 0) {
 		return <LoadingIndicator />;
