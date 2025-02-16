@@ -24,7 +24,7 @@ const PostDetail = () => {
 	const { id = '' } = route?.params ?? {};
 	const { userInfo } = useAuthContext();
 	const [isUpdated, setIsUpdated] = useState(false);
-	const { post, error, loading } = useGetPostDetail(id, isUpdated);
+	const { post, error, isLoading: loading } = useGetPostDetail(id, isUpdated);
 	const { LoadingIndicator } = useLoading();
 
 	// const [isCommentsUpdated, setIsCommentsUpdated] = useState(false);

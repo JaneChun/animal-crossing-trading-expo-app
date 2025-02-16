@@ -1,7 +1,8 @@
 import { DocumentData } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { getDocFromFirestore } from '@/utilities/firebaseApi';
-import { getCreatorDisplayName, Post } from './useGetPosts';
+import { Post } from './useGetPosts';
+import { getCreatorInfo } from '@/utilities/firebaseApi';
 
 type UseGetPostDetailReturnType = {
 	post: Post | null;
@@ -37,9 +38,9 @@ function useGetPostDetail(
 					return;
 				}
 
-				const displayName = await getCreatorDisplayName(docData.creatorId);
+				const creatorInfo = await getCreatorInfo(docData.creatorId);
 
-				setData({ ...docData, creatorDisplayName: displayName } as Post);
+				setData({ ...docData, ...creatorInfo } as Post);
 			} catch (e) {
 				setError(e as Error);
 			} finally {

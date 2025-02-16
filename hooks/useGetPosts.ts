@@ -13,38 +13,22 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/fbase';
 import { CartItem } from '@/screens/NewPost';
-import { getDocFromFirestore } from '@/utilities/firebaseApi';
+import { getCreatorInfo } from '@/utilities/firebaseApi';
 
 interface doc {
 	id: string;
-	type: string;
+	type: 'buy' | 'sell' | 'done';
 	title: string;
 	body: string;
 	images: string[];
 	creatorId: string;
 	createdAt: ReturnType<typeof serverTimestamp>;
-	cart?: CartItem[];
+	cart: CartItem[];
 }
 export interface Post extends doc {
 	creatorDisplayName: string;
+	creatorIslandName: string;
 }
-
-export const getCreatorDisplayName = async (
-	creatorId: string,
-): Promise<string> => {
-	try {
-		const docData = await getDocFromFirestore({
-			collection: 'Users',
-			id: creatorId,
-		});
-		if (!docData) return 'Unknown User';
-
-		return docData.displayName || 'Unknown User';
-	} catch (error) {
-		console.log(`${creatorId} 유저 displayName 조회 실패:`, error);
-		return 'Unknown User';
-	}
-};
 
 const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 	const [data, setData] = useState<Post[]>([]);
@@ -98,11 +82,11 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 				const newData: Post[] = await Promise.all(
 					querySnapshot.docs.map(async (doc) => {
 						const docData = doc.data();
-						const displayName = await getCreatorDisplayName(docData.creatorId);
+						const creatorInfo = await getCreatorInfo(docData.creatorId);
 						return {
 							id: doc.id,
 							...docData,
-							creatorDisplayName: displayName,
+							...creatorInfo,
 						} as Post;
 					}),
 				);

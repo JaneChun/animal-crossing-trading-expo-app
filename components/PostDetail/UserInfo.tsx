@@ -22,7 +22,7 @@ const UserInfo = ({
 					}}
 					style={styles.islandImage}
 				/>
-				<Text style={styles.islandName}>{islandName || '지지섬'}</Text>
+				{islandName && <Text style={styles.islandName}>{islandName}</Text>}
 			</View>
 		</View>
 	);

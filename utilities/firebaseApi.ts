@@ -176,3 +176,30 @@ export const deleteObjectFromStorage = async (imageUrl: string) => {
 		console.log('이미지 삭제 실패:', e);
 	}
 };
+
+// USERINFO
+export const getCreatorInfo = async (creatorId: string) => {
+	try {
+		const docData = await getDocFromFirestore({
+			collection: 'Users',
+			id: creatorId,
+		});
+
+		if (!docData) {
+			return getDefaultCreatorInfo();
+		}
+
+		return {
+			creatorDisplayName: docData.displayName || 'Unknown User',
+			creatorIslandName: docData.islandName || '',
+		};
+	} catch (e) {
+		console.log(`${creatorId} creatorInfo 조회 실패:`, e);
+		return getDefaultCreatorInfo();
+	}
+};
+
+const getDefaultCreatorInfo = () => ({
+	creatorDisplayName: 'Unknown User',
+	creatorIslandName: '',
+});
