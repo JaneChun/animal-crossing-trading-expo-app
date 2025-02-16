@@ -1,45 +1,56 @@
 import { DocumentData } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { getDocFromFirestore } from '@/utilities/firebaseApi';
+import { getCreatorDisplayName, Post } from './useGetPosts';
 
 type UseGetPostDetailReturnType = {
-	post: DocumentData | null;
+	post: Post | null;
 	error: Error | null;
-	loading: boolean;
+	isLoading: boolean;
 };
 
 function useGetPostDetail(
 	id: string,
 	isUpdated?: boolean,
 ): UseGetPostDetailReturnType {
-	const [data, setData] = useState<DocumentData>({});
+	const [data, setData] = useState<Post | null>(null);
 	const [error, setError] = useState<Error | null>(null);
-	const [loading, setLoading] = useState<boolean>(true);
-
-	if (!id) return { post: null, error: null, loading: false };
+	const [isLoading, setIsLoading] = useState<boolean>(true);
 
 	useEffect(() => {
-		setLoading(true);
+		if (!id) {
+			setData(null);
+			setError(null);
+			setIsLoading(false);
+			return;
+		}
+
+		setData(null);
 		setError(null);
-		setData({});
+		setIsLoading(true);
 
 		const getData = async () => {
 			try {
 				const docData = await getDocFromFirestore({ collection: 'Boards', id });
-				if (!docData) return;
+				if (!docData) {
+					setData(null);
+					return;
+				}
 
-				setData(docData);
+				const displayName = await getCreatorDisplayName(docData.creatorId);
+
+				setData({ ...docData, creatorDisplayName: displayName } as Post);
 			} catch (e) {
 				setError(e as Error);
 			} finally {
-				setLoading(false);
+				setIsLoading(false);
 			}
 		};
 
 		getData();
 	}, [id, isUpdated]);
 
-	return { post: data, error, loading };
+	return { post: data, error, isLoading };
 }
 
 export default useGetPostDetail;

@@ -13,23 +13,41 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/fbase';
 import { CartItem } from '@/screens/NewPost';
+import { getDocFromFirestore } from '@/utilities/firebaseApi';
 
-export interface doc {
+interface doc {
 	id: string;
 	type: string;
 	title: string;
 	body: string;
 	images: string[];
-	creatorDisplayName: string;
 	creatorId: string;
 	createdAt: ReturnType<typeof serverTimestamp>;
 	cart?: CartItem[];
-	// done?: boolean;
-	// comments?: number;
+}
+export interface Post extends doc {
+	creatorDisplayName: string;
 }
 
+export const getCreatorDisplayName = async (
+	creatorId: string,
+): Promise<string> => {
+	try {
+		const docData = await getDocFromFirestore({
+			collection: 'Users',
+			id: creatorId,
+		});
+		if (!docData) return 'Unknown User';
+
+		return docData.displayName || 'Unknown User';
+	} catch (error) {
+		console.log(`${creatorId} 유저 displayName 조회 실패:`, error);
+		return 'Unknown User';
+	}
+};
+
 const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
-	const [data, setData] = useState<doc[]>([]);
+	const [data, setData] = useState<Post[]>([]);
 	const lastestDocRef = useRef<QueryDocumentSnapshot<DocumentData> | null>(
 		null,
 	); // 마지막으로 불러온 문서 (다음 데이터를 가져올 때 사용)
@@ -77,10 +95,17 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 				lastestDocRef.current = newLastDoc;
 
 				// 데이터 변환
-				const newData: doc[] = querySnapshot.docs.map((doc) => ({
-					id: doc.id,
-					...doc.data(),
-				})) as doc[];
+				const newData: Post[] = await Promise.all(
+					querySnapshot.docs.map(async (doc) => {
+						const docData = doc.data();
+						const displayName = await getCreatorDisplayName(docData.creatorId);
+						return {
+							id: doc.id,
+							...docData,
+							creatorDisplayName: displayName,
+						} as Post;
+					}),
+				);
 
 				// 기존 데이터에 추가 or 초기화
 				setData((prevData) =>

@@ -58,7 +58,11 @@ const NewPost = () => {
 	const { id: editingId = '' } = route?.params ?? {};
 
 	const [isUpdated, setIsUpdated] = useState(false);
-	const { post, error, loading } = useGetPostDetail(editingId, isUpdated);
+	const {
+		post,
+		error,
+		isLoading: loading,
+	} = useGetPostDetail(editingId, isUpdated);
 
 	useEffect(() => {
 		tabNavigation.setOptions({
@@ -144,8 +148,8 @@ const NewPost = () => {
 				images: string[];
 				cart: CartItem[];
 				createdAt: ReturnType<typeof serverTimestamp>;
-				creatorDisplayName?: string;
 				creatorId?: string;
+				// comments: number;
 			} = {
 				type,
 				title,
@@ -154,13 +158,9 @@ const NewPost = () => {
 					(url) => !deletedImageUrls.includes(url), // 기존 이미지 + 새 이미지 - 삭제된 이미지
 				),
 				cart,
-				createdAt: serverTimestamp(),
-				creatorDisplayName: userInfo?.displayName,
 				creatorId: userInfo?.uid,
-				//  cartList: cart.map(({ name }) => name),
-				// 	creatorIslandName: userInfo?.islandName,
-				// 	done: false,
-				// 	comments: 0,
+				createdAt: serverTimestamp(),
+				// comments: 0,
 			};
 
 			if (editingId) {
