@@ -18,6 +18,7 @@ import {
 } from 'firebase/storage';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { UserInfo } from '@/contexts/AuthContext';
+import { Alert } from 'react-native';
 
 // DATABASE
 export const getDocFromFirestore = async ({
@@ -127,8 +128,13 @@ export const getUserInfoFromFirestore = async ({
 		} else {
 			return null; // Firestore에 데이터 없음
 		}
-	} catch (e) {
+	} catch (e: any) {
 		console.log('Firestore에서 유저 정보 가져오기 실패:', e);
+
+		if (e.code === 'unavailable' || e.code === 'network-request-failed') {
+			Alert.alert('네트워크 오류', '인터넷 연결을 확인해주세요.');
+		}
+
 		return null;
 	}
 };
