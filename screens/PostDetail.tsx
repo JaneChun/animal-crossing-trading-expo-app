@@ -26,7 +26,11 @@ const PostDetail = () => {
 	const { userInfo } = useAuthContext();
 	const [isUpdated, setIsUpdated] = useState(false);
 	const { post, error, isLoading: loading } = useGetPostDetail(id, isUpdated);
-	const { LoadingIndicator } = useLoading();
+	const {
+		isLoading: isCommentUploadLoading,
+		setIsLoading,
+		LoadingIndicator,
+	} = useLoading();
 
 	const [isCommentsUpdated, setIsCommentsUpdated] = useState(false);
 	// const { comments, commentsError, commentsLoading } = useGetComment(
@@ -50,7 +54,7 @@ const PostDetail = () => {
 			0,
 		) ?? 0;
 
-	if (loading) {
+	if (loading || isCommentUploadLoading) {
 		return <LoadingIndicator />;
 	}
 
@@ -117,7 +121,7 @@ const PostDetail = () => {
 						<CommentsList
 							postId={post.id}
 							postCreatorId={post.creatorId}
-							comments={[]}
+							comments={[]} // comments로 수정하기
 							isCommentsUpdated={isCommentsUpdated}
 							setIsCommentsUpdated={setIsCommentsUpdated}
 							containerStyle={{ marginBottom: 60 }}
@@ -125,7 +129,7 @@ const PostDetail = () => {
 					}
 				/>
 				{/* 키보드 위에 고정되는 입력창 */}
-				<CommentInput />
+				<CommentInput postId={post.id} setIsLoading={setIsLoading} />
 			</View>
 		</KeyboardAvoidingView>
 	);

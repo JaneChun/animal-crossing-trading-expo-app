@@ -7,8 +7,10 @@ import {
 	deleteDoc,
 	doc,
 	getDoc,
+	increment,
 	setDoc,
 	updateDoc,
+	writeBatch,
 } from 'firebase/firestore';
 import {
 	deleteObject,
@@ -203,3 +205,30 @@ const getDefaultCreatorInfo = () => ({
 	creatorDisplayName: 'Unknown User',
 	creatorIslandName: '',
 });
+
+// COMMENT
+export const addComment = async ({
+	postId,
+	commentData,
+}: {
+	postId: string;
+	commentData: any;
+}) => {
+	const batch = writeBatch(db);
+
+	try {
+		// 댓글 문서 추가
+		const commentRef = doc(collection(db, 'Boards', postId, 'Comments')); // Boards/{postId}/Comments 서브컬렉션
+		batch.set(commentRef, commentData);
+
+		// post 문서의 commentCount 필드 수정
+		const postRef = doc(db, 'Boards', postId);
+		batch.update(postRef, { commentCount: increment(1) });
+
+		await batch.commit();
+		console.log('댓글 추가 및 게시글 댓글 수 증가 완료');
+	} catch (e: any) {
+		console.log('댓글 추가 중 오류 발생:', e);
+		throw new Error(e);
+	}
+};

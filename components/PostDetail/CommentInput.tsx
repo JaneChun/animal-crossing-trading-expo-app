@@ -4,14 +4,29 @@ import {
 	TouchableOpacity,
 	StyleSheet,
 	Keyboard,
+	Alert,
 } from 'react-native';
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { FontAwesome } from '@expo/vector-icons';
 import { Colors } from '@/constants/Color';
+import { serverTimestamp } from 'firebase/firestore';
+import { auth } from '@/fbase';
+import { useAuthContext } from '@/contexts/AuthContext';
+import { useNavigation } from '@react-navigation/native';
+import { TabNavigation } from '@/types/navigation';
+import { addComment } from '@/utilities/firebaseApi';
 
-const CommentInput = () => {
+const CommentInput = ({
+	postId,
+	setIsLoading,
+}: {
+	postId: string;
+	setIsLoading: Dispatch<SetStateAction<boolean>>;
+}) => {
 	const [commentInput, setCommentInput] = useState<string>('');
 	const [keyboardHeight, setKeyboardHeight] = useState(0);
+	const navigation = useNavigation<TabNavigation>();
+	const { userInfo } = useAuthContext();
 
 	// 키보드 이벤트 리스너 추가 (키보드 높이 감지)
 	useEffect(() => {
@@ -35,7 +50,43 @@ const CommentInput = () => {
 	}, []);
 
 	const onSubmit = () => {
-		console.log(commentInput);
+		if (!userInfo || !auth.currentUser) {
+			Alert.alert('댓글 쓰기는 로그인 후 가능합니다.');
+			navigation.navigate('Login');
+			return;
+		}
+
+		if (!postId) {
+			Alert.alert('게시글을 찾을 수 없습니다.');
+			navigation.navigate('Login');
+			return;
+		}
+
+		if (commentInput.trim() === '') {
+			Alert.alert('오류', '내용이 비어있는지 확인해주세요.');
+			return;
+		}
+
+		const commentData = {
+			creatorId: userInfo.uid,
+			body: commentInput,
+			createdAt: serverTimestamp(),
+		};
+
+		try {
+			setIsLoading(true);
+			addComment({ postId, commentData });
+		} catch (e: any) {
+			Alert.alert(
+				'오류',
+				`댓글을 작성하는 중 오류가 발생했습니다.${e.code && `\n${e.code}`}`,
+			);
+		} finally {
+			setCommentInput('');
+			setTimeout(() => {
+				setIsLoading(false);
+			}, 2000);
+		}
 	};
 
 	return (
