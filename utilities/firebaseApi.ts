@@ -8,6 +8,7 @@ import {
 	doc,
 	getDoc,
 	increment,
+	serverTimestamp,
 	setDoc,
 	updateDoc,
 	writeBatch,
@@ -180,7 +181,13 @@ export const deleteObjectFromStorage = async (imageUrl: string) => {
 };
 
 // USERINFO
-export const getCreatorInfo = async (creatorId: string) => {
+export const getCreatorInfo = async (
+	creatorId: string,
+): Promise<{
+	creatorDisplayName: string;
+	creatorIslandName: string;
+	creatorPhotoURL: string;
+}> => {
 	try {
 		const docData = await getDocFromFirestore({
 			collection: 'Users',
@@ -194,6 +201,7 @@ export const getCreatorInfo = async (creatorId: string) => {
 		return {
 			creatorDisplayName: docData.displayName || 'Unknown User',
 			creatorIslandName: docData.islandName || '',
+			creatorPhotoURL: docData.photoURL || '',
 		};
 	} catch (e) {
 		console.log(`${creatorId} creatorInfo 조회 실패:`, e);
@@ -204,6 +212,7 @@ export const getCreatorInfo = async (creatorId: string) => {
 const getDefaultCreatorInfo = () => ({
 	creatorDisplayName: 'Unknown User',
 	creatorIslandName: '',
+	creatorPhotoURL: '',
 });
 
 // COMMENT
@@ -230,5 +239,29 @@ export const addComment = async ({
 	} catch (e: any) {
 		console.log('댓글 추가 중 오류 발생:', e);
 		throw new Error(e);
+	}
+};
+
+export const updateComment = async ({
+	postId,
+	commentId,
+	newCommentText,
+}: {
+	postId: string;
+	commentId: string;
+	newCommentText: string;
+}) => {
+	if (!postId || !commentId) return;
+
+	const commentRef = doc(db, 'Boards', postId, 'Comments', commentId);
+
+	try {
+		await updateDoc(commentRef, {
+			comment: newCommentText,
+			updatedAt: serverTimestamp(),
+		});
+		console.log('댓글 수정 완료');
+	} catch (e) {
+		console.log(' 댓글 수정 중 오류 발생:', e);
 	}
 };

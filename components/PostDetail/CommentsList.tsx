@@ -3,6 +3,8 @@ import { View, Text, FlatList, StyleSheet, ViewStyle } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 // import CommentUnit from './CommentUnit';
 import { TabNavigation } from '@/types/navigation';
+import { Comment } from '@/hooks/useGetComments';
+import CommentUnit from './CommentUnit';
 
 const CommentsList = ({
 	postId,
@@ -14,7 +16,7 @@ const CommentsList = ({
 }: {
 	postId: string;
 	postCreatorId: string;
-	comments: string[];
+	comments: Comment[];
 	isCommentsUpdated: boolean;
 	setIsCommentsUpdated: Dispatch<SetStateAction<boolean>>;
 	containerStyle?: ViewStyle;
@@ -23,12 +25,12 @@ const CommentsList = ({
 
 	return (
 		<View style={[styles.container, containerStyle]}>
-			<Text style={styles.commentHeader}>댓글 ({[].length})</Text>
+			<Text style={styles.commentHeader}>댓글 ({comments.length})</Text>
 
 			<FlatList
 				data={comments}
-				keyExtractor={(item) => item.commentId}
-				renderItem={({ item }) => <Text>댓글</Text>}
+				keyExtractor={({ id }) => id}
+				renderItem={({ item }) => <CommentUnit {...item} />}
 			/>
 		</View>
 	);

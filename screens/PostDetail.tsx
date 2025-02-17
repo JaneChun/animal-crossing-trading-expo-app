@@ -4,7 +4,6 @@ import { View, StyleSheet, Text, KeyboardAvoidingView } from 'react-native';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 import useGetPostDetail from '../hooks/useGetPostDetail';
 import CommentsList from '@/components/PostDetail/CommentsList';
-// import useGetComment from '../Hooks/useGetComment';
 import { Colors } from '@/constants/Color';
 import TypeBadge from '@/components/Home/TypeBadge';
 import UserInfo from '@/components/PostDetail/UserInfo';
@@ -19,6 +18,7 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import { FlatList } from 'react-native-gesture-handler';
 import useLoading from '@/hooks/useLoading';
 import CommentInput from '@/components/PostDetail/CommentInput';
+import useGetComments from '@/hooks/useGetComments';
 
 const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
@@ -33,10 +33,7 @@ const PostDetail = () => {
 	} = useLoading();
 
 	const [isCommentsUpdated, setIsCommentsUpdated] = useState(false);
-	// const { comments, commentsError, commentsLoading } = useGetComment(
-	// 	id,
-	// 	isCommentsUpdated,
-	// );
+	const { comments, commentsError, isCommentsLoading } = useGetComments(id);
 
 	// if (error) console.log(error);
 	// if (commentsError) console.log(commentsError);
@@ -121,7 +118,7 @@ const PostDetail = () => {
 						<CommentsList
 							postId={post.id}
 							postCreatorId={post.creatorId}
-							comments={[]} // comments로 수정하기
+							comments={comments}
 							isCommentsUpdated={isCommentsUpdated}
 							setIsCommentsUpdated={setIsCommentsUpdated}
 							containerStyle={{ marginBottom: 60 }}
