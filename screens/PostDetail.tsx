@@ -1,9 +1,9 @@
 import { PostDetailRouteProp } from '@/types/navigation';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, KeyboardAvoidingView } from 'react-native';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 import useGetPostDetail from '../hooks/useGetPostDetail';
-// import Comment from '../Components/PostDetail/Comment';
+import CommentsList from '@/components/PostDetail/CommentsList';
 // import useGetComment from '../Hooks/useGetComment';
 import { Colors } from '@/constants/Color';
 import TypeBadge from '@/components/Home/TypeBadge';
@@ -18,6 +18,7 @@ import ActionButtons from '@/components/PostDetail/ActionButtons';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { FlatList } from 'react-native-gesture-handler';
 import useLoading from '@/hooks/useLoading';
+import CommentInput from '@/components/PostDetail/CommentInput';
 
 const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
@@ -27,7 +28,7 @@ const PostDetail = () => {
 	const { post, error, isLoading: loading } = useGetPostDetail(id, isUpdated);
 	const { LoadingIndicator } = useLoading();
 
-	// const [isCommentsUpdated, setIsCommentsUpdated] = useState(false);
+	const [isCommentsUpdated, setIsCommentsUpdated] = useState(false);
 	// const { comments, commentsError, commentsLoading } = useGetComment(
 	// 	id,
 	// 	isCommentsUpdated,
@@ -62,69 +63,88 @@ const PostDetail = () => {
 	}
 
 	return (
-		<FlatList
-			data={[]}
-			renderItem={null}
-			style={styles.container}
-			ListEmptyComponent={
-				<View style={styles.content}>
-					<View style={styles.header}>
-						{post.creatorId === userInfo?.uid && <ActionButtons id={post.id} />}
-						<TypeBadge
-							type={post.type}
-							containerStyle={styles.typeBadgeContainer}
-						/>
-						<Title title={post.title} containerStyle={{ marginBottom: 8 }} />
-						<UserInfo
-							displayName={post.creatorDisplayName}
-							islandName={post.creatorIslandName}
-							containerStyle={{ marginBottom: 8 }}
-						/>
-						<CreatedAt
-							createdAt={post.createdAt}
-							containerStyle={{ marginBottom: 16 }}
-						/>
-					</View>
+		<KeyboardAvoidingView style={styles.screen} behavior='padding'>
+			<View style={styles.screen}>
+				<FlatList
+					data={[]}
+					renderItem={null}
+					style={styles.container}
+					contentContainerStyle={{ flexGrow: 1 }}
+					keyboardShouldPersistTaps='handled'
+					ListEmptyComponent={
+						<View style={styles.content}>
+							<View style={styles.header}>
+								{post.creatorId === userInfo?.uid && (
+									<ActionButtons id={post.id} />
+								)}
+								<TypeBadge
+									type={post.type}
+									containerStyle={styles.typeBadgeContainer}
+								/>
+								<Title
+									title={post.title}
+									containerStyle={{ marginBottom: 8 }}
+								/>
+								<UserInfo
+									displayName={post.creatorDisplayName}
+									islandName={post.creatorIslandName}
+									containerStyle={{ marginBottom: 8 }}
+								/>
+								<CreatedAt
+									createdAt={post.createdAt}
+									containerStyle={{ marginBottom: 16 }}
+								/>
+							</View>
 
-					<View style={styles.body}>
-						<ImageCarousel
-							images={post.images}
-							containerStyle={{ marginBottom: 16 }}
-						/>
-						<Body body={post.body} containerStyle={{ marginBottom: 32 }} />
-						<ItemSummaryList
-							cart={post.cart}
-							containerStyle={{ marginBottom: 8 }}
-						/>
-						<Total
-							totalPrice={totalPrice}
-							containerStyle={{ marginBottom: 16 }}
-						/>
-					</View>
-
-					{/* <Comment
-							done={post.done}
+							<View style={styles.body}>
+								<ImageCarousel
+									images={post.images}
+									containerStyle={{ marginBottom: 16 }}
+								/>
+								<Body body={post.body} containerStyle={{ marginBottom: 32 }} />
+								<ItemSummaryList
+									cart={post.cart}
+									containerStyle={{ marginBottom: 8 }}
+								/>
+								<Total
+									totalPrice={totalPrice}
+									containerStyle={{ marginBottom: 16 }}
+								/>
+							</View>
+						</View>
+					}
+					ListFooterComponent={
+						<CommentsList
+							postId={post.id}
 							postCreatorId={post.creatorId}
-							comments={comments}
-							id={post.id}
+							comments={[]}
 							isCommentsUpdated={isCommentsUpdated}
 							setIsCommentsUpdated={setIsCommentsUpdated}
-					/> */}
-				</View>
-			}
-		></FlatList>
+							containerStyle={{ marginBottom: 60 }}
+						/>
+					}
+				/>
+				{/* 키보드 위에 고정되는 입력창 */}
+				<CommentInput />
+			</View>
+		</KeyboardAvoidingView>
 	);
 };
 
 export default PostDetail;
 
 const styles = StyleSheet.create({
+	screen: {
+		flex: 1,
+	},
 	container: {
 		backgroundColor: 'white',
 		padding: 24,
+		paddingBottom: 0,
 	},
 	content: {
 		paddingHorizontal: 2,
+		flex: 1,
 	},
 	header: {
 		borderBottomWidth: 1,
