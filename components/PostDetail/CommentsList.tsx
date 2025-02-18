@@ -10,15 +10,11 @@ const CommentsList = ({
 	postId,
 	postCreatorId,
 	comments,
-	isCommentsUpdated,
-	setIsCommentsUpdated,
 	containerStyle,
 }: {
 	postId: string;
 	postCreatorId: string;
 	comments: Comment[];
-	isCommentsUpdated: boolean;
-	setIsCommentsUpdated: Dispatch<SetStateAction<boolean>>;
 	containerStyle?: ViewStyle;
 }) => {
 	const navigation = useNavigation<TabNavigation>();
@@ -30,7 +26,7 @@ const CommentsList = ({
 			<FlatList
 				data={comments}
 				keyExtractor={({ id }) => id}
-				renderItem={({ item }) => <CommentUnit {...item} />}
+				renderItem={({ item }) => <CommentUnit postId={postId} {...item} />}
 			/>
 		</View>
 	);

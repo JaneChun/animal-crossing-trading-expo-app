@@ -6,6 +6,9 @@ import { elapsedTime } from '@/utilities/elapsedTime';
 import { getCreatorInfo } from '@/utilities/firebaseApi';
 import { Comment } from '@/hooks/useGetComments';
 import { Colors } from '@/constants/Color';
+import { Entypo } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { TabNavigation } from '@/types/navigation';
 // import { ChatContext } from '../../Context/ChatContext';
 
 type CommentCreatorInfo = {
@@ -13,20 +16,24 @@ type CommentCreatorInfo = {
 	creatorPhotoURL: string;
 };
 
+interface CommentUnitProps extends Comment {
+	postId: string;
+}
+
 const CommentUnit = ({
+	postId,
 	id,
 	body,
 	creatorId,
 	createdAt,
 	updatedAt,
-}: Comment) => {
+}: CommentUnitProps) => {
 	const { showActionSheetWithOptions } = useActionSheet();
 	const { userInfo } = useAuthContext();
-	const [isEditing, setIsEditing] = useState(false);
-	const [newCommentInput, setNewCommentInput] = useState(body);
-	// const { dispatch } = useContext(ChatContext);
 	const [commentCreatorInfo, setCommentCreatorInfo] =
 		useState<CommentCreatorInfo | null>(null);
+	const navigation = useNavigation<TabNavigation>();
+	// const { dispatch } = useContext(ChatContext);
 
 	useEffect(() => {
 		const getCommentCreatorInfo = async () => {
@@ -36,9 +43,16 @@ const CommentUnit = ({
 		getCommentCreatorInfo();
 	}, []);
 
-	// 모달 옵션
-	const showCommentEditOptions = () => {
-		const options = ['댓글 수정', '댓글 삭제', '취소'];
+	const showCommentEditOptions = ({
+		postId,
+		commentId,
+		comment,
+	}: {
+		postId: string;
+		commentId: string;
+		comment: string;
+	}) => {
+		const options = ['수정', '삭제', '취소'];
 		const cancelButtonIndex = 2;
 
 		showActionSheetWithOptions(
@@ -47,30 +61,22 @@ const CommentUnit = ({
 				cancelButtonIndex,
 			},
 			(buttonIndex) => {
-				if (buttonIndex === 0) editComment();
+				if (buttonIndex === 0) editComment({ postId, commentId, comment });
 				else if (buttonIndex === 1) deleteComment();
 			},
 		);
 	};
 
-	// 댓글 수정
-	const editComment = async () => {
-		// if (!id || !comment.commentId) return;
-		// if (newCommentInput.trim() === '') {
-		// 	Alert.alert('알림', '내용이 비어있는지 확인해주세요.');
-		// 	return;
-		// }
-		// try {
-		// 	await updateComment({
-		// 		postId: id,
-		// 		commentId: comment.id,
-		// 		newCommentBody: '',
-		// 	});
-		// 	setIsCommentsUpdated((prev) => !prev);
-		// 	setIsEditing(false);
-		// } catch (error) {
-		// 	console.log('❌ 댓글 수정 오류:', error);
-		// }
+	const editComment = async ({
+		postId,
+		commentId,
+		comment,
+	}: {
+		postId: string;
+		commentId: string;
+		comment: string;
+	}) => {
+		navigation.navigate('EditComment', { postId, commentId, comment });
 	};
 
 	// 댓글 삭제
@@ -92,11 +98,6 @@ const CommentUnit = ({
 		// 		},
 		// 	},
 		// ]);
-	};
-
-	// 댓글 입력 핸들러
-	const newCommentInputHandler = (text: string) => {
-		setNewCommentInput(text);
 	};
 
 	// 채팅 시작
@@ -130,30 +131,38 @@ const CommentUnit = ({
 
 	return (
 		<View style={styles.container}>
-			{/* {!isEditing ? ( */}
-			<>
-				<Image
-					source={{ uri: commentCreatorInfo?.creatorPhotoURL }}
-					style={styles.profileImage}
-				/>
-				<View style={styles.commentContent}>
-					<View style={styles.commentHeader}>
-						<Text style={styles.displayName}>
-							{commentCreatorInfo?.creatorDisplayName}
-						</Text>
-						{/* {postCreatorId === comment.creatorId && (
+			<Image
+				source={{ uri: commentCreatorInfo?.creatorPhotoURL }}
+				style={styles.profileImage}
+			/>
+			<View style={styles.commentContent}>
+				<View style={styles.commentHeader}>
+					<Text style={styles.displayName}>
+						{commentCreatorInfo?.creatorDisplayName}
+					</Text>
+					{/* {postCreatorId === comment.creatorId && (
 									<Text style={styles.authorTag}>작성자</Text>
 								)} */}
-						{creatorId === userInfo?.uid && (
-							<TouchableOpacity onPress={showCommentEditOptions}>
-								<Text style={styles.menu}>⋮</Text>
-							</TouchableOpacity>
-						)}
-					</View>
-					<Text style={styles.commentBody}>{body}</Text>
-					<View style={styles.commentFooter}>
-						<Text style={styles.time}>{elapsedTime(createdAt?.toDate())}</Text>
-						{/* {postCreatorId === userInfo?.uid &&
+					{creatorId === userInfo?.uid && (
+						<TouchableOpacity
+							onPress={() =>
+								showCommentEditOptions({ postId, commentId: id, comment: body })
+							}
+						>
+							<View style={styles.menu}>
+								<Entypo
+									name='dots-three-vertical'
+									size={14}
+									color={Colors.font_gray}
+								/>
+							</View>
+						</TouchableOpacity>
+					)}
+				</View>
+				<Text style={styles.commentBody}>{body}</Text>
+				<View style={styles.commentFooter}>
+					<Text style={styles.time}>{elapsedTime(createdAt?.toDate())}</Text>
+					{/* {postCreatorId === userInfo?.uid &&
 									postCreatorId !== comment.creatorId && (
 										<TouchableOpacity
 											style={styles.chatButton}
@@ -162,30 +171,8 @@ const CommentUnit = ({
 											<Text style={styles.chatText}>채팅하기</Text>
 										</TouchableOpacity>
 									)} */}
-					</View>
 				</View>
-			</>
-			{/* ) : (
-				<View style={styles.editContainer}>
-					<TextInput
-						style={styles.input}
-						value={newCommentInput}
-						onChangeText={newCommentInputHandler}
-						multiline
-					/>
-					<View style={styles.buttonContainer}>
-						<TouchableOpacity onPress={editComment} style={styles.button}>
-							<Text style={styles.buttonText}>수정</Text>
-						</TouchableOpacity>
-						<TouchableOpacity
-							onPress={() => setIsEditing(false)}
-							style={styles.cancelButton}
-						>
-							<Text style={styles.cancelText}>취소</Text>
-						</TouchableOpacity>
-					</View>
-				</View>
-			)} */}
+			</View>
 		</View>
 	);
 };
@@ -222,8 +209,6 @@ const styles = StyleSheet.create({
 		marginLeft: 5,
 	},
 	menu: {
-		fontSize: 18,
-		color: '#888',
 		padding: 5,
 	},
 	commentBody: {

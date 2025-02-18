@@ -83,9 +83,7 @@ const CommentInput = ({
 			);
 		} finally {
 			setCommentInput('');
-			setTimeout(() => {
-				setIsLoading(false);
-			}, 2000);
+			setIsLoading(false);
 		}
 	};
 

@@ -21,6 +21,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Button from '@/components/ui/Button';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import EditProfile from '@/screens/EditProfile';
+import EditComment from '@/screens/EditComment';
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
@@ -49,6 +50,14 @@ const HomeStack = () => {
 							등록
 						</Button>
 					),
+				}}
+			/>
+			<Stack.Screen
+				name='EditComment'
+				component={EditComment}
+				options={{
+					presentation: 'modal',
+					title: '댓글 수정',
 				}}
 			/>
 		</Stack.Navigator>

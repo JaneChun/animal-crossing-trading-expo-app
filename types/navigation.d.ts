@@ -10,6 +10,9 @@ export type RootTabParamList = {
 	Search: undefined;
 	Login: undefined;
 	MyPage: undefined;
+	// 모달로 표시되는 화면
+	EditProfile: { userInfo: UserInfo };
+	EditComment: { postId: string; commentId: string; comment: string };
 };
 
 // HomeStack 탭 내부에서 관리하는 Stack Navigator
@@ -18,20 +21,12 @@ export type HomeStackParamList = {
 	PostDetail: { id: string };
 };
 
-// MyPageStack 탭 내부에서 관리하는 Stack Navigator
-export type ProfileStackParamList = {
-	MyPage: undefined;
-	EditProfile: { userInfo: UserInfo };
-};
-
+// 전체 앱에서 사용할 네비게이션 타입
 export type TabNavigation = BottomTabNavigationProp<RootTabParamList>;
 export type StackNavigation = NativeStackNavigationProp<HomeStackParamList>;
-export type ProfileStackNavigation =
-	NativeStackNavigationProp<ProfileStackParamList>;
 
+// 특정 화면에 대한 Route Prop (화면에서 `route.params`를 사용할 때 필요함)
 export type PostDetailRouteProp = RouteProp<HomeStackParamList, 'PostDetail'>;
 export type NewPostRouteProp = RouteProp<RootTabParamList, 'NewPost'>;
-export type EditProfileRouteProp = RouteProp<
-	ProfileStackParamList,
-	'EditProfile'
->;
+export type EditProfileRouteProp = RouteProp<RootTabParamList, 'EditProfile'>;
+export type EditCommentRouteProp = RouteProp<RootTabParamList, 'EditComment'>;

@@ -4,23 +4,22 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, Alert } from 'react-native';
 import Button from '../ui/Button';
 import { useNavigation } from '@react-navigation/native';
-import { ProfileStackNavigation, TabNavigation } from '@/types/navigation';
+import { TabNavigation } from '@/types/navigation';
 import { FontAwesome } from '@expo/vector-icons';
 
 const Profile = () => {
 	const { userInfo, logout } = useAuthContext();
-	const stackNavigation = useNavigation<ProfileStackNavigation>();
-	const tabNavigation = useNavigation<TabNavigation>();
+	const navigation = useNavigation<TabNavigation>();
 
 	const editProfile = () => {
-		stackNavigation.navigate('EditProfile', { userInfo });
+		navigation.navigate('EditProfile', { userInfo });
 	};
 
 	const handleLogout = async () => {
 		const isSuccess: boolean | void = await logout();
 
 		if (Boolean(isSuccess)) {
-			tabNavigation.reset({
+			navigation.reset({
 				index: 0,
 				routes: [{ name: 'Home' }],
 			});

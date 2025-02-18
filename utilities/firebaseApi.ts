@@ -251,17 +251,16 @@ export const updateComment = async ({
 	commentId: string;
 	newCommentText: string;
 }) => {
-	if (!postId || !commentId) return;
-
-	const commentRef = doc(db, 'Boards', postId, 'Comments', commentId);
-
 	try {
+		// 댓글 문서 수정
+		const commentRef = doc(db, 'Boards', postId, 'Comments', commentId);
 		await updateDoc(commentRef, {
-			comment: newCommentText,
+			body: newCommentText,
 			updatedAt: serverTimestamp(),
 		});
 		console.log('댓글 수정 완료');
-	} catch (e) {
+	} catch (e: any) {
 		console.log(' 댓글 수정 중 오류 발생:', e);
+		throw new Error(e);
 	}
 };

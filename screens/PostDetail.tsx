@@ -31,9 +31,8 @@ const PostDetail = () => {
 		setIsLoading,
 		LoadingIndicator,
 	} = useLoading();
-
-	const [isCommentsUpdated, setIsCommentsUpdated] = useState(false);
-	const { comments, commentsError, isCommentsLoading } = useGetComments(id);
+	const { comments, commentsError, isCommentsLoading, refresh } =
+		useGetComments(id);
 
 	// if (error) console.log(error);
 	// if (commentsError) console.log(commentsError);
@@ -41,6 +40,7 @@ const PostDetail = () => {
 	useFocusEffect(
 		useCallback(() => {
 			setIsUpdated((prev) => !prev);
+			refresh();
 		}, [id]),
 	);
 
@@ -51,7 +51,7 @@ const PostDetail = () => {
 			0,
 		) ?? 0;
 
-	if (loading || isCommentUploadLoading) {
+	if (loading || isCommentUploadLoading || isCommentsLoading) {
 		return <LoadingIndicator />;
 	}
 
@@ -119,8 +119,6 @@ const PostDetail = () => {
 							postId={post.id}
 							postCreatorId={post.creatorId}
 							comments={comments}
-							isCommentsUpdated={isCommentsUpdated}
-							setIsCommentsUpdated={setIsCommentsUpdated}
 							containerStyle={{ marginBottom: 60 }}
 						/>
 					}
