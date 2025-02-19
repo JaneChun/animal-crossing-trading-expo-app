@@ -50,12 +50,7 @@ const NewPost = () => {
 	const route = useRoute<NewPostRouteProp>();
 	const { id: editingId = '' } = route?.params ?? {};
 
-	const [isUpdated, setIsUpdated] = useState(false);
-	const {
-		post,
-		error,
-		isLoading: loading,
-	} = useGetPostDetail(editingId, isUpdated);
+	const { post, error, isLoading: loading } = useGetPostDetail(editingId);
 
 	useEffect(() => {
 		tabNavigation.setOptions({
@@ -76,7 +71,9 @@ const NewPost = () => {
 
 			if (post.images?.length) {
 				setOriginalImageUrls(post.images);
-				setImages(post.images.map((url: string) => ({ uri: url }))); // UI 표시에 필요하므로 images에도 변환하여 추가
+				setImages(
+					post.images.map((url: string) => ({ uri: url } as ImagePickerAsset)),
+				); // UI 표시에 필요하므로 images에도 변환하여 추가
 			}
 		}
 	}, [post]);

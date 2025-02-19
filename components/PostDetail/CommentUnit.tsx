@@ -40,7 +40,7 @@ const CommentUnit = ({
 			setCommentCreatorInfo(userInfo);
 		};
 		getCommentCreatorInfo();
-	}, []);
+	}, [creatorId]);
 
 	const showCommentEditOptions = ({
 		postId,
@@ -100,33 +100,33 @@ const CommentUnit = ({
 	};
 
 	// 채팅 시작
-	const onChatClick = async () => {
-		// if (!id || !userInfo) return;
-		// const combinedId =
-		// 	userInfo.uid > comment.creatorId
-		// 		? userInfo.uid + comment.creatorId
-		// 		: comment.creatorId + userInfo.uid;
-		// try {
-		// 	const response = await getDoc(doc(db, 'Chats', combinedId));
-		// 	if (!response.exists()) {
-		// 		await setDataToFirestore(doc(db, 'Chats', combinedId), {
-		// 			messages: [],
-		// 			participants: [userInfo.uid, comment.creatorId],
-		// 		});
-		// 	}
-		// 	dispatch({
-		// 		type: 'CHANGE_USER',
-		// 		payload: {
-		// 			uid: comment.creatorId,
-		// 			displayName: comment.creatorDisplayName,
-		// 			photoURL: comment.creatorPhotoURL,
-		// 		},
-		// 	});
-		// 	// 채팅방으로 이동 (네비게이션 로직 필요)
-		// } catch (error) {
-		// 	console.log('❌ 채팅 오류:', error);
-		// }
-	};
+	// const onChatClick = async () => {
+	// if (!id || !userInfo) return;
+	// const combinedId =
+	// 	userInfo.uid > comment.creatorId
+	// 		? userInfo.uid + comment.creatorId
+	// 		: comment.creatorId + userInfo.uid;
+	// try {
+	// 	const response = await getDoc(doc(db, 'Chats', combinedId));
+	// 	if (!response.exists()) {
+	// 		await setDataToFirestore(doc(db, 'Chats', combinedId), {
+	// 			messages: [],
+	// 			participants: [userInfo.uid, comment.creatorId],
+	// 		});
+	// 	}
+	// 	dispatch({
+	// 		type: 'CHANGE_USER',
+	// 		payload: {
+	// 			uid: comment.creatorId,
+	// 			displayName: comment.creatorDisplayName,
+	// 			photoURL: comment.creatorPhotoURL,
+	// 		},
+	// 	});
+	// 	// 채팅방으로 이동 (네비게이션 로직 필요)
+	// } catch (error) {
+	// 	console.log('❌ 채팅 오류:', error);
+	// }
+	// };
 
 	return (
 		<View style={styles.container}>

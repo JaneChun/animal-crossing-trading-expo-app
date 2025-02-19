@@ -21,7 +21,11 @@ function useGetComments(postId: string) {
 	const [commentsError, setCommentsError] = useState<Error | null>(null);
 	const [isCommentsLoading, setIsCommentsLoading] = useState<boolean>(true);
 
-	const getComments = async () => {
+	const fetchData = useCallback(async () => {
+		if (!postId) return;
+
+		setIsCommentsLoading(true);
+
 		try {
 			const q = query(
 				collection(db, `Boards/${postId}/Comments`),
@@ -45,19 +49,19 @@ function useGetComments(postId: string) {
 		} finally {
 			setIsCommentsLoading(false);
 		}
-	};
-
-	useEffect(() => {
-		refresh();
 	}, [postId]);
 
 	const refresh = useCallback(async () => {
-		setIsCommentsLoading(true);
 		setComments([]);
 		setCommentsError(null);
 
-		getComments();
-	}, [getComments]);
+		fetchData();
+	}, [fetchData]);
+
+	// 초기 로드
+	useEffect(() => {
+		refresh();
+	}, [postId, refresh]);
 
 	return { comments, commentsError, isCommentsLoading, refresh };
 }

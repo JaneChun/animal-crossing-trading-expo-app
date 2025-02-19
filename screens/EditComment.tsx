@@ -36,7 +36,7 @@ const EditComment = () => {
 				</Button>
 			),
 		});
-	}, [newCommentInput, isLoading]);
+	}, [newCommentInput, isValid, isLoading, navigation]);
 
 	useEffect(() => {
 		setNewCommentInput(comment);

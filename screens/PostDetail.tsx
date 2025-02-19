@@ -47,10 +47,9 @@ const PostDetail = () => {
 
 	useFocusEffect(
 		useCallback(() => {
-			console.log('refresh');
 			postRefresh();
 			commentRefresh();
-		}, []),
+		}, [postRefresh, commentRefresh]),
 	);
 
 	if (loading || isCommentUploadLoading || isCommentsLoading) {

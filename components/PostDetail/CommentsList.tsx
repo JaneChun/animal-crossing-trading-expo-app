@@ -1,8 +1,5 @@
-import { useNavigation } from '@react-navigation/native';
-import { FlatList, StyleSheet, Text, View, ViewStyle } from 'react-native';
-// import CommentUnit from './CommentUnit';
 import { Comment } from '@/hooks/useGetComments';
-import { TabNavigation } from '@/types/navigation';
+import { FlatList, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import CommentUnit from './CommentUnit';
 
 const CommentsList = ({
@@ -15,8 +12,6 @@ const CommentsList = ({
 	comments: Comment[];
 	containerStyle?: ViewStyle;
 }) => {
-	const navigation = useNavigation<TabNavigation>();
-
 	return (
 		<View style={[styles.container, containerStyle]}>
 			<Text style={styles.commentHeader}>댓글 ({comments.length})</Text>

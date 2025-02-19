@@ -39,7 +39,7 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 	const [isEnd, setIsEnd] = useState<boolean>(false); // 더 이상 불러올 데이터가 없을 경우 true
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
-	const memoizedFilter = useMemo(() => filter, [filter?.creatorId]);
+	const memoizedFilter = useMemo(() => filter, [JSON.stringify(filter)]);
 
 	const fetchData = useCallback(
 		async (isLoadMore = false) => {
@@ -105,11 +105,6 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 		[memoizedFilter, pageSize, isEnd, isLoading],
 	);
 
-	// 초기 로드
-	useEffect(() => {
-		refresh();
-	}, [memoizedFilter, pageSize]);
-
 	const refresh = useCallback(() => {
 		setIsEnd(false);
 		setData([]);
@@ -117,6 +112,11 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 
 		fetchData(false);
 	}, [fetchData]);
+
+	// 초기 로드
+	useEffect(() => {
+		refresh();
+	}, [memoizedFilter, pageSize]);
 
 	const loadMore = useCallback(() => {
 		if (isLoading || isEnd) return;

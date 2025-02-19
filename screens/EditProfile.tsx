@@ -43,7 +43,14 @@ const EditProfile = () => {
 				</Button>
 			),
 		});
-	}, [displayNameInput, islandNameInput, image, isLoading]);
+	}, [
+		displayNameInput,
+		islandNameInput,
+		image,
+		isValid,
+		isLoading,
+		navigation,
+	]);
 
 	useEffect(() => {
 		if (userInfo) {

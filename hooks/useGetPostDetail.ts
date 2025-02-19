@@ -14,7 +14,7 @@ function useGetPostDetail(id: string): UseGetPostDetailReturnType {
 	const [error, setError] = useState<Error | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 
-	const fetchData = async () => {
+	const fetchData = useCallback(async () => {
 		if (!id) return;
 
 		setIsLoading(true);
@@ -32,11 +32,6 @@ function useGetPostDetail(id: string): UseGetPostDetailReturnType {
 		} finally {
 			setIsLoading(false);
 		}
-	};
-
-	// 초기 로드
-	useEffect(() => {
-		refresh();
 	}, [id]);
 
 	const refresh = useCallback(() => {
@@ -44,7 +39,12 @@ function useGetPostDetail(id: string): UseGetPostDetailReturnType {
 		setError(null);
 
 		fetchData();
-	}, []);
+	}, [fetchData]);
+
+	// 초기 로드
+	useEffect(() => {
+		refresh();
+	}, [id, refresh]);
 
 	return { post: data, error, isLoading, refresh };
 }
