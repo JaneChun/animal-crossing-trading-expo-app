@@ -1,11 +1,11 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import PostUnit from '../Home/PostUnit';
-import { useAuthContext } from '@/contexts/AuthContext';
-import useLoading from '@/hooks/useLoading';
 import { Colors } from '@/constants/Color';
+import { useAuthContext } from '@/contexts/AuthContext';
 import useGetPosts from '@/hooks/useGetPosts';
+import useLoading from '@/hooks/useLoading';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+import PostUnit from '../Home/PostUnit';
 
 const MyPosts = () => {
 	const { userInfo } = useAuthContext();

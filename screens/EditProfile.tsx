@@ -1,20 +1,20 @@
-import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { ImagePickerAsset } from 'expo-image-picker';
+import ProfileImageInput from '@/components/MyPage/ProfileImageInput';
+import ValidationInput from '@/components/MyPage/ValidationInput';
+import Button from '@/components/ui/Button';
+import { Colors } from '@/constants/Color';
+import { useAuthContext, UserInfo } from '@/contexts/AuthContext';
+import useLoading from '@/hooks/useLoading';
+import { EditProfileRouteProp } from '@/types/navigation';
 import {
 	deleteObjectFromStorage,
 	updateDocToFirestore,
 	uploadObjectToStorage,
 } from '@/utilities/firebaseApi';
-import { Colors } from '@/constants/Color';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { EditProfileRouteProp } from '@/types/navigation';
-import Button from '@/components/ui/Button';
-import { useAuthContext, UserInfo } from '@/contexts/AuthContext';
-import ValidationInput from '@/components/MyPage/ValidationInput';
-import ProfileImageInput from '@/components/MyPage/ProfileImageInput';
 import { FontAwesome } from '@expo/vector-icons';
-import useLoading from '@/hooks/useLoading';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { ImagePickerAsset } from 'expo-image-picker';
+import React, { useEffect, useState } from 'react';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const EditProfile = () => {
 	const route = useRoute<EditProfileRouteProp>();

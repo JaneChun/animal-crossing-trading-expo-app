@@ -1,5 +1,4 @@
 import {
-	DocumentData,
 	collection,
 	getDocs,
 	orderBy,

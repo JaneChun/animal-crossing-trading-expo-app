@@ -1,20 +1,20 @@
-import {
-	View,
-	TextInput,
-	TouchableOpacity,
-	StyleSheet,
-	Keyboard,
-	Alert,
-} from 'react-native';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { FontAwesome } from '@expo/vector-icons';
 import { Colors } from '@/constants/Color';
-import { serverTimestamp } from 'firebase/firestore';
-import { auth } from '@/fbase';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { useNavigation } from '@react-navigation/native';
+import { auth } from '@/fbase';
 import { TabNavigation } from '@/types/navigation';
 import { addComment } from '@/utilities/firebaseApi';
+import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import { serverTimestamp } from 'firebase/firestore';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import {
+	Alert,
+	Keyboard,
+	StyleSheet,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from 'react-native';
 
 const CommentInput = ({
 	postId,

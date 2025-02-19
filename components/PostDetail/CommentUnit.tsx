@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { useActionSheet } from '@expo/react-native-action-sheet';
+import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { Comment } from '@/hooks/useGetComments';
+import { TabNavigation } from '@/types/navigation';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { getCreatorInfo } from '@/utilities/firebaseApi';
-import { Comment } from '@/hooks/useGetComments';
-import { Colors } from '@/constants/Color';
+import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { TabNavigation } from '@/types/navigation';
+import React, { useEffect, useState } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 // import { ChatContext } from '../../Context/ChatContext';
 
 type CommentCreatorInfo = {
@@ -26,7 +26,6 @@ const CommentUnit = ({
 	body,
 	creatorId,
 	createdAt,
-	updatedAt,
 }: CommentUnitProps) => {
 	const { showActionSheetWithOptions } = useActionSheet();
 	const { userInfo } = useAuthContext();

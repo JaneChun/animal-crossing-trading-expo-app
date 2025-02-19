@@ -1,7 +1,6 @@
-import { View, Text, StyleSheet, Image, ViewStyle } from 'react-native';
-import React from 'react';
-import { Colors } from '@/constants/Color';
 import { CartItem } from '@/screens/NewPost';
+import React from 'react';
+import { Image, StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 type TotalProps = {
 	cart: CartItem[];

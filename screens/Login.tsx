@@ -1,13 +1,6 @@
-import {
-	View,
-	Text,
-	StyleSheet,
-	Image,
-	TouchableOpacity,
-	Alert,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import type { TabNavigation } from '@/types/navigation';
+import { useNavigation } from '@react-navigation/native';
+import { Alert, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { useAuthContext } from '@/contexts/AuthContext';
 

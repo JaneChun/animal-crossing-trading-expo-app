@@ -1,9 +1,9 @@
-import { useAuthContext } from '@/contexts/AuthContext';
-import { StyleSheet } from 'react-native';
-import Profile from '@/components/MyPage/Profile';
 import MyPosts from '@/components/MyPage/MyPosts';
-import { FlatList } from 'react-native-gesture-handler';
+import Profile from '@/components/MyPage/Profile';
+import { useAuthContext } from '@/contexts/AuthContext';
 import useLoading from '@/hooks/useLoading';
+import { StyleSheet } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 
 const MyPage = () => {
 	const { userInfo } = useAuthContext();

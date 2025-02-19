@@ -1,11 +1,11 @@
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
-import React from 'react';
-import { View, Text, Image, StyleSheet, Alert } from 'react-native';
-import Button from '../ui/Button';
-import { useNavigation } from '@react-navigation/native';
 import { TabNavigation } from '@/types/navigation';
 import { FontAwesome } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import React from 'react';
+import { Alert, Image, StyleSheet, Text, View } from 'react-native';
+import Button from '../ui/Button';
 
 const Profile = () => {
 	const { userInfo, logout } = useAuthContext();

@@ -1,6 +1,6 @@
-import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/Color';
 import { useState } from 'react';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 type ValidationInputProps = {
 	label: string;

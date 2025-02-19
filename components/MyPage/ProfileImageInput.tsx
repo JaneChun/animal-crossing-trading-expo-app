@@ -1,21 +1,20 @@
-import {
-	View,
-	Text,
-	TouchableOpacity,
-	Image,
-	StyleSheet,
-	Alert,
-	Keyboard,
-} from 'react-native';
+import { Colors } from '@/constants/Color';
 import { useActionSheet } from '@expo/react-native-action-sheet';
+import { Entypo, FontAwesome } from '@expo/vector-icons';
 import {
 	ImagePickerAsset,
 	launchImageLibraryAsync,
 	useMediaLibraryPermissions,
 } from 'expo-image-picker';
-import { Entypo, FontAwesome } from '@expo/vector-icons';
 import { Dispatch, SetStateAction } from 'react';
-import { Colors } from '@/constants/Color';
+import {
+	Alert,
+	Image,
+	Keyboard,
+	StyleSheet,
+	TouchableOpacity,
+	View,
+} from 'react-native';
 
 type ProfileImageInputProps = {
 	image: ImagePickerAsset | null;

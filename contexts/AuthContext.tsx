@@ -1,18 +1,9 @@
 import {
-	createContext,
-	ReactNode,
-	useContext,
-	useEffect,
-	useState,
-} from 'react';
-import { auth } from '../fbase';
-import {
-	OAuthProvider,
-	onAuthStateChanged,
-	signInWithCredential,
-	reauthenticateWithCredential,
-	deleteUser,
-} from 'firebase/auth';
+	getUserInfoFromFirestore,
+	saveUserToFirestore,
+	updateDocToFirestore,
+} from '@/utilities/firebaseApi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
 	// getKeyHashAndroid,
 	initializeKakaoSDK,
@@ -21,12 +12,21 @@ import {
 	login as kakaoLogin,
 	logout as kakaoLogout,
 } from '@react-native-kakao/user';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-	getUserInfoFromFirestore,
-	saveUserToFirestore,
-	updateDocToFirestore,
-} from '@/utilities/firebaseApi';
+	deleteUser,
+	OAuthProvider,
+	onAuthStateChanged,
+	reauthenticateWithCredential,
+	signInWithCredential,
+} from 'firebase/auth';
+import {
+	createContext,
+	ReactNode,
+	useContext,
+	useEffect,
+	useState,
+} from 'react';
+import { auth } from '../fbase';
 
 export type UserInfo = {
 	uid: string;

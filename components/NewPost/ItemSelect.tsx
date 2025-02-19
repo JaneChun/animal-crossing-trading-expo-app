@@ -1,20 +1,20 @@
+import { Colors } from '@/constants/Color';
+import type { CartItem } from '@/screens/NewPost';
+import axios from 'axios';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
-	View,
+	ActivityIndicator,
+	Image,
+	StyleProp,
+	StyleSheet,
 	Text,
 	TextInput,
-	TouchableOpacity,
-	Image,
-	StyleSheet,
-	ActivityIndicator,
-	StyleProp,
 	TextStyle,
+	TouchableOpacity,
+	View,
 	ViewStyle,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import axios from 'axios';
-import type { CartItem } from '@/screens/NewPost';
-import { Colors } from '@/constants/Color';
 
 type ItemSelectProps = {
 	cart: CartItem[];

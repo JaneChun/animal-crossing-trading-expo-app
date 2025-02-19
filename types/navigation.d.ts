@@ -1,7 +1,7 @@
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { UserInfo } from '@/contexts/AuthContext';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
-import { UserInfo } from '@/contexts/AuthContext';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export type RootTabParamList = {
 	Home: NavigatorScreenParams<HomeStackParamList>;

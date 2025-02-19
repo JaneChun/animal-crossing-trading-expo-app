@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { elapsedTime } from '@/utilities/elapsedTime';
-import { Text, StyleSheet, ViewStyle, View } from 'react-native';
+import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 type CreatedAtProps = {
 	createdAt: any;

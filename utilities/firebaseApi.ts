@@ -1,7 +1,8 @@
+import { UserInfo } from '@/contexts/AuthContext';
 import { db, storage } from '@/fbase';
+import { ImagePickerAsset } from 'expo-image-picker';
 import {
 	DocumentData,
-	DocumentReference,
 	addDoc,
 	collection,
 	deleteDoc,
@@ -15,12 +16,10 @@ import {
 } from 'firebase/firestore';
 import {
 	deleteObject,
-	ref,
 	getDownloadURL,
+	ref,
 	uploadBytes,
 } from 'firebase/storage';
-import { ImagePickerAsset } from 'expo-image-picker';
-import { UserInfo } from '@/contexts/AuthContext';
 import { Alert } from 'react-native';
 
 // DATABASE

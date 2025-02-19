@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { View, TextInput, Alert, StyleSheet } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import { EditCommentRouteProp, TabNavigation } from '@/types/navigation';
-import Button from '../components/ui/Button';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { auth } from '@/fbase';
 import useLoading from '@/hooks/useLoading';
-import { serverTimestamp } from 'firebase/firestore';
+import { EditCommentRouteProp, TabNavigation } from '@/types/navigation';
 import { updateComment } from '@/utilities/firebaseApi';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { Alert, StyleSheet, TextInput, View } from 'react-native';
+import Button from '../components/ui/Button';
 
 const EditComment = () => {
 	const route = useRoute<EditCommentRouteProp>();

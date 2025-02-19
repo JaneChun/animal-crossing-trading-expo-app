@@ -9,12 +9,12 @@ import {
 	useState,
 } from 'react';
 import {
-	View,
-	Text,
 	Image,
 	StyleSheet,
-	TouchableOpacity,
+	Text,
 	TextInput,
+	TouchableOpacity,
+	View,
 } from 'react-native';
 
 type CartItemProps = {

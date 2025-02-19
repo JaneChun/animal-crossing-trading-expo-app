@@ -1,7 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { Dispatch, SetStateAction } from 'react';
-import { StyleSheet } from 'react-native';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type TypeSelectProps = {
 	type: 'buy' | 'sell' | 'done';

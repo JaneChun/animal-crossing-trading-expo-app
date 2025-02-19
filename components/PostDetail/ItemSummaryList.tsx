@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { CartItem } from '@/screens/NewPost';
 import { Ionicons } from '@expo/vector-icons';
-import { View, Text, Image, StyleSheet, ViewStyle } from 'react-native';
+import { Image, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 type ItemSummaryListProps = {

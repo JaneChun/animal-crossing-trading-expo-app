@@ -1,37 +1,30 @@
-import { useEffect, useState } from 'react';
-import {
-	StyleSheet,
-	Alert,
-	KeyboardAvoidingView,
-	ScrollView,
-	View,
-	ActivityIndicator,
-} from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { Colors } from '@/constants/Color';
+import { type NewPostRouteProp, type TabNavigation } from '@/types/navigation';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { serverTimestamp } from 'firebase/firestore';
-import { type NewPostRouteProp, type TabNavigation } from '@/types/navigation';
+import { useEffect, useState } from 'react';
+import { Alert, KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import { useAuthContext } from '../contexts/AuthContext';
 import { auth } from '../fbase';
 import {
 	addDocToFirestore,
+	deleteObjectFromStorage,
 	updateDocToFirestore,
 	uploadObjectToStorage,
-	deleteObjectFromStorage,
 } from '../utilities/firebaseApi';
-import { Colors } from '@/constants/Color';
 
-import TypeSelect from '@/components/NewPost/TypeSelect';
-import TitleInput from '@/components/NewPost/TitleInput';
 import BodyInput from '@/components/NewPost/BodyInput';
 import ImageInput from '@/components/NewPost/ImageInput';
+import TitleInput from '@/components/NewPost/TitleInput';
+import TypeSelect from '@/components/NewPost/TypeSelect';
+import useGetPostDetail from '@/hooks/useGetPostDetail';
+import useLoading from '@/hooks/useLoading';
+import React from 'react';
+import ItemList from '../components/NewPost/ItemList';
 import ItemSelect from '../components/NewPost/ItemSelect';
 import Button from '../components/ui/Button';
-import ItemList from '../components/NewPost/ItemList';
-import useGetPostDetail from '@/hooks/useGetPostDetail';
-import React from 'react';
-import useLoading from '@/hooks/useLoading';
 
 export type CartItem = {
 	UniqueEntryID: string;

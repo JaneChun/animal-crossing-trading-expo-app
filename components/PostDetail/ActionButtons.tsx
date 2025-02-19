@@ -1,15 +1,15 @@
-import {
-	View,
-	Text,
-	StyleSheet,
-	ViewStyle,
-	TouchableOpacity,
-	Alert,
-} from 'react-native';
+import { Colors } from '@/constants/Color';
 import { TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
+import {
+	Alert,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+	ViewStyle,
+} from 'react-native';
 import { deleteDocFromFirestore } from '../../utilities/firebaseApi';
-import { Colors } from '@/constants/Color';
 
 type ActionButtonsProps = {
 	id: string;

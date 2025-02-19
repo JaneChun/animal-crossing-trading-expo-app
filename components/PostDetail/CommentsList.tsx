@@ -1,14 +1,12 @@
-import { Dispatch, SetStateAction, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ViewStyle } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { FlatList, StyleSheet, Text, View, ViewStyle } from 'react-native';
 // import CommentUnit from './CommentUnit';
-import { TabNavigation } from '@/types/navigation';
 import { Comment } from '@/hooks/useGetComments';
+import { TabNavigation } from '@/types/navigation';
 import CommentUnit from './CommentUnit';
 
 const CommentsList = ({
 	postId,
-	postCreatorId,
 	comments,
 	containerStyle,
 }: {

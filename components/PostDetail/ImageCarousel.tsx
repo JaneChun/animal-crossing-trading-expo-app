@@ -1,6 +1,5 @@
 import { Colors } from '@/constants/Color';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Dimensions, Image, StyleSheet, View, ViewStyle } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 
@@ -8,7 +7,7 @@ type ImageCarouselProps = {
 	images: string[];
 	containerStyle: ViewStyle;
 };
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const ImageCarousel = ({ images, containerStyle }: ImageCarouselProps) => {
 	const [activeIndex, setActiveIndex] = useState(0);

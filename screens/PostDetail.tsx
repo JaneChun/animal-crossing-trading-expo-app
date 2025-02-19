@@ -1,24 +1,24 @@
-import { PostDetailRouteProp } from '@/types/navigation';
-import React, { useCallback } from 'react';
-import { View, StyleSheet, Text, KeyboardAvoidingView } from 'react-native';
-import { useFocusEffect, useRoute } from '@react-navigation/native';
-import useGetPostDetail from '../hooks/useGetPostDetail';
-import CommentsList from '@/components/PostDetail/CommentsList';
-import { Colors } from '@/constants/Color';
 import TypeBadge from '@/components/Home/TypeBadge';
-import UserInfo from '@/components/PostDetail/UserInfo';
+import ActionButtons from '@/components/PostDetail/ActionButtons';
+import Body from '@/components/PostDetail/Body';
+import CommentInput from '@/components/PostDetail/CommentInput';
+import CommentsList from '@/components/PostDetail/CommentsList';
+import CreatedAt from '@/components/PostDetail/CreatedAt';
 import ImageCarousel from '@/components/PostDetail/ImageCarousel';
 import ItemSummaryList from '@/components/PostDetail/ItemSummaryList';
 import Title from '@/components/PostDetail/Title';
-import CreatedAt from '@/components/PostDetail/CreatedAt';
-import Body from '@/components/PostDetail/Body';
 import Total from '@/components/PostDetail/Total';
-import ActionButtons from '@/components/PostDetail/ActionButtons';
+import UserInfo from '@/components/PostDetail/UserInfo';
+import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { FlatList } from 'react-native-gesture-handler';
-import useLoading from '@/hooks/useLoading';
-import CommentInput from '@/components/PostDetail/CommentInput';
 import useGetComments from '@/hooks/useGetComments';
+import useLoading from '@/hooks/useLoading';
+import { PostDetailRouteProp } from '@/types/navigation';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
+import React, { useCallback } from 'react';
+import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+import useGetPostDetail from '../hooks/useGetPostDetail';
 
 const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();

@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Color';
-import { View, Text, Image, StyleSheet, ViewStyle } from 'react-native';
+import { Image, StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 type UserInfoProps = {
 	displayName: string;

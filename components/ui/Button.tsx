@@ -1,10 +1,10 @@
 import { Colors } from '@/constants/Color';
 import React from 'react';
 import {
+	GestureResponderEvent,
+	StyleSheet,
 	Text,
 	TouchableOpacity,
-	StyleSheet,
-	GestureResponderEvent,
 } from 'react-native';
 
 type Color = 'mint' | 'white' | 'gray';

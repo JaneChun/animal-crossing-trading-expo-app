@@ -1,7 +1,6 @@
+import { getCreatorInfo, getDocFromFirestore } from '@/utilities/firebaseApi';
 import { useCallback, useEffect, useState } from 'react';
-import { getDocFromFirestore } from '@/utilities/firebaseApi';
 import { Post } from './useGetPosts';
-import { getCreatorInfo } from '@/utilities/firebaseApi';
 
 type UseGetPostDetailReturnType = {
 	post: Post | null;

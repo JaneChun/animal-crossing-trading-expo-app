@@ -1,11 +1,11 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import PostUnit from '../components/Home/PostUnit';
 import { Colors } from '@/constants/Color';
-import useLoading from '@/hooks/useLoading';
 import useGetPosts from '@/hooks/useGetPosts';
+import useLoading from '@/hooks/useLoading';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
+import PostUnit from '../components/Home/PostUnit';
 
 const Home = () => {
 	const { LoadingIndicator, InlineLoadingIndicator } = useLoading();

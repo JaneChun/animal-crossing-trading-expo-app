@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { View, ActivityIndicator, StyleSheet, Image } from 'react-native';
-import { Colors } from '@/constants/Color';
+import { Image, StyleSheet, View } from 'react-native';
 
 const useLoading = () => {
 	const [isLoading, setIsLoading] = useState(false);

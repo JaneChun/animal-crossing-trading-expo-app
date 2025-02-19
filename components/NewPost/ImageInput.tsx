@@ -1,26 +1,24 @@
-import {
-	View,
-	Text,
-	TouchableOpacity,
-	Keyboard,
-	ScrollView,
-	StyleProp,
-	StyleSheet,
-	TextStyle,
-	ViewStyle,
-	Alert,
-	Image,
-} from 'react-native';
 import { Colors } from '@/constants/Color';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Dispatch, SetStateAction } from 'react';
 import {
-	launchImageLibraryAsync,
 	ImagePickerAsset,
+	launchImageLibraryAsync,
 	useMediaLibraryPermissions,
 } from 'expo-image-picker';
+import React, { Dispatch, SetStateAction } from 'react';
+import {
+	Alert,
+	Image,
+	Keyboard,
+	StyleProp,
+	StyleSheet,
+	Text,
+	TextStyle,
+	TouchableOpacity,
+	View,
+	ViewStyle,
+} from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import React from 'react';
 
 type ImageInputProps = {
 	images: ImagePickerAsset[];
