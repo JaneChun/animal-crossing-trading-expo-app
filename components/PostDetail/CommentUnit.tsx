@@ -8,7 +8,7 @@ import {
 	getCreatorInfo,
 } from '@/utilities/firebaseApi';
 import { useActionSheet } from '@expo/react-native-action-sheet';
-import { Entypo } from '@expo/vector-icons';
+import { AntDesign, Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import {
@@ -29,11 +29,13 @@ type CommentCreatorInfo = {
 interface CommentUnitProps extends Comment {
 	commentRefresh: () => void;
 	postId: string;
+	postCreatorId: string;
 }
 
 const CommentUnit = ({
 	commentRefresh,
 	postId,
+	postCreatorId,
 	id,
 	body,
 	creatorId,
@@ -90,7 +92,6 @@ const CommentUnit = ({
 		navigation.navigate('EditComment', { postId, commentId, comment });
 	};
 
-	// 댓글 삭제
 	const deleteComment = async ({
 		postId,
 		commentId,
@@ -130,33 +131,34 @@ const CommentUnit = ({
 	};
 
 	// 채팅 시작
-	// const onChatClick = async () => {
-	// if (!id || !userInfo) return;
-	// const combinedId =
-	// 	userInfo.uid > comment.creatorId
-	// 		? userInfo.uid + comment.creatorId
-	// 		: comment.creatorId + userInfo.uid;
-	// try {
-	// 	const response = await getDoc(doc(db, 'Chats', combinedId));
-	// 	if (!response.exists()) {
-	// 		await setDataToFirestore(doc(db, 'Chats', combinedId), {
-	// 			messages: [],
-	// 			participants: [userInfo.uid, comment.creatorId],
-	// 		});
-	// 	}
-	// 	dispatch({
-	// 		type: 'CHANGE_USER',
-	// 		payload: {
-	// 			uid: comment.creatorId,
-	// 			displayName: comment.creatorDisplayName,
-	// 			photoURL: comment.creatorPhotoURL,
-	// 		},
-	// 	});
-	// 	// 채팅방으로 이동 (네비게이션 로직 필요)
-	// } catch (error) {
-	// 	console.log('❌ 채팅 오류:', error);
-	// }
-	// };
+	const onChatClick = async () => {
+		console.log('chatclick');
+		// if (!id || !userInfo) return;
+		// const combinedId =
+		// 	userInfo.uid > comment.creatorId
+		// 		? userInfo.uid + comment.creatorId
+		// 		: comment.creatorId + userInfo.uid;
+		// try {
+		// 	const response = await getDoc(doc(db, 'Chats', combinedId));
+		// 	if (!response.exists()) {
+		// 		await setDataToFirestore(doc(db, 'Chats', combinedId), {
+		// 			messages: [],
+		// 			participants: [userInfo.uid, comment.creatorId],
+		// 		});
+		// 	}
+		// 	dispatch({
+		// 		type: 'CHANGE_USER',
+		// 		payload: {
+		// 			uid: comment.creatorId,
+		// 			displayName: comment.creatorDisplayName,
+		// 			photoURL: comment.creatorPhotoURL,
+		// 		},
+		// 	});
+		// 	// 채팅방으로 이동 (네비게이션 로직 필요)
+		// } catch (error) {
+		// 	console.log('❌ 채팅 오류:', error);
+		// }
+	};
 
 	return (
 		<View style={styles.container}>
@@ -165,13 +167,16 @@ const CommentUnit = ({
 				style={styles.profileImage}
 			/>
 			<View style={styles.commentContent}>
+				{/* 헤더 */}
 				<View style={styles.commentHeader}>
-					<Text style={styles.displayName}>
-						{commentCreatorInfo?.creatorDisplayName}
-					</Text>
-					{/* {postCreatorId === comment.creatorId && (
-									<Text style={styles.authorTag}>작성자</Text>
-								)} */}
+					<View style={styles.creatorInfo}>
+						<Text style={styles.creatorDisplayNameText}>
+							{commentCreatorInfo?.creatorDisplayName}
+						</Text>
+						{postCreatorId === creatorId && (
+							<Text style={styles.authorTag}>작성자</Text>
+						)}
+					</View>
 					{creatorId === userInfo?.uid && (
 						<TouchableOpacity
 							onPress={() =>
@@ -188,18 +193,22 @@ const CommentUnit = ({
 						</TouchableOpacity>
 					)}
 				</View>
+
+				{/* 바디 */}
 				<Text style={styles.commentBody}>{body}</Text>
+
+				{/* 푸터 */}
 				<View style={styles.commentFooter}>
 					<Text style={styles.time}>{elapsedTime(createdAt?.toDate())}</Text>
-					{/* {postCreatorId === userInfo?.uid &&
-									postCreatorId !== comment.creatorId && (
-										<TouchableOpacity
-											style={styles.chatButton}
-											onPress={onChatClick}
-										>
-											<Text style={styles.chatText}>채팅하기</Text>
-										</TouchableOpacity>
-									)} */}
+					{/* {postCreatorId === userInfo?.uid && postCreatorId !== creatorId && ( */}
+					<TouchableOpacity
+						style={styles.chatButtonContainer}
+						onPress={onChatClick}
+					>
+						<Text style={styles.chatText}>채팅하기</Text>
+						<AntDesign name='arrowright' color={Colors.font_black} size={14} />
+					</TouchableOpacity>
+					{/* )} */}
 				</View>
 			</View>
 		</View>
@@ -221,21 +230,30 @@ const styles = StyleSheet.create({
 	},
 	commentContent: {
 		flex: 1,
+		gap: 2,
 	},
 	commentHeader: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
+		marginBottom: 6,
 	},
-	displayName: {
+	creatorInfo: {
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
+	creatorDisplayNameText: {
 		fontSize: 14,
-		fontWeight: 'bold',
+		fontWeight: 600,
 		color: Colors.font_black,
 	},
 	authorTag: {
+		backgroundColor: Colors.primary_background,
+		color: Colors.primary_text,
 		fontSize: 12,
-		color: 'red',
-		marginLeft: 5,
+		padding: 4,
+		borderRadius: 4,
+		marginHorizontal: 6,
 	},
 	menu: {
 		padding: 5,
@@ -254,31 +272,17 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		color: Colors.primary,
 	},
-	// chatButton: { padding: 5, backgroundColor: '#5DB075', borderRadius: 5 },
-	// chatText: { fontSize: 12, color: '#fff' },
-	// editContainer: { padding: 10, backgroundColor: '#f9f9f9', borderRadius: 10 },
-	// input: {
-	// 	borderWidth: 1,
-	// 	borderColor: '#ddd',
-	// 	borderRadius: 5,
-	// 	padding: 8,
-	// 	minHeight: 60,
-	// 	textAlignVertical: 'top',
-	// },
-	// buttonContainer: {
-	// 	flexDirection: 'row',
-	// 	justifyContent: 'flex-end',
-	// 	marginTop: 5,
-	// },
-	// button: {
-	// 	padding: 8,
-	// 	backgroundColor: '#5DB075',
-	// 	borderRadius: 5,
-	// 	marginRight: 5,
-	// },
-	// buttonText: { color: '#fff', fontWeight: 'bold' },
-	// cancelButton: { padding: 8, backgroundColor: '#ddd', borderRadius: 5 },
-	// cancelText: { color: '#333' },
+	chatButtonContainer: {
+		flexDirection: 'row',
+		alignItems: 'flex-start',
+		gap: 4,
+		padding: 8,
+		backgroundColor: 'white',
+		borderRadius: 6,
+		borderWidth: 1,
+		borderColor: Colors.border_gray,
+	},
+	chatText: { fontSize: 14, color: Colors.font_black, fontWeight: 600 },
 });
 
 export default CommentUnit;

@@ -139,7 +139,7 @@ const NewPost = () => {
 				cart: CartItem[];
 				createdAt: ReturnType<typeof serverTimestamp>;
 				creatorId?: string;
-				// comments: number;
+				commentCount: number;
 			} = {
 				type,
 				title,
@@ -150,7 +150,7 @@ const NewPost = () => {
 				cart,
 				creatorId: userInfo?.uid,
 				createdAt: serverTimestamp(),
-				// comments: 0,
+				commentCount: 0,
 			};
 
 			if (editingId) {

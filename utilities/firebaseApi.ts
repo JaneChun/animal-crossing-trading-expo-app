@@ -263,3 +263,29 @@ export const updateComment = async ({
 		throw new Error(e);
 	}
 };
+
+export const deleteComment = async ({
+	postId,
+	commentId,
+}: {
+	postId: string;
+	commentId: string;
+}) => {
+	const batch = writeBatch(db);
+
+	try {
+		// 댓글 문서 삭제
+		const commentRef = doc(db, 'Boards', postId, 'Comments', commentId);
+		batch.delete(commentRef);
+
+		// post 문서의 commentCount 필드 수정
+		const postRef = doc(db, 'Boards', postId);
+		batch.update(postRef, { commentCount: increment(-1) });
+
+		await batch.commit();
+		console.log('댓글 추가 및 게시글 댓글 수 감소 완료');
+	} catch (e: any) {
+		console.log(' 댓글 삭제 중 오류 발생:', e);
+		throw new Error(e);
+	}
+};

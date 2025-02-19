@@ -44,7 +44,7 @@ const Home = () => {
 						createdAt={item.createdAt}
 						creatorDisplayName={item.creatorDisplayName}
 						creatorId={item.creatorId}
-						// comments={item.comments}
+						commentCount={item.commentCount}
 						// done={item.done}
 					/>
 				)}

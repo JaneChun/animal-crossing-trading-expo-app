@@ -15,7 +15,7 @@ interface PostUnitProps {
 	createdAt: any;
 	creatorDisplayName: string;
 	creatorId: string;
-	// comments?: number;
+	commentCount: number;
 	// done?: boolean;
 }
 
@@ -27,6 +27,7 @@ const PostUnit = ({
 	createdAt,
 	creatorDisplayName,
 	creatorId,
+	commentCount,
 }: PostUnitProps) => {
 	const navigation = useNavigation<StackNavigation>();
 
@@ -60,7 +61,7 @@ const PostUnit = ({
 					) : (
 						<TypeBadge type='buy' />
 					)}
-					<Text style={styles.title} numberOfLines={1}>
+					<Text style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
 						{title}
 					</Text>
 				</View>
@@ -71,10 +72,10 @@ const PostUnit = ({
 			</View>
 
 			{/* 댓글 */}
-			{/* <View style={styles.commentContainer}>
+			<View style={styles.commentContainer}>
 				<Text style={styles.commentLabel}>댓글</Text>
-				<Text style={styles.commentCount}>{comments}</Text>
-			</View> */}
+				<Text style={styles.commentCount}>{commentCount}</Text>
+			</View>
 		</TouchableOpacity>
 	);
 };
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		paddingVertical: 12,
+		paddingVertical: 16,
 		borderBottomWidth: 1,
 		borderBottomColor: Colors.border_gray,
 	},
@@ -106,11 +107,13 @@ const styles = StyleSheet.create({
 		marginLeft: 12,
 	},
 	titleContainer: {
+		flex: 1,
 		height: 30,
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	title: {
+		flexShrink: 1,
 		fontSize: 16,
 		fontWeight: 600,
 		color: Colors.font_black,
@@ -127,19 +130,22 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 		color: Colors.font_light_gray,
 	},
-	// commentContainer: {
-	// 	alignItems: 'center',
-	// 	marginLeft: 12,
-	// },
-	// commentLabel: {
-	// 	fontSize: 10,
-	// 	color: '#888',
-	// },
-	// commentCount: {
-	// 	fontSize: 14,
-	// 	fontWeight: 'bold',
-	// 	color: '#333',
-	// },
+	commentContainer: {
+		width: 50,
+		flexDirection: 'column',
+		gap: 6,
+		alignItems: 'center',
+	},
+	commentLabel: {
+		fontSize: 12,
+		fontWeight: 600,
+		color: Colors.font_black,
+	},
+	commentCount: {
+		fontSize: 16,
+		fontWeight: 'bold',
+		color: Colors.font_black,
+	},
 });
 
 export default PostUnit;

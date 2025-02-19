@@ -24,6 +24,7 @@ interface doc {
 	creatorId: string;
 	createdAt: ReturnType<typeof serverTimestamp>;
 	cart: CartItem[];
+	commentCount: number;
 }
 export interface Post extends doc {
 	creatorDisplayName: string;
