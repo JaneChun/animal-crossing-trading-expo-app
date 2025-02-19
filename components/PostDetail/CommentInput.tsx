@@ -19,9 +19,11 @@ import { addComment } from '@/utilities/firebaseApi';
 const CommentInput = ({
 	postId,
 	setIsLoading,
+	commentRefresh,
 }: {
 	postId: string;
 	setIsLoading: Dispatch<SetStateAction<boolean>>;
+	commentRefresh: () => void;
 }) => {
 	const [commentInput, setCommentInput] = useState<string>('');
 	const [keyboardHeight, setKeyboardHeight] = useState(0);
@@ -76,6 +78,7 @@ const CommentInput = ({
 		try {
 			setIsLoading(true);
 			addComment({ postId, commentData });
+			commentRefresh();
 		} catch (e: any) {
 			Alert.alert(
 				'오류',

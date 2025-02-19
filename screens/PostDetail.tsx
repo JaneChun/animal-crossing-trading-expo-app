@@ -1,5 +1,5 @@
 import { PostDetailRouteProp } from '@/types/navigation';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { View, StyleSheet, Text, KeyboardAvoidingView } from 'react-native';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 import useGetPostDetail from '../hooks/useGetPostDetail';
@@ -24,24 +24,33 @@ const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
 	const { id = '' } = route?.params ?? {};
 	const { userInfo } = useAuthContext();
-	const [isUpdated, setIsUpdated] = useState(false);
-	const { post, error, isLoading: loading } = useGetPostDetail(id, isUpdated);
+	const {
+		post,
+		error,
+		isLoading: loading,
+		refresh: postRefresh,
+	} = useGetPostDetail(id);
 	const {
 		isLoading: isCommentUploadLoading,
 		setIsLoading,
 		LoadingIndicator,
 	} = useLoading();
-	const { comments, commentsError, isCommentsLoading, refresh } =
-		useGetComments(id);
+	const {
+		comments,
+		commentsError,
+		isCommentsLoading,
+		refresh: commentRefresh,
+	} = useGetComments(id);
 
 	// if (error) console.log(error);
 	// if (commentsError) console.log(commentsError);
 
 	useFocusEffect(
 		useCallback(() => {
-			setIsUpdated((prev) => !prev);
-			refresh();
-		}, [id]),
+			console.log('refresh');
+			postRefresh();
+			commentRefresh();
+		}, []),
 	);
 
 	const totalPrice =
@@ -124,7 +133,11 @@ const PostDetail = () => {
 					}
 				/>
 				{/* 키보드 위에 고정되는 입력창 */}
-				<CommentInput postId={post.id} setIsLoading={setIsLoading} />
+				<CommentInput
+					postId={post.id}
+					setIsLoading={setIsLoading}
+					commentRefresh={commentRefresh}
+				/>
 			</View>
 		</KeyboardAvoidingView>
 	);

@@ -28,6 +28,7 @@ interface doc {
 export interface Post extends doc {
 	creatorDisplayName: string;
 	creatorIslandName: string;
+	creatorPhotoURL: string;
 }
 
 const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
