@@ -1,12 +1,20 @@
 import { View, Text, StyleSheet, Image, ViewStyle } from 'react-native';
 import React from 'react';
 import { Colors } from '@/constants/Color';
+import { CartItem } from '@/screens/NewPost';
 
 type TotalProps = {
-	totalPrice: number;
+	cart: CartItem[];
 	containerStyle: ViewStyle;
 };
-const Total = ({ totalPrice, containerStyle }: TotalProps) => {
+const Total = ({ cart = [], containerStyle }: TotalProps) => {
+	const totalPrice =
+		cart.reduce(
+			(acc: number, cur: { quantity: number; price: number }) =>
+				acc + Number(cur.quantity) * Number(cur.price),
+			0,
+		) ?? 0;
+
 	return (
 		<View style={[styles.container, containerStyle]}>
 			<Text style={styles.totalLabel}>일괄</Text>

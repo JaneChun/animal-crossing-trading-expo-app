@@ -53,13 +53,6 @@ const PostDetail = () => {
 		}, []),
 	);
 
-	const totalPrice =
-		post?.cart?.reduce(
-			(acc: number, cur: { quantity: number; price: number }) =>
-				acc + Number(cur.quantity) * Number(cur.price),
-			0,
-		) ?? 0;
-
 	if (loading || isCommentUploadLoading || isCommentsLoading) {
 		return <LoadingIndicator />;
 	}
@@ -111,15 +104,12 @@ const PostDetail = () => {
 									images={post.images}
 									containerStyle={{ marginBottom: 16 }}
 								/>
-								<Body body={post.body} containerStyle={{ marginBottom: 32 }} />
+								<Body body={post.body} containerStyle={{ marginBottom: 36 }} />
 								<ItemSummaryList
 									cart={post.cart}
-									containerStyle={{ marginBottom: 8 }}
-								/>
-								<Total
-									totalPrice={totalPrice}
 									containerStyle={{ marginBottom: 16 }}
 								/>
+								<Total cart={post.cart} containerStyle={{ marginBottom: 24 }} />
 							</View>
 						</View>
 					}
