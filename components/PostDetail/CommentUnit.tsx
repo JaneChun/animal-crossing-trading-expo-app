@@ -3,12 +3,22 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import { Comment } from '@/hooks/useGetComments';
 import { TabNavigation } from '@/types/navigation';
 import { elapsedTime } from '@/utilities/elapsedTime';
-import { getCreatorInfo } from '@/utilities/firebaseApi';
+import {
+	deleteComment as deleteCommentFromDB,
+	getCreatorInfo,
+} from '@/utilities/firebaseApi';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+	Alert,
+	Image,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from 'react-native';
 // import { ChatContext } from '../../Context/ChatContext';
 
 type CommentCreatorInfo = {
@@ -17,10 +27,12 @@ type CommentCreatorInfo = {
 };
 
 interface CommentUnitProps extends Comment {
+	commentRefresh: () => void;
 	postId: string;
 }
 
 const CommentUnit = ({
+	commentRefresh,
 	postId,
 	id,
 	body,
@@ -61,7 +73,7 @@ const CommentUnit = ({
 			},
 			(buttonIndex) => {
 				if (buttonIndex === 0) editComment({ postId, commentId, comment });
-				else if (buttonIndex === 1) deleteComment();
+				else if (buttonIndex === 1) deleteComment({ postId, commentId });
 			},
 		);
 	};
@@ -79,24 +91,42 @@ const CommentUnit = ({
 	};
 
 	// 댓글 삭제
-	const deleteComment = async () => {
-		// Alert.alert('댓글 삭제', '정말로 삭제하시겠습니까?', [
-		// 	{ text: '취소', style: 'cancel' },
-		// 	{
-		// 		text: '삭제',
-		// 		style: 'destructive',
-		// 		onPress: async () => {
-		// 			try {
-		// 				await deleteDoc(
-		// 					doc(db, 'Boards', id, 'Comments', comment.commentId),
-		// 				);
-		// 				setIsCommentsUpdated((prev) => !prev);
-		// 			} catch (error) {
-		// 				console.log('❌ 댓글 삭제 오류:', error);
-		// 			}
-		// 		},
-		// 	},
-		// ]);
+	const deleteComment = async ({
+		postId,
+		commentId,
+	}: {
+		postId: string;
+		commentId: string;
+	}) => {
+		Alert.alert('댓글 삭제', '정말로 삭제하겠습니까?', [
+			{ text: '취소', style: 'cancel' },
+			{
+				text: '삭제',
+				onPress: () => handleDeleteComment({ postId, commentId }),
+			},
+		]);
+	};
+
+	const showAlert = (title: string, message: string, onPress?: () => void) => {
+		Alert.alert(title, message, [{ text: '확인', onPress }]);
+	};
+
+	const handleDeleteComment = async ({
+		postId,
+		commentId,
+	}: {
+		postId: string;
+		commentId: string;
+	}) => {
+		try {
+			await deleteCommentFromDB({ postId, commentId });
+			showAlert('삭제 완료', '댓글이 성공적으로 삭제되었습니다.', async () => {
+				commentRefresh();
+			});
+		} catch (e: any) {
+			showAlert('삭제 실패', '댓글 삭제 중 오류가 발생했습니다.');
+			console.log('댓글 삭제 오류:', e);
+		}
 	};
 
 	// 채팅 시작

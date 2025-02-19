@@ -6,11 +6,13 @@ const CommentsList = ({
 	postId,
 	comments,
 	containerStyle,
+	commentRefresh,
 }: {
 	postId: string;
 	postCreatorId: string;
 	comments: Comment[];
 	containerStyle?: ViewStyle;
+	commentRefresh: () => void;
 }) => {
 	return (
 		<View style={[styles.container, containerStyle]}>
@@ -19,7 +21,13 @@ const CommentsList = ({
 			<FlatList
 				data={comments}
 				keyExtractor={({ id }) => id}
-				renderItem={({ item }) => <CommentUnit postId={postId} {...item} />}
+				renderItem={({ item }) => (
+					<CommentUnit
+						commentRefresh={commentRefresh}
+						postId={postId}
+						{...item}
+					/>
+				)}
 			/>
 		</View>
 	);

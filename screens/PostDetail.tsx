@@ -118,6 +118,7 @@ const PostDetail = () => {
 							postCreatorId={post.creatorId}
 							comments={comments}
 							containerStyle={{ marginBottom: 60 }}
+							commentRefresh={commentRefresh}
 						/>
 					}
 				/>
