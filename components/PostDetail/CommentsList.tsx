@@ -4,6 +4,7 @@ import CommentUnit from './CommentUnit';
 
 const CommentsList = ({
 	postId,
+	postCreatorId,
 	comments,
 	containerStyle,
 	commentRefresh,
@@ -25,6 +26,7 @@ const CommentsList = ({
 					<CommentUnit
 						commentRefresh={commentRefresh}
 						postId={postId}
+						postCreatorId={postCreatorId}
 						{...item}
 					/>
 				)}

@@ -16,4 +16,6 @@ export const Colors = {
 	green_text: '#278734',
 	blue_background: '#d2f4ff',
 	blue_text: '#4e9eb6',
+	primary_text: '#06A98A',
+	primary_background: '#DBF6F1',
 };
