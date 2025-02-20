@@ -11,9 +11,12 @@ import {
 	deleteDoc,
 	doc,
 	getDoc,
+	getDocs,
 	increment,
+	query,
 	setDoc,
 	updateDoc,
+	where,
 	writeBatch,
 } from 'firebase/firestore';
 import {
@@ -334,13 +337,15 @@ const generateChatId = (user1: string, user2: string): string => {
 export const sendMessage = async ({
 	chatId,
 	senderId,
+	receiverId,
 	message,
 }: {
 	chatId: string;
 	senderId: string;
+	receiverId: string;
 	message: string;
 }) => {
-	if (!chatId || !senderId || !message.trim()) return;
+	if (!chatId || !senderId || !receiverId || !message.trim()) return;
 
 	try {
 		// 1. 메세지 추가
@@ -350,6 +355,7 @@ export const sendMessage = async ({
 			body: message,
 			senderId,
 			createdAt: Timestamp.now(),
+			isReadBy: [senderId],
 		});
 
 		// 2. 채팅방 정보 업데이트 (최근 메시지, 보낸 사람, 시간)
@@ -358,6 +364,7 @@ export const sendMessage = async ({
 			lastMessage: message,
 			lastMessageSenderId: senderId,
 			updatedAt: Timestamp.now(),
+			[`unreadCount.${receiverId}`]: increment(1), // 상대 유저의 unreadCount 1 증가 시킴
 		});
 	} catch (e: any) {
 		console.log('메시지 전송 오류:', e);
@@ -400,5 +407,88 @@ export const rejoinChatRoom = async ({ chatId }: { chatId: string }) => {
 	} catch (e: any) {
 		console.log('채팅방 다시 참여 중 오류 발생:', e);
 		throw new Error(e);
+	}
+};
+
+// 메시지가 읽히면 isReadBy 배열에 읽은 사용자를 추가
+export const markMessageAsRead = async ({
+	chatId,
+	messageId,
+	userId,
+}: {
+	chatId: string;
+	messageId: string;
+	userId: string;
+}) => {
+	const messageRef = doc(db, `Chats/${chatId}/Messages/${messageId}`);
+
+	try {
+		await updateDoc(messageRef, {
+			isReadBy: arrayUnion(userId),
+		});
+		console.log(`메시지(${messageId}) 읽음 처리됨`);
+	} catch (e) {
+		console.log('메시지 읽음 처리 실패:', e);
+	}
+};
+
+export const markMessagesAsRead = async ({
+	chatId,
+	userId,
+}: {
+	chatId: string;
+	userId: string;
+}) => {
+	const messagesRef = collection(db, `Chats/${chatId}/Messages`);
+
+	try {
+		// 안 읽은 메시지만 가져오기
+		const q = query(messagesRef, where('isReadBy', 'not-in', [userId]));
+		const querySnapshot = await getDocs(q);
+
+		if (querySnapshot.empty) return;
+
+		const batch = writeBatch(db);
+
+		// 1. 메세지별 읽음 처리
+		querySnapshot.docs.forEach((messageDoc) => {
+			const messageRef = doc(db, `Chats/${chatId}/Messages/${messageDoc.id}`);
+			batch.update(messageRef, {
+				isReadBy: arrayUnion(userId), // 내가 읽었다고 추가
+			});
+		});
+
+		// 2. 채팅방 정보도 업데이트 (내 unreadCount 초기화)
+		const chatRef = doc(db, `Chats/${chatId}`);
+		batch.update(chatRef, {
+			[`unreadCount.${userId}`]: 0,
+		});
+
+		await batch.commit();
+		console.log(
+			`${userId}의 메세지 읽음 상태 배치 업데이트 & unreadCount 초기화 완료`,
+		);
+	} catch (error) {
+		console.error('메시지 읽음 처리 중 오류 발생:', error);
+	}
+};
+
+// 채팅을 읽으면 사용자의 unreadCount를 0으로 변경
+export const markChatAsRead = async ({
+	chatId,
+	userId,
+}: {
+	chatId: string;
+	userId: string;
+}) => {
+	const chatRef = doc(db, `Chats/${chatId}`);
+
+	try {
+		await updateDoc(chatRef, {
+			[`unreadCount.${userId}`]: 0,
+		});
+		console.log(`${userId}가 채팅방(${chatId})을 읽음`);
+	} catch (e) {
+		console.log('채팅 읽음 처리 실패:', e);
 	}
 };

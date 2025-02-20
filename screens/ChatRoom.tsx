@@ -3,7 +3,11 @@ import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/fbase';
 import { ChatRoomRouteProp, MyChatStackNavigation } from '@/types/navigation';
-import { leaveChatRoom, sendMessage } from '@/utilities/firebaseApi';
+import {
+	leaveChatRoom,
+	markMessagesAsRead,
+	sendMessage,
+} from '@/utilities/firebaseApi';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo, Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -35,6 +39,17 @@ const ChatRoom = () => {
 
 	const route = useRoute<ChatRoomRouteProp>();
 	const { chatId, receiverInfo } = route.params;
+
+	// 유저가 채팅방에 들어올 때 markMessagesAsRead 실행
+	useEffect(() => {
+		const readMessages = async () => {
+			if (chatId && userInfo) {
+				markMessagesAsRead({ chatId, userId: userInfo.uid });
+			}
+		};
+
+		readMessages();
+	}, [chatId, userInfo]);
 
 	// 🔹 ✅ 채팅방 정보 실시간 구독
 	useEffect(() => {
@@ -71,13 +86,13 @@ const ChatRoom = () => {
 	}, [chatId]);
 
 	const onSubmit = async () => {
-		// if (participants.length === 1 || chatInput === '') return;
-		if (!userInfo || chatInput === '') return;
+		if (!userInfo || !receiverInfo || chatInput === '') return;
 
 		try {
 			await sendMessage({
 				chatId,
 				senderId: userInfo.uid,
+				receiverId: receiverInfo.uid,
 				message: chatInput,
 			});
 		} catch (e) {
@@ -127,6 +142,9 @@ const ChatRoom = () => {
 					<Text style={styles.receivedText}>{item.body}</Text>
 				</View>
 				<Text style={styles.messageTime}>{formattedDate}</Text>
+				{item.isReadBy.includes(receiverInfo.uid) && (
+					<Text style={styles.readText}>읽음</Text>
+				)}
 			</View>
 		);
 	};
@@ -253,6 +271,11 @@ const styles = StyleSheet.create({
 	messageTime: {
 		fontSize: 10,
 		color: Colors.font_gray,
+	},
+	readText: {
+		fontSize: 10,
+		color: Colors.font_gray,
+		paddingBottom: 1,
 	},
 });
 

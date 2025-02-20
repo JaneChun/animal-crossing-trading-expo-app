@@ -26,7 +26,6 @@ const MyChat = () => {
 		chatId: string;
 		receiverInfo: ReceiverInfo;
 	}) => {
-		console.log(chatId);
 		navigation.navigate('ChatRoom', { chatId, receiverInfo });
 	};
 

@@ -20,6 +20,7 @@ interface doc {
 }
 
 export interface ReceiverInfo {
+	uid: string;
 	creatorDisplayName: string;
 	creatorIslandName: string;
 	creatorPhotoURL: string;
@@ -67,7 +68,10 @@ const useGetChats = () => {
 					return {
 						id: doc.id,
 						...docData,
-						receiverInfo,
+						receiverInfo: {
+							...receiverInfo,
+							uid: receiverId,
+						},
 					} as Chat;
 				}),
 			);
