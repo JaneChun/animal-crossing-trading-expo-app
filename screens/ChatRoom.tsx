@@ -138,7 +138,12 @@ const ChatRoom = () => {
 				<View style={styles.header}>
 					<TouchableOpacity
 						style={styles.iconContainer}
-						onPress={() => navigation.goBack()}
+						onPress={() =>
+							navigation.reset({
+								index: 0,
+								routes: [{ name: 'Chat' }],
+							})
+						}
 					>
 						<Ionicons
 							name='chevron-back-outline'

@@ -311,7 +311,13 @@ export const createChatRoom = async (user1: string, user2: string) => {
 			});
 			console.log(`새 채팅방 생성: ${chatId}`);
 		} else {
-			console.log(`기존 채팅방 사용: ${chatId}`);
+			// 기존 채팅방이 있는데, 사용자가 나간 채팅방이라면 (participants 배열에 없다면) 다시 추가
+			const participants = chatSnap.data().participants;
+			if (!participants.includes(user1)) {
+				await rejoinChatRoom({ chatId });
+			} else {
+				console.log(`기존 채팅방 사용: ${chatId}`);
+			}
 		}
 
 		return chatId;
@@ -380,21 +386,17 @@ export const leaveChatRoom = async ({
 	}
 };
 
-export const rejoinChatRoom = async ({
-	chatId,
-	userId,
-}: {
-	chatId: string;
-	userId: string;
-}) => {
+export const rejoinChatRoom = async ({ chatId }: { chatId: string }) => {
+	const users = chatId.split('_');
+
 	try {
 		const chatRef = doc(db, 'Chats', chatId);
 
 		await updateDoc(chatRef, {
-			participants: arrayUnion(userId),
+			participants: arrayUnion(...users),
 		});
 
-		console.log(`${userId} 유저가 채팅방에 다시 참여했습니다`);
+		console.log(`${JSON.stringify(users)} 유저가 채팅방에 다시 참여했습니다.`);
 	} catch (e: any) {
 		console.log('채팅방 다시 참여 중 오류 발생:', e);
 		throw new Error(e);

@@ -73,8 +73,8 @@ const useGetChats = () => {
 			);
 
 			setChats(chatsList);
-		} catch (error) {
-			console.error('채팅방 목록 가져오기 오류:', error);
+		} catch (e: any) {
+			console.log('채팅방 목록 가져오기 오류:', e);
 			return [];
 		}
 	};
