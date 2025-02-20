@@ -5,6 +5,8 @@ import {
 	DocumentData,
 	Timestamp,
 	addDoc,
+	arrayRemove,
+	arrayUnion,
 	collection,
 	deleteDoc,
 	doc,
@@ -353,6 +355,48 @@ export const sendMessage = async ({
 		});
 	} catch (e: any) {
 		console.log('메시지 전송 오류:', e);
+		throw new Error(e);
+	}
+};
+
+export const leaveChatRoom = async ({
+	chatId,
+	userId,
+}: {
+	chatId: string;
+	userId: string;
+}) => {
+	try {
+		const chatRef = doc(db, 'Chats', chatId);
+
+		await updateDoc(chatRef, {
+			participants: arrayRemove(userId),
+		});
+
+		console.log(`${userId} 유저가 채팅방을 나갔습니다.`);
+	} catch (e: any) {
+		console.log('채팅방 나가기 중 오류 발생:', e);
+		throw new Error(e);
+	}
+};
+
+export const rejoinChatRoom = async ({
+	chatId,
+	userId,
+}: {
+	chatId: string;
+	userId: string;
+}) => {
+	try {
+		const chatRef = doc(db, 'Chats', chatId);
+
+		await updateDoc(chatRef, {
+			participants: arrayUnion(userId),
+		});
+
+		console.log(`${userId} 유저가 채팅방에 다시 참여했습니다`);
+	} catch (e: any) {
+		console.log('채팅방 다시 참여 중 오류 발생:', e);
 		throw new Error(e);
 	}
 };

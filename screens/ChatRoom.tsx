@@ -3,7 +3,8 @@ import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/fbase';
 import { ChatRoomRouteProp, MyChatStackNavigation } from '@/types/navigation';
-import { sendMessage } from '@/utilities/firebaseApi';
+import { leaveChatRoom, sendMessage } from '@/utilities/firebaseApi';
+import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo, Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {
@@ -15,7 +16,6 @@ import {
 } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import {
-	Alert,
 	Image,
 	KeyboardAvoidingView,
 	StyleSheet,
@@ -26,11 +26,11 @@ import {
 import { FlatList } from 'react-native-gesture-handler';
 
 const ChatRoom = () => {
+	const { showActionSheetWithOptions } = useActionSheet();
 	const navigation = useNavigation<MyChatStackNavigation>();
 	const { userInfo } = useAuthContext();
 	const [chat, setChat] = useState<any | null>(null); // 타입
 	const [messages, setMessages] = useState<any[]>([]);
-
 	const [chatInput, setChatInput] = useState('');
 
 	const route = useRoute<ChatRoomRouteProp>();
@@ -87,38 +87,26 @@ const ChatRoom = () => {
 		}
 	};
 
-	const confirmLeaveChat = () => {
-		Alert.alert('채팅 나가기', '정말 나가겠습니까?', [
-			{ text: '취소', style: 'cancel' },
-			{ text: '확인', onPress: () => handleLeaveChat({ chatId: chat.id }) },
-		]);
+	const showActionOptions = () => {
+		const options = ['나가기', '취소'];
+		const cancelButtonIndex = 1;
+
+		showActionSheetWithOptions(
+			{
+				options,
+				cancelButtonIndex,
+			},
+			(buttonIndex) => {
+				if (buttonIndex === 0) leaveChat({ chatId: chat.id });
+			},
+		);
 	};
 
-	const handleLeaveChat = async ({ chatId }: { chatId: string }) => {
-		// if (!userInfo) return;
-		// try {
-		// 	const chatRef = doc(db, 'Chats', chatId);
-		// 	const chatSnapshot = await getDoc(chatRef);
-		// 	if (!chatSnapshot.exists()) {
-		// 		console.log('채팅방이 존재하지 않습니다.');
-		// 		return;
-		// 	}
-		// 	const chatData = chatSnapshot.data();
-		// 	const { participants } = chatData;
-		// 	// 유저가 유일한 참여자인 경우 → 채팅방 삭제
-		// 	if (participants.length === 1) {
-		// 		await deleteDoc(chatRef);
-		// 		console.log(`채팅방 ${chatId} 삭제됨`);
-		// 	} else {
-		// 		// 유저가 채팅방을 나갈 때, participants 배열에서 제거
-		// 		await updateDoc(chatRef, {
-		// 			participants: arrayRemove(userInfo.uid),
-		// 		});
-		// 		console.log(`${userInfo.displayName} 유저가 채팅방을 나갔습니다.`);
-		// 	}
-		// } catch (e) {
-		// 	console.log('채팅방 나가기 중 오류 발생:', e);
-		// }
+	const leaveChat = async ({ chatId }: { chatId: string }) => {
+		if (!userInfo) return;
+
+		await leaveChatRoom({ chatId, userId: userInfo.uid });
+		navigation.goBack();
 	};
 
 	const renderMessage = ({ item }: { item: any }) => {
@@ -167,7 +155,7 @@ const ChatRoom = () => {
 					</Text>
 					<TouchableOpacity
 						style={styles.iconContainer}
-						onPress={confirmLeaveChat}
+						onPress={showActionOptions}
 					>
 						<Entypo
 							name='dots-three-vertical'
