@@ -1,8 +1,10 @@
+import Input from '@/components/ui/Input';
+import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/fbase';
 import { ChatRoomRouteProp, MyChatStackNavigation } from '@/types/navigation';
 import { sendMessage } from '@/utilities/firebaseApi';
-import { FontAwesome } from '@expo/vector-icons';
+import { Entypo, Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {
 	collection,
@@ -14,15 +16,14 @@ import {
 import React, { useEffect, useState } from 'react';
 import {
 	Alert,
-	FlatList,
 	Image,
 	KeyboardAvoidingView,
 	StyleSheet,
 	Text,
-	TextInput,
 	TouchableOpacity,
 	View,
 } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 
 const ChatRoom = () => {
 	const navigation = useNavigation<MyChatStackNavigation>();
@@ -69,7 +70,7 @@ const ChatRoom = () => {
 		return () => unsubscribe();
 	}, [chatId]);
 
-	const handleSend = async () => {
+	const onSubmit = async () => {
 		// if (participants.length === 1 || chatInput === '') return;
 		if (!userInfo || chatInput === '') return;
 
@@ -120,131 +121,146 @@ const ChatRoom = () => {
 		// }
 	};
 
-	const renderMessage = ({ item }: { item: any }) => (
-		<View
-			style={[
-				styles.messageContainer,
-				item.senderId === userInfo?.uid
-					? styles.sentMessage
-					: styles.receivedMessage,
-			]}
-		>
-			<Text style={styles.messageText}>{item.body}</Text>
-			<Text style={styles.messageTime}>
-				{item.createdAt.toDate().toLocaleTimeString().slice(0, -3)}
-			</Text>
-		</View>
-	);
+	const renderMessage = ({ item }: { item: any }) => {
+		const formattedDate = item.createdAt
+			.toDate()
+			.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+
+		return item.senderId === userInfo?.uid ? (
+			<View style={[styles.messageContainer, { alignSelf: 'flex-end' }]}>
+				<Text style={styles.messageTime}>{formattedDate}</Text>
+				<View style={[styles.messageBubble, styles.sentBackground]}>
+					<Text style={styles.sentText}>{item.body}</Text>
+				</View>
+			</View>
+		) : (
+			<View style={[styles.messageContainer, { alignSelf: 'flex-start' }]}>
+				<View style={[styles.messageBubble, styles.receivedBackground]}>
+					<Text style={styles.receivedText}>{item.body}</Text>
+				</View>
+				<Text style={styles.messageTime}>{formattedDate}</Text>
+			</View>
+		);
+	};
 
 	return (
-		<KeyboardAvoidingView style={styles.container} behavior='padding'>
-			<View style={styles.header}>
-				<TouchableOpacity onPress={() => navigation.navigate('Chat')}>
-					<FontAwesome name='arrow-left' size={24} color='black' />
-				</TouchableOpacity>
-				<Image
-					source={{ uri: receiverInfo.creatorPhotoURL }}
-					style={styles.profileImage}
-				/>
-				<Text style={styles.userName}>{receiverInfo.creatorDisplayName}</Text>
-				<TouchableOpacity onPress={confirmLeaveChat}>
-					<FontAwesome name='ellipsis-v' size={24} color='black' />
-				</TouchableOpacity>
-			</View>
-
-			<FlatList
-				// ref={messageEndRef}
-				data={messages}
-				keyExtractor={(item) => item.id}
-				renderItem={renderMessage}
-				contentContainerStyle={styles.messageList}
-			/>
-
-			<View style={styles.inputContainer}>
-				<TextInput
-					value={chatInput}
-					onChangeText={setChatInput}
-					placeholder={
-						chat?.participants.length === 1
-							? '대화 상대가 없습니다.'
-							: '메시지를 입력하세요.'
-					}
-					style={styles.input}
-					editable={chat?.participants.length > 1}
-				/>
-				<TouchableOpacity
-					onPress={handleSend}
-					disabled={chat?.participants.length === 1}
-				>
-					<FontAwesome
-						name='paper-plane'
-						size={24}
-						color={chat?.participants.length === 1 ? 'gray' : '#0cc6b6'}
+		<View style={styles.screen}>
+			<KeyboardAvoidingView style={styles.container} behavior='padding'>
+				{/* 헤더 */}
+				<View style={styles.header}>
+					<TouchableOpacity
+						style={styles.iconContainer}
+						onPress={() => navigation.goBack()}
+					>
+						<Ionicons
+							name='chevron-back-outline'
+							size={24}
+							color={Colors.font_black}
+						/>
+					</TouchableOpacity>
+					<Image
+						source={{ uri: receiverInfo.creatorPhotoURL }}
+						style={styles.profileImage}
 					/>
-				</TouchableOpacity>
-			</View>
-		</KeyboardAvoidingView>
+					<Text style={styles.displayName}>
+						{receiverInfo.creatorDisplayName}
+					</Text>
+					<TouchableOpacity
+						style={styles.iconContainer}
+						onPress={confirmLeaveChat}
+					>
+						<Entypo
+							name='dots-three-vertical'
+							size={18}
+							color={Colors.font_black}
+						/>
+					</TouchableOpacity>
+				</View>
+
+				{/* 본문 */}
+				<FlatList
+					data={messages}
+					keyExtractor={({ id }) => id}
+					renderItem={renderMessage}
+					contentContainerStyle={styles.content}
+				/>
+
+				{/* 인풋 */}
+				<Input
+					input={chatInput}
+					setInput={setChatInput}
+					placeholder='메세지 보내기'
+					onPress={onSubmit}
+				/>
+			</KeyboardAvoidingView>
+		</View>
 	);
 };
 
 const styles = StyleSheet.create({
-	container: { flex: 1, backgroundColor: '#fff' },
+	screen: {
+		flex: 1,
+		backgroundColor: 'white',
+	},
+	container: {
+		flex: 1,
+	},
+	content: {
+		flex: 1,
+		padding: 24,
+	},
 	header: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		padding: 16,
+		paddingHorizontal: 12,
+		paddingVertical: 8,
 		borderBottomWidth: 1,
-		borderBottomColor: '#ddd',
+		borderBottomColor: Colors.border_gray,
 	},
 	profileImage: {
 		width: 40,
 		height: 40,
 		borderRadius: 20,
-		marginHorizontal: 10,
+		marginLeft: 4,
+		marginRight: 8,
 	},
-	userName: { flex: 1, fontSize: 16, fontWeight: 'bold' },
-	messageList: { padding: 16 },
+	displayName: {
+		flex: 1,
+		fontSize: 16,
+		fontWeight: 'bold',
+	},
+	iconContainer: {
+		padding: 5,
+	},
 	messageContainer: {
+		flexDirection: 'row',
+		alignItems: 'flex-end',
+		gap: 6,
+		marginVertical: 8,
+	},
+	messageBubble: {
+		maxWidth: '75%',
 		padding: 10,
 		borderRadius: 8,
-		marginVertical: 4,
-		maxWidth: '75%',
 	},
-	sentMessage: { alignSelf: 'flex-end', backgroundColor: '#0cc6b6' },
-	receivedMessage: { alignSelf: 'flex-start', backgroundColor: '#e0e0e0' },
-	messageText: { fontSize: 14, color: 'white' },
-	messageTime: { fontSize: 10, color: '#ccc', marginTop: 4 },
-	inputContainer: {
-		flexDirection: 'row',
-		padding: 10,
-		borderTopWidth: 1,
-		borderColor: '#ddd',
+	sentBackground: {
+		backgroundColor: Colors.primary,
 	},
-	input: {
-		flex: 1,
-		borderWidth: 1,
-		borderColor: '#ddd',
-		borderRadius: 20,
-		padding: 10,
-		marginRight: 10,
+	receivedBackground: {
+		backgroundColor: Colors.border_gray,
 	},
-	popupContainer: {
-		position: 'absolute',
-		bottom: '30%',
-		alignSelf: 'center',
-		backgroundColor: 'white',
-		padding: 20,
-		borderRadius: 10,
-		shadowOpacity: 0.2,
+	sentText: {
+		fontSize: 14,
+		color: 'white',
 	},
-	popupText: { fontSize: 16, fontWeight: 'bold', textAlign: 'center' },
-	ratingContainer: {
-		flexDirection: 'row',
-		justifyContent: 'center',
-		marginVertical: 10,
+	receivedText: {
+		fontSize: 14,
+		color: Colors.font_black,
 	},
-	confirmButton: { backgroundColor: '#0cc6b6', padding: 10, borderRadius: 5 },
-	confirmButtonText: { color: 'white', textAlign: 'center' },
+	messageTime: {
+		fontSize: 10,
+		color: Colors.font_gray,
+	},
 });
 
 export default ChatRoom;
