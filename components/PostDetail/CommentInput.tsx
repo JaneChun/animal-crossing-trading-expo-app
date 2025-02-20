@@ -3,18 +3,11 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import { auth } from '@/fbase';
 import { TabNavigation } from '@/types/navigation';
 import { addComment } from '@/utilities/firebaseApi';
-import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { Timestamp } from 'firebase/firestore';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import {
-	Alert,
-	Keyboard,
-	StyleSheet,
-	TextInput,
-	TouchableOpacity,
-	View,
-} from 'react-native';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { Alert, StyleSheet } from 'react-native';
+import Input from '../ui/Input';
 
 const CommentInput = ({
 	postId,
@@ -26,30 +19,8 @@ const CommentInput = ({
 	commentRefresh: () => void;
 }) => {
 	const [commentInput, setCommentInput] = useState<string>('');
-	const [keyboardHeight, setKeyboardHeight] = useState(0);
 	const navigation = useNavigation<TabNavigation>();
 	const { userInfo } = useAuthContext();
-
-	// 키보드 이벤트 리스너 추가 (키보드 높이 감지)
-	useEffect(() => {
-		const keyboardDidShowListener = Keyboard.addListener(
-			'keyboardDidShow',
-			(event) => {
-				setKeyboardHeight(event.endCoordinates.height - 235);
-			},
-		);
-		const keyboardDidHideListener = Keyboard.addListener(
-			'keyboardDidHide',
-			() => {
-				setKeyboardHeight(0);
-			},
-		);
-
-		return () => {
-			keyboardDidShowListener.remove();
-			keyboardDidHideListener.remove();
-		};
-	}, []);
 
 	const onSubmit = () => {
 		if (!userInfo || !auth.currentUser) {
@@ -91,18 +62,13 @@ const CommentInput = ({
 	};
 
 	return (
-		<View style={[styles.inputContainer, { bottom: keyboardHeight }]}>
-			<TextInput
-				style={styles.inputText}
-				value={commentInput}
-				onChangeText={setCommentInput}
-				placeholder='댓글을 입력해주세요.'
-				multiline
-			/>
-			<TouchableOpacity style={styles.iconContainer} onPress={onSubmit}>
-				<FontAwesome name='send' color={Colors.primary} size={24} />
-			</TouchableOpacity>
-		</View>
+		<Input
+			input={commentInput}
+			setInput={setCommentInput}
+			onPress={onSubmit}
+			placeholder='댓글을 입력해주세요.'
+			marginBottom={101}
+		/>
 	);
 };
 

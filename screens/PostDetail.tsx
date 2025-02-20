@@ -65,16 +65,15 @@ const PostDetail = () => {
 	}
 
 	return (
-		<KeyboardAvoidingView style={styles.screen} behavior='padding'>
-			<View style={styles.screen}>
+		<View style={styles.screen}>
+			<KeyboardAvoidingView style={styles.container} behavior='padding'>
 				<FlatList
 					data={[]}
 					renderItem={null}
-					style={styles.container}
-					contentContainerStyle={{ flexGrow: 1 }}
 					keyboardShouldPersistTaps='handled'
 					ListEmptyComponent={
 						<View style={styles.content}>
+							{/* 헤더 */}
 							<View style={styles.header}>
 								{post.creatorId === userInfo?.uid && (
 									<ActionButtons id={post.id} />
@@ -98,6 +97,7 @@ const PostDetail = () => {
 								/>
 							</View>
 
+							{/* 본문 */}
 							<View style={styles.body}>
 								<ImageCarousel
 									images={post.images}
@@ -110,26 +110,25 @@ const PostDetail = () => {
 								/>
 								<Total cart={post.cart} containerStyle={{ marginBottom: 24 }} />
 							</View>
+
+							{/* 댓글 */}
+							<CommentsList
+								postId={post.id}
+								postCreatorId={post.creatorId}
+								comments={comments}
+								containerStyle={{ marginBottom: 60 }}
+								commentRefresh={commentRefresh}
+							/>
 						</View>
 					}
-					ListFooterComponent={
-						<CommentsList
-							postId={post.id}
-							postCreatorId={post.creatorId}
-							comments={comments}
-							containerStyle={{ marginBottom: 60 }}
-							commentRefresh={commentRefresh}
-						/>
-					}
 				/>
-				{/* 키보드 위에 고정되는 입력창 */}
 				<CommentInput
 					postId={post.id}
 					setIsLoading={setIsLoading}
 					commentRefresh={commentRefresh}
 				/>
-			</View>
-		</KeyboardAvoidingView>
+			</KeyboardAvoidingView>
+		</View>
 	);
 };
 
@@ -138,15 +137,14 @@ export default PostDetail;
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
+		backgroundColor: 'white',
 	},
 	container: {
-		backgroundColor: 'white',
-		padding: 24,
-		paddingBottom: 0,
+		flex: 1,
 	},
 	content: {
-		paddingHorizontal: 2,
 		flex: 1,
+		padding: 24,
 	},
 	header: {
 		borderBottomWidth: 1,

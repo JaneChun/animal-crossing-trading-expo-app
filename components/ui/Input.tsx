@@ -13,11 +13,13 @@ const Input = ({
 	input,
 	setInput,
 	placeholder,
+	marginBottom,
 	onPress,
 }: {
 	input: string;
 	setInput: Dispatch<SetStateAction<string>>;
 	placeholder?: string;
+	marginBottom?: number;
 	onPress: () => void;
 }) => {
 	const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false);
@@ -45,7 +47,10 @@ const Input = ({
 
 	return (
 		<View
-			style={[styles.inputContainer, isKeyboardVisible && { marginBottom: 58 }]}
+			style={[
+				styles.inputContainer,
+				isKeyboardVisible && { marginBottom: marginBottom ? marginBottom : 58 },
+			]}
 		>
 			<TextInput
 				style={styles.inputText}
