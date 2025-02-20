@@ -2,7 +2,7 @@ import { Colors } from '@/constants/Color';
 import { type NewPostRouteProp, type TabNavigation } from '@/types/navigation';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
-import { serverTimestamp } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { Alert, KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -137,7 +137,7 @@ const NewPost = () => {
 				body: string;
 				images: string[];
 				cart: CartItem[];
-				createdAt: ReturnType<typeof serverTimestamp>;
+				createdAt: Timestamp;
 				creatorId?: string;
 				commentCount: number;
 			} = {
@@ -149,7 +149,7 @@ const NewPost = () => {
 				),
 				cart,
 				creatorId: userInfo?.uid,
-				createdAt: serverTimestamp(),
+				createdAt: Timestamp.now(),
 				commentCount: 0,
 			};
 

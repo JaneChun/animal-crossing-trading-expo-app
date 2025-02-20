@@ -1,16 +1,17 @@
 import { Colors } from '@/constants/Color';
 import { elapsedTime } from '@/utilities/elapsedTime';
+import { Timestamp } from 'firebase/firestore';
 import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 type CreatedAtProps = {
-	createdAt: any;
+	createdAt: Timestamp;
 	containerStyle: ViewStyle;
 };
 
 const CreatedAt = ({ createdAt, containerStyle }: CreatedAtProps) => {
 	return (
 		<View style={containerStyle}>
-			<Text style={styles.date}>{elapsedTime(createdAt?.toDate())}</Text>
+			<Text style={styles.date}>{elapsedTime(createdAt)}</Text>
 		</View>
 	);
 };

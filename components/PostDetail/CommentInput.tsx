@@ -5,7 +5,7 @@ import { TabNavigation } from '@/types/navigation';
 import { addComment } from '@/utilities/firebaseApi';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { serverTimestamp } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
 	Alert,
@@ -72,7 +72,7 @@ const CommentInput = ({
 		const commentData = {
 			creatorId: userInfo.uid,
 			body: commentInput,
-			createdAt: serverTimestamp(),
+			createdAt: Timestamp.now(),
 		};
 
 		try {

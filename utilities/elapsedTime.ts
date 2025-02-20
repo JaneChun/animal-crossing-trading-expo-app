@@ -1,5 +1,7 @@
-export const elapsedTime = (date: number): string => {
-	const start = new Date(date);
+import { Timestamp } from 'firebase/firestore';
+
+export const elapsedTime = (date: Timestamp): string => {
+	const start = date.toDate();
 	const end = new Date();
 
 	const seconds = Math.floor((end.getTime() - start.getTime()) / 1000);

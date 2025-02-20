@@ -9,8 +9,8 @@ import {
 	orderBy,
 	query,
 	QueryDocumentSnapshot,
-	serverTimestamp,
 	startAfter,
+	Timestamp,
 	where,
 } from 'firebase/firestore';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -22,7 +22,7 @@ interface doc {
 	body: string;
 	images: string[];
 	creatorId: string;
-	createdAt: ReturnType<typeof serverTimestamp>;
+	createdAt: Timestamp;
 	cart: CartItem[];
 	commentCount: number;
 }
