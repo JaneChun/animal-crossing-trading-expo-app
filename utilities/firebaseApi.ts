@@ -3,13 +3,13 @@ import { db, storage } from '@/fbase';
 import { ImagePickerAsset } from 'expo-image-picker';
 import {
 	DocumentData,
+	Timestamp,
 	addDoc,
 	collection,
 	deleteDoc,
 	doc,
 	getDoc,
 	increment,
-	serverTimestamp,
 	setDoc,
 	updateDoc,
 	writeBatch,
@@ -255,7 +255,7 @@ export const updateComment = async ({
 		const commentRef = doc(db, 'Boards', postId, 'Comments', commentId);
 		await updateDoc(commentRef, {
 			body: newCommentText,
-			updatedAt: serverTimestamp(),
+			updatedAt: Timestamp.now(),
 		});
 		console.log('댓글 수정 완료');
 	} catch (e: any) {
@@ -286,6 +286,73 @@ export const deleteComment = async ({
 		console.log('댓글 추가 및 게시글 댓글 수 감소 완료');
 	} catch (e: any) {
 		console.log(' 댓글 삭제 중 오류 발생:', e);
+		throw new Error(e);
+	}
+};
+
+// CHAT
+export const createChatRoom = async (user1: string, user2: string) => {
+	const chatId = generateChatId(user1, user2);
+	const chatRef = doc(db, 'Chats', chatId);
+
+	try {
+		const chatSnap = await getDoc(chatRef);
+
+		// 채팅방이 존재하지 않으면 새로 생성
+		if (!chatSnap.exists()) {
+			await setDoc(chatRef, {
+				id: chatId,
+				participants: [user1, user2],
+				lastMessage: '',
+				lastMessageSenderId: '',
+				updatedAt: Timestamp.now(),
+			});
+			console.log(`새 채팅방 생성: ${chatId}`);
+		} else {
+			console.log(`기존 채팅방 사용: ${chatId}`);
+		}
+
+		return chatId;
+	} catch (e) {
+		console.log('채팅방 생성 중 오류:', e);
+		throw new Error('채팅방을 생성할 수 없습니다.');
+	}
+};
+
+const generateChatId = (user1: string, user2: string): string => {
+	return [user1, user2].sort().join('_');
+};
+
+export const sendMessage = async ({
+	chatId,
+	senderId,
+	message,
+}: {
+	chatId: string;
+	senderId: string;
+	message: string;
+}) => {
+	if (!chatId || !senderId || !message.trim()) return;
+
+	try {
+		// 1. 메세지 추가
+		const messageRef = collection(db, 'Chats', chatId, 'Messages'); // Boards/{chatId}/Messages 서브컬렉션
+
+		await addDoc(messageRef, {
+			body: message,
+			senderId,
+			createdAt: Timestamp.now(),
+		});
+
+		// 2. 채팅방 정보 업데이트 (최근 메시지, 보낸 사람, 시간)
+		const chatRef = doc(db, 'Chats', chatId);
+		await updateDoc(chatRef, {
+			lastMessage: message,
+			lastMessageSenderId: senderId,
+			updatedAt: Timestamp.now(),
+		});
+	} catch (e: any) {
+		console.log('메시지 전송 오류:', e);
 		throw new Error(e);
 	}
 };

@@ -1,23 +1,24 @@
 import { Colors } from '@/constants/Color';
-import { StackNavigation } from '@/types/navigation';
+import { HomeStackNavigation } from '@/types/navigation';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { elapsedTime } from '../../utilities/elapsedTime';
 import TypeBadge from './TypeBadge';
 
-interface PostUnitProps {
+type PostUnitProps = {
 	id: string;
 	type: string;
 	title: string;
 	previewImage: string;
-	createdAt: any;
+	createdAt: Timestamp;
 	creatorDisplayName: string;
 	creatorId: string;
 	commentCount: number;
 	// done?: boolean;
-}
+};
 
 const PostUnit = ({
 	id,
@@ -29,7 +30,7 @@ const PostUnit = ({
 	creatorId,
 	commentCount,
 }: PostUnitProps) => {
-	const navigation = useNavigation<StackNavigation>();
+	const navigation = useNavigation<HomeStackNavigation>();
 
 	const navigateToPost = () => {
 		navigation.navigate('PostDetail', { id });
@@ -67,7 +68,7 @@ const PostUnit = ({
 				</View>
 				<Text style={styles.infoText}>
 					<Text style={styles.creator}>{creatorDisplayName} </Text>
-					<Text style={styles.date}> {elapsedTime(createdAt.toDate())}</Text>
+					<Text style={styles.date}> {elapsedTime(createdAt)}</Text>
 				</Text>
 			</View>
 

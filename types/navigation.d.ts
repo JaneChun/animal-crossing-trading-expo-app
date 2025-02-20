@@ -1,11 +1,12 @@
 import { UserInfo } from '@/contexts/AuthContext';
+import { ReceiverInfo } from '@/hooks/useGetChats';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export type RootTabParamList = {
 	Home: NavigatorScreenParams<HomeStackParamList>;
-	MyChat: undefined;
+	MyChat: NavigatorScreenParams<MyChat>;
 	NewPost: { id: string };
 	Search: undefined;
 	Login: undefined;
@@ -21,12 +22,21 @@ export type HomeStackParamList = {
 	PostDetail: { id: string };
 };
 
+// MyChatStack
+export type MyChatStackParamList = {
+	Chat: undefined;
+	ChatRoom: { chatId: string; receiverInfo: ReceiverInfo };
+};
+
 // 전체 앱에서 사용할 네비게이션 타입
 export type TabNavigation = BottomTabNavigationProp<RootTabParamList>;
-export type StackNavigation = NativeStackNavigationProp<HomeStackParamList>;
+export type HomeStackNavigation = NativeStackNavigationProp<HomeStackParamList>;
+export type MyChatStackNavigation =
+	NativeStackNavigationProp<MyChatStackParamList>;
 
 // 특정 화면에 대한 Route Prop (화면에서 `route.params`를 사용할 때 필요함)
 export type PostDetailRouteProp = RouteProp<HomeStackParamList, 'PostDetail'>;
 export type NewPostRouteProp = RouteProp<RootTabParamList, 'NewPost'>;
 export type EditProfileRouteProp = RouteProp<RootTabParamList, 'EditProfile'>;
 export type EditCommentRouteProp = RouteProp<RootTabParamList, 'EditComment'>;
+export type ChatRoomRouteProp = RouteProp<MyChatStackParamList, 'ChatRoom'>;

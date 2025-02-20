@@ -4,6 +4,7 @@ import { Comment } from '@/hooks/useGetComments';
 import { TabNavigation } from '@/types/navigation';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import {
+	createChatRoom,
 	deleteComment as deleteCommentFromDB,
 	getCreatorInfo,
 } from '@/utilities/firebaseApi';
@@ -46,7 +47,6 @@ const CommentUnit = ({
 	const [commentCreatorInfo, setCommentCreatorInfo] =
 		useState<CommentCreatorInfo | null>(null);
 	const navigation = useNavigation<TabNavigation>();
-	// const { dispatch } = useContext(ChatContext);
 
 	useEffect(() => {
 		const getCommentCreatorInfo = async () => {
@@ -131,33 +131,22 @@ const CommentUnit = ({
 	};
 
 	// 채팅 시작
-	const onChatClick = async () => {
-		console.log('chatclick');
-		// if (!id || !userInfo) return;
-		// const combinedId =
-		// 	userInfo.uid > comment.creatorId
-		// 		? userInfo.uid + comment.creatorId
-		// 		: comment.creatorId + userInfo.uid;
-		// try {
-		// 	const response = await getDoc(doc(db, 'Chats', combinedId));
-		// 	if (!response.exists()) {
-		// 		await setDataToFirestore(doc(db, 'Chats', combinedId), {
-		// 			messages: [],
-		// 			participants: [userInfo.uid, comment.creatorId],
-		// 		});
-		// 	}
-		// 	dispatch({
-		// 		type: 'CHANGE_USER',
-		// 		payload: {
-		// 			uid: comment.creatorId,
-		// 			displayName: comment.creatorDisplayName,
-		// 			photoURL: comment.creatorPhotoURL,
-		// 		},
-		// 	});
-		// 	// 채팅방으로 이동 (네비게이션 로직 필요)
-		// } catch (error) {
-		// 	console.log('❌ 채팅 오류:', error);
-		// }
+	const onChatClick = async (receiverId: string) => {
+		if (!userInfo) return;
+
+		try {
+			const chatId = await createChatRoom(userInfo.uid, receiverId);
+
+			navigation.navigate('MyChat', {
+				screen: 'ChatRoom',
+				params: {
+					chatId,
+					receiverInfo: commentCreatorInfo,
+				},
+			});
+		} catch (error) {
+			Alert.alert('오류', '채팅방을 열 수 없습니다.');
+		}
 	};
 
 	return (
@@ -199,16 +188,20 @@ const CommentUnit = ({
 
 				{/* 푸터 */}
 				<View style={styles.commentFooter}>
-					<Text style={styles.time}>{elapsedTime(createdAt?.toDate())}</Text>
-					{/* {postCreatorId === userInfo?.uid && postCreatorId !== creatorId && ( */}
-					<TouchableOpacity
-						style={styles.chatButtonContainer}
-						onPress={onChatClick}
-					>
-						<Text style={styles.chatText}>채팅하기</Text>
-						<AntDesign name='arrowright' color={Colors.font_black} size={14} />
-					</TouchableOpacity>
-					{/* )} */}
+					<Text style={styles.time}>{elapsedTime(createdAt)}</Text>
+					{postCreatorId === userInfo?.uid && postCreatorId !== creatorId && (
+						<TouchableOpacity
+							style={styles.chatButtonContainer}
+							onPress={() => onChatClick(creatorId)}
+						>
+							<Text style={styles.chatText}>채팅하기</Text>
+							<AntDesign
+								name='arrowright'
+								color={Colors.font_black}
+								size={14}
+							/>
+						</TouchableOpacity>
+					)}
 				</View>
 			</View>
 		</View>

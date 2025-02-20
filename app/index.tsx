@@ -1,31 +1,33 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
 	Entypo,
 	FontAwesome,
 	FontAwesome6,
 	MaterialCommunityIcons,
 } from '@expo/vector-icons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import Home from '@/screens/Home';
-import PostDetail from '@/screens/PostDetail';
-import MyChat from '@/screens/MyChat';
-import NewPost from '@/screens/NewPost';
-import Search from '@/screens/Search';
-import Login from '@/screens/Login';
-import MyPage from '@/screens/MyPage';
 import { Colors } from '@/constants/Color';
+import Home from '@/screens/Home';
+import Login from '@/screens/Login';
+import MyChat from '@/screens/MyChat';
+import MyPage from '@/screens/MyPage';
+import NewPost from '@/screens/NewPost';
+import PostDetail from '@/screens/PostDetail';
+import Search from '@/screens/Search';
 
-import { AuthContextProvider, useAuthContext } from '../contexts/AuthContext';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Button from '@/components/ui/Button';
-import { ActionSheetProvider } from '@expo/react-native-action-sheet';
-import EditProfile from '@/screens/EditProfile';
+import ChatRoom from '@/screens/ChatRoom';
 import EditComment from '@/screens/EditComment';
+import EditProfile from '@/screens/EditProfile';
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { AuthContextProvider, useAuthContext } from '../contexts/AuthContext';
 
 const Stack = createNativeStackNavigator();
 const BottomTab = createBottomTabNavigator();
 const ProfileStack = createNativeStackNavigator();
+const ChatStack = createNativeStackNavigator();
 
 const HomeStack = () => {
 	return (
@@ -81,6 +83,15 @@ const MyPageStack = () => {
 	);
 };
 
+const MyChatStack = () => {
+	return (
+		<ChatStack.Navigator screenOptions={{ headerShown: false }}>
+			<ChatStack.Screen name='Chat' component={MyChat} />
+			<ChatStack.Screen name='ChatRoom' component={ChatRoom} />
+		</ChatStack.Navigator>
+	);
+};
+
 const BottomTabNavigator = () => {
 	const { userInfo } = useAuthContext();
 
@@ -112,7 +123,7 @@ const BottomTabNavigator = () => {
 			/>
 			<BottomTab.Screen
 				name='MyChat'
-				component={MyChat}
+				component={MyChatStack}
 				options={{
 					tabBarIcon: ({ focused }) => (
 						<MaterialCommunityIcons

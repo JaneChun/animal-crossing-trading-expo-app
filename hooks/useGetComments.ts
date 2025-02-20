@@ -3,7 +3,7 @@ import {
 	getDocs,
 	orderBy,
 	query,
-	serverTimestamp,
+	Timestamp,
 } from 'firebase/firestore';
 import { useCallback, useEffect, useState } from 'react';
 import { db } from '../fbase';
@@ -12,8 +12,8 @@ export interface Comment {
 	id: string;
 	body: string;
 	creatorId: string;
-	createdAt: ReturnType<typeof serverTimestamp>;
-	updatedAt?: ReturnType<typeof serverTimestamp>;
+	createdAt: Timestamp;
+	updatedAt?: Timestamp;
 }
 
 function useGetComments(postId: string) {
