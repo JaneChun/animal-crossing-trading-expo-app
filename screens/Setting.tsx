@@ -76,12 +76,11 @@ export default Setting;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		padding: 16,
+		paddingHorizontal: 8,
 		backgroundColor: 'white',
 	},
 	row: {
-		paddingVertical: 18,
-		paddingHorizontal: 8,
+		padding: 18,
 		borderBottomWidth: 1,
 		borderBottomColor: Colors.border_gray,
 	},

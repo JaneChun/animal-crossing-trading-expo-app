@@ -1,5 +1,6 @@
 import MyPosts from '@/components/MyPage/MyPosts';
 import Profile from '@/components/MyPage/Profile';
+import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import useLoading from '@/hooks/useLoading';
@@ -23,7 +24,7 @@ const MyPage = () => {
 	};
 
 	return (
-		<View style={styles.container}>
+		<Layout>
 			<View style={styles.header}>
 				<Text style={styles.title}>프로필</Text>
 				<TouchableOpacity style={styles.iconContainer} onPress={onPressSetting}>
@@ -41,16 +42,11 @@ const MyPage = () => {
 				ListHeaderComponent={<Profile />}
 				ListEmptyComponent={<MyPosts />}
 			/>
-		</View>
+		</Layout>
 	);
 };
 
 const styles = StyleSheet.create({
-	container: {
-		flexGrow: 1,
-		padding: 24,
-		backgroundColor: 'white',
-	},
 	header: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',

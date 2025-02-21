@@ -19,6 +19,7 @@ import BodyInput from '@/components/NewPost/BodyInput';
 import ImageInput from '@/components/NewPost/ImageInput';
 import TitleInput from '@/components/NewPost/TitleInput';
 import TypeSelect from '@/components/NewPost/TypeSelect';
+import Layout from '@/components/ui/Layout';
 import useGetPostDetail from '@/hooks/useGetPostDetail';
 import useLoading from '@/hooks/useLoading';
 import React from 'react';
@@ -205,63 +206,61 @@ const NewPost = () => {
 	}
 
 	return (
-		<KeyboardAvoidingView style={styles.container}>
-			<FlatList
-				data={[]}
-				renderItem={null}
-				ListEmptyComponent={
-					<>
-						<TypeSelect type={type} setType={setType} />
+		<Layout>
+			<KeyboardAvoidingView>
+				<FlatList
+					data={[]}
+					renderItem={null}
+					ListEmptyComponent={
+						<>
+							<TypeSelect type={type} setType={setType} />
 
-						<TitleInput
-							title={title}
-							setTitle={setTitle}
-							containerStyle={styles.inputContainer}
-							labelStyle={styles.label}
-							inputStyle={styles.input}
-						/>
+							<TitleInput
+								title={title}
+								setTitle={setTitle}
+								containerStyle={styles.inputContainer}
+								labelStyle={styles.label}
+								inputStyle={styles.input}
+							/>
 
-						<BodyInput
-							body={body}
-							setBody={setBody}
-							containerStyle={styles.inputContainer}
-							labelStyle={styles.label}
-							inputStyle={styles.input}
-						/>
+							<BodyInput
+								body={body}
+								setBody={setBody}
+								containerStyle={styles.inputContainer}
+								labelStyle={styles.label}
+								inputStyle={styles.input}
+							/>
 
-						<ImageInput
-							images={images}
-							setImages={setImages}
-							containerStyle={styles.inputContainer}
-							labelStyle={styles.label}
-						/>
+							<ImageInput
+								images={images}
+								setImages={setImages}
+								containerStyle={styles.inputContainer}
+								labelStyle={styles.label}
+							/>
 
-						<ItemSelect
-							cart={cart}
-							setCart={setCart}
-							containerStyle={styles.inputContainer}
-							labelStyle={styles.label}
-						/>
+							<ItemSelect
+								cart={cart}
+								setCart={setCart}
+								containerStyle={styles.inputContainer}
+								labelStyle={styles.label}
+							/>
 
-						<ItemList cart={cart} setCart={setCart} />
+							<ItemList cart={cart} setCart={setCart} />
 
-						<View style={styles.buttonContainer}>
-							<Button color='white' size='lg' onPress={onSubmit}>
-								등록
-							</Button>
-						</View>
-					</>
-				}
-			></FlatList>
-		</KeyboardAvoidingView>
+							<View style={styles.buttonContainer}>
+								<Button color='white' size='lg' onPress={onSubmit}>
+									등록
+								</Button>
+							</View>
+						</>
+					}
+				></FlatList>
+			</KeyboardAvoidingView>
+		</Layout>
 	);
 };
 
 const styles = StyleSheet.create({
-	container: {
-		padding: 24,
-		backgroundColor: 'white',
-	},
 	inputContainer: {
 		marginVertical: 16,
 	},

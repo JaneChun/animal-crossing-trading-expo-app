@@ -1,9 +1,10 @@
+import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
 import useGetPosts from '@/hooks/useGetPosts';
 import useLoading from '@/hooks/useLoading';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import PostUnit from '../components/Home/PostUnit';
 
@@ -29,9 +30,7 @@ const Home = () => {
 	}
 
 	return (
-		<View style={styles.container}>
-			<Text style={styles.header}>거래글</Text>
-
+		<Layout title='거래글'>
 			<FlatList
 				data={data}
 				keyExtractor={({ id }) => id}
@@ -66,22 +65,11 @@ const Home = () => {
 					) : null
 				}
 			/>
-		</View>
+		</Layout>
 	);
 };
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		padding: 16,
-		backgroundColor: 'white',
-	},
-	header: {
-		fontSize: 20,
-		fontWeight: 'bold',
-		marginBottom: 8,
-		color: Colors.font_black,
-	},
 	endText: {
 		textAlign: 'center',
 		color: Colors.font_gray,

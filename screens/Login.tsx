@@ -2,6 +2,7 @@ import type { TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { Alert, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import Layout from '@/components/ui/Layout';
 import { useAuthContext } from '@/contexts/AuthContext';
 
 const Login = () => {
@@ -22,14 +23,16 @@ const Login = () => {
 	};
 
 	return (
-		<View style={styles.container}>
-			<TouchableOpacity activeOpacity={0.7} onPress={handleLogin}>
-				<Image
-					source={require('../assets/images/kakao_login.png')}
-					style={styles.kakaoLoginImage}
-				/>
-			</TouchableOpacity>
-		</View>
+		<Layout>
+			<View style={styles.container}>
+				<TouchableOpacity activeOpacity={0.7} onPress={handleLogin}>
+					<Image
+						source={require('../assets/images/kakao_login.png')}
+						style={styles.kakaoLoginImage}
+					/>
+				</TouchableOpacity>
+			</View>
+		</Layout>
 	);
 };
 
