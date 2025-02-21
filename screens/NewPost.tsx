@@ -1,10 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { auth } from '@/fbase';
 import {
-	addDocToFirestore,
-	updateDocToFirestore,
-} from '@/firebase/firestoreService';
-import {
 	deleteObjectFromStorage,
 	uploadObjectToStorage,
 } from '@/firebase/imageService';
@@ -26,6 +22,7 @@ import ImageInput from '@/components/NewPost/ImageInput';
 import TitleInput from '@/components/NewPost/TitleInput';
 import TypeSelect from '@/components/NewPost/TypeSelect';
 import Layout from '@/components/ui/Layout';
+import { createPost, updatePost } from '@/firebase/postService';
 import useGetPostDetail from '@/hooks/useGetPostDetail';
 import useLoading from '@/hooks/useLoading';
 import React from 'react';
@@ -162,21 +159,14 @@ const NewPost = () => {
 			};
 
 			if (editingId) {
-				await updateDocToFirestore({
-					collection: 'Boards',
-					id: editingId,
-					requestData,
-				});
+				await updatePost(editingId, requestData);
 
 				// 삭제된 이미지가 있으면 스토리지에서도 삭제
 				if (deletedImageUrls.length) {
 					await Promise.all(deletedImageUrls.map(deleteObjectFromStorage));
 				}
 			} else {
-				createdId = await addDocToFirestore({
-					directory: 'Boards',
-					requestData,
-				});
+				createdId = await createPost(requestData);
 
 				Alert.alert(
 					`${editingId ? '수정' : '작성'} 완료`,

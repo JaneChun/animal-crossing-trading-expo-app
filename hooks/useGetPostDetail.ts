@@ -1,4 +1,4 @@
-import { getDocFromFirestore } from '@/firebase/firestoreService';
+import { getPost } from '@/firebase/postService';
 import { getPublicUserInfo } from '@/firebase/userService';
 import { useCallback, useEffect, useState } from 'react';
 import { Post } from './useGetPosts';
@@ -21,15 +21,15 @@ function useGetPostDetail(id: string): UseGetPostDetailReturnType {
 		setIsLoading(true);
 
 		try {
-			const docData = await getDocFromFirestore({ collection: 'Boards', id });
-			if (!docData) return;
+			const post = await getPost(id);
+			if (!post) return;
 
 			const { displayName, islandName, photoURL } = await getPublicUserInfo(
-				docData.creatorId,
+				post.creatorId,
 			);
 
 			setData({
-				...docData,
+				...post,
 				creatorDisplayName: displayName,
 				creatorIslandName: islandName,
 				creatorPhotoURL: photoURL,

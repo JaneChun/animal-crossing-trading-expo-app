@@ -1,5 +1,4 @@
 import { Colors } from '@/constants/Color';
-import { deleteDocFromFirestore } from '@/firebase/firestoreService';
 import { TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import {
@@ -28,7 +27,7 @@ const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
 		tabNavigation.navigate('NewPostTab', { id });
 	};
 
-	const deletePost = async () => {
+	const deletePost = async (id: string) => {
 		Alert.alert('게시글 삭제', '정말로 삭제하겠습니까?', [
 			{ text: '취소', style: 'cancel' },
 			{ text: '삭제', onPress: handleDeletePost },
@@ -37,7 +36,8 @@ const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
 
 	const handleDeletePost = async () => {
 		try {
-			await deleteDocFromFirestore({ id });
+			await deletePost(id);
+
 			showAlert('삭제 완료', '게시글이 성공적으로 삭제되었습니다.', () =>
 				tabNavigation.goBack(),
 			);

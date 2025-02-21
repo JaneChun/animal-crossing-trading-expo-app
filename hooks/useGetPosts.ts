@@ -1,6 +1,6 @@
 import { db } from '@/fbase';
+import { postDoc } from '@/firebase/postService';
 import { getPublicUserInfos } from '@/firebase/userService';
-import { CartItem } from '@/screens/NewPost';
 import {
 	collection,
 	DocumentData,
@@ -10,23 +10,11 @@ import {
 	query,
 	QueryDocumentSnapshot,
 	startAfter,
-	Timestamp,
 	where,
 } from 'firebase/firestore';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-interface doc {
-	id: string;
-	type: 'buy' | 'sell' | 'done';
-	title: string;
-	body: string;
-	images: string[];
-	creatorId: string;
-	createdAt: Timestamp;
-	cart: CartItem[];
-	commentCount: number;
-}
-export interface Post extends doc {
+export interface Post extends postDoc {
 	creatorDisplayName: string;
 	creatorIslandName: string;
 	creatorPhotoURL: string;
