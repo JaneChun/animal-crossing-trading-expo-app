@@ -10,7 +10,7 @@ export type RootTabParamList = {
 	NewPost: { id: string };
 	Search: undefined;
 	Login: undefined;
-	MyPage: undefined;
+	MyPage: NavigatorScreenParams<MyPageStackParamList>;
 	// 모달로 표시되는 화면
 	EditProfile: { userInfo: UserInfo };
 	EditComment: { postId: string; commentId: string; comment: string };
@@ -28,11 +28,19 @@ export type MyChatStackParamList = {
 	ChatRoom: { chatId: string; receiverInfo: ReceiverInfo };
 };
 
+// MyPageStack
+export type MyPageStackParamList = {
+	Profile: undefined;
+	Setting: undefined;
+};
+
 // 전체 앱에서 사용할 네비게이션 타입
 export type TabNavigation = BottomTabNavigationProp<RootTabParamList>;
 export type HomeStackNavigation = NativeStackNavigationProp<HomeStackParamList>;
 export type MyChatStackNavigation =
 	NativeStackNavigationProp<MyChatStackParamList>;
+export type MyPageStackNavigation =
+	NativeStackNavigationProp<MyPageStackParamList>;
 
 // 특정 화면에 대한 Route Prop (화면에서 `route.params`를 사용할 때 필요함)
 export type PostDetailRouteProp = RouteProp<HomeStackParamList, 'PostDetail'>;

@@ -4,28 +4,15 @@ import { TabNavigation } from '@/types/navigation';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { Alert, Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
 
 const Profile = () => {
-	const { userInfo, logout } = useAuthContext();
+	const { userInfo } = useAuthContext();
 	const navigation = useNavigation<TabNavigation>();
 
 	const editProfile = () => {
 		navigation.navigate('EditProfile', { userInfo });
-	};
-
-	const handleLogout = async () => {
-		const isSuccess: boolean | void = await logout();
-
-		if (Boolean(isSuccess)) {
-			navigation.reset({
-				index: 0,
-				routes: [{ name: 'Home' }],
-			});
-		} else {
-			Alert.alert('로그아웃 실패', '다시 시도해주세요.');
-		}
 	};
 
 	return (
@@ -56,9 +43,6 @@ const Profile = () => {
 			<View style={styles.buttonsContainer}>
 				<Button color='gray' size='md' onPress={editProfile}>
 					프로필 수정
-				</Button>
-				<Button color='gray' size='md' onPress={handleLogout}>
-					로그아웃
 				</Button>
 			</View>
 		</View>

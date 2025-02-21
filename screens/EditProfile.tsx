@@ -14,13 +14,13 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 
 const EditProfile = () => {
 	const route = useRoute<EditProfileRouteProp>();
 	const navigation = useNavigation();
 	const { userInfo }: { userInfo: UserInfo } = route?.params ?? {};
-	const { setUserInfo, deleteAccount } = useAuthContext();
+	const { setUserInfo } = useAuthContext();
 	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
 
 	const [displayNameInput, setDisplayNameInput] = useState<string>('');
@@ -146,34 +146,6 @@ const EditProfile = () => {
 		}
 	};
 
-	const onDeleteAccount = async () => {
-		if (!userInfo) return;
-
-		Alert.alert(
-			'회원 탈퇴',
-			'정말로 탈퇴하시겠습니까?\n탈퇴한 계정은 삭제되며 복구되지 않습니다.',
-			[
-				{ text: '취소', style: 'cancel' },
-				{
-					text: '네, 동의합니다.',
-					onPress: async () => {
-						try {
-							await deleteAccount(userInfo.uid);
-
-							Alert.alert(
-								'탈퇴 완료',
-								'탈퇴 처리가 성공적으로 완료되었습니다.',
-							);
-							navigation.goBack();
-						} catch (e: any) {
-							Alert.alert('탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.');
-						}
-					},
-				},
-			],
-		);
-	};
-
 	if (!userInfo) {
 		return (
 			<View style={styles.container}>
@@ -213,12 +185,6 @@ const EditProfile = () => {
 					</Text>
 				</View>
 			</View>
-
-			<View style={styles.deleteAccountContainer}>
-				<TouchableOpacity onPress={onDeleteAccount}>
-					<Text style={styles.deleteAccountText}>회원 탈퇴</Text>
-				</TouchableOpacity>
-			</View>
 		</View>
 	);
 };
@@ -244,15 +210,5 @@ const styles = StyleSheet.create({
 		color: Colors.primary,
 		fontSize: 14,
 		marginBottom: 16,
-	},
-	deleteAccountContainer: {
-		flex: 1,
-		width: '100%',
-		marginBottom: 48,
-		justifyContent: 'flex-end',
-		alignItems: 'center',
-	},
-	deleteAccountText: {
-		color: 'red',
 	},
 });
