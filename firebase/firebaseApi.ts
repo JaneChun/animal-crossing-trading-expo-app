@@ -25,7 +25,7 @@ import {
 	ref,
 	uploadBytes,
 } from 'firebase/storage';
-import { Alert } from 'react-native';
+import firestoreRequest from './firebaseInterceptor';
 
 // DATABASE
 export const getDocFromFirestore = async ({
@@ -35,18 +35,11 @@ export const getDocFromFirestore = async ({
 	collection: string;
 	id: string;
 }): Promise<DocumentData | null> => {
-	try {
+	return firestoreRequest('Firestore 문서 조회', async () => {
 		const docRef = doc(db, collection, id);
 		const docSnap = await getDoc(docRef);
-
-		if (docSnap.exists()) {
-			return { id, ...docSnap.data() };
-		}
-		return null;
-	} catch (e) {
-		console.log(`Firestore 문서 가져오기 실패 (${collection}/${id}):`, e);
-		throw e;
-	}
+		return docSnap.exists() ? { id, ...docSnap.data() } : null;
+	});
 };
 
 export const addDocToFirestore = async ({
@@ -56,31 +49,33 @@ export const addDocToFirestore = async ({
 	directory: string;
 	requestData: any;
 }): Promise<string> => {
-	const docRef = await addDoc(collection(db, directory), requestData);
-	return docRef.id;
+	return firestoreRequest('Firestore 문서 추가', async () => {
+		const docRef = await addDoc(collection(db, directory), requestData);
+		return docRef.id;
+	});
 };
 
-export const deleteDocFromFirestore = async ({ id }: { id: string }) => {
-	const docData = await getDocFromFirestore({ collection: 'Boards', id });
-	if (!docData) return;
+export const deleteDocFromFirestore = async ({
+	id,
+}: {
+	id: string;
+}): Promise<void> => {
+	return firestoreRequest('Firestore 문서 삭제', async () => {
+		const docData = await getDocFromFirestore({ collection: 'Boards', id });
+		if (!docData) return;
 
-	const images = docData.images || [];
+		const images = docData.images || [];
+		const docRef = doc(db, 'Boards', id);
 
-	// 1. Storage에서 이미지 삭제
-	await Promise.all(
-		images.map((imageUrl: string) => deleteObjectFromStorage(imageUrl)),
-	);
+		// 1. Firestore에서 문서 삭제
+		await deleteDoc(docRef);
 
-	// 2. Firestore에서 문서 삭제
-	await deleteDoc(doc(db, 'Boards', id));
+		// 2. Storage에서 이미지 삭제
+		await Promise.all(
+			images.map((imageUrl: string) => deleteObjectFromStorage(imageUrl)),
+		);
+	});
 };
-
-// export async function setDataToFirestore(
-// 	ref: DocumentReference,
-// 	requestData: any,
-// ) {
-// 	await setDoc(ref, requestData);
-// }
 
 export async function updateDocToFirestore({
 	id,
@@ -90,8 +85,10 @@ export async function updateDocToFirestore({
 	id: string;
 	collection: string;
 	requestData: any;
-}) {
-	await updateDoc(doc(db, collection, id), requestData);
+}): Promise<void> {
+	return firestoreRequest('Firebase 문서 업데이트', async () => {
+		await updateDoc(doc(db, collection, id), requestData);
+	});
 }
 
 // DATABASE - USER
@@ -103,18 +100,20 @@ export const saveUserToFirestore = async ({
 	uid: string;
 	displayName: string;
 	photoURL: string;
-}) => {
-	await setDoc(
-		doc(db, 'Users', uid),
-		{
-			displayName: displayName ?? '',
-			photoURL: photoURL ?? '',
-			islandName: '', // 기본값
-			createdAt: new Date(),
-			lastLogin: new Date(),
-		},
-		{ merge: true },
-	);
+}): Promise<void> => {
+	return firestoreRequest('유저 정보 저장', async () => {
+		await setDoc(
+			doc(db, 'Users', uid),
+			{
+				displayName: displayName ?? '',
+				photoURL: photoURL ?? '',
+				islandName: '',
+				createdAt: new Date(),
+				lastLogin: new Date(),
+			},
+			{ merge: true },
+		);
+	});
 };
 
 export const getUserInfoFromFirestore = async ({
@@ -122,7 +121,7 @@ export const getUserInfoFromFirestore = async ({
 }: {
 	uid: string;
 }): Promise<UserInfo> => {
-	try {
+	return firestoreRequest('내 유저 정보 조회', async () => {
 		const userRef = doc(db, 'Users', uid);
 		const userSnap = await getDoc(userRef);
 
@@ -135,15 +134,7 @@ export const getUserInfoFromFirestore = async ({
 		} else {
 			return null; // Firestore에 데이터 없음
 		}
-	} catch (e: any) {
-		console.log('Firestore에서 유저 정보 가져오기 실패:', e);
-
-		if (e.code === 'unavailable' || e.code === 'network-request-failed') {
-			Alert.alert('네트워크 오류', '인터넷 연결을 확인해주세요.');
-		}
-
-		return null;
-	}
+	});
 };
 
 // STORAGE
@@ -154,7 +145,7 @@ export const uploadObjectToStorage = async ({
 	images: ImagePickerAsset[];
 	directory: string;
 }): Promise<string[]> => {
-	try {
+	return firestoreRequest('Storage 이미지 업로드', async () => {
 		const uploadPromises = images.map(async (image) => {
 			const fileName = `${Date.now()}_${image.fileName || 'image.jpg'}`;
 			const storageRef = ref(storage, `${directory}/${fileName}`);
@@ -163,25 +154,23 @@ export const uploadObjectToStorage = async ({
 			const blob = await response.blob(); // Blob(바이너리) 형태로 변환
 
 			await uploadBytes(storageRef, blob); // Firebase Storage에 Blob 파일 업로드
+
 			return getDownloadURL(storageRef); // 업로드 후 다운로드 URL 반환
 		});
 
 		const downloadURLs = await Promise.all(uploadPromises);
-		console.log('이미지 업로드 완료');
-		return downloadURLs;
-	} catch (e) {
-		console.log('이미지 업로드 실패:', e);
-		return [];
-	}
+
+		return downloadURLs.filter((url) => url !== null);
+	});
 };
 
-export const deleteObjectFromStorage = async (imageUrl: string) => {
-	const imageRef = ref(storage, imageUrl);
-	try {
+export const deleteObjectFromStorage = async (
+	imageUrl: string,
+): Promise<void> => {
+	return firestoreRequest('Storage 이미지 삭제', async () => {
+		const imageRef = ref(storage, imageUrl);
 		await deleteObject(imageRef);
-	} catch (e) {
-		console.log('이미지 삭제 실패:', e);
-	}
+	});
 };
 
 // USERINFO
@@ -193,22 +182,23 @@ export const getCreatorInfo = async (
 	creatorPhotoURL: string;
 }> => {
 	try {
-		const docData = await getDocFromFirestore({
-			collection: 'Users',
-			id: creatorId,
+		return firestoreRequest('타 유저 정보 조회', async () => {
+			const docData = await getDocFromFirestore({
+				collection: 'Users',
+				id: creatorId,
+			});
+
+			if (!docData) {
+				return getDefaultCreatorInfo();
+			}
+
+			return {
+				creatorDisplayName: docData.displayName || 'Unknown User',
+				creatorIslandName: docData.islandName || '',
+				creatorPhotoURL: docData.photoURL || '',
+			};
 		});
-
-		if (!docData) {
-			return getDefaultCreatorInfo();
-		}
-
-		return {
-			creatorDisplayName: docData.displayName || 'Unknown User',
-			creatorIslandName: docData.islandName || '',
-			creatorPhotoURL: docData.photoURL || '',
-		};
 	} catch (e) {
-		console.log(`${creatorId} creatorInfo 조회 실패:`, e);
 		return getDefaultCreatorInfo();
 	}
 };
@@ -226,24 +216,20 @@ export const addComment = async ({
 }: {
 	postId: string;
 	commentData: any;
-}) => {
-	const batch = writeBatch(db);
+}): Promise<void> => {
+	return firestoreRequest('댓글 추가', async () => {
+		const batch = writeBatch(db);
 
-	try {
-		// 댓글 문서 추가
+		// 1. 댓글 문서 추가
 		const commentRef = doc(collection(db, 'Boards', postId, 'Comments')); // Boards/{postId}/Comments 서브컬렉션
 		batch.set(commentRef, commentData);
 
-		// post 문서의 commentCount 필드 수정
+		// 2. post 문서의 commentCount 필드 수정
 		const postRef = doc(db, 'Boards', postId);
 		batch.update(postRef, { commentCount: increment(1) });
 
 		await batch.commit();
-		console.log('댓글 추가 및 게시글 댓글 수 증가 완료');
-	} catch (e: any) {
-		console.log('댓글 추가 중 오류 발생:', e);
-		throw new Error(e);
-	}
+	});
 };
 
 export const updateComment = async ({
@@ -254,19 +240,15 @@ export const updateComment = async ({
 	postId: string;
 	commentId: string;
 	newCommentText: string;
-}) => {
-	try {
-		// 댓글 문서 수정
+}): Promise<void> => {
+	return firestoreRequest('댓글 수정', async () => {
+		// 1. 댓글 문서 수정
 		const commentRef = doc(db, 'Boards', postId, 'Comments', commentId);
 		await updateDoc(commentRef, {
 			body: newCommentText,
 			updatedAt: Timestamp.now(),
 		});
-		console.log('댓글 수정 완료');
-	} catch (e: any) {
-		console.log(' 댓글 수정 중 오류 발생:', e);
-		throw new Error(e);
-	}
+	});
 };
 
 export const deleteComment = async ({
@@ -275,32 +257,31 @@ export const deleteComment = async ({
 }: {
 	postId: string;
 	commentId: string;
-}) => {
-	const batch = writeBatch(db);
+}): Promise<void> => {
+	return firestoreRequest('댓글 삭제', async () => {
+		const batch = writeBatch(db);
 
-	try {
-		// 댓글 문서 삭제
+		// 1. 댓글 문서 삭제
 		const commentRef = doc(db, 'Boards', postId, 'Comments', commentId);
 		batch.delete(commentRef);
 
-		// post 문서의 commentCount 필드 수정
+		// 2. post 문서의 commentCount 필드 수정
 		const postRef = doc(db, 'Boards', postId);
 		batch.update(postRef, { commentCount: increment(-1) });
 
 		await batch.commit();
-		console.log('댓글 추가 및 게시글 댓글 수 감소 완료');
-	} catch (e: any) {
-		console.log(' 댓글 삭제 중 오류 발생:', e);
-		throw new Error(e);
-	}
+	});
 };
 
 // CHAT
-export const createChatRoom = async (user1: string, user2: string) => {
-	const chatId = generateChatId(user1, user2);
-	const chatRef = doc(db, 'Chats', chatId);
+export const createChatRoom = async (
+	user1: string,
+	user2: string,
+): Promise<string | undefined> => {
+	return firestoreRequest('채팅방 생성', async () => {
+		const chatId = generateChatId(user1, user2);
 
-	try {
+		const chatRef = doc(db, 'Chats', chatId);
 		const chatSnap = await getDoc(chatRef);
 
 		// 채팅방이 존재하지 않으면 새로 생성
@@ -314,8 +295,9 @@ export const createChatRoom = async (user1: string, user2: string) => {
 			});
 			console.log(`새 채팅방 생성: ${chatId}`);
 		} else {
-			// 기존 채팅방이 있는데, 사용자가 나간 채팅방이라면 (participants 배열에 없다면) 다시 추가
 			const participants = chatSnap.data().participants;
+
+			// 기존 채팅방이 있는데, 사용자가 나간 채팅방이라면 (participants 배열에 없다면) 다시 추가
 			if (!participants.includes(user1)) {
 				await rejoinChatRoom({ chatId });
 			} else {
@@ -324,10 +306,7 @@ export const createChatRoom = async (user1: string, user2: string) => {
 		}
 
 		return chatId;
-	} catch (e) {
-		console.log('채팅방 생성 중 오류:', e);
-		throw new Error('채팅방을 생성할 수 없습니다.');
-	}
+	});
 };
 
 const generateChatId = (user1: string, user2: string): string => {
@@ -344,10 +323,10 @@ export const sendMessage = async ({
 	senderId: string;
 	receiverId: string;
 	message: string;
-}) => {
-	if (!chatId || !senderId || !receiverId || !message.trim()) return;
+}): Promise<void> => {
+	return firestoreRequest('메세지 전송', async () => {
+		if (!chatId || !senderId || !receiverId || !message.trim()) return;
 
-	try {
 		// 1. 메세지 추가
 		const messageRef = collection(db, 'Chats', chatId, 'Messages'); // Boards/{chatId}/Messages 서브컬렉션
 
@@ -364,12 +343,9 @@ export const sendMessage = async ({
 			lastMessage: message,
 			lastMessageSenderId: senderId,
 			updatedAt: Timestamp.now(),
-			[`unreadCount.${receiverId}`]: increment(1), // 상대 유저의 unreadCount 1 증가 시킴
+			[`unreadCount.${receiverId}`]: increment(1), // 상대 유저의 unreadCount 1 증가
 		});
-	} catch (e: any) {
-		console.log('메시지 전송 오류:', e);
-		throw new Error(e);
-	}
+	});
 };
 
 export const leaveChatRoom = async ({
@@ -378,58 +354,29 @@ export const leaveChatRoom = async ({
 }: {
 	chatId: string;
 	userId: string;
-}) => {
-	try {
+}): Promise<void> => {
+	return firestoreRequest('채팅방 나가기', async () => {
 		const chatRef = doc(db, 'Chats', chatId);
 
 		await updateDoc(chatRef, {
 			participants: arrayRemove(userId),
 		});
-
-		console.log(`${userId} 유저가 채팅방을 나갔습니다.`);
-	} catch (e: any) {
-		console.log('채팅방 나가기 중 오류 발생:', e);
-		throw new Error(e);
-	}
+	});
 };
 
-export const rejoinChatRoom = async ({ chatId }: { chatId: string }) => {
-	const users = chatId.split('_');
-
-	try {
+export const rejoinChatRoom = async ({
+	chatId,
+}: {
+	chatId: string;
+}): Promise<void> => {
+	return firestoreRequest('채팅방 재입장', async () => {
+		const users = chatId.split('_');
 		const chatRef = doc(db, 'Chats', chatId);
 
 		await updateDoc(chatRef, {
 			participants: arrayUnion(...users),
 		});
-
-		console.log(`${JSON.stringify(users)} 유저가 채팅방에 다시 참여했습니다.`);
-	} catch (e: any) {
-		console.log('채팅방 다시 참여 중 오류 발생:', e);
-		throw new Error(e);
-	}
-};
-
-// 메시지가 읽히면 isReadBy 배열에 읽은 사용자를 추가
-export const markMessageAsRead = async ({
-	chatId,
-	messageId,
-	userId,
-}: {
-	chatId: string;
-	messageId: string;
-	userId: string;
-}) => {
-	const messageRef = doc(db, `Chats/${chatId}/Messages/${messageId}`);
-
-	try {
-		await updateDoc(messageRef, {
-			isReadBy: arrayUnion(userId),
-		});
-		console.log(`메시지(${messageId}) 읽음 처리됨`);
-	} catch (e) {
-		console.log('메시지 읽음 처리 실패:', e);
-	}
+	});
 };
 
 export const markMessagesAsRead = async ({
@@ -438,11 +385,11 @@ export const markMessagesAsRead = async ({
 }: {
 	chatId: string;
 	userId: string;
-}) => {
-	const messagesRef = collection(db, `Chats/${chatId}/Messages`);
+}): Promise<void> => {
+	return firestoreRequest('메세지 읽음 처리', async () => {
+		const messagesRef = collection(db, `Chats/${chatId}/Messages`);
 
-	try {
-		// 안 읽은 메시지만 가져오기
+		// 0. 안 읽은 메시지만 가져오기
 		const q = query(messagesRef, where('isReadBy', 'not-in', [userId]));
 		const querySnapshot = await getDocs(q);
 
@@ -465,50 +412,19 @@ export const markMessagesAsRead = async ({
 		});
 
 		await batch.commit();
-		console.log(
-			`${userId}의 메세지 읽음 상태 배치 업데이트 & unreadCount 초기화 완료`,
-		);
-	} catch (error) {
-		console.error('메시지 읽음 처리 중 오류 발생:', error);
-	}
+	});
 };
 
-// 채팅을 읽으면 사용자의 unreadCount를 0으로 변경
-export const markChatAsRead = async ({
-	chatId,
-	userId,
-}: {
-	chatId: string;
-	userId: string;
-}) => {
-	const chatRef = doc(db, `Chats/${chatId}`);
-
-	try {
-		await updateDoc(chatRef, {
-			[`unreadCount.${userId}`]: 0,
-		});
-		console.log(`${userId}가 채팅방(${chatId})을 읽음`);
-	} catch (e) {
-		console.log('채팅 읽음 처리 실패:', e);
-	}
-};
-
-export const reportError = async (errorMessage: string, errorStack: string) => {
-	try {
-		if (!errorMessage) {
-			Alert.alert('리포트 실패', '에러 메시지가 없습니다.');
-			return;
-		}
-
+export const reportError = async (
+	errorMessage: string,
+	errorStack: string,
+): Promise<void> => {
+	return firestoreRequest('에러 리포트', async () => {
 		await addDoc(collection(db, 'Errors'), {
 			message: errorMessage,
 			stack: errorStack,
 			timestamp: Timestamp.now(),
 			platform: 'React Native Expo',
 		});
-		Alert.alert('에러 리포트 완료', '개발팀에 에러가 보고되었습니다.');
-	} catch (e) {
-		console.log('에러 리포트 중 오류:', e);
-		Alert.alert('리포트 실패', '에러 리포트 중 문제가 발생했습니다.');
-	}
+	});
 };

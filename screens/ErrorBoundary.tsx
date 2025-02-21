@@ -2,6 +2,7 @@ import { Colors } from '@/constants/Color';
 import { reportError } from '@/firebase/firebaseApi';
 import React, { ReactNode } from 'react';
 import {
+	Alert,
 	Button,
 	ScrollView,
 	StyleSheet,
@@ -52,10 +53,17 @@ class ErrorBoundary extends React.Component<
 	};
 
 	reportErrorToFirestore = async () => {
-		await reportError(
-			this.state.errorMessage ?? '',
-			this.state.errorStack ?? '',
-		);
+		try {
+			await reportError(
+				this.state.errorMessage ?? '',
+				this.state.errorStack ?? '',
+			);
+
+			Alert.alert('에러 리포트 완료', '개발팀에 에러가 보고되었습니다.');
+		} catch (e) {
+			console.log('에러 리포트 중 오류:', e);
+			Alert.alert('리포트 실패', '에러 리포트 중 문제가 발생했습니다.');
+		}
 	};
 
 	render() {
