@@ -1,4 +1,4 @@
-import { getCreatorInfo, getDocFromFirestore } from '@/firebase/firebaseApi';
+import { getDocFromFirestore, getPublicUserInfo } from '@/firebase/firebaseApi';
 import { useCallback, useEffect, useState } from 'react';
 import { Post } from './useGetPosts';
 
@@ -23,9 +23,16 @@ function useGetPostDetail(id: string): UseGetPostDetailReturnType {
 			const docData = await getDocFromFirestore({ collection: 'Boards', id });
 			if (!docData) return;
 
-			const creatorInfo = await getCreatorInfo(docData.creatorId);
+			const { displayName, islandName, photoURL } = await getPublicUserInfo(
+				docData.creatorId,
+			);
 
-			setData({ ...docData, ...creatorInfo } as Post);
+			setData({
+				...docData,
+				creatorDisplayName: displayName,
+				creatorIslandName: islandName,
+				creatorPhotoURL: photoURL,
+			} as Post);
 		} catch (e) {
 			console.log('데이터 Fetch중 에러:', e);
 			setError(e as Error);

@@ -1,10 +1,8 @@
 import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
-import useGetChats, {
-	Chat as ChatType,
-	ReceiverInfo,
-} from '@/hooks/useGetChats';
+import { PublicUserInfo } from '@/firebase/firebaseApi';
+import useGetChats, { Chat as ChatType } from '@/hooks/useGetChats';
 import { ChatStackNavigation } from '@/types/navigation';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { useNavigation } from '@react-navigation/native';
@@ -28,7 +26,7 @@ const Chat = () => {
 		receiverInfo,
 	}: {
 		chatId: string;
-		receiverInfo: ReceiverInfo;
+		receiverInfo: PublicUserInfo;
 	}) => {
 		stackNavigation.navigate('ChatRoom', { chatId, receiverInfo });
 	};
@@ -49,14 +47,12 @@ const Chat = () => {
 				style={styles.chatItem}
 			>
 				<Image
-					source={{ uri: receiverInfo.creatorPhotoURL }}
+					source={{ uri: receiverInfo.photoURL }}
 					style={styles.profileImage}
 				/>
 				<View style={styles.chatInfo}>
 					<View style={styles.chatHeader}>
-						<Text style={styles.chatUserName}>
-							{receiverInfo.creatorDisplayName}
-						</Text>
+						<Text style={styles.chatUserName}>{receiverInfo.displayName}</Text>
 						<Text style={styles.chatTime}>{elapsedTime(updatedAt)}</Text>
 					</View>
 					<Text style={styles.lastMessage} numberOfLines={1}>

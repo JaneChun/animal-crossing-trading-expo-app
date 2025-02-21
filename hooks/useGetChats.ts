@@ -1,6 +1,6 @@
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/fbase';
-import { getCreatorInfo } from '@/firebase/firebaseApi';
+import { getPublicUserInfo, PublicUserInfo } from '@/firebase/firebaseApi';
 import {
 	collection,
 	getDocs,
@@ -19,15 +19,8 @@ interface doc {
 	updatedAt: Timestamp;
 }
 
-export interface ReceiverInfo {
-	uid: string;
-	creatorDisplayName: string;
-	creatorIslandName: string;
-	creatorPhotoURL: string;
-}
-
 export interface Chat extends doc {
-	receiverInfo: ReceiverInfo;
+	receiverInfo: PublicUserInfo;
 }
 
 const useGetChats = () => {
@@ -63,7 +56,7 @@ const useGetChats = () => {
 					const receiverId = docData.participants.find(
 						(uid: string) => uid !== userId,
 					);
-					const receiverInfo = await getCreatorInfo(receiverId);
+					const receiverInfo = await getPublicUserInfo(receiverId);
 
 					return {
 						id: doc.id,

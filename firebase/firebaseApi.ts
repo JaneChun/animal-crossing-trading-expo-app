@@ -92,6 +92,22 @@ export async function updateDocToFirestore({
 	});
 }
 
+export const queryDocs = async <T extends DocumentData>(
+	q: Query<DocumentData>,
+): Promise<Array<T & { id: string }>> => {
+	const querySnapshot = await getDocs(q);
+
+	if (querySnapshot.empty) return [];
+
+	return querySnapshot.docs.map((doc) => {
+		const docData = doc.data() as T;
+		return {
+			id: doc.id,
+			...docData,
+		};
+	});
+};
+
 // DATABASE - USER
 export const saveUserToFirestore = async ({
 	uid,
@@ -174,63 +190,45 @@ export const deleteObjectFromStorage = async (
 	});
 };
 
-// USERINFO
-export const getCreatorInfo = async (
-	creatorId: string,
-): Promise<{
-	creatorDisplayName: string;
-	creatorIslandName: string;
-	creatorPhotoURL: string;
-}> => {
-	try {
-		return firestoreRequest('타 유저 정보 조회', async () => {
-			const docData = await getDocFromFirestore({
-				collection: 'Users',
-				id: creatorId,
-			});
-
-			if (!docData) {
-				return getDefaultCreatorInfo();
-			}
-
-			return {
-				creatorDisplayName: docData.displayName || 'Unknown User',
-				creatorIslandName: docData.islandName || '',
-				creatorPhotoURL: docData.photoURL || '',
-			};
-		});
-	} catch (e) {
-		return getDefaultCreatorInfo();
-	}
-};
-
-export const queryDocs = async <T extends DocumentData>(
-	q: Query<DocumentData>,
-): Promise<Array<T & { id: string }>> => {
-	const querySnapshot = await getDocs(q);
-
-	if (querySnapshot.empty) return [];
-
-	return querySnapshot.docs.map((doc) => {
-		const docData = doc.data() as T;
-		return {
-			id: doc.id,
-			...docData,
-		};
-	});
-};
-
-type PublicUserInfo = {
+// PUBLIC USERINFO
+export type PublicUserInfo = {
 	uid: string;
 	displayName: string;
 	islandName: string;
 	photoURL: string;
 };
 
-const getDefaultCreatorInfo = () => ({
-	creatorDisplayName: 'Unknown User',
-	creatorIslandName: '',
-	creatorPhotoURL: '',
+export const getPublicUserInfo = async (
+	creatorId: string,
+): Promise<PublicUserInfo> => {
+	try {
+		return firestoreRequest('유저 정보 조회', async () => {
+			const docData = await getDocFromFirestore({
+				collection: 'Users',
+				id: creatorId,
+			});
+
+			if (!docData) {
+				return getDefaultPublicUserInfo(creatorId);
+			}
+
+			return {
+				uid: creatorId,
+				displayName: docData.displayName || 'Unknown User',
+				islandName: docData.islandName || '',
+				photoURL: docData.photoURL || '',
+			};
+		});
+	} catch (e) {
+		return getDefaultPublicUserInfo(creatorId);
+	}
+};
+
+const getDefaultPublicUserInfo = (uid: string): PublicUserInfo => ({
+	uid,
+	displayName: 'Unknown User',
+	islandName: '',
+	photoURL: '',
 });
 
 export const getPublicUserInfos = async (

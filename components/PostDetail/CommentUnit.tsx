@@ -3,7 +3,8 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import {
 	createChatRoom,
 	deleteComment as deleteCommentFromDB,
-	getCreatorInfo,
+	getPublicUserInfo,
+	PublicUserInfo,
 } from '@/firebase/firebaseApi';
 import { Comment } from '@/hooks/useGetComments';
 import { HomeStackNavigation, TabNavigation } from '@/types/navigation';
@@ -20,12 +21,6 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native';
-// import { ChatContext } from '../../Context/ChatContext';
-
-type CommentCreatorInfo = {
-	creatorDisplayName: string;
-	creatorPhotoURL: string;
-};
 
 interface CommentUnitProps extends Comment {
 	commentRefresh: () => void;
@@ -45,13 +40,13 @@ const CommentUnit = ({
 	const { showActionSheetWithOptions } = useActionSheet();
 	const { userInfo } = useAuthContext();
 	const [commentCreatorInfo, setCommentCreatorInfo] =
-		useState<CommentCreatorInfo | null>(null);
+		useState<PublicUserInfo | null>(null);
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<HomeStackNavigation>();
 
 	useEffect(() => {
 		const getCommentCreatorInfo = async () => {
-			const userInfo = await getCreatorInfo(creatorId);
+			const userInfo = await getPublicUserInfo(creatorId);
 			setCommentCreatorInfo(userInfo);
 		};
 		getCommentCreatorInfo();
@@ -153,7 +148,7 @@ const CommentUnit = ({
 	return (
 		<View style={styles.container}>
 			<Image
-				source={{ uri: commentCreatorInfo?.creatorPhotoURL }}
+				source={{ uri: commentCreatorInfo?.photoURL }}
 				style={styles.profileImage}
 			/>
 			<View style={styles.commentContent}>
@@ -161,7 +156,7 @@ const CommentUnit = ({
 				<View style={styles.commentHeader}>
 					<View style={styles.creatorInfo}>
 						<Text style={styles.creatorDisplayNameText}>
-							{commentCreatorInfo?.creatorDisplayName}
+							{commentCreatorInfo?.displayName}
 						</Text>
 						{postCreatorId === creatorId && (
 							<Text style={styles.authorTag}>작성자</Text>
