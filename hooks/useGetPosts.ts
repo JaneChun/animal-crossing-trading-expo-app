@@ -1,6 +1,6 @@
 import { db } from '@/fbase';
+import { getCreatorInfo } from '@/firebase/firebaseApi';
 import { CartItem } from '@/screens/NewPost';
-import { getCreatorInfo } from '@/utilities/firebaseApi';
 import {
 	collection,
 	DocumentData,

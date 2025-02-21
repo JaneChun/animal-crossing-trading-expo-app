@@ -2,12 +2,12 @@ import Input from '@/components/ui/Input';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/fbase';
-import { ChatRoomRouteProp, ChatStackNavigation } from '@/types/navigation';
 import {
 	leaveChatRoom,
 	markMessagesAsRead,
 	sendMessage,
-} from '@/utilities/firebaseApi';
+} from '@/firebase/firebaseApi';
+import { ChatRoomRouteProp, ChatStackNavigation } from '@/types/navigation';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo, Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';

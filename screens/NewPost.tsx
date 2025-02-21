@@ -17,7 +17,7 @@ import {
 	deleteObjectFromStorage,
 	updateDocToFirestore,
 	uploadObjectToStorage,
-} from '../utilities/firebaseApi';
+} from '../firebase/firebaseApi';
 
 import BodyInput from '@/components/NewPost/BodyInput';
 import ImageInput from '@/components/NewPost/ImageInput';

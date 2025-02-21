@@ -1,13 +1,13 @@
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { Comment } from '@/hooks/useGetComments';
-import { HomeStackNavigation, TabNavigation } from '@/types/navigation';
-import { elapsedTime } from '@/utilities/elapsedTime';
 import {
 	createChatRoom,
 	deleteComment as deleteCommentFromDB,
 	getCreatorInfo,
-} from '@/utilities/firebaseApi';
+} from '@/firebase/firebaseApi';
+import { Comment } from '@/hooks/useGetComments';
+import { HomeStackNavigation, TabNavigation } from '@/types/navigation';
+import { elapsedTime } from '@/utilities/elapsedTime';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { AntDesign, Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';

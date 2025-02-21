@@ -3,16 +3,16 @@ import ValidationInput from '@/components/Profile/ValidationInput';
 import Button from '@/components/ui/Button';
 import { Colors } from '@/constants/Color';
 import { useAuthContext, UserInfo } from '@/contexts/AuthContext';
+import {
+	deleteObjectFromStorage,
+	updateDocToFirestore,
+	uploadObjectToStorage,
+} from '@/firebase/firebaseApi';
 import useLoading from '@/hooks/useLoading';
 import {
 	EditProfileRouteProp,
 	ProfileStackNavigation,
 } from '@/types/navigation';
-import {
-	deleteObjectFromStorage,
-	updateDocToFirestore,
-	uploadObjectToStorage,
-} from '@/utilities/firebaseApi';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';

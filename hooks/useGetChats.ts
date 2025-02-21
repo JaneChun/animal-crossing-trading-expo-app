@@ -1,6 +1,6 @@
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/fbase';
-import { getCreatorInfo } from '@/utilities/firebaseApi';
+import { getCreatorInfo } from '@/firebase/firebaseApi';
 import {
 	collection,
 	getDocs,

@@ -1,13 +1,13 @@
 import Layout from '@/components/ui/Layout';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { auth } from '@/fbase';
+import { updateComment } from '@/firebase/firebaseApi';
 import useLoading from '@/hooks/useLoading';
 import {
 	EditCommentRouteProp,
 	HomeStackNavigation,
 	TabNavigation,
 } from '@/types/navigation';
-import { updateComment } from '@/utilities/firebaseApi';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Alert, StyleSheet, TextInput } from 'react-native';

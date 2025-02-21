@@ -9,7 +9,7 @@ import {
 	View,
 	ViewStyle,
 } from 'react-native';
-import { deleteDocFromFirestore } from '../../utilities/firebaseApi';
+import { deleteDocFromFirestore } from '../../firebase/firebaseApi';
 
 type ActionButtonsProps = {
 	id: string;
