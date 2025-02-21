@@ -1,26 +1,26 @@
-import MyPosts from '@/components/MyPage/MyPosts';
-import Profile from '@/components/MyPage/Profile';
+import MyPosts from '@/components/Profile/MyPosts';
+import ProfileBox from '@/components/Profile/Profile';
 import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import useLoading from '@/hooks/useLoading';
-import { MyPageStackNavigation } from '@/types/navigation';
+import { ProfileStackNavigation } from '@/types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
-const MyPage = () => {
+const Profile = () => {
 	const { userInfo } = useAuthContext();
 	const { LoadingIndicator } = useLoading();
-	const navigation = useNavigation<MyPageStackNavigation>();
+	const stackNavigation = useNavigation<ProfileStackNavigation>();
 
 	if (!userInfo) {
 		return <LoadingIndicator />;
 	}
 
 	const onPressSetting = () => {
-		navigation.navigate('Setting');
+		stackNavigation.navigate('Setting');
 	};
 
 	return (
@@ -39,7 +39,7 @@ const MyPage = () => {
 			<FlatList
 				data={[]}
 				renderItem={null}
-				ListHeaderComponent={<Profile />}
+				ListHeaderComponent={<ProfileBox />}
 				ListEmptyComponent={<MyPosts />}
 			/>
 		</Layout>
@@ -63,4 +63,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default MyPage;
+export default Profile;

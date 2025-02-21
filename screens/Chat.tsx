@@ -1,8 +1,11 @@
 import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
-import useGetChats, { Chat, ReceiverInfo } from '@/hooks/useGetChats';
-import { MyChatStackNavigation } from '@/types/navigation';
+import useGetChats, {
+	Chat as ChatType,
+	ReceiverInfo,
+} from '@/hooks/useGetChats';
+import { ChatStackNavigation } from '@/types/navigation';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
@@ -15,8 +18,8 @@ import {
 	View,
 } from 'react-native';
 
-const MyChat = () => {
-	const navigation = useNavigation<MyChatStackNavigation>();
+const Chat = () => {
+	const stackNavigation = useNavigation<ChatStackNavigation>();
 	const { userInfo } = useAuthContext();
 	const { chats } = useGetChats();
 
@@ -27,10 +30,10 @@ const MyChat = () => {
 		chatId: string;
 		receiverInfo: ReceiverInfo;
 	}) => {
-		navigation.navigate('ChatRoom', { chatId, receiverInfo });
+		stackNavigation.navigate('ChatRoom', { chatId, receiverInfo });
 	};
 
-	const renderChatItem = ({ item }: { item: Chat }) => {
+	const renderChatItem = ({ item }: { item: ChatType }) => {
 		const {
 			id,
 			lastMessage,
@@ -129,4 +132,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default MyChat;
+export default Chat;

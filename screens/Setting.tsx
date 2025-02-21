@@ -1,11 +1,12 @@
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { TabNavigation } from '@/types/navigation';
+import { ProfileStackNavigation, TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const Setting = () => {
-	const navigation = useNavigation<TabNavigation>();
+	const tabNavigation = useNavigation<TabNavigation>();
+	const stackNavigation = useNavigation<ProfileStackNavigation>();
 	const { logout, deleteAccount } = useAuthContext();
 	const { userInfo } = useAuthContext();
 
@@ -20,7 +21,7 @@ const Setting = () => {
 		const isSuccess: boolean | void = await logout();
 
 		if (Boolean(isSuccess)) {
-			navigation.reset({
+			tabNavigation.reset({
 				index: 0,
 				routes: [{ name: 'Home' }],
 			});
@@ -50,7 +51,7 @@ const Setting = () => {
 			await deleteAccount(userInfo.uid);
 
 			Alert.alert('탈퇴 완료', '탈퇴 처리가 성공적으로 완료되었습니다.');
-			navigation.goBack();
+			stackNavigation.goBack();
 		} catch (e: any) {
 			Alert.alert('탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.');
 		}

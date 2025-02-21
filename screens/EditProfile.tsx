@@ -1,10 +1,13 @@
-import ProfileImageInput from '@/components/MyPage/ProfileImageInput';
-import ValidationInput from '@/components/MyPage/ValidationInput';
+import ProfileImageInput from '@/components/Profile/ProfileImageInput';
+import ValidationInput from '@/components/Profile/ValidationInput';
 import Button from '@/components/ui/Button';
 import { Colors } from '@/constants/Color';
 import { useAuthContext, UserInfo } from '@/contexts/AuthContext';
 import useLoading from '@/hooks/useLoading';
-import { EditProfileRouteProp } from '@/types/navigation';
+import {
+	EditProfileRouteProp,
+	ProfileStackNavigation,
+} from '@/types/navigation';
 import {
 	deleteObjectFromStorage,
 	updateDocToFirestore,
@@ -18,7 +21,7 @@ import { Alert, StyleSheet, Text, View } from 'react-native';
 
 const EditProfile = () => {
 	const route = useRoute<EditProfileRouteProp>();
-	const navigation = useNavigation();
+	const stackNavigation = useNavigation<ProfileStackNavigation>();
 	const { userInfo }: { userInfo: UserInfo } = route?.params ?? {};
 	const { setUserInfo } = useAuthContext();
 	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
@@ -31,7 +34,7 @@ const EditProfile = () => {
 	const isValid = displayNameInput.length > 0 && islandNameInput.length > 0;
 
 	useEffect(() => {
-		navigation.setOptions({
+		stackNavigation.setOptions({
 			headerRight: () => (
 				<Button
 					disabled={isLoading || !isValid}
@@ -49,7 +52,7 @@ const EditProfile = () => {
 		image,
 		isValid,
 		isLoading,
-		navigation,
+		stackNavigation,
 	]);
 
 	useEffect(() => {
@@ -136,10 +139,10 @@ const EditProfile = () => {
 
 			Alert.alert('성공', '프로필이 성공적으로 변경되었습니다.');
 			resetForm();
-			navigation.goBack();
+			stackNavigation.goBack();
 		} catch (e) {
 			Alert.alert('오류', '프로필 업데이트 중 오류가 발생했습니다.');
-			navigation.goBack();
+			stackNavigation.goBack();
 			console.log(e);
 		} finally {
 			setIsLoading(false);

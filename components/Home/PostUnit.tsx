@@ -30,10 +30,10 @@ const PostUnit = ({
 	creatorId,
 	commentCount,
 }: PostUnitProps) => {
-	const navigation = useNavigation<HomeStackNavigation>();
+	const stackNavigation = useNavigation<HomeStackNavigation>();
 
 	const navigateToPost = () => {
-		navigation.navigate('PostDetail', { id });
+		stackNavigation.navigate('PostDetail', { id });
 	};
 
 	return (

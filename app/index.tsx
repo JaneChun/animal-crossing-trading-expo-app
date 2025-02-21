@@ -1,3 +1,5 @@
+import { Colors } from '@/constants/Color';
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import {
 	Entypo,
 	FontAwesome,
@@ -6,32 +8,31 @@ import {
 } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
-import { Colors } from '@/constants/Color';
-import Home from '@/screens/Home';
-import Login from '@/screens/Login';
-import MyChat from '@/screens/MyChat';
-import MyPage from '@/screens/MyPage';
-import NewPost from '@/screens/NewPost';
-import PostDetail from '@/screens/PostDetail';
-import Search from '@/screens/Search';
-
-import Button from '@/components/ui/Button';
-import ChatRoom from '@/screens/ChatRoom';
-import EditComment from '@/screens/EditComment';
-import EditProfile from '@/screens/EditProfile';
-import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthContextProvider, useAuthContext } from '../contexts/AuthContext';
 
-const Stack = createNativeStackNavigator();
-const BottomTab = createBottomTabNavigator();
-const ProfileStack = createNativeStackNavigator();
-const ChatStack = createNativeStackNavigator();
+// 스크린 import
+import Chat from '@/screens/Chat';
+import ChatRoom from '@/screens/ChatRoom';
+import EditComment from '@/screens/EditComment';
+import EditProfile from '@/screens/EditProfile';
+import Home from '@/screens/Home';
+import Login from '@/screens/Login';
+import NewPost from '@/screens/NewPost';
+import PostDetail from '@/screens/PostDetail';
+import Profile from '@/screens/Profile';
+import Search from '@/screens/Search';
+import Setting from '@/screens/Setting';
 
-const HomeStack = () => {
+// 네비게이터 생성
+const BottomTab = createBottomTabNavigator();
+const HomeStack = createNativeStackNavigator();
+const ChatStack = createNativeStackNavigator();
+const ProfileStack = createNativeStackNavigator();
+
+const HomeStackNavigator = () => {
 	return (
-		<Stack.Navigator
+		<HomeStack.Navigator
 			screenOptions={{
 				title: '모동숲 마켓',
 				headerRight: () => (
@@ -39,22 +40,17 @@ const HomeStack = () => {
 				),
 			}}
 		>
-			<Stack.Screen name='Post' component={Home} />
-			<Stack.Screen name='PostDetail' component={PostDetail} />
-			<Stack.Screen
+			<HomeStack.Screen name='Home' component={Home} />
+			<HomeStack.Screen name='PostDetail' component={PostDetail} />
+			<HomeStack.Screen
 				name='NewPost'
 				component={NewPost}
 				options={{
 					presentation: 'modal',
 					title: '글 수정',
-					headerRight: () => (
-						<Button color='white' size='md2'>
-							등록
-						</Button>
-					),
 				}}
 			/>
-			<Stack.Screen
+			<HomeStack.Screen
 				name='EditComment'
 				component={EditComment}
 				options={{
@@ -62,39 +58,69 @@ const HomeStack = () => {
 					title: '댓글 수정',
 				}}
 			/>
-		</Stack.Navigator>
+		</HomeStack.Navigator>
 	);
 };
 
-const MyPageStack = () => {
+const ProfileStackNavigator = () => {
+	const { userInfo } = useAuthContext();
+
 	return (
 		<ProfileStack.Navigator screenOptions={{ headerShown: false }}>
-			<ProfileStack.Screen name='MyPage' component={MyPage} />
-			<ProfileStack.Screen
-				name='EditProfile'
-				component={EditProfile}
-				options={{
-					headerShown: true,
-					presentation: 'modal',
-					title: '프로필 수정',
-				}}
-			/>
+			{userInfo ? (
+				<>
+					<ProfileStack.Screen
+						name='Profile'
+						component={Profile}
+						options={{ title: '프로필' }}
+					/>
+					<ProfileStack.Screen
+						name='EditProfile'
+						component={EditProfile}
+						options={{
+							headerShown: true,
+							presentation: 'modal',
+							title: '프로필 수정',
+						}}
+					/>
+					<ProfileStack.Screen
+						name='Setting'
+						component={Setting}
+						options={{
+							headerShown: true,
+							title: '설정',
+						}}
+					/>
+				</>
+			) : (
+				<BottomTab.Screen
+					name='Login'
+					component={Login}
+					options={{
+						tabBarIcon: ({ focused }) => (
+							<Entypo
+								name='login'
+								size={24}
+								color={focused ? Colors.primary : Colors.dark_gray}
+							/>
+						),
+					}}
+				/>
+			)}
 		</ProfileStack.Navigator>
 	);
 };
 
-const MyChatStack = () => {
+const ChatStackNavigator = () => {
 	return (
 		<ChatStack.Navigator screenOptions={{ headerShown: false }}>
-			<ChatStack.Screen name='Chat' component={MyChat} />
+			<ChatStack.Screen name='Chat' component={Chat} />
 			<ChatStack.Screen name='ChatRoom' component={ChatRoom} />
 		</ChatStack.Navigator>
 	);
 };
 
 const BottomTabNavigator = () => {
-	const { userInfo } = useAuthContext();
-
 	return (
 		<BottomTab.Navigator
 			screenOptions={{
@@ -110,7 +136,7 @@ const BottomTabNavigator = () => {
 		>
 			<BottomTab.Screen
 				name='Home'
-				component={HomeStack}
+				component={HomeStackNavigator}
 				options={{
 					tabBarIcon: ({ focused }) => (
 						<Entypo
@@ -122,8 +148,8 @@ const BottomTabNavigator = () => {
 				}}
 			/>
 			<BottomTab.Screen
-				name='MyChat'
-				component={MyChatStack}
+				name='Chat'
+				component={ChatStackNavigator}
 				options={{
 					tabBarIcon: ({ focused }) => (
 						<MaterialCommunityIcons
@@ -160,35 +186,19 @@ const BottomTabNavigator = () => {
 					),
 				}}
 			/>
-			{userInfo ? (
-				<BottomTab.Screen
-					name='MyPage'
-					component={MyPageStack}
-					options={{
-						tabBarIcon: ({ focused }) => (
-							<FontAwesome6
-								name='user-large'
-								size={21}
-								color={focused ? Colors.primary : Colors.dark_gray}
-							/>
-						),
-					}}
-				/>
-			) : (
-				<BottomTab.Screen
-					name='Login'
-					component={Login}
-					options={{
-						tabBarIcon: ({ focused }) => (
-							<Entypo
-								name='login'
-								size={24}
-								color={focused ? Colors.primary : Colors.dark_gray}
-							/>
-						),
-					}}
-				/>
-			)}
+			<BottomTab.Screen
+				name='Profile'
+				component={ProfileStackNavigator}
+				options={{
+					tabBarIcon: ({ focused }) => (
+						<FontAwesome6
+							name='user-large'
+							size={21}
+							color={focused ? Colors.primary : Colors.dark_gray}
+						/>
+					),
+				}}
+			/>
 		</BottomTab.Navigator>
 	);
 };

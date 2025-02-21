@@ -7,13 +7,13 @@ import { useAuthContext } from '@/contexts/AuthContext';
 
 const Login = () => {
 	const { login } = useAuthContext();
-	const navigation = useNavigation<TabNavigation>();
+	const tabNavigation = useNavigation<TabNavigation>();
 
 	const handleLogin = async () => {
 		const isSuccess: boolean | void = await login();
 
 		if (Boolean(isSuccess)) {
-			navigation.reset({
+			tabNavigation.reset({
 				index: 0,
 				routes: [{ name: 'Home' }],
 			});

@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { TabNavigation } from '@/types/navigation';
+import { ProfileStackNavigation } from '@/types/navigation';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
@@ -9,10 +9,10 @@ import Button from '../ui/Button';
 
 const Profile = () => {
 	const { userInfo } = useAuthContext();
-	const navigation = useNavigation<TabNavigation>();
+	const stackNavigation = useNavigation<ProfileStackNavigation>();
 
 	const editProfile = () => {
-		navigation.navigate('EditProfile', { userInfo });
+		stackNavigation.navigate('EditProfile', { userInfo });
 	};
 
 	return (

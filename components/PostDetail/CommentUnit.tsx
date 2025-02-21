@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { Comment } from '@/hooks/useGetComments';
-import { TabNavigation } from '@/types/navigation';
+import { HomeStackNavigation, TabNavigation } from '@/types/navigation';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import {
 	createChatRoom,
@@ -46,7 +46,8 @@ const CommentUnit = ({
 	const { userInfo } = useAuthContext();
 	const [commentCreatorInfo, setCommentCreatorInfo] =
 		useState<CommentCreatorInfo | null>(null);
-	const navigation = useNavigation<TabNavigation>();
+	const tabNavigation = useNavigation<TabNavigation>();
+	const stackNavigation = useNavigation<HomeStackNavigation>();
 
 	useEffect(() => {
 		const getCommentCreatorInfo = async () => {
@@ -89,7 +90,7 @@ const CommentUnit = ({
 		commentId: string;
 		comment: string;
 	}) => {
-		navigation.navigate('EditComment', { postId, commentId, comment });
+		stackNavigation.navigate('EditComment', { postId, commentId, comment });
 	};
 
 	const deleteComment = async ({
@@ -137,7 +138,7 @@ const CommentUnit = ({
 		try {
 			const chatId = await createChatRoom(userInfo.uid, receiverId);
 
-			navigation.navigate('MyChat', {
+			tabNavigation.navigate('Chat', {
 				screen: 'ChatRoom',
 				params: {
 					chatId,

@@ -17,7 +17,7 @@ type ActionButtonsProps = {
 };
 
 const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
-	const navigation = useNavigation<TabNavigation>();
+	const tabNavigation = useNavigation<TabNavigation>();
 
 	const showAlert = (title: string, message: string, onPress?: () => void) => {
 		Alert.alert(title, message, [{ text: '확인', onPress }]);
@@ -25,7 +25,7 @@ const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
 
 	const editPost = () => {
 		// if (post.done) return;
-		navigation.navigate('NewPost', { id });
+		tabNavigation.navigate('NewPost', { id });
 	};
 
 	const deletePost = async () => {
@@ -39,7 +39,7 @@ const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
 		try {
 			await deleteDocFromFirestore({ id });
 			showAlert('삭제 완료', '게시글이 성공적으로 삭제되었습니다.', () =>
-				navigation.goBack(),
+				tabNavigation.goBack(),
 			);
 		} catch (e) {
 			showAlert('삭제 실패', '게시글 삭제 중 오류가 발생했습니다.');

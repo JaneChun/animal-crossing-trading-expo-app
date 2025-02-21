@@ -2,7 +2,7 @@ import Input from '@/components/ui/Input';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/fbase';
-import { ChatRoomRouteProp, MyChatStackNavigation } from '@/types/navigation';
+import { ChatRoomRouteProp, ChatStackNavigation } from '@/types/navigation';
 import {
 	leaveChatRoom,
 	markMessagesAsRead,
@@ -31,7 +31,7 @@ import { FlatList } from 'react-native-gesture-handler';
 
 const ChatRoom = () => {
 	const { showActionSheetWithOptions } = useActionSheet();
-	const navigation = useNavigation<MyChatStackNavigation>();
+	const stackNavigation = useNavigation<ChatStackNavigation>();
 	const { userInfo } = useAuthContext();
 	const [chat, setChat] = useState<any | null>(null); // 타입
 	const [messages, setMessages] = useState<any[]>([]);
@@ -121,7 +121,7 @@ const ChatRoom = () => {
 		if (!userInfo) return;
 
 		await leaveChatRoom({ chatId, userId: userInfo.uid });
-		navigation.goBack();
+		stackNavigation.goBack();
 	};
 
 	const renderMessage = ({ item }: { item: any }) => {
@@ -157,7 +157,7 @@ const ChatRoom = () => {
 					<TouchableOpacity
 						style={styles.iconContainer}
 						onPress={() =>
-							navigation.reset({
+							stackNavigation.reset({
 								index: 0,
 								routes: [{ name: 'Chat' }],
 							})

@@ -2,7 +2,11 @@ import Layout from '@/components/ui/Layout';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { auth } from '@/fbase';
 import useLoading from '@/hooks/useLoading';
-import { EditCommentRouteProp, TabNavigation } from '@/types/navigation';
+import {
+	EditCommentRouteProp,
+	HomeStackNavigation,
+	TabNavigation,
+} from '@/types/navigation';
 import { updateComment } from '@/utilities/firebaseApi';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
@@ -12,7 +16,8 @@ import Button from '../components/ui/Button';
 const EditComment = () => {
 	const route = useRoute<EditCommentRouteProp>();
 	const { commentId, postId, comment } = route.params;
-	const navigation = useNavigation<TabNavigation>();
+	const tabNavigation = useNavigation<TabNavigation>();
+	const stackNavigation = useNavigation<HomeStackNavigation>();
 	const { userInfo } = useAuthContext();
 	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
 	const [newCommentInput, setNewCommentInput] = useState('');
@@ -20,7 +25,7 @@ const EditComment = () => {
 	const isValid = newCommentInput?.length > 0;
 
 	useEffect(() => {
-		navigation.setOptions({
+		stackNavigation.setOptions({
 			headerRight: () => (
 				<Button
 					disabled={isLoading || !isValid}
@@ -32,12 +37,16 @@ const EditComment = () => {
 				</Button>
 			),
 			headerLeft: () => (
-				<Button color='gray' size='md2' onPress={() => navigation.goBack()}>
+				<Button
+					color='gray'
+					size='md2'
+					onPress={() => stackNavigation.goBack()}
+				>
 					취소
 				</Button>
 			),
 		});
-	}, [newCommentInput, isValid, isLoading, navigation]);
+	}, [newCommentInput, isValid, isLoading, stackNavigation]);
 
 	useEffect(() => {
 		setNewCommentInput(comment);
@@ -46,7 +55,7 @@ const EditComment = () => {
 	const onSubmit = () => {
 		if (!userInfo || !auth.currentUser) {
 			Alert.alert('댓글 쓰기는 로그인 후 가능합니다.');
-			navigation.navigate('Login');
+			tabNavigation.navigate('Profile', { screen: 'Login' });
 			return;
 		}
 
@@ -66,7 +75,7 @@ const EditComment = () => {
 		} finally {
 			setNewCommentInput('');
 			setIsLoading(false);
-			navigation.goBack();
+			stackNavigation.goBack();
 		}
 	};
 

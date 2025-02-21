@@ -1,5 +1,9 @@
 import { Colors } from '@/constants/Color';
-import { type NewPostRouteProp, type TabNavigation } from '@/types/navigation';
+import {
+	HomeStackNavigation,
+	type NewPostRouteProp,
+	type TabNavigation,
+} from '@/types/navigation';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
@@ -38,6 +42,7 @@ export type CartItem = {
 
 const NewPost = () => {
 	const tabNavigation = useNavigation<TabNavigation>();
+	const stackNavigation = useNavigation<HomeStackNavigation>();
 	const { userInfo } = useAuthContext();
 	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
 
@@ -54,7 +59,7 @@ const NewPost = () => {
 	const { post, error, isLoading: loading } = useGetPostDetail(editingId);
 
 	useEffect(() => {
-		tabNavigation.setOptions({
+		stackNavigation.setOptions({
 			headerRight: () => (
 				<Button color='white' size='md2' onPress={onSubmit}>
 					등록
@@ -106,7 +111,7 @@ const NewPost = () => {
 
 	const onSubmit = async () => {
 		if (!validateUser()) {
-			return tabNavigation.navigate('Login');
+			return tabNavigation.navigate('Profile', { screen: 'Login' });
 		}
 
 		if (!validateForm()) return;
@@ -187,7 +192,7 @@ const NewPost = () => {
 			setIsLoading(false);
 
 			if (editingId) {
-				tabNavigation.goBack();
+				stackNavigation.goBack();
 			}
 
 			if (createdId) {
