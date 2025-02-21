@@ -14,10 +14,12 @@ import { useAuthContext } from '../contexts/AuthContext';
 import { auth } from '../fbase';
 import {
 	addDocToFirestore,
-	deleteObjectFromStorage,
 	updateDocToFirestore,
-	uploadObjectToStorage,
 } from '../firebase/firebaseApi';
+import {
+	deleteObjectFromStorage,
+	uploadObjectToStorage,
+} from '../firebase/imageService';
 
 import BodyInput from '@/components/NewPost/BodyInput';
 import ImageInput from '@/components/NewPost/ImageInput';

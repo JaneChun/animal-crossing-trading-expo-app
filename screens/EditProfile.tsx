@@ -3,11 +3,11 @@ import ValidationInput from '@/components/Profile/ValidationInput';
 import Button from '@/components/ui/Button';
 import { Colors } from '@/constants/Color';
 import { useAuthContext, UserInfo } from '@/contexts/AuthContext';
+import { updateDocToFirestore } from '@/firebase/firebaseApi';
 import {
 	deleteObjectFromStorage,
-	updateDocToFirestore,
 	uploadObjectToStorage,
-} from '@/firebase/firebaseApi';
+} from '@/firebase/imageService';
 import useLoading from '@/hooks/useLoading';
 import {
 	EditProfileRouteProp,
