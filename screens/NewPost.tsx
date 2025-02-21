@@ -111,7 +111,7 @@ const NewPost = () => {
 
 	const onSubmit = async () => {
 		if (!validateUser()) {
-			return tabNavigation.navigate('Profile', { screen: 'Login' });
+			return tabNavigation.navigate('ProfileTab', { screen: 'Login' });
 		}
 
 		if (!validateForm()) return;
@@ -196,7 +196,7 @@ const NewPost = () => {
 			}
 
 			if (createdId) {
-				tabNavigation.navigate('Home', {
+				tabNavigation.navigate('HomeTab', {
 					screen: 'PostDetail',
 					params: {
 						id: createdId,

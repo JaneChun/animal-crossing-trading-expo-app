@@ -6,11 +6,11 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 // 하단 탭 네비게이션
 export type RootTabParamList = {
-	Home: NavigatorScreenParams<HomeStackParamList>;
-	Chat: NavigatorScreenParams<Chat>;
-	NewPost: { id: string };
-	Search: undefined;
-	Profile: NavigatorScreenParams<ProfileStackParamList>;
+	HomeTab: NavigatorScreenParams<HomeStackParamList>;
+	ChatTab: NavigatorScreenParams<Chat>;
+	NewPostTab: { id: string };
+	SearchTab: undefined;
+	ProfileTab: NavigatorScreenParams<ProfileStackParamList>;
 };
 
 // Home 스택 네비게이션

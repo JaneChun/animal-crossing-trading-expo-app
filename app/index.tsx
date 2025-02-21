@@ -136,7 +136,7 @@ const BottomTabNavigator = () => {
 			}}
 		>
 			<BottomTab.Screen
-				name='Home'
+				name='HomeTab'
 				component={HomeStackNavigator}
 				options={{
 					tabBarIcon: ({ focused }) => (
@@ -149,7 +149,7 @@ const BottomTabNavigator = () => {
 				}}
 			/>
 			<BottomTab.Screen
-				name='Chat'
+				name='ChatTab'
 				component={ChatStackNavigator}
 				options={{
 					tabBarIcon: ({ focused }) => (
@@ -162,7 +162,7 @@ const BottomTabNavigator = () => {
 				}}
 			/>
 			<BottomTab.Screen
-				name='NewPost'
+				name='NewPostTab'
 				component={NewPost}
 				options={{
 					tabBarIcon: ({ focused }) => (
@@ -175,7 +175,7 @@ const BottomTabNavigator = () => {
 				}}
 			/>
 			<BottomTab.Screen
-				name='Search'
+				name='SearchTab'
 				component={Search}
 				options={{
 					tabBarIcon: ({ focused }) => (
@@ -188,7 +188,7 @@ const BottomTabNavigator = () => {
 				}}
 			/>
 			<BottomTab.Screen
-				name='Profile'
+				name='ProfileTab'
 				component={ProfileStackNavigator}
 				options={{
 					tabBarIcon: ({ focused }) => (

@@ -138,7 +138,7 @@ const CommentUnit = ({
 		try {
 			const chatId = await createChatRoom(userInfo.uid, receiverId);
 
-			tabNavigation.navigate('Chat', {
+			tabNavigation.navigate('ChatTab', {
 				screen: 'ChatRoom',
 				params: {
 					chatId,

@@ -55,7 +55,7 @@ const EditComment = () => {
 	const onSubmit = () => {
 		if (!userInfo || !auth.currentUser) {
 			Alert.alert('댓글 쓰기는 로그인 후 가능합니다.');
-			tabNavigation.navigate('Profile', { screen: 'Login' });
+			tabNavigation.navigate('ProfileTab', { screen: 'Login' });
 			return;
 		}
 

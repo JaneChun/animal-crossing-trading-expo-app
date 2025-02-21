@@ -25,7 +25,7 @@ const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
 
 	const editPost = () => {
 		// if (post.done) return;
-		tabNavigation.navigate('NewPost', { id });
+		tabNavigation.navigate('NewPostTab', { id });
 	};
 
 	const deletePost = async () => {

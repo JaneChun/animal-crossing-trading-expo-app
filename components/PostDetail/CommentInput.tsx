@@ -25,13 +25,13 @@ const CommentInput = ({
 	const onSubmit = () => {
 		if (!userInfo || !auth.currentUser) {
 			Alert.alert('댓글 쓰기는 로그인 후 가능합니다.');
-			tabNavigation.navigate('Profile', { screen: 'Login' });
+			tabNavigation.navigate('ProfileTab', { screen: 'Login' });
 			return;
 		}
 
 		if (!postId) {
 			Alert.alert('게시글을 찾을 수 없습니다.');
-			tabNavigation.navigate('Profile', { screen: 'Login' });
+			tabNavigation.navigate('ProfileTab', { screen: 'Login' });
 			return;
 		}
 

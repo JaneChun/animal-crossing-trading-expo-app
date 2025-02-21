@@ -15,7 +15,7 @@ const Login = () => {
 		if (Boolean(isSuccess)) {
 			tabNavigation.reset({
 				index: 0,
-				routes: [{ name: 'Home' }],
+				routes: [{ name: 'HomeTab' }],
 			});
 		} else {
 			Alert.alert('로그인 실패', '다시 시도해주세요.');
