@@ -3,8 +3,6 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import {
 	createChatRoom,
 	deleteComment as deleteCommentFromDB,
-	getPublicUserInfo,
-	PublicUserInfo,
 } from '@/firebase/firebaseApi';
 import { Comment } from '@/hooks/useGetComments';
 import { HomeStackNavigation, TabNavigation } from '@/types/navigation';
@@ -12,7 +10,7 @@ import { elapsedTime } from '@/utilities/elapsedTime';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { AntDesign, Entypo } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
 	Alert,
 	Image,
@@ -36,21 +34,14 @@ const CommentUnit = ({
 	body,
 	creatorId,
 	createdAt,
+	creatorDisplayName,
+	creatorIslandName,
+	creatorPhotoURL,
 }: CommentUnitProps) => {
 	const { showActionSheetWithOptions } = useActionSheet();
 	const { userInfo } = useAuthContext();
-	const [commentCreatorInfo, setCommentCreatorInfo] =
-		useState<PublicUserInfo | null>(null);
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<HomeStackNavigation>();
-
-	useEffect(() => {
-		const getCommentCreatorInfo = async () => {
-			const userInfo = await getPublicUserInfo(creatorId);
-			setCommentCreatorInfo(userInfo);
-		};
-		getCommentCreatorInfo();
-	}, [creatorId]);
 
 	const showCommentEditOptions = ({
 		postId,
@@ -137,7 +128,12 @@ const CommentUnit = ({
 				screen: 'ChatRoom',
 				params: {
 					chatId,
-					receiverInfo: commentCreatorInfo,
+					receiverInfo: {
+						uid: creatorId,
+						diaplayName: creatorDisplayName,
+						islandName: creatorIslandName,
+						photoURL: creatorPhotoURL,
+					},
 				},
 			});
 		} catch (error) {
@@ -147,16 +143,13 @@ const CommentUnit = ({
 
 	return (
 		<View style={styles.container}>
-			<Image
-				source={{ uri: commentCreatorInfo?.photoURL }}
-				style={styles.profileImage}
-			/>
+			<Image source={{ uri: creatorPhotoURL }} style={styles.profileImage} />
 			<View style={styles.commentContent}>
 				{/* 헤더 */}
 				<View style={styles.commentHeader}>
 					<View style={styles.creatorInfo}>
 						<Text style={styles.creatorDisplayNameText}>
-							{commentCreatorInfo?.displayName}
+							{creatorDisplayName}
 						</Text>
 						{postCreatorId === creatorId && (
 							<Text style={styles.authorTag}>작성자</Text>

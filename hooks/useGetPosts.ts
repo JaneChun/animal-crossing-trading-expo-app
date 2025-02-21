@@ -100,11 +100,14 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 
 				// 4. 게시글과 유저 정보를 합쳐서 최종 데이터 생성
 				const newData = posts.map((post) => {
-					const publicUserInfo = publicUserInfos[post.creatorId];
+					const { displayName, islandName, photoURL } =
+						publicUserInfos[post.creatorId];
 
 					return {
 						...post,
-						...publicUserInfo,
+						displayName,
+						islandName,
+						photoURL,
 					} as Post;
 				});
 

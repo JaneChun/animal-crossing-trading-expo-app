@@ -381,6 +381,7 @@ export const sendMessage = async ({
 		await addDoc(messageRef, {
 			body: message,
 			senderId,
+			receiverId,
 			createdAt: Timestamp.now(),
 			isReadBy: [senderId],
 		});

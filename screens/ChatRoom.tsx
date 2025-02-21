@@ -170,12 +170,10 @@ const ChatRoom = () => {
 						/>
 					</TouchableOpacity>
 					<Image
-						source={{ uri: receiverInfo.creatorPhotoURL }}
+						source={{ uri: receiverInfo.photoURL }}
 						style={styles.profileImage}
 					/>
-					<Text style={styles.displayName}>
-						{receiverInfo.creatorDisplayName}
-					</Text>
+					<Text style={styles.displayName}>{receiverInfo.displayName}</Text>
 					<TouchableOpacity
 						style={styles.iconContainer}
 						onPress={showActionOptions}
