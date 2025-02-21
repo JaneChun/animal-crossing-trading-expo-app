@@ -1,9 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
-import {
-	createChatRoom,
-	deleteComment as deleteCommentFromDB,
-} from '@/firebase/firebaseApi';
+import { createChatRoom } from '@/firebase/chatService';
+import { deleteComment as deleteCommentFromDB } from '@/firebase/commentService';
 import { Comment } from '@/hooks/useGetComments';
 import { HomeStackNavigation, TabNavigation } from '@/types/navigation';
 import { elapsedTime } from '@/utilities/elapsedTime';

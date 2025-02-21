@@ -1,7 +1,7 @@
 import Layout from '@/components/ui/Layout';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { auth } from '@/fbase';
-import { updateComment } from '@/firebase/firebaseApi';
+import { updateComment } from '@/firebase/commentService';
 import useLoading from '@/hooks/useLoading';
 import {
 	EditCommentRouteProp,
