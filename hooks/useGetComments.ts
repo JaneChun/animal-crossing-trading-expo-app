@@ -1,4 +1,5 @@
-import { getPublicUserInfos, queryDocs } from '@/firebase/firebaseApi';
+import { queryDocs } from '@/firebase/firestoreService';
+import { getPublicUserInfos } from '@/firebase/userService';
 import { collection, orderBy, query, Timestamp } from 'firebase/firestore';
 import { useCallback, useEffect, useState } from 'react';
 import { db } from '../fbase';

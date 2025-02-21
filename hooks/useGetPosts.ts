@@ -1,5 +1,5 @@
 import { db } from '@/fbase';
-import { getPublicUserInfos } from '@/firebase/firebaseApi';
+import { getPublicUserInfos } from '@/firebase/userService';
 import { CartItem } from '@/screens/NewPost';
 import {
 	collection,

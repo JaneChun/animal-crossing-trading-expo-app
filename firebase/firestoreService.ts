@@ -11,8 +11,8 @@ import {
 	updateDoc,
 } from 'firebase/firestore';
 import firestoreRequest from './firebaseInterceptor';
+import { deleteObjectFromStorage } from './imageService';
 
-// DATABASE
 export const getDocFromFirestore = async ({
 	collection,
 	id,

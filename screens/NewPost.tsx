@@ -1,4 +1,13 @@
 import { Colors } from '@/constants/Color';
+import { auth } from '@/fbase';
+import {
+	addDocToFirestore,
+	updateDocToFirestore,
+} from '@/firebase/firestoreService';
+import {
+	deleteObjectFromStorage,
+	uploadObjectToStorage,
+} from '@/firebase/imageService';
 import {
 	HomeStackNavigation,
 	type NewPostRouteProp,
@@ -11,15 +20,6 @@ import { useEffect, useState } from 'react';
 import { Alert, KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useAuthContext } from '../contexts/AuthContext';
-import { auth } from '../fbase';
-import {
-	addDocToFirestore,
-	updateDocToFirestore,
-} from '../firebase/firebaseApi';
-import {
-	deleteObjectFromStorage,
-	uploadObjectToStorage,
-} from '../firebase/imageService';
 
 import BodyInput from '@/components/NewPost/BodyInput';
 import ImageInput from '@/components/NewPost/ImageInput';

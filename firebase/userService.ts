@@ -8,8 +8,8 @@ import {
 	setDoc,
 	where,
 } from 'firebase/firestore';
-import { getDocFromFirestore, queryDocs } from './firebaseApi';
 import firestoreRequest from './firebaseInterceptor';
+import { getDocFromFirestore, queryDocs } from './firestoreService';
 
 export type PublicUserInfo = {
 	uid: string;

@@ -1,4 +1,4 @@
-import { updateDocToFirestore } from '@/firebase/firebaseApi';
+import { updateDocToFirestore } from '@/firebase/firestoreService';
 import {
 	getUserInfoFromFirestore,
 	saveUserToFirestore,

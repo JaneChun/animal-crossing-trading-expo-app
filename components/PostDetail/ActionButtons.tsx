@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { deleteDocFromFirestore } from '@/firebase/firestoreService';
 import { TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import {
@@ -9,7 +10,6 @@ import {
 	View,
 	ViewStyle,
 } from 'react-native';
-import { deleteDocFromFirestore } from '../../firebase/firebaseApi';
 
 type ActionButtonsProps = {
 	id: string;

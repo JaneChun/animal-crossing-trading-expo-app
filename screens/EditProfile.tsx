@@ -3,7 +3,7 @@ import ValidationInput from '@/components/Profile/ValidationInput';
 import Button from '@/components/ui/Button';
 import { Colors } from '@/constants/Color';
 import { useAuthContext, UserInfo } from '@/contexts/AuthContext';
-import { updateDocToFirestore } from '@/firebase/firebaseApi';
+import { updateDocToFirestore } from '@/firebase/firestoreService';
 import {
 	deleteObjectFromStorage,
 	uploadObjectToStorage,
