@@ -1,5 +1,5 @@
 import { db } from '@/fbase';
-import { getCreatorInfo } from '@/firebase/firebaseApi';
+import { getPublicUserInfos } from '@/firebase/firebaseApi';
 import { CartItem } from '@/screens/NewPost';
 import {
 	collection,
@@ -48,25 +48,25 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 
 			setIsLoading(true);
 
+			// 기본 쿼리: 최신순 정렬 후 pageSize만큼 가져옴
+			let q = query(
+				collection(db, 'Boards'),
+				orderBy('createdAt', 'desc'),
+				limit(pageSize),
+			);
+
+			// 특정 유저의 게시글만 가져오는 필터
+			if (memoizedFilter?.creatorId) {
+				q = query(q, where('creatorId', '==', memoizedFilter.creatorId));
+			}
+
+			// 스크롤 시 마지막 문서 이후 데이터 가져오기
+			if (isLoadMore && lastestDocRef.current) {
+				q = query(q, startAfter(lastestDocRef.current));
+			}
+
 			try {
-				// 기본 쿼리: 최신순 정렬 후 pageSize만큼 가져옴
-				let q = query(
-					collection(db, 'Boards'),
-					orderBy('createdAt', 'desc'),
-					limit(pageSize),
-				);
-
-				// 특정 유저의 게시글만 가져오는 필터
-				if (memoizedFilter?.creatorId) {
-					q = query(q, where('creatorId', '==', memoizedFilter.creatorId));
-				}
-
-				// 스크롤 시 마지막 문서 이후 데이터 가져오기
-				if (isLoadMore && lastestDocRef.current) {
-					q = query(q, startAfter(lastestDocRef.current));
-				}
-
-				// Firebase에서 데이터 가져오기
+				// 1. 게시글 목록 조회
 				const querySnapshot = await getDocs(q);
 
 				// 더 이상 불러올 데이터가 없는 경우 종료
@@ -81,17 +81,32 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 				lastestDocRef.current = newLastDoc;
 
 				// 데이터 변환
-				const newData: Post[] = await Promise.all(
-					querySnapshot.docs.map(async (doc) => {
-						const docData = doc.data();
-						const creatorInfo = await getCreatorInfo(docData.creatorId);
-						return {
-							id: doc.id,
-							...docData,
-							...creatorInfo,
-						} as Post;
-					}),
-				);
+				const posts = querySnapshot.docs.map((doc) => {
+					const docData = doc.data();
+
+					return {
+						id: doc.id,
+						...docData,
+					} as Post;
+				});
+
+				// 2. 게시글 목록에서 creatorId 추출
+				const uniqueCreatorIds: string[] = [
+					...new Set(posts.map((post: any) => post.creatorId)),
+				];
+
+				// 3. 유저 정보 한 번에 조회
+				const publicUserInfos = await getPublicUserInfos(uniqueCreatorIds);
+
+				// 4. 게시글과 유저 정보를 합쳐서 최종 데이터 생성
+				const newData = posts.map((post) => {
+					const publicUserInfo = publicUserInfos[post.creatorId];
+
+					return {
+						...post,
+						...publicUserInfo,
+					} as Post;
+				});
 
 				// 기존 데이터에 추가 or 초기화
 				setData((prevData) =>

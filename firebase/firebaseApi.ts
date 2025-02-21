@@ -3,6 +3,7 @@ import { db, storage } from '@/fbase';
 import { ImagePickerAsset } from 'expo-image-picker';
 import {
 	DocumentData,
+	Query,
 	Timestamp,
 	addDoc,
 	arrayRemove,
@@ -203,11 +204,60 @@ export const getCreatorInfo = async (
 	}
 };
 
+export const queryDocs = async <T extends DocumentData>(
+	q: Query<DocumentData>,
+): Promise<Array<T & { id: string }>> => {
+	const querySnapshot = await getDocs(q);
+
+	if (querySnapshot.empty) return [];
+
+	return querySnapshot.docs.map((doc) => {
+		const docData = doc.data() as T;
+		return {
+			id: doc.id,
+			...docData,
+		};
+	});
+};
+
+type PublicUserInfo = {
+	uid: string;
+	displayName: string;
+	islandName: string;
+	photoURL: string;
+};
+
 const getDefaultCreatorInfo = () => ({
 	creatorDisplayName: 'Unknown User',
 	creatorIslandName: '',
 	creatorPhotoURL: '',
 });
+
+export const getPublicUserInfos = async (
+	creatorIds: string[],
+): Promise<Record<string, PublicUserInfo>> => {
+	return firestoreRequest('유저 정보 일괄 조회', async () => {
+		if (creatorIds.length === 0) return {};
+
+		const usersRef = collection(db, 'Users');
+		const q = query(usersRef, where('__name__', 'in', creatorIds));
+
+		const usersData = await queryDocs(q);
+
+		// 유저 정보를 ID 기반 객체로 변환
+		const publicUserInfoMap: Record<string, PublicUserInfo> = {};
+		usersData.forEach((user) => {
+			publicUserInfoMap[user.id] = {
+				uid: user.id,
+				displayName: user.displayName || 'Unknown User',
+				islandName: user.islandName || '',
+				photoURL: user.photoURL || '',
+			};
+		});
+
+		return publicUserInfoMap;
+	});
+};
 
 // COMMENT
 export const addComment = async ({

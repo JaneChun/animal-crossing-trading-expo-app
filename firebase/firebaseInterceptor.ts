@@ -5,12 +5,12 @@ const firestoreRequest = async (
 	operation: () => Promise<any>,
 ) => {
 	try {
-		console.log(`📡 Firestore 요청 시작: ${requestName}...`);
+		console.log(`📡 Firestore 요청 : ${requestName} 시작...`);
 		const result = await operation();
-		console.log(`✅ Firestore 요청 성공: ${requestName}`);
+		console.log(`✅ Firestore 요청 : ${requestName} 성공`);
 		return result;
 	} catch (error: any) {
-		console.error(`❌ Firestore 요청 실패: ${requestName}`, error);
+		console.error(`❌ Firestore 요청 : ${requestName} 실패`, error);
 
 		// 네트워크 오류 처리
 		if (
