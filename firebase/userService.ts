@@ -1,45 +1,50 @@
 import { db } from '@/fbase';
-import { UserInfo } from 'firebase/auth';
-import {
-	collection,
-	doc,
-	getDoc,
-	query,
-	setDoc,
-	where,
-} from 'firebase/firestore';
+import { collection, doc, query, setDoc, where } from 'firebase/firestore';
 import firestoreRequest from './firebaseInterceptor';
 import { getDocFromFirestore, queryDocs } from './firestoreService';
 
-export type PublicUserInfo = {
+export interface PublicUserInfo {
 	uid: string;
 	displayName: string;
 	islandName: string;
 	photoURL: string;
-};
+}
 
-export const getUserInfoFromFirestore = async ({
+export interface UserInfo extends PublicUserInfo {
+	createdAt: Date;
+	lastLogin: Date;
+}
+
+const getDefaultPublicUserInfo = (uid: string): PublicUserInfo => ({
 	uid,
-}: {
-	uid: string;
-}): Promise<UserInfo> => {
-	return firestoreRequest('내 유저 정보 조회', async () => {
-		const userRef = doc(db, 'Users', uid);
-		const userSnap = await getDoc(userRef);
+	displayName: 'Unknown User',
+	islandName: '',
+	photoURL: '',
+});
 
-		if (userSnap.exists()) {
-			const fullUserInfo = userSnap.data(); // Firestore에 저장된 유저 데이터 반환
-			const { displayName, photoURL, islandName, createdAt, lastLogin } =
-				fullUserInfo;
+export const getUserInfo = async (uid: string): Promise<UserInfo | null> => {
+	return firestoreRequest('나의 정보 조회', async () => {
+		const docData = await getDocFromFirestore({
+			collection: 'Users',
+			id: uid,
+		});
 
-			return { uid, displayName, photoURL, islandName, createdAt, lastLogin };
-		} else {
-			return null; // Firestore에 데이터 없음
+		if (!docData) {
+			return null;
 		}
+
+		return {
+			uid: docData.uid,
+			displayName: docData.displayName,
+			photoURL: docData.photoURL,
+			islandName: docData.islandName,
+			createdAt: docData.createdAt,
+			lastLogin: docData.lastLogin,
+		};
 	});
 };
 
-export const saveUserToFirestore = async ({
+export const saveUserInfo = async ({
 	uid,
 	displayName,
 	photoURL,
@@ -48,7 +53,7 @@ export const saveUserToFirestore = async ({
 	displayName: string;
 	photoURL: string;
 }): Promise<void> => {
-	return firestoreRequest('유저 정보 저장', async () => {
+	return firestoreRequest('나의 정보 저장', async () => {
 		await setDoc(
 			doc(db, 'Users', uid),
 			{
@@ -89,13 +94,6 @@ export const getPublicUserInfo = async (
 	}
 };
 
-const getDefaultPublicUserInfo = (uid: string): PublicUserInfo => ({
-	uid,
-	displayName: 'Unknown User',
-	islandName: '',
-	photoURL: '',
-});
-
 export const getPublicUserInfos = async (
 	creatorIds: string[],
 ): Promise<Record<string, PublicUserInfo>> => {
@@ -107,7 +105,7 @@ export const getPublicUserInfos = async (
 
 		const usersData = await queryDocs(q);
 
-		// 유저 정보를 ID 기반 객체로 변환
+		// 유저 정보를 ID로 매핑하여 반환
 		const publicUserInfoMap: Record<string, PublicUserInfo> = {};
 		usersData.forEach((user) => {
 			publicUserInfoMap[user.id] = {

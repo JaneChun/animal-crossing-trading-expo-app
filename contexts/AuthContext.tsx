@@ -1,8 +1,5 @@
 import { updateDocToFirestore } from '@/firebase/firestoreService';
-import {
-	getUserInfoFromFirestore,
-	saveUserToFirestore,
-} from '@/firebase/userService';
+import { getUserInfo, saveUserInfo, UserInfo } from '@/firebase/userService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
 	// getKeyHashAndroid,
@@ -26,20 +23,12 @@ import {
 	useEffect,
 	useState,
 } from 'react';
+import { Alert } from 'react-native';
 import { auth } from '../fbase';
 
-export type UserInfo = {
-	uid: string;
-	displayName: string;
-	islandName: string;
-	photoURL: string;
-	createdAt: Date;
-	lastLogin: Date;
-} | null;
-
 type AuthContextType = {
-	userInfo: UserInfo;
-	setUserInfo: (user: UserInfo) => void;
+	userInfo: UserInfo | null;
+	setUserInfo: (user: UserInfo | null) => void;
 	login: () => void;
 	logout: () => void;
 	deleteAccount: (uid: string) => void;
@@ -48,7 +37,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
-	const [userInfo, setUserInfo] = useState<UserInfo>(null);
+	const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
 	// KakaoSDK 초기화
 	useEffect(() => {
@@ -61,10 +50,21 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			if (user) {
-				const userInfo: UserInfo = await getUserInfoFromFirestore({
-					uid: user.uid,
-				});
-				setUserInfo(userInfo);
+				const fetchedUserInfo = await getUserInfo(user.uid);
+
+				if (!fetchedUserInfo) {
+					Alert.alert(
+						'계정 정보 없음',
+						'유저 정보를 불러올 수 없습니다. 다시 로그인해 주세요.',
+						[{ text: '확인', onPress: () => auth.signOut() }],
+					);
+
+					setUserInfo(null);
+					await AsyncStorage.removeItem('@user');
+					return;
+				}
+
+				setUserInfo(fetchedUserInfo);
 				await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
 			} else {
 				setUserInfo(null);
@@ -100,23 +100,21 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			const { user } = result;
 
 			// Firestore에서 유저 정보 가져오기
-			let userInfo: UserInfo = await getUserInfoFromFirestore({
-				uid: user.uid,
-			});
+			let fetchedUserInfo = await getUserInfo(user.uid);
 
 			// Firestore에 없으면 새로 저장
-			if (!userInfo) {
-				await saveUserToFirestore({
+			if (!fetchedUserInfo) {
+				await saveUserInfo({
 					uid: user.uid,
 					displayName: user.displayName ?? '',
 					photoURL: user.photoURL ?? '',
 				});
 
-				userInfo = await getUserInfoFromFirestore({ uid: user.uid });
+				fetchedUserInfo = await getUserInfo(user.uid);
 			}
 
 			// 상태 업데이트 & AsyncStorage에 저장
-			setUserInfo(userInfo);
+			setUserInfo(fetchedUserInfo);
 			await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
 
 			return true;
