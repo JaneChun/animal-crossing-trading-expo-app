@@ -492,3 +492,23 @@ export const markChatAsRead = async ({
 		console.log('채팅 읽음 처리 실패:', e);
 	}
 };
+
+export const reportError = async (errorMessage: string, errorStack: string) => {
+	try {
+		if (!errorMessage) {
+			Alert.alert('리포트 실패', '에러 메시지가 없습니다.');
+			return;
+		}
+
+		await addDoc(collection(db, 'Errors'), {
+			message: errorMessage,
+			stack: errorStack,
+			timestamp: Timestamp.now(),
+			platform: 'React Native Expo',
+		});
+		Alert.alert('에러 리포트 완료', '개발팀에 에러가 보고되었습니다.');
+	} catch (e) {
+		console.log('에러 리포트 중 오류:', e);
+		Alert.alert('리포트 실패', '에러 리포트 중 문제가 발생했습니다.');
+	}
+};

@@ -16,6 +16,7 @@ import Chat from '@/screens/Chat';
 import ChatRoom from '@/screens/ChatRoom';
 import EditComment from '@/screens/EditComment';
 import EditProfile from '@/screens/EditProfile';
+import ErrorBoundary from '@/screens/ErrorBoundary';
 import Home from '@/screens/Home';
 import Login from '@/screens/Login';
 import NewPost from '@/screens/NewPost';
@@ -205,12 +206,14 @@ const BottomTabNavigator = () => {
 
 export default function Index() {
 	return (
-		<AuthContextProvider>
-			<ActionSheetProvider>
-				<GestureHandlerRootView>
-					<BottomTabNavigator />
-				</GestureHandlerRootView>
-			</ActionSheetProvider>
-		</AuthContextProvider>
+		<ErrorBoundary>
+			<AuthContextProvider>
+				<ActionSheetProvider>
+					<GestureHandlerRootView>
+						<BottomTabNavigator />
+					</GestureHandlerRootView>
+				</ActionSheetProvider>
+			</AuthContextProvider>
+		</ErrorBoundary>
 	);
 }
