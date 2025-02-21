@@ -1,4 +1,5 @@
-import { getDocFromFirestore, getPublicUserInfo } from '@/firebase/firebaseApi';
+import { getDocFromFirestore } from '@/firebase/firebaseApi';
+import { getPublicUserInfo } from '@/firebase/userService';
 import { useCallback, useEffect, useState } from 'react';
 import { Post } from './useGetPosts';
 

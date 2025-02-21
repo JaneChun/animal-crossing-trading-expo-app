@@ -1,6 +1,6 @@
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/fbase';
-import { getPublicUserInfo, PublicUserInfo } from '@/firebase/firebaseApi';
+import { getPublicUserInfo, PublicUserInfo } from '@/firebase/userService';
 import {
 	collection,
 	getDocs,
