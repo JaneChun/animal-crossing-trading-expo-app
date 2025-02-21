@@ -6,7 +6,7 @@ import {
 	leaveChatRoom,
 	markMessagesAsRead,
 	sendMessage,
-} from '@/firebase/firebaseApi';
+} from '@/firebase/chatService';
 import { ChatRoomRouteProp, ChatStackNavigation } from '@/types/navigation';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo, Ionicons } from '@expo/vector-icons';
