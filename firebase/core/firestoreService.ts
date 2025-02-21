@@ -10,7 +10,7 @@ import {
 	getDocs,
 	updateDoc,
 } from 'firebase/firestore';
-import { deleteObjectFromStorage } from './imageService';
+import { deleteObjectFromStorage } from '../services/imageService';
 
 export const getDocFromFirestore = async ({
 	collection,

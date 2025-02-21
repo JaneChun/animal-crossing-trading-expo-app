@@ -1,5 +1,5 @@
-import { queryDocs } from '@/firebase/firestoreService';
-import { getPublicUserInfos } from '@/firebase/userService';
+import { queryDocs } from '@/firebase/core/firestoreService';
+import { getPublicUserInfos } from '@/firebase/services/userService';
 import { collection, orderBy, query, Timestamp } from 'firebase/firestore';
 import { useCallback, useEffect, useState } from 'react';
 import { db } from '../fbase';

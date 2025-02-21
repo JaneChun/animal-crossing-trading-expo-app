@@ -1,7 +1,7 @@
 import { db } from '@/fbase';
 import { collection, doc, query, setDoc, where } from 'firebase/firestore';
-import firestoreRequest from './firebaseInterceptor';
-import { getDocFromFirestore, queryDocs } from './firestoreService';
+import firestoreRequest from '../core/firebaseInterceptor';
+import { getDocFromFirestore, queryDocs } from '../core/firestoreService';
 
 export interface PublicUserInfo {
 	uid: string;

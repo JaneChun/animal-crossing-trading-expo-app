@@ -1,6 +1,6 @@
 import { db } from '@/fbase';
-import { postDoc } from '@/firebase/postService';
-import { getPublicUserInfos } from '@/firebase/userService';
+import { postDoc } from '@/firebase/services/postService';
+import { getPublicUserInfos } from '@/firebase/services/userService';
 import {
 	collection,
 	DocumentData,

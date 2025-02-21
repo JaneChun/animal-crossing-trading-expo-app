@@ -1,5 +1,5 @@
-import { getPost } from '@/firebase/postService';
-import { getPublicUserInfo } from '@/firebase/userService';
+import { getPost } from '@/firebase/services/postService';
+import { getPublicUserInfo } from '@/firebase/services/userService';
 import { useCallback, useEffect, useState } from 'react';
 import { Post } from './useGetPosts';
 

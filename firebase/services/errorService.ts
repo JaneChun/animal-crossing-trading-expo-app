@@ -1,6 +1,6 @@
 import { db } from '@/fbase';
 import { addDoc, collection, Timestamp } from 'firebase/firestore';
-import firestoreRequest from './firebaseInterceptor';
+import firestoreRequest from '../core/firebaseInterceptor';
 
 export const reportError = async (
 	errorMessage: string,

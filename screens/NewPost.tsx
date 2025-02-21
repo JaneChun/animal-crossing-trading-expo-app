@@ -3,7 +3,7 @@ import { auth } from '@/fbase';
 import {
 	deleteObjectFromStorage,
 	uploadObjectToStorage,
-} from '@/firebase/imageService';
+} from '@/firebase/services/imageService';
 import {
 	HomeStackNavigation,
 	type NewPostRouteProp,
@@ -22,7 +22,7 @@ import ImageInput from '@/components/NewPost/ImageInput';
 import TitleInput from '@/components/NewPost/TitleInput';
 import TypeSelect from '@/components/NewPost/TypeSelect';
 import Layout from '@/components/ui/Layout';
-import { createPost, updatePost } from '@/firebase/postService';
+import { createPost, updatePost } from '@/firebase/services/postService';
 import useGetPostDetail from '@/hooks/useGetPostDetail';
 import useLoading from '@/hooks/useLoading';
 import React from 'react';

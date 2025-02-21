@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Color';
-import { reportError } from '@/firebase/errorService';
+import { reportError } from '@/firebase/services/errorService';
 import React, { ReactNode } from 'react';
 import {
 	Alert,

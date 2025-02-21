@@ -1,12 +1,12 @@
 import { CartItem } from '@/screens/NewPost';
 import { Timestamp } from 'firebase/firestore';
-import firestoreRequest from './firebaseInterceptor';
+import firestoreRequest from '../core/firebaseInterceptor';
 import {
 	addDocToFirestore,
 	deleteDocFromFirestore,
 	getDocFromFirestore,
 	updateDocToFirestore,
-} from './firestoreService';
+} from '../core/firestoreService';
 
 export interface postDoc {
 	id: string;

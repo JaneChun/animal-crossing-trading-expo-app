@@ -1,5 +1,9 @@
-import { updateDocToFirestore } from '@/firebase/firestoreService';
-import { getUserInfo, saveUserInfo, UserInfo } from '@/firebase/userService';
+import { updateDocToFirestore } from '@/firebase/core/firestoreService';
+import {
+	getUserInfo,
+	saveUserInfo,
+	UserInfo,
+} from '@/firebase/services/userService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
 	// getKeyHashAndroid,

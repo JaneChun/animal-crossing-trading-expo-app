@@ -15,7 +15,7 @@ import {
 	where,
 	writeBatch,
 } from 'firebase/firestore';
-import firestoreRequest from './firebaseInterceptor';
+import firestoreRequest from '../core/firebaseInterceptor';
 
 const generateChatId = (user1: string, user2: string): string => {
 	return [user1, user2].sort().join('_');

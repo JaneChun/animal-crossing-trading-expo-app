@@ -6,7 +6,7 @@ import {
 	ref,
 	uploadBytes,
 } from 'firebase/storage';
-import firestoreRequest from './firebaseInterceptor';
+import firestoreRequest from '../core/firebaseInterceptor';
 
 export const uploadObjectToStorage = async ({
 	images,

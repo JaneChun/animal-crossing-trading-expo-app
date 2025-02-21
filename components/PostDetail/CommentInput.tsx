@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { auth } from '@/fbase';
-import { addComment } from '@/firebase/commentService';
+import { addComment } from '@/firebase/services/commentService';
 import { TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { Timestamp } from 'firebase/firestore';
