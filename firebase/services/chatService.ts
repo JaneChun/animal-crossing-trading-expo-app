@@ -1,4 +1,6 @@
 import { db } from '@/fbase';
+import { Chat } from '@/types/chat';
+import { PublicUserInfo } from '@/types/user';
 import {
 	addDoc,
 	arrayRemove,
@@ -8,6 +10,7 @@ import {
 	getDoc,
 	getDocs,
 	increment,
+	Query,
 	query,
 	setDoc,
 	Timestamp,
@@ -16,9 +19,54 @@ import {
 	writeBatch,
 } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
+import { getPublicUserInfos } from './userService';
 
 const generateChatId = (user1: string, user2: string): string => {
 	return [user1, user2].sort().join('_');
+};
+
+export const fetchMyChats = async <T extends Chat, U>(
+	q: Query,
+	userId: string,
+) => {
+	return firestoreRequest('채팅방 조회', async () => {
+		const querySnapshot = await getDocs(q);
+
+		if (querySnapshot.empty) return { data: [] };
+
+		const data: T[] = querySnapshot.docs.map((doc) => {
+			const docData = doc.data();
+			return {
+				id: doc.id,
+				...docData,
+			} as unknown as T;
+		});
+
+		const uniqueReceiverIds: string[] = data
+			.map((item) => item.participants.find((uid) => uid !== userId))
+			.filter(Boolean) as string[];
+
+		const publicUserInfos: Record<string, PublicUserInfo> =
+			await getPublicUserInfos(uniqueReceiverIds);
+
+		const populatedData: U[] = data.map((item) => {
+			const receiverId = item.participants.find((uid) => uid !== userId) || '';
+			const { displayName, islandName, photoURL } = publicUserInfos[receiverId];
+
+			return {
+				...item,
+				receiverInfo: {
+					displayName,
+					islandName,
+					photoURL,
+				},
+			} as U;
+		});
+
+		return {
+			data: populatedData,
+		};
+	});
 };
 
 export const createChatRoom = async (
