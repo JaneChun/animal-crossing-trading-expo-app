@@ -1,11 +1,7 @@
-import { CartItem } from '@/screens/NewPost';
+import { TotalProps } from '@/types/components';
 import React from 'react';
-import { Image, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
-type TotalProps = {
-	cart: CartItem[];
-	containerStyle: ViewStyle;
-};
 const Total = ({ cart = [], containerStyle }: TotalProps) => {
 	const totalPrice =
 		cart.reduce(

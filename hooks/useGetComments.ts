@@ -1,25 +1,13 @@
 import { queryDocs } from '@/firebase/core/firestoreService';
 import { getPublicUserInfos } from '@/firebase/services/userService';
-import { collection, orderBy, query, Timestamp } from 'firebase/firestore';
+import { Comment, CommentWithCreatorInfo } from '@/types/comment';
+import { PublicUserInfo } from '@/types/user';
+import { collection, orderBy, query } from 'firebase/firestore';
 import { useCallback, useEffect, useState } from 'react';
 import { db } from '../fbase';
 
-interface doc {
-	id: string;
-	body: string;
-	creatorId: string;
-	createdAt: Timestamp;
-	updatedAt?: Timestamp;
-}
-
-export interface Comment extends doc {
-	creatorDisplayName: string;
-	creatorIslandName: string;
-	creatorPhotoURL: string;
-}
-
 function useGetComments(postId: string) {
-	const [comments, setComments] = useState<Comment[]>([]);
+	const [comments, setComments] = useState<CommentWithCreatorInfo[]>([]);
 	const [commentsError, setCommentsError] = useState<Error | null>(null);
 	const [isCommentsLoading, setIsCommentsLoading] = useState<boolean>(true);
 
@@ -39,24 +27,27 @@ function useGetComments(postId: string) {
 
 			// 2. 댓글 목록에서 creatorId 추출
 			const uniqueCreatorIds: string[] = [
-				...new Set(data.map((post: any) => post.creatorId)),
+				...new Set(data.map((comment: Comment) => comment.creatorId)),
 			];
 
 			// 3. 유저 정보 한 번에 조회
-			const publicUserInfos = await getPublicUserInfos(uniqueCreatorIds);
+			const publicUserInfos: Record<string, PublicUserInfo> =
+				await getPublicUserInfos(uniqueCreatorIds);
 
 			// 4. 댓글과 유저 정보를 합쳐서 최종 데이터 생성
-			const populatedComments = data.map((comment) => {
-				const { displayName, islandName, photoURL } =
-					publicUserInfos[comment.creatorId];
+			const populatedComments: CommentWithCreatorInfo[] = data.map(
+				(comment) => {
+					const { displayName, islandName, photoURL } =
+						publicUserInfos[comment.creatorId];
 
-				return {
-					...comment,
-					creatorDisplayName: displayName,
-					creatorIslandName: islandName,
-					creatorPhotoURL: photoURL,
-				} as Comment;
-			});
+					return {
+						...comment,
+						creatorDisplayName: displayName,
+						creatorIslandName: islandName,
+						creatorPhotoURL: photoURL,
+					};
+				},
+			);
 
 			setComments(populatedComments);
 		} catch (error: unknown) {

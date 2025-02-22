@@ -1,35 +1,17 @@
 import { Colors } from '@/constants/Color';
+import { ButtonColor, ButtonProps, ButtonSize } from '@/types/components';
 import React from 'react';
-import {
-	GestureResponderEvent,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-} from 'react-native';
-
-type Color = 'mint' | 'white' | 'gray';
-type Size = 'sm' | 'md' | 'md2' | 'lg';
-
-interface ButtonProps {
-	type?: 'submit' | undefined;
-	color: Color;
-	size: Size;
-	style?: object;
-	disabled?: boolean;
-	onPress?: (event: GestureResponderEvent) => void;
-	children: React.ReactNode;
-}
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 const Button = ({
-	type,
+	children,
+	onPress,
 	color,
 	size,
 	style,
 	disabled,
-	onPress,
-	children,
 }: ButtonProps) => {
-	const getColorStyles = (color: Color) => {
+	const getColorStyles = (color: ButtonColor) => {
 		switch (color) {
 			case 'mint':
 				return styles.mint;
@@ -42,7 +24,7 @@ const Button = ({
 		}
 	};
 
-	const getTextStyles = (color: Color) => {
+	const getTextStyles = (color: ButtonColor) => {
 		switch (color) {
 			case 'mint':
 				return { color: 'white' };
@@ -55,7 +37,7 @@ const Button = ({
 		}
 	};
 
-	const getSizeStyles = (size: Size) => {
+	const getSizeStyles = (size: ButtonSize) => {
 		switch (size) {
 			case 'sm':
 				return styles.sm;

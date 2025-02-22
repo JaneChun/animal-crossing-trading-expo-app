@@ -2,7 +2,7 @@ import ProfileImageInput from '@/components/Profile/ProfileImageInput';
 import ValidationInput from '@/components/Profile/ValidationInput';
 import Button from '@/components/ui/Button';
 import { Colors } from '@/constants/Color';
-import { useAuthContext, UserInfo } from '@/contexts/AuthContext';
+import { useAuthContext } from '@/contexts/AuthContext';
 import { updateDocToFirestore } from '@/firebase/core/firestoreService';
 import {
 	deleteObjectFromStorage,
@@ -13,6 +13,7 @@ import {
 	EditProfileRouteProp,
 	ProfileStackNavigation,
 } from '@/types/navigation';
+import { UserInfo } from '@/types/user';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
@@ -22,7 +23,7 @@ import { Alert, StyleSheet, Text, View } from 'react-native';
 const EditProfile = () => {
 	const route = useRoute<EditProfileRouteProp>();
 	const stackNavigation = useNavigation<ProfileStackNavigation>();
-	const { userInfo }: { userInfo: UserInfo } = route?.params ?? {};
+	const { userInfo } = route.params;
 	const { setUserInfo } = useAuthContext();
 	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
 
@@ -56,14 +57,14 @@ const EditProfile = () => {
 	]);
 
 	useEffect(() => {
-		if (userInfo) {
-			setDisplayNameInput(userInfo.displayName || '');
-			setIslandNameInput(userInfo.islandName || '');
+		if (!userInfo) return;
 
-			if (userInfo.photoURL) {
-				setOriginalImageUrl(userInfo.photoURL || '');
-				setImage({ uri: userInfo.photoURL } as ImagePickerAsset); // UI 표시에 필요하므로 image에도 변환하여 추가
-			}
+		setDisplayNameInput(userInfo.displayName);
+		setIslandNameInput(userInfo.islandName);
+
+		if (userInfo.photoURL) {
+			setOriginalImageUrl(userInfo.photoURL);
+			setImage({ uri: userInfo.photoURL } as ImagePickerAsset); // UI 표시에 필요하므로 image에도 변환하여 추가
 		}
 	}, [userInfo]);
 

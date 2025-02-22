@@ -1,14 +1,8 @@
 import { Colors } from '@/constants/Color';
-import { ReactNode } from 'react';
+import { LayoutProps } from '@/types/components';
 import { StyleSheet, Text, View } from 'react-native';
 
-const Layout = ({
-	title,
-	children,
-}: {
-	title?: string;
-	children: ReactNode;
-}) => {
+const Layout = ({ title, children }: LayoutProps) => {
 	return (
 		<View style={styles.screen}>
 			{title && <Text style={styles.title}>{title}</Text>}

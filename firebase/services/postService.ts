@@ -1,5 +1,4 @@
-import { CartItem } from '@/screens/NewPost';
-import { Timestamp } from 'firebase/firestore';
+import { CreatePostRequest, Post, UpdatePostRequest } from '@/types/post';
 import firestoreRequest from '../core/firebaseInterceptor';
 import {
 	addDocToFirestore,
@@ -8,19 +7,7 @@ import {
 	updateDocToFirestore,
 } from '../core/firestoreService';
 
-export interface postDoc {
-	id: string;
-	type: 'buy' | 'sell' | 'done';
-	title: string;
-	body: string;
-	images: string[];
-	creatorId: string;
-	createdAt: Timestamp;
-	cart: CartItem[];
-	commentCount: number;
-}
-
-export const getPost = async (postId: string): Promise<postDoc | null> => {
+export const getPost = async (postId: string): Promise<Post | null> => {
 	return firestoreRequest('게시글 조회', async () => {
 		const docData = await getDocFromFirestore({
 			collection: 'Boards',
@@ -31,7 +18,7 @@ export const getPost = async (postId: string): Promise<postDoc | null> => {
 			return null;
 		}
 
-		const post: postDoc = {
+		const post: Post = {
 			id: docData.id,
 			type: docData.type,
 			title: docData.title,
@@ -47,7 +34,9 @@ export const getPost = async (postId: string): Promise<postDoc | null> => {
 	});
 };
 
-export const createPost = async (requestData: any): Promise<string> => {
+export const createPost = async (
+	requestData: CreatePostRequest,
+): Promise<string> => {
 	return firestoreRequest('게시글 생성', async () => {
 		const createdId = await addDocToFirestore({
 			directory: 'Boards',
@@ -60,7 +49,7 @@ export const createPost = async (requestData: any): Promise<string> => {
 
 export const updatePost = async (
 	id: string,
-	requestData: any,
+	requestData: UpdatePostRequest,
 ): Promise<void> => {
 	return firestoreRequest('게시글 수정', async () => {
 		await updateDocToFirestore({

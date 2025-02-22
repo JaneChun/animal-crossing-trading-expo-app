@@ -1,13 +1,8 @@
 import { Colors } from '@/constants/Color';
-import { CartItem } from '@/screens/NewPost';
+import { ItemSummaryListProps } from '@/types/components';
 import { Ionicons } from '@expo/vector-icons';
-import { Image, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-
-type ItemSummaryListProps = {
-	cart: CartItem[];
-	containerStyle: ViewStyle;
-};
 
 const ItemSummaryList = ({ cart, containerStyle }: ItemSummaryListProps) => {
 	return (

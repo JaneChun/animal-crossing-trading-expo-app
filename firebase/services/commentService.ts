@@ -1,9 +1,9 @@
 import { db } from '@/fbase';
+import { addCommentRequest, updateCommentRequest } from '@/types/comment';
 import {
 	collection,
 	doc,
 	increment,
-	Timestamp,
 	updateDoc,
 	writeBatch,
 } from 'firebase/firestore';
@@ -11,17 +11,17 @@ import firestoreRequest from '../core/firebaseInterceptor';
 
 export const addComment = async ({
 	postId,
-	commentData,
+	requestData,
 }: {
 	postId: string;
-	commentData: any;
+	requestData: addCommentRequest;
 }): Promise<void> => {
 	return firestoreRequest('댓글 작성', async () => {
 		const batch = writeBatch(db);
 
 		// 1. 댓글 문서 추가
 		const commentRef = doc(collection(db, 'Boards', postId, 'Comments'));
-		batch.set(commentRef, commentData);
+		batch.set(commentRef, requestData);
 
 		// 2. post 문서의 commentCount 필드 수정
 		const postRef = doc(db, 'Boards', postId);
@@ -34,19 +34,16 @@ export const addComment = async ({
 export const updateComment = async ({
 	postId,
 	commentId,
-	newCommentText,
+	requestData,
 }: {
 	postId: string;
 	commentId: string;
-	newCommentText: string;
+	requestData: updateCommentRequest;
 }): Promise<void> => {
 	return firestoreRequest('댓글 수정', async () => {
 		// 1. 댓글 문서 수정
 		const commentRef = doc(db, 'Boards', postId, 'Comments', commentId);
-		await updateDoc(commentRef, {
-			body: newCommentText,
-			updatedAt: Timestamp.now(),
-		});
+		await updateDoc(commentRef, requestData);
 	});
 };
 

@@ -22,7 +22,7 @@ import useGetPostDetail from '../hooks/useGetPostDetail';
 
 const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
-	const { id = '' } = route?.params ?? {};
+	const { id = '' } = route.params;
 	const { userInfo } = useAuthContext();
 	const {
 		post,

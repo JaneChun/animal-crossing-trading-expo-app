@@ -1,34 +1,13 @@
 import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/fbase';
-import {
-	getPublicUserInfo,
-	PublicUserInfo,
-} from '@/firebase/services/userService';
-import {
-	collection,
-	getDocs,
-	orderBy,
-	query,
-	Timestamp,
-	where,
-} from 'firebase/firestore';
+import { getPublicUserInfo } from '@/firebase/services/userService';
+import { ChatWithReceiverInfo } from '@/types/chat';
+import { collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-
-interface doc {
-	id: string;
-	participants: string[];
-	lastMessage: string;
-	lastMessageSenderId: string;
-	updatedAt: Timestamp;
-}
-
-export interface Chat extends doc {
-	receiverInfo: PublicUserInfo;
-}
 
 const useGetChats = () => {
 	const { userInfo } = useAuthContext();
-	const [chats, setChats] = useState<Chat[]>([]);
+	const [chats, setChats] = useState<ChatWithReceiverInfo[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 
 	useEffect(() => {
@@ -68,7 +47,7 @@ const useGetChats = () => {
 							...receiverInfo,
 							uid: receiverId,
 						},
-					} as Chat;
+					} as ChatWithReceiverInfo;
 				}),
 			);
 

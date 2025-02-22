@@ -2,7 +2,7 @@ import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { createChatRoom } from '@/firebase/services/chatService';
 import { deleteComment as deleteCommentFromDB } from '@/firebase/services/commentService';
-import { Comment } from '@/hooks/useGetComments';
+import { CommentUnitProps } from '@/types/components';
 import { HomeStackNavigation, TabNavigation } from '@/types/navigation';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { useActionSheet } from '@expo/react-native-action-sheet';
@@ -18,12 +18,6 @@ import {
 	View,
 } from 'react-native';
 
-interface CommentUnitProps extends Comment {
-	commentRefresh: () => void;
-	postId: string;
-	postCreatorId: string;
-}
-
 const CommentUnit = ({
 	commentRefresh,
 	postId,
@@ -32,6 +26,7 @@ const CommentUnit = ({
 	body,
 	creatorId,
 	createdAt,
+	updatedAt,
 	creatorDisplayName,
 	creatorIslandName,
 	creatorPhotoURL,
@@ -44,11 +39,11 @@ const CommentUnit = ({
 	const showCommentEditOptions = ({
 		postId,
 		commentId,
-		comment,
+		body,
 	}: {
 		postId: string;
 		commentId: string;
-		comment: string;
+		body: string;
 	}) => {
 		const options = ['수정', '삭제', '취소'];
 		const cancelButtonIndex = 2;
@@ -59,7 +54,7 @@ const CommentUnit = ({
 				cancelButtonIndex,
 			},
 			(buttonIndex) => {
-				if (buttonIndex === 0) editComment({ postId, commentId, comment });
+				if (buttonIndex === 0) editComment({ postId, commentId, body });
 				else if (buttonIndex === 1) deleteComment({ postId, commentId });
 			},
 		);
@@ -68,13 +63,13 @@ const CommentUnit = ({
 	const editComment = async ({
 		postId,
 		commentId,
-		comment,
+		body,
 	}: {
 		postId: string;
 		commentId: string;
-		comment: string;
+		body: string;
 	}) => {
-		stackNavigation.navigate('EditComment', { postId, commentId, comment });
+		stackNavigation.navigate('EditComment', { postId, commentId, body });
 	};
 
 	const deleteComment = async ({
@@ -156,7 +151,7 @@ const CommentUnit = ({
 					{creatorId === userInfo?.uid && (
 						<TouchableOpacity
 							onPress={() =>
-								showCommentEditOptions({ postId, commentId: id, comment: body })
+								showCommentEditOptions({ postId, commentId: id, body })
 							}
 						>
 							<View style={styles.menu}>

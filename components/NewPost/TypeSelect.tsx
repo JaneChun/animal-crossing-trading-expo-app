@@ -1,11 +1,6 @@
 import { Colors } from '@/constants/Color';
-import { Dispatch, SetStateAction } from 'react';
+import { TypeSelectProps } from '@/types/components';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-type TypeSelectProps = {
-	type: 'buy' | 'sell' | 'done';
-	setType: Dispatch<SetStateAction<'buy' | 'sell' | 'done'>>;
-};
 
 const TypeSelect = ({ type, setType }: TypeSelectProps) => {
 	return (

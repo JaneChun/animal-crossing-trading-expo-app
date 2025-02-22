@@ -1,13 +1,7 @@
 import { Colors } from '@/constants/Color';
-import { CartItem } from '@/screens/NewPost';
+import { CartItemProps } from '@/types/components';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import {
-	Dispatch,
-	SetStateAction,
-	useCallback,
-	useEffect,
-	useState,
-} from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
 	Image,
 	StyleSheet,
@@ -16,12 +10,6 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native';
-
-type CartItemProps = {
-	item: CartItem;
-	cart: CartItem[];
-	setCart: Dispatch<SetStateAction<CartItem[]>>;
-};
 
 const Item = ({ item, cart, setCart }: CartItemProps) => {
 	const [quantityInput, setQuantityInput] = useState<number>(

@@ -1,6 +1,7 @@
 import { db } from '@/fbase';
-import { postDoc } from '@/firebase/services/postService';
 import { getPublicUserInfos } from '@/firebase/services/userService';
+import { Post, PostWithCreatorInfo } from '@/types/post';
+import { PublicUserInfo } from '@/types/user';
 import {
 	collection,
 	DocumentData,
@@ -14,14 +15,8 @@ import {
 } from 'firebase/firestore';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-export interface Post extends postDoc {
-	creatorDisplayName: string;
-	creatorIslandName: string;
-	creatorPhotoURL: string;
-}
-
 const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
-	const [data, setData] = useState<Post[]>([]);
+	const [data, setData] = useState<PostWithCreatorInfo[]>([]);
 	const lastestDocRef = useRef<QueryDocumentSnapshot<DocumentData> | null>(
 		null,
 	); // 마지막으로 불러온 문서 (다음 데이터를 가져올 때 사용)
@@ -69,7 +64,7 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 				lastestDocRef.current = newLastDoc;
 
 				// 데이터 변환
-				const posts = querySnapshot.docs.map((doc) => {
+				const posts: Post[] = querySnapshot.docs.map((doc) => {
 					const docData = doc.data();
 
 					return {
@@ -80,28 +75,29 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 
 				// 2. 게시글 목록에서 creatorId 추출
 				const uniqueCreatorIds: string[] = [
-					...new Set(posts.map((post: any) => post.creatorId)),
+					...new Set(posts.map((post: Post) => post.creatorId)),
 				];
 
 				// 3. 유저 정보 한 번에 조회
-				const publicUserInfos = await getPublicUserInfos(uniqueCreatorIds);
+				const publicUserInfos: Record<string, PublicUserInfo> =
+					await getPublicUserInfos(uniqueCreatorIds);
 
 				// 4. 게시글과 유저 정보를 합쳐서 최종 데이터 생성
-				const newData = posts.map((post) => {
+				const populatedPosts: PostWithCreatorInfo[] = posts.map((post) => {
 					const { displayName, islandName, photoURL } =
 						publicUserInfos[post.creatorId];
 
 					return {
 						...post,
-						displayName,
-						islandName,
-						photoURL,
-					} as Post;
+						creatorDisplayName: displayName,
+						creatorIslandName: islandName,
+						creatorPhotoURL: photoURL,
+					};
 				});
 
 				// 기존 데이터에 추가 or 초기화
 				setData((prevData) =>
-					isLoadMore ? [...prevData, ...newData] : newData,
+					isLoadMore ? [...prevData, ...populatedPosts] : populatedPosts,
 				);
 			} catch (e) {
 				console.log('데이터 Fetch중 에러:', e);

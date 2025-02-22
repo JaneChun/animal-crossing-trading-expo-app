@@ -1,19 +1,8 @@
 import { db } from '@/fbase';
+import { PublicUserInfo, UserInfo } from '@/types/user';
 import { collection, doc, query, setDoc, where } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
 import { getDocFromFirestore, queryDocs } from '../core/firestoreService';
-
-export interface PublicUserInfo {
-	uid: string;
-	displayName: string;
-	islandName: string;
-	photoURL: string;
-}
-
-export interface UserInfo extends PublicUserInfo {
-	createdAt: Date;
-	lastLogin: Date;
-}
 
 const getDefaultPublicUserInfo = (uid: string): PublicUserInfo => ({
 	uid,
@@ -34,7 +23,7 @@ export const getUserInfo = async (uid: string): Promise<UserInfo | null> => {
 		}
 
 		return {
-			uid: docData.uid,
+			uid,
 			displayName: docData.displayName,
 			photoURL: docData.photoURL,
 			islandName: docData.islandName,

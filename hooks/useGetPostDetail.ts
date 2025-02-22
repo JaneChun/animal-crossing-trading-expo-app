@@ -1,17 +1,11 @@
 import { getPost } from '@/firebase/services/postService';
 import { getPublicUserInfo } from '@/firebase/services/userService';
+import { Post, PostWithCreatorInfo } from '@/types/post';
+import { PublicUserInfo } from '@/types/user';
 import { useCallback, useEffect, useState } from 'react';
-import { Post } from './useGetPosts';
 
-type UseGetPostDetailReturnType = {
-	post: Post | null;
-	error: Error | null;
-	isLoading: boolean;
-	refresh: () => void;
-};
-
-function useGetPostDetail(id: string): UseGetPostDetailReturnType {
-	const [data, setData] = useState<Post | null>(null);
+function useGetPostDetail(id: string) {
+	const [data, setData] = useState<PostWithCreatorInfo | null>(null);
 	const [error, setError] = useState<Error | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -21,19 +15,20 @@ function useGetPostDetail(id: string): UseGetPostDetailReturnType {
 		setIsLoading(true);
 
 		try {
-			const post = await getPost(id);
+			const post: Post | null = await getPost(id);
 			if (!post) return;
 
-			const { displayName, islandName, photoURL } = await getPublicUserInfo(
+			const publicUserInfo: PublicUserInfo = await getPublicUserInfo(
 				post.creatorId,
 			);
+			const { displayName, islandName, photoURL } = publicUserInfo;
 
 			setData({
 				...post,
 				creatorDisplayName: displayName,
 				creatorIslandName: islandName,
 				creatorPhotoURL: photoURL,
-			} as Post);
+			});
 		} catch (e) {
 			console.log('데이터 Fetch중 에러:', e);
 			setError(e as Error);

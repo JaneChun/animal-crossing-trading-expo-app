@@ -1,5 +1,5 @@
-import { Comment } from '@/hooks/useGetComments';
-import { FlatList, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { CommentsListProps } from '@/types/components';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import CommentUnit from './CommentUnit';
 
 const CommentsList = ({
@@ -8,13 +8,7 @@ const CommentsList = ({
 	comments,
 	containerStyle,
 	commentRefresh,
-}: {
-	postId: string;
-	postCreatorId: string;
-	comments: Comment[];
-	containerStyle?: ViewStyle;
-	commentRefresh: () => void;
-}) => {
+}: CommentsListProps) => {
 	return (
 		<View style={[styles.container, containerStyle]}>
 			<Text style={styles.commentHeader}>댓글 ({comments.length})</Text>

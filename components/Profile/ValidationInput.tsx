@@ -1,13 +1,7 @@
 import { Colors } from '@/constants/Color';
+import { ValidationInputProps } from '@/types/components';
 import { useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
-
-type ValidationInputProps = {
-	label: string;
-	value: string;
-	onChangeText: (text: string) => void;
-	placeholder?: string;
-};
 
 const ValidationInput = ({
 	label,

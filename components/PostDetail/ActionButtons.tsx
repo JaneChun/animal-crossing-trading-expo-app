@@ -1,19 +1,8 @@
 import { Colors } from '@/constants/Color';
+import { ActionButtonsProps } from '@/types/components';
 import { HomeStackNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
-import {
-	Alert,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-	ViewStyle,
-} from 'react-native';
-
-type ActionButtonsProps = {
-	id: string;
-	containerStyles?: ViewStyle;
-};
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
 	const stackNavigation = useNavigation<HomeStackNavigation>();
@@ -46,25 +35,6 @@ const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
 		}
 	};
 
-	// const closePost = async () => {
-	// if (!userInfo || !id || post.done) return;
-	// Alert.alert('거래 완료', '거래 완료로 변경하겠습니까?', [
-	// 	{ text: '취소', style: 'cancel' },
-	// 	{
-	// 		text: '확인',
-	// 		onPress: async () => {
-	// 			try {
-	// 				const docRef = doc(db, 'Boards', id);
-	// 				await updateDataToFirestore(docRef, { done: true });
-	// 				setIsUpdated(!isUpdated);
-	// 			} catch (error) {
-	// 				console.log(error);
-	// 			}
-	// 		},
-	// 	},
-	// ]);
-	// };
-
 	return (
 		<View style={containerStyles}>
 			<View style={styles.buttonsContainer}>
@@ -75,11 +45,6 @@ const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
 				<TouchableOpacity onPress={() => deletePost(id)}>
 					<Text style={[styles.deleteButton, styles.buttonText]}>삭제</Text>
 				</TouchableOpacity>
-				{/* {!post.done && (
-						<TouchableOpacity onPress={closePost}>
-							<Text style={[styles.completeButton, styles.buttonText]}>거래 완료</Text>
-						</TouchableOpacity>
-					)} */}
 			</View>
 		</View>
 	);

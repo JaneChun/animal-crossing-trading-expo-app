@@ -1,24 +1,12 @@
 import { Colors } from '@/constants/Color';
+import { PostUnitProps } from '@/types/components';
 import { HomeStackNavigation } from '@/types/navigation';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { Timestamp } from 'firebase/firestore';
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { elapsedTime } from '../../utilities/elapsedTime';
 import TypeBadge from './TypeBadge';
-
-type PostUnitProps = {
-	id: string;
-	type: string;
-	title: string;
-	previewImage: string;
-	createdAt: Timestamp;
-	creatorDisplayName: string;
-	creatorId: string;
-	commentCount: number;
-	// done?: boolean;
-};
 
 const PostUnit = ({
 	id,
@@ -27,7 +15,6 @@ const PostUnit = ({
 	previewImage,
 	createdAt,
 	creatorDisplayName,
-	creatorId,
 	commentCount,
 }: PostUnitProps) => {
 	const stackNavigation = useNavigation<HomeStackNavigation>();

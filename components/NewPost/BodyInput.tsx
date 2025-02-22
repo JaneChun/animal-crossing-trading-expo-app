@@ -1,22 +1,7 @@
 import { Colors } from '@/constants/Color';
-import React, { Dispatch, SetStateAction } from 'react';
-import {
-	StyleProp,
-	StyleSheet,
-	Text,
-	TextInput,
-	TextStyle,
-	View,
-	ViewStyle,
-} from 'react-native';
-
-type BodyInputProps = {
-	body: string;
-	setBody: Dispatch<SetStateAction<string>>;
-	containerStyle?: StyleProp<ViewStyle>;
-	labelStyle?: StyleProp<TextStyle>;
-	inputStyle?: StyleProp<TextStyle>;
-};
+import { BodyInputProps } from '@/types/components';
+import React from 'react';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 const BodyInput = ({
 	body,

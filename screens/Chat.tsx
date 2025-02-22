@@ -1,9 +1,9 @@
 import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
-import { PublicUserInfo } from '@/firebase/firebaseApi';
-import useGetChats, { Chat as ChatType } from '@/hooks/useGetChats';
+import useGetChats from '@/hooks/useGetChats';
+import { ChatWithReceiverInfo } from '@/types/chat';
 import { ChatStackNavigation } from '@/types/navigation';
+import { PublicUserInfo } from '@/types/user';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
@@ -18,7 +18,6 @@ import {
 
 const Chat = () => {
 	const stackNavigation = useNavigation<ChatStackNavigation>();
-	const { userInfo } = useAuthContext();
 	const { chats } = useGetChats();
 
 	const enterChatRoom = ({
@@ -31,7 +30,7 @@ const Chat = () => {
 		stackNavigation.navigate('ChatRoom', { chatId, receiverInfo });
 	};
 
-	const renderChatItem = ({ item }: { item: ChatType }) => {
+	const renderChatItem = ({ item }: { item: ChatWithReceiverInfo }) => {
 		const {
 			id,
 			lastMessage,

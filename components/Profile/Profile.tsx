@@ -12,6 +12,7 @@ const Profile = () => {
 	const stackNavigation = useNavigation<ProfileStackNavigation>();
 
 	const editProfile = () => {
+		if (!userInfo) return;
 		stackNavigation.navigate('EditProfile', { userInfo });
 	};
 

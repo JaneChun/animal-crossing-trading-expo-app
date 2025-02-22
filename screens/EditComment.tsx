@@ -3,19 +3,21 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import { auth } from '@/fbase';
 import { updateComment } from '@/firebase/services/commentService';
 import useLoading from '@/hooks/useLoading';
+import { updateCommentRequest } from '@/types/comment';
 import {
 	EditCommentRouteProp,
 	HomeStackNavigation,
 	TabNavigation,
 } from '@/types/navigation';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { Timestamp } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { Alert, StyleSheet, TextInput } from 'react-native';
 import Button from '../components/ui/Button';
 
 const EditComment = () => {
 	const route = useRoute<EditCommentRouteProp>();
-	const { commentId, postId, comment } = route.params;
+	const { commentId, postId, body } = route.params;
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<HomeStackNavigation>();
 	const { userInfo } = useAuthContext();
@@ -49,8 +51,8 @@ const EditComment = () => {
 	}, [newCommentInput, isValid, isLoading, stackNavigation]);
 
 	useEffect(() => {
-		setNewCommentInput(comment);
-	}, [comment]);
+		setNewCommentInput(body);
+	}, [body]);
 
 	const onSubmit = () => {
 		if (!userInfo || !auth.currentUser) {
@@ -64,9 +66,14 @@ const EditComment = () => {
 			return;
 		}
 
+		const requestData: updateCommentRequest = {
+			body: newCommentInput,
+			updatedAt: Timestamp.now(),
+		};
+
 		try {
 			setIsLoading(true);
-			updateComment({ postId, commentId, newCommentText: newCommentInput });
+			updateComment({ postId, commentId, requestData });
 		} catch (e: any) {
 			Alert.alert(
 				'오류',

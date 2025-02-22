@@ -1,34 +1,18 @@
 import { Colors } from '@/constants/Color';
-import type { CartItem } from '@/screens/NewPost';
+import { ItemSelectProps } from '@/types/components';
+import { Item } from '@/types/post';
 import axios from 'axios';
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	ActivityIndicator,
 	Image,
-	StyleProp,
 	StyleSheet,
 	Text,
 	TextInput,
-	TextStyle,
 	TouchableOpacity,
 	View,
-	ViewStyle,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-
-type ItemSelectProps = {
-	cart: CartItem[];
-	setCart: Dispatch<SetStateAction<CartItem[]>>;
-	containerStyle?: StyleProp<ViewStyle>;
-	labelStyle?: StyleProp<TextStyle>;
-};
-
-type Item = {
-	UniqueEntryID: string;
-	color: string;
-	imageUrl: string;
-	name: string;
-};
 
 const ItemSelect = ({
 	cart,

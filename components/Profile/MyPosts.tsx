@@ -27,17 +27,7 @@ const MyPosts = () => {
 				data={data}
 				keyExtractor={({ id }) => id}
 				renderItem={({ item }) => (
-					<PostUnit
-						id={item.id}
-						type={item.type}
-						title={item.title}
-						previewImage={item.images?.[0]}
-						createdAt={item.createdAt}
-						creatorDisplayName={item.creatorDisplayName}
-						creatorId={item.creatorId}
-						commentCount={item.commentCount}
-						// done={item.done}
-					/>
+					<PostUnit {...item} previewImage={item.images?.[0]} />
 				)}
 				onEndReached={!isEnd ? loadMore : undefined}
 				onEndReachedThreshold={0.5}

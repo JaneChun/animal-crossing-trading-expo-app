@@ -1,12 +1,7 @@
 import { Colors } from '@/constants/Color';
+import { CreatedAtProps } from '@/types/components';
 import { elapsedTime } from '@/utilities/elapsedTime';
-import { Timestamp } from 'firebase/firestore';
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
-
-type CreatedAtProps = {
-	createdAt: Timestamp;
-	containerStyle: ViewStyle;
-};
+import { StyleSheet, Text, View } from 'react-native';
 
 const CreatedAt = ({ createdAt, containerStyle }: CreatedAtProps) => {
 	return (

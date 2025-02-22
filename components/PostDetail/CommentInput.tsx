@@ -2,10 +2,12 @@ import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { auth } from '@/fbase';
 import { addComment } from '@/firebase/services/commentService';
+import { addCommentRequest } from '@/types/comment';
+import { CommentInputProps } from '@/types/components';
 import { TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { Timestamp } from 'firebase/firestore';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { Alert, StyleSheet } from 'react-native';
 import Input from '../ui/Input';
 
@@ -13,11 +15,7 @@ const CommentInput = ({
 	postId,
 	setIsLoading,
 	commentRefresh,
-}: {
-	postId: string;
-	setIsLoading: Dispatch<SetStateAction<boolean>>;
-	commentRefresh: () => void;
-}) => {
+}: CommentInputProps) => {
 	const [commentInput, setCommentInput] = useState<string>('');
 	const tabNavigation = useNavigation<TabNavigation>();
 	const { userInfo } = useAuthContext();
@@ -40,7 +38,7 @@ const CommentInput = ({
 			return;
 		}
 
-		const commentData = {
+		const requestData: addCommentRequest = {
 			creatorId: userInfo.uid,
 			body: commentInput,
 			createdAt: Timestamp.now(),
@@ -48,7 +46,7 @@ const CommentInput = ({
 
 		try {
 			setIsLoading(true);
-			addComment({ postId, commentData });
+			addComment({ postId, requestData });
 			commentRefresh();
 		} catch (e: any) {
 			Alert.alert(

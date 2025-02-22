@@ -1,12 +1,9 @@
 import { Colors } from '@/constants/Color';
+import { ImageCarouselProps } from '@/types/components';
 import React, { useState } from 'react';
-import { Dimensions, Image, StyleSheet, View, ViewStyle } from 'react-native';
+import { Dimensions, Image, StyleSheet, View } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 
-type ImageCarouselProps = {
-	images: string[];
-	containerStyle: ViewStyle;
-};
 const { width } = Dimensions.get('window');
 
 const ImageCarousel = ({ images, containerStyle }: ImageCarouselProps) => {

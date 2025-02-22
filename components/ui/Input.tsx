@@ -1,6 +1,7 @@
 import { Colors } from '@/constants/Color';
+import { InputProps } from '@/types/components';
 import { FontAwesome } from '@expo/vector-icons';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	Keyboard,
 	StyleSheet,
@@ -12,16 +13,10 @@ import {
 const Input = ({
 	input,
 	setInput,
+	onPress,
 	placeholder,
 	marginBottom,
-	onPress,
-}: {
-	input: string;
-	setInput: Dispatch<SetStateAction<string>>;
-	placeholder?: string;
-	marginBottom?: number;
-	onPress: () => void;
-}) => {
+}: InputProps) => {
 	const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false);
 
 	// 키보드 이벤트 리스너 추가 (키보드 감지)

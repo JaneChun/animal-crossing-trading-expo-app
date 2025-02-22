@@ -25,19 +25,16 @@ import Layout from '@/components/ui/Layout';
 import { createPost, updatePost } from '@/firebase/services/postService';
 import useGetPostDetail from '@/hooks/useGetPostDetail';
 import useLoading from '@/hooks/useLoading';
+import {
+	CartItem,
+	CreatePostRequest,
+	Type,
+	UpdatePostRequest,
+} from '@/types/post';
 import React from 'react';
 import ItemList from '../components/NewPost/ItemList';
 import ItemSelect from '../components/NewPost/ItemSelect';
 import Button from '../components/ui/Button';
-
-export type CartItem = {
-	UniqueEntryID: string;
-	color: string;
-	imageUrl: string;
-	name: string;
-	quantity: number;
-	price: number;
-};
 
 const NewPost = () => {
 	const tabNavigation = useNavigation<TabNavigation>();
@@ -45,7 +42,7 @@ const NewPost = () => {
 	const { userInfo } = useAuthContext();
 	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
 
-	const [type, setType] = useState<'buy' | 'sell' | 'done'>('buy');
+	const [type, setType] = useState<Type>('buy');
 	const [title, setTitle] = useState<string>('');
 	const [body, setBody] = useState<string>('');
 	const [images, setImages] = useState<ImagePickerAsset[]>([]); // ImagePicker로 추가한 이미지
@@ -68,18 +65,18 @@ const NewPost = () => {
 	}, [title, body, images, cart]);
 
 	useEffect(() => {
-		if (post) {
-			setType(post.type || 'buy');
-			setTitle(post.title || '');
-			setBody(post.body || '');
-			setCart(post.cart || []);
+		if (!post) return;
 
-			if (post.images?.length) {
-				setOriginalImageUrls(post.images);
-				setImages(
-					post.images.map((url: string) => ({ uri: url } as ImagePickerAsset)),
-				); // UI 표시에 필요하므로 images에도 변환하여 추가
-			}
+		setType(post.type);
+		setTitle(post.title);
+		setBody(post.body);
+		setCart(post.cart);
+
+		if (post.images?.length) {
+			setOriginalImageUrls(post.images);
+			setImages(
+				post.images.map((url: string) => ({ uri: url } as ImagePickerAsset)),
+			); // UI 표시에 필요하므로 images에도 변환하여 추가
 		}
 	}, [post]);
 
@@ -108,6 +105,41 @@ const NewPost = () => {
 		setOriginalImageUrls([]);
 	};
 
+	// images와 originalImageUrls를 비교하여 기존 이미지, 새로 추가된 이미지, 삭제된 이미지 구분
+	const getFilteredImages = () => {
+		const newImages: ImagePickerAsset[] = images.filter(
+			({ uri }) => !originalImageUrls.includes(uri),
+		);
+
+		const deletedImageUrls: string[] = originalImageUrls.filter(
+			(url) => !images.some(({ uri }) => uri === url),
+		);
+		return { newImages, deletedImageUrls };
+	};
+
+	const buildCreatePostRequest = (imageUrls: string[]): CreatePostRequest => {
+		return {
+			type,
+			title,
+			body,
+			images: imageUrls,
+			cart,
+			creatorId: userInfo!.uid,
+			createdAt: Timestamp.now(),
+			commentCount: 0,
+		};
+	};
+
+	const buildUpdatePostRequest = (imageUrls: string[]): UpdatePostRequest => {
+		return {
+			type,
+			title,
+			body,
+			images: imageUrls,
+			cart,
+		};
+	};
+
 	const onSubmit = async () => {
 		if (!validateUser()) {
 			return tabNavigation.navigate('ProfileTab', { screen: 'Login' });
@@ -115,13 +147,7 @@ const NewPost = () => {
 
 		if (!validateForm()) return;
 
-		// 기존 이미지, 새로 추가된 이미지, 삭제된 이미지 구분
-		const newImages: ImagePickerAsset[] = images.filter(
-			({ uri }) => !originalImageUrls.includes(uri),
-		);
-		const deletedImageUrls: string[] = originalImageUrls.filter(
-			(url) => !images.some(({ uri }) => uri === url),
-		);
+		const { newImages, deletedImageUrls } = getFilteredImages();
 
 		let createdId;
 		try {
@@ -136,29 +162,13 @@ const NewPost = () => {
 				});
 			}
 
-			let requestData: {
-				type: string;
-				title: string;
-				body: string;
-				images: string[];
-				cart: CartItem[];
-				createdAt: Timestamp;
-				creatorId?: string;
-				commentCount: number;
-			} = {
-				type,
-				title,
-				body,
-				images: [...originalImageUrls, ...uploadedImageUrls].filter(
-					(url) => !deletedImageUrls.includes(url), // 기존 이미지 + 새 이미지 - 삭제된 이미지
-				),
-				cart,
-				creatorId: userInfo?.uid,
-				createdAt: Timestamp.now(),
-				commentCount: 0,
-			};
+			// 기존 이미지 + 새 이미지 - 삭제된 이미지
+			const imageUrls = [...originalImageUrls, ...uploadedImageUrls].filter(
+				(url) => !deletedImageUrls.includes(url),
+			);
 
 			if (editingId) {
+				const requestData = buildUpdatePostRequest(imageUrls);
 				await updatePost(editingId, requestData);
 
 				// 삭제된 이미지가 있으면 스토리지에서도 삭제
@@ -166,6 +176,7 @@ const NewPost = () => {
 					await Promise.all(deletedImageUrls.map(deleteObjectFromStorage));
 				}
 			} else {
+				const requestData = buildCreatePostRequest(imageUrls);
 				createdId = await createPost(requestData);
 
 				Alert.alert(

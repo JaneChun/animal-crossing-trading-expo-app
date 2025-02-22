@@ -1,9 +1,6 @@
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { TitleProps } from '@/types/components';
+import { StyleSheet, Text, View } from 'react-native';
 
-type TitleProps = {
-	title: string;
-	containerStyle: ViewStyle;
-};
 const Title = ({ title, containerStyle }: TitleProps) => {
 	return (
 		<View style={containerStyle}>

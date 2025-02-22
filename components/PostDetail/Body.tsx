@@ -1,10 +1,7 @@
 import { Colors } from '@/constants/Color';
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { BodyProps } from '@/types/components';
+import { StyleSheet, Text, View } from 'react-native';
 
-type BodyProps = {
-	body: string;
-	containerStyle: ViewStyle;
-};
 const Body = ({ body, containerStyle }: BodyProps) => {
 	return (
 		<View style={containerStyle}>

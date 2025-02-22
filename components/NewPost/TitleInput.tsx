@@ -1,21 +1,7 @@
 import { Colors } from '@/constants/Color';
-import React, { Dispatch, SetStateAction } from 'react';
-import {
-	StyleProp,
-	Text,
-	TextInput,
-	TextStyle,
-	View,
-	ViewStyle,
-} from 'react-native';
-
-type TitleInputProps = {
-	title: string;
-	setTitle: Dispatch<SetStateAction<string>>;
-	containerStyle?: StyleProp<ViewStyle>;
-	labelStyle?: StyleProp<TextStyle>;
-	inputStyle?: StyleProp<TextStyle>;
-};
+import { TitleInputProps } from '@/types/components';
+import React from 'react';
+import { Text, TextInput, View } from 'react-native';
 
 const TitleInput = ({
 	title,

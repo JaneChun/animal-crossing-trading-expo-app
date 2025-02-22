@@ -1,11 +1,6 @@
 import { Colors } from '@/constants/Color';
-import { Image, StyleSheet, Text, View, ViewStyle } from 'react-native';
-
-type UserInfoProps = {
-	displayName: string;
-	islandName: string;
-	containerStyle: ViewStyle;
-};
+import { UserInfoProps } from '@/types/components';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
 const UserInfo = ({
 	displayName,

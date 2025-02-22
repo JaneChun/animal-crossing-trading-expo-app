@@ -1,12 +1,11 @@
 import { Colors } from '@/constants/Color';
+import { ProfileImageInputProps } from '@/types/components';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo, FontAwesome } from '@expo/vector-icons';
 import {
-	ImagePickerAsset,
 	launchImageLibraryAsync,
 	useMediaLibraryPermissions,
 } from 'expo-image-picker';
-import { Dispatch, SetStateAction } from 'react';
 import {
 	Alert,
 	Image,
@@ -15,11 +14,6 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native';
-
-type ProfileImageInputProps = {
-	image: ImagePickerAsset | null;
-	setImage: Dispatch<SetStateAction<ImagePickerAsset | null>>;
-};
 
 const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 	const [, requestPermission, getPermission] = useMediaLibraryPermissions();

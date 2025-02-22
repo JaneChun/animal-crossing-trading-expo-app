@@ -56,15 +56,14 @@ const ChatRoom = () => {
 		if (!chatId) return;
 
 		const chatRef = doc(db, 'Chats', chatId);
+
 		const unsubscribe = onSnapshot(chatRef, (doc) => {
 			if (doc.exists()) {
-				setChat(doc.data()); // ✅ 채팅방 정보 업데이트
-			} else {
-				console.log('채팅방이 존재하지 않습니다.');
+				setChat(doc.data());
 			}
 		});
 
-		return () => unsubscribe(); // ✅ 언마운트 시 리스너 해제
+		return () => unsubscribe();
 	}, [chatId]);
 
 	// 🔹 ✅ 메시지 목록 실시간 구독 (서브컬렉션)

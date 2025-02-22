@@ -1,10 +1,7 @@
 import { Colors } from '@/constants/Color';
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { TypeBadgeProps } from '@/types/components';
+import { StyleSheet, Text, View } from 'react-native';
 
-type TypeBadgeProps = {
-	type: 'buy' | 'sell' | 'done';
-	containerStyle?: ViewStyle;
-};
 const TypeBadge = ({ type, containerStyle }: TypeBadgeProps) => {
 	return (
 		<View style={containerStyle}>
