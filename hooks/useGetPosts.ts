@@ -1,11 +1,9 @@
 import { db } from '@/fbase';
-import { getPublicUserInfos } from '@/firebase/services/userService';
+import { fetchCollectionData } from '@/firebase/api/fetchCollectionData';
 import { Post, PostWithCreatorInfo } from '@/types/post';
-import { PublicUserInfo } from '@/types/user';
 import {
 	collection,
 	DocumentData,
-	getDocs,
 	limit,
 	orderBy,
 	query,
@@ -17,11 +15,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 	const [data, setData] = useState<PostWithCreatorInfo[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [isEnd, setIsEnd] = useState<boolean>(false); // 더 이상 불러올 데이터가 없을 경우 true
 	const lastestDocRef = useRef<QueryDocumentSnapshot<DocumentData> | null>(
 		null,
 	); // 마지막으로 불러온 문서 (다음 데이터를 가져올 때 사용)
-	const [isEnd, setIsEnd] = useState<boolean>(false); // 더 이상 불러올 데이터가 없을 경우 true
-	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const memoizedFilter = useMemo(() => filter, [JSON.stringify(filter)]);
 
@@ -31,7 +29,6 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 
 			setIsLoading(true);
 
-			// 기본 쿼리: 최신순 정렬 후 pageSize만큼 가져옴
 			let q = query(
 				collection(db, 'Boards'),
 				orderBy('createdAt', 'desc'),
@@ -48,62 +45,16 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 				q = query(q, startAfter(lastestDocRef.current));
 			}
 
-			try {
-				// 1. 게시글 목록 조회
-				const querySnapshot = await getDocs(q);
+			const { data: posts, lastDoc } = await fetchCollectionData<
+				Post,
+				PostWithCreatorInfo
+			>(q);
 
-				// 더 이상 불러올 데이터가 없는 경우 종료
-				if (querySnapshot.empty) {
-					setIsEnd(true);
-					setIsLoading(false);
-					return;
-				}
+			lastestDocRef.current = lastDoc;
 
-				// 현재 가져온 문서들 중 마지막 문서를 저장 (다음 요청을 위해 필요)
-				const newLastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
-				lastestDocRef.current = newLastDoc;
-
-				// 데이터 변환
-				const posts: Post[] = querySnapshot.docs.map((doc) => {
-					const docData = doc.data();
-
-					return {
-						id: doc.id,
-						...docData,
-					} as Post;
-				});
-
-				// 2. 게시글 목록에서 creatorId 추출
-				const uniqueCreatorIds: string[] = [
-					...new Set(posts.map((post: Post) => post.creatorId)),
-				];
-
-				// 3. 유저 정보 한 번에 조회
-				const publicUserInfos: Record<string, PublicUserInfo> =
-					await getPublicUserInfos(uniqueCreatorIds);
-
-				// 4. 게시글과 유저 정보를 합쳐서 최종 데이터 생성
-				const populatedPosts: PostWithCreatorInfo[] = posts.map((post) => {
-					const { displayName, islandName, photoURL } =
-						publicUserInfos[post.creatorId];
-
-					return {
-						...post,
-						creatorDisplayName: displayName,
-						creatorIslandName: islandName,
-						creatorPhotoURL: photoURL,
-					};
-				});
-
-				// 기존 데이터에 추가 or 초기화
-				setData((prevData) =>
-					isLoadMore ? [...prevData, ...populatedPosts] : populatedPosts,
-				);
-			} catch (e) {
-				console.log('데이터 Fetch중 에러:', e);
-			} finally {
-				setIsLoading(false);
-			}
+			// 기존 데이터에 추가 or 초기화
+			setData((prevData) => (isLoadMore ? [...prevData, ...posts] : posts));
+			setIsLoading(false);
 		},
 		[memoizedFilter, pageSize, isEnd, isLoading],
 	);

@@ -26,24 +26,19 @@ const PostDetail = () => {
 	const { userInfo } = useAuthContext();
 	const {
 		post,
-		error,
 		isLoading: loading,
 		refresh: postRefresh,
 	} = useGetPostDetail(id);
+	const {
+		comments,
+		isLoading: isCommentsLoading,
+		refresh: commentRefresh,
+	} = useGetComments(id);
 	const {
 		isLoading: isCommentUploadLoading,
 		setIsLoading,
 		LoadingIndicator,
 	} = useLoading();
-	const {
-		comments,
-		commentsError,
-		isCommentsLoading,
-		refresh: commentRefresh,
-	} = useGetComments(id);
-
-	// if (error) console.log(error);
-	// if (commentsError) console.log(commentsError);
 
 	useFocusEffect(
 		useCallback(() => {
