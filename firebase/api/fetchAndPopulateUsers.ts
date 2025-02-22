@@ -8,7 +8,7 @@ import {
 } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
 
-export const fetchCollectionData = async <T extends { creatorId: string }, U>(
+export const fetchAndPopulateUsers = async <T extends { creatorId: string }, U>(
 	q: Query,
 ): Promise<{
 	data: U[];

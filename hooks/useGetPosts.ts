@@ -1,5 +1,5 @@
 import { db } from '@/fbase';
-import { fetchCollectionData } from '@/firebase/api/fetchCollectionData';
+import { fetchAndPopulateUsers } from '@/firebase/api/fetchAndPopulateUsers';
 import { Post, PostWithCreatorInfo } from '@/types/post';
 import {
 	collection,
@@ -45,7 +45,7 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 				q = query(q, startAfter(lastestDocRef.current));
 			}
 
-			const { data: posts, lastDoc } = await fetchCollectionData<
+			const { data: posts, lastDoc } = await fetchAndPopulateUsers<
 				Post,
 				PostWithCreatorInfo
 			>(q);

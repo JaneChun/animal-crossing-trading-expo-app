@@ -1,4 +1,4 @@
-import { fetchCollectionData } from '@/firebase/api/fetchCollectionData';
+import { fetchAndPopulateUsers } from '@/firebase/api/fetchAndPopulateUsers';
 import { Comment, CommentWithCreatorInfo } from '@/types/comment';
 import { collection, orderBy, query } from 'firebase/firestore';
 import { useCallback, useEffect, useState } from 'react';
@@ -18,9 +18,10 @@ function useGetComments(postId: string) {
 			orderBy('createdAt', 'asc'),
 		);
 
-		const { data } = await fetchCollectionData<Comment, CommentWithCreatorInfo>(
-			q,
-		);
+		const { data } = await fetchAndPopulateUsers<
+			Comment,
+			CommentWithCreatorInfo
+		>(q);
 
 		setComments(data);
 		setIsLoading(false);
