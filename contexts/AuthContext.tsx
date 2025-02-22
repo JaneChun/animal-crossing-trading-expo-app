@@ -26,6 +26,7 @@ import {
 } from 'react';
 import { Alert } from 'react-native';
 import { auth } from '../fbase';
+import firebaseRequest from '../firebase/core/firebaseInterceptor';
 
 type AuthContextType = {
 	userInfo: UserInfo | null;
@@ -88,7 +89,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 	}, []);
 
 	const login = async (): Promise<boolean> => {
-		try {
+		return firebaseRequest('로그인', async () => {
 			const kakaoTokenInfo = await kakaoLogin();
 			const provider = new OAuthProvider('oidc.kakao');
 
@@ -97,7 +98,6 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			});
 
 			const result = await signInWithCredential(auth, credential);
-
 			const { user } = result;
 
 			// Firestore에서 유저 정보 가져오기
@@ -119,16 +119,11 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
 
 			return true;
-		} catch (error) {
-			console.log('로그인 실패:', error);
-			setUserInfo(null);
-
-			return false;
-		}
+		});
 	};
 
 	const logout = async (): Promise<boolean> => {
-		try {
+		return firebaseRequest('로그아웃', async () => {
 			await kakaoLogout(); // 카카오 로그아웃
 			await auth.signOut(); // Firebase auth 로그아웃
 
@@ -137,18 +132,14 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			await AsyncStorage.removeItem('@user');
 
 			return true;
-		} catch (e) {
-			console.log('로그아웃 실패:', e);
-
-			return false;
-		}
+		});
 	};
 
 	const deleteAccount = async (uid: string) => {
-		const user = auth.currentUser;
-		if (!user || !userInfo) return;
+		return firebaseRequest('회원 탈퇴', async () => {
+			const user = auth.currentUser;
+			if (!user || !userInfo) return;
 
-		try {
 			// 재인증 후 탈퇴 가능
 			const kakaoTokenInfo = await kakaoLogin();
 			const provider = new OAuthProvider('oidc.kakao');
@@ -176,19 +167,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 					},
 				},
 			});
-			console.log('회원 탈퇴 성공');
-		} catch (e: any) {
-			if (e.code === 'auth/wrong-password') {
-				console.log('❌ 잘못된 비밀번호');
-			} else if (e.code === 'auth/user-mismatch') {
-				console.log('❌ 인증 정보가 일치하지 않음');
-			} else if (e.code === 'auth/requires-recent-login') {
-				console.log('❌ 다시 로그인 후 시도해주세요.');
-			} else {
-				console.log('❌ 회원 탈퇴 실패:', e.message);
-			}
-			throw new Error(e);
-		}
+		});
 	};
 
 	return (
