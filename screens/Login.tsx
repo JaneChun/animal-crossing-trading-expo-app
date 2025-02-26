@@ -1,8 +1,9 @@
 import type { TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
-import { Alert, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import Layout from '@/components/ui/Layout';
+import { showToast } from '@/components/ui/Toast';
 import { useAuthContext } from '@/contexts/AuthContext';
 
 const Login = () => {
@@ -13,12 +14,11 @@ const Login = () => {
 		const isSuccess: boolean | void = await login();
 
 		if (Boolean(isSuccess)) {
+			showToast('success', '로그인 성공');
 			tabNavigation.reset({
 				index: 0,
 				routes: [{ name: 'HomeTab' }],
 			});
-		} else {
-			Alert.alert('로그인 실패', '다시 시도해주세요.');
 		}
 	};
 

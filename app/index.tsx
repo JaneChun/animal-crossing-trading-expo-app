@@ -9,9 +9,11 @@ import {
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Toast from 'react-native-toast-message';
 import { AuthContextProvider, useAuthContext } from '../contexts/AuthContext';
 
 // 스크린 import
+import { toastConfig } from '@/components/ui/Toast';
 import Chat from '@/screens/Chat';
 import ChatRoom from '@/screens/ChatRoom';
 import EditComment from '@/screens/EditComment';
@@ -211,6 +213,7 @@ export default function Index() {
 				<ActionSheetProvider>
 					<GestureHandlerRootView>
 						<BottomTabNavigator />
+						<Toast config={toastConfig} />
 					</GestureHandlerRootView>
 				</ActionSheetProvider>
 			</AuthContextProvider>

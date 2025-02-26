@@ -7,7 +7,6 @@ import {
 } from 'expo-image-picker';
 import React from 'react';
 import {
-	Alert,
 	Image,
 	Keyboard,
 	StyleSheet,
@@ -16,6 +15,7 @@ import {
 	View,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+import { showToast } from '../ui/Toast';
 
 const ImageInput = ({
 	images,
@@ -33,10 +33,7 @@ const ImageInput = ({
 		}
 
 		if (currentPermission.status === 'denied') {
-			Alert.alert(
-				'권한 필요',
-				'이미지를 업로드하려면 사진 접근 권한이 필요합니다.',
-			);
+			showToast('warn', '이미지를 업로드하려면 사진 접근 권한이 필요합니다.');
 			return false;
 		}
 		return currentPermission.status === 'granted';

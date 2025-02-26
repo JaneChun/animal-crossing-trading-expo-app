@@ -1,3 +1,4 @@
+import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { ProfileStackNavigation, TabNavigation } from '@/types/navigation';
@@ -25,8 +26,9 @@ const Setting = () => {
 				index: 0,
 				routes: [{ name: 'HomeTab' }],
 			});
+			showToast('success', '로그아웃되었습니다.');
 		} else {
-			Alert.alert('로그아웃 실패', '다시 시도해주세요.');
+			showToast('error', '로그아웃 실패. 다시 시도해주세요.');
 		}
 	};
 

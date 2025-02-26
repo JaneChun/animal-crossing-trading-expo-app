@@ -1,4 +1,5 @@
 import Layout from '@/components/ui/Layout';
+import { showToast } from '@/components/ui/Toast';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { auth } from '@/fbase';
 import { updateComment } from '@/firebase/services/commentService';
@@ -12,7 +13,7 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Timestamp } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, TextInput } from 'react-native';
+import { StyleSheet, TextInput } from 'react-native';
 import Button from '../components/ui/Button';
 
 const EditComment = () => {
@@ -56,13 +57,12 @@ const EditComment = () => {
 
 	const onSubmit = () => {
 		if (!userInfo || !auth.currentUser) {
-			Alert.alert('댓글 쓰기는 로그인 후 가능합니다.');
+			showToast('warn', '댓글 쓰기는 로그인 후 가능합니다.');
 			tabNavigation.navigate('ProfileTab', { screen: 'Login' });
 			return;
 		}
 
 		if (newCommentInput.trim() === '') {
-			Alert.alert('오류', '내용이 비어있는지 확인해주세요.');
 			return;
 		}
 
@@ -71,19 +71,13 @@ const EditComment = () => {
 			updatedAt: Timestamp.now(),
 		};
 
-		try {
-			setIsLoading(true);
-			updateComment({ postId, commentId, requestData });
-		} catch (e: any) {
-			Alert.alert(
-				'오류',
-				`댓글을 작성하는 중 오류가 발생했습니다.${e.code && `\n${e.code}`}`,
-			);
-		} finally {
-			setNewCommentInput('');
-			setIsLoading(false);
-			stackNavigation.goBack();
-		}
+		setIsLoading(true);
+		updateComment({ postId, commentId, requestData });
+		setIsLoading(false);
+
+		setNewCommentInput('');
+		stackNavigation.goBack();
+		showToast('success', '댓글이 수정되었습니다.');
 	};
 
 	if (isLoading) {

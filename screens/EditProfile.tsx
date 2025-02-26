@@ -1,6 +1,7 @@
 import ProfileImageInput from '@/components/Profile/ProfileImageInput';
 import ValidationInput from '@/components/Profile/ValidationInput';
 import Button from '@/components/ui/Button';
+import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { updateDocToFirestore } from '@/firebase/core/firestoreService';
@@ -18,7 +19,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 const EditProfile = () => {
 	const route = useRoute<EditProfileRouteProp>();
@@ -134,15 +135,15 @@ const EditProfile = () => {
 				};
 
 				setUserInfo(newUserInfo);
+				showToast('success', '프로필이 성공적으로 변경되었습니다.');
 			} else {
 				console.log('변경된 데이터가 없습니다.');
 			}
 
-			Alert.alert('성공', '프로필이 성공적으로 변경되었습니다.');
 			resetForm();
 			stackNavigation.goBack();
 		} catch (e) {
-			Alert.alert('오류', '프로필 업데이트 중 오류가 발생했습니다.');
+			showToast('error', '프로필 업데이트 중 오류가 발생했습니다.');
 			stackNavigation.goBack();
 			console.log(e);
 		} finally {

@@ -13,7 +13,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
-import { Alert, KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useAuthContext } from '../contexts/AuthContext';
 
@@ -22,6 +22,7 @@ import ImageInput from '@/components/NewPost/ImageInput';
 import TitleInput from '@/components/NewPost/TitleInput';
 import TypeSelect from '@/components/NewPost/TypeSelect';
 import Layout from '@/components/ui/Layout';
+import { showToast } from '@/components/ui/Toast';
 import { createPost, updatePost } from '@/firebase/services/postService';
 import useGetPostDetail from '@/hooks/useGetPostDetail';
 import useLoading from '@/hooks/useLoading';
@@ -82,7 +83,7 @@ const NewPost = () => {
 
 	const validateUser = () => {
 		if (!userInfo || !auth.currentUser) {
-			Alert.alert('글 쓰기는 로그인 후 가능합니다.');
+			showToast('warn', '글 쓰기는 로그인 후 가능합니다.');
 			return false;
 		}
 		return true;
@@ -90,7 +91,7 @@ const NewPost = () => {
 
 	const validateForm = () => {
 		if (!title || !body) {
-			Alert.alert('오류', '제목이나 내용이 비어있는지 확인해주세요.');
+			showToast('warn', '제목이나 내용이 비어있는지 확인해주세요.');
 			return false;
 		}
 		return true;
@@ -175,37 +176,25 @@ const NewPost = () => {
 				if (deletedImageUrls.length) {
 					await Promise.all(deletedImageUrls.map(deleteObjectFromStorage));
 				}
+
+				stackNavigation.goBack();
+				showToast('success', '글이 수정되었습니다.');
 			} else {
 				const requestData = buildCreatePostRequest(imageUrls);
 				createdId = await createPost(requestData);
 
-				Alert.alert(
-					`${editingId ? '수정' : '작성'} 완료`,
-					`글이 ${editingId ? '수정' : '작성'}되었습니다.`,
-				);
-			}
-		} catch (error) {
-			Alert.alert(
-				'오류',
-				`글을 ${editingId ? '수정' : '작성'}하는 중 오류가 발생했습니다.`,
-			);
-			console.log(error);
-		} finally {
-			resetForm();
-			setIsLoading(false);
-
-			if (editingId) {
-				stackNavigation.goBack();
-			}
-
-			if (createdId) {
 				tabNavigation.navigate('HomeTab', {
 					screen: 'PostDetail',
 					params: {
 						id: createdId,
 					},
 				});
+				showToast('success', '글이 작성되었습니다.');
 			}
+
+			resetForm();
+		} finally {
+			setIsLoading(false);
 		}
 	};
 

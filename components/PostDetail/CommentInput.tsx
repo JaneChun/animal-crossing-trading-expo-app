@@ -8,8 +8,9 @@ import { TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { Timestamp } from 'firebase/firestore';
 import { useState } from 'react';
-import { Alert, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import Input from '../ui/Input';
+import { showToast } from '../ui/Toast';
 
 const CommentInput = ({
 	postId,
@@ -22,19 +23,18 @@ const CommentInput = ({
 
 	const onSubmit = () => {
 		if (!userInfo || !auth.currentUser) {
-			Alert.alert('댓글 쓰기는 로그인 후 가능합니다.');
+			showToast('warn', '댓글 쓰기는 로그인 후 가능합니다.');
 			tabNavigation.navigate('ProfileTab', { screen: 'Login' });
 			return;
 		}
 
 		if (!postId) {
-			Alert.alert('게시글을 찾을 수 없습니다.');
+			showToast('error', '게시글을 찾을 수 없습니다.');
 			tabNavigation.navigate('ProfileTab', { screen: 'Login' });
 			return;
 		}
 
 		if (commentInput.trim() === '') {
-			Alert.alert('오류', '내용이 비어있는지 확인해주세요.');
 			return;
 		}
 
@@ -44,19 +44,12 @@ const CommentInput = ({
 			createdAt: Timestamp.now(),
 		};
 
-		try {
-			setIsLoading(true);
-			addComment({ postId, requestData });
-			commentRefresh();
-		} catch (e: any) {
-			Alert.alert(
-				'오류',
-				`댓글을 작성하는 중 오류가 발생했습니다.${e.code && `\n${e.code}`}`,
-			);
-		} finally {
-			setCommentInput('');
-			setIsLoading(false);
-		}
+		setIsLoading(true);
+
+		addComment({ postId, requestData });
+
+		setIsLoading(false);
+		setCommentInput('');
 	};
 
 	return (

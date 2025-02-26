@@ -1,15 +1,13 @@
 import { Colors } from '@/constants/Color';
+import { deletePost as deletePostFromDB } from '@/firebase/services/postService';
 import { ActionButtonsProps } from '@/types/components';
 import { HomeStackNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { showToast } from '../ui/Toast';
 
 const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
 	const stackNavigation = useNavigation<HomeStackNavigation>();
-
-	const showAlert = (title: string, message: string, onPress?: () => void) => {
-		Alert.alert(title, message, [{ text: '확인', onPress }]);
-	};
 
 	const editPost = () => {
 		stackNavigation.navigate('NewPost', { id });
@@ -24,14 +22,11 @@ const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
 
 	const handleDeletePost = async () => {
 		try {
-			await deletePost(id);
-
-			showAlert('삭제 완료', '게시글이 성공적으로 삭제되었습니다.', () =>
-				stackNavigation.goBack(),
-			);
+			await deletePostFromDB(id);
+			showToast('success', '게시글이 삭제되었습니다.');
+			stackNavigation.goBack();
 		} catch (e) {
-			showAlert('삭제 실패', '게시글 삭제 중 오류가 발생했습니다.');
-			console.log('게시글 삭제 오류:', e);
+			showToast('error', '게시글 삭제 중 오류가 발생했습니다.');
 		}
 	};
 

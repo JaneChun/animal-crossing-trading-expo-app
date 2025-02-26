@@ -39,7 +39,7 @@ const firestoreRequest = async (
 		else {
 			Alert.alert(
 				'오류 발생',
-				`요청 실패: ${error.message || '알 수 없는 오류가 발생했습니다.'}`,
+				`요청 실패: ${error.code || '알 수 없는 오류가 발생했습니다.'}`,
 			);
 		}
 

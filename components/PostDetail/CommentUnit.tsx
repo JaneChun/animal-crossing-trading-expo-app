@@ -17,6 +17,7 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native';
+import { showToast } from '../ui/Toast';
 
 const CommentUnit = ({
 	commentRefresh,
@@ -88,10 +89,6 @@ const CommentUnit = ({
 		]);
 	};
 
-	const showAlert = (title: string, message: string, onPress?: () => void) => {
-		Alert.alert(title, message, [{ text: '확인', onPress }]);
-	};
-
 	const handleDeleteComment = async ({
 		postId,
 		commentId,
@@ -101,12 +98,10 @@ const CommentUnit = ({
 	}) => {
 		try {
 			await deleteCommentFromDB({ postId, commentId });
-			showAlert('삭제 완료', '댓글이 성공적으로 삭제되었습니다.', async () => {
-				commentRefresh();
-			});
+			showToast('success', '댓글이 삭제되었습니다.');
+			commentRefresh();
 		} catch (e: any) {
-			showAlert('삭제 실패', '댓글 삭제 중 오류가 발생했습니다.');
-			console.log('댓글 삭제 오류:', e);
+			showToast('error', '댓글 삭제 중 오류가 발생했습니다.');
 		}
 	};
 
@@ -114,24 +109,20 @@ const CommentUnit = ({
 	const onChatClick = async (receiverId: string) => {
 		if (!userInfo) return;
 
-		try {
-			const chatId = await createChatRoom(userInfo.uid, receiverId);
+		const chatId = await createChatRoom(userInfo.uid, receiverId);
 
-			tabNavigation.navigate('ChatTab', {
-				screen: 'ChatRoom',
-				params: {
-					chatId,
-					receiverInfo: {
-						uid: creatorId,
-						diaplayName: creatorDisplayName,
-						islandName: creatorIslandName,
-						photoURL: creatorPhotoURL,
-					},
+		tabNavigation.navigate('ChatTab', {
+			screen: 'ChatRoom',
+			params: {
+				chatId,
+				receiverInfo: {
+					uid: creatorId,
+					diaplayName: creatorDisplayName,
+					islandName: creatorIslandName,
+					photoURL: creatorPhotoURL,
 				},
-			});
-		} catch (error) {
-			Alert.alert('오류', '채팅방을 열 수 없습니다.');
-		}
+			},
+		});
 	};
 
 	return (
