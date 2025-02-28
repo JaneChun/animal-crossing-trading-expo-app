@@ -50,6 +50,7 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 				PostWithCreatorInfo
 			>(q);
 
+			if (!lastDoc) setIsEnd(true);
 			lastestDocRef.current = lastDoc;
 
 			// 기존 데이터에 추가 or 초기화

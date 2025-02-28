@@ -3,6 +3,7 @@ import ProfileBox from '@/components/Profile/Profile';
 import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
+import useGetPosts from '@/hooks/useGetPosts';
 import useLoading from '@/hooks/useLoading';
 import { ProfileStackNavigation } from '@/types/navigation';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,10 +13,14 @@ import { FlatList } from 'react-native-gesture-handler';
 
 const Profile = () => {
 	const { userInfo } = useAuthContext();
-	const { LoadingIndicator } = useLoading();
 	const stackNavigation = useNavigation<ProfileStackNavigation>();
+	const { LoadingIndicator } = useLoading();
+	const { data, isLoading, isEnd, loadMore } = useGetPosts(
+		{ creatorId: userInfo?.uid },
+		5,
+	);
 
-	if (!userInfo) {
+	if (!userInfo || (isLoading && data.length === 0)) {
 		return <LoadingIndicator />;
 	}
 
@@ -40,7 +45,14 @@ const Profile = () => {
 				data={[]}
 				renderItem={null}
 				ListHeaderComponent={<ProfileBox />}
-				ListEmptyComponent={<MyPosts />}
+				ListEmptyComponent={
+					<MyPosts
+						data={data}
+						isLoading={isLoading}
+						isEnd={isEnd}
+						loadMore={loadMore}
+					/>
+				}
 			/>
 		</Layout>
 	);

@@ -130,6 +130,13 @@ export type UserInfoProps = {
 };
 
 // Profile/
+export type MyPostsProps = {
+	data: PostWithCreatorInfo[];
+	isLoading: boolean;
+	isEnd: boolean;
+	loadMore: () => void;
+};
+
 export type ProfileImageInputProps = {
 	image: ImagePickerAsset | null;
 	setImage: Dispatch<SetStateAction<ImagePickerAsset | null>>;

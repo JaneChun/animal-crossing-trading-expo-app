@@ -1,6 +1,7 @@
 import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
 import useGetChats from '@/hooks/useGetChats';
+import useLoading from '@/hooks/useLoading';
 import { ChatWithReceiverInfo } from '@/types/chat';
 import { ChatStackNavigation } from '@/types/navigation';
 import { PublicUserInfo } from '@/types/user';
@@ -18,7 +19,8 @@ import {
 
 const Chat = () => {
 	const stackNavigation = useNavigation<ChatStackNavigation>();
-	const { chats } = useGetChats();
+	const { chats, isLoading } = useGetChats();
+	const { LoadingIndicator } = useLoading();
 
 	const enterChatRoom = ({
 		chatId,
@@ -61,6 +63,10 @@ const Chat = () => {
 			</TouchableOpacity>
 		);
 	};
+
+	if (isLoading) {
+		return <LoadingIndicator />;
+	}
 
 	return (
 		<Layout title='채팅'>

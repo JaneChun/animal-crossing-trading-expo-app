@@ -1,23 +1,13 @@
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
-import useGetPosts from '@/hooks/useGetPosts';
 import useLoading from '@/hooks/useLoading';
+import { MyPostsProps } from '@/types/components';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import PostUnit from '../Home/PostUnit';
 
-const MyPosts = () => {
-	const { userInfo } = useAuthContext();
-	const { LoadingIndicator, InlineLoadingIndicator } = useLoading();
-	const { data, isLoading, isEnd, loadMore } = useGetPosts(
-		{ creatorId: userInfo?.uid },
-		5,
-	);
-
-	if (isLoading && data.length === 0) {
-		return <LoadingIndicator />;
-	}
+const MyPosts = ({ data, isLoading, isEnd, loadMore }: MyPostsProps) => {
+	const { InlineLoadingIndicator } = useLoading();
 
 	return (
 		<View style={styles.container}>
