@@ -21,6 +21,10 @@ const CommentInput = ({
 	const tabNavigation = useNavigation<TabNavigation>();
 	const { userInfo } = useAuthContext();
 
+	const resetForm = () => {
+		setCommentInput('');
+	};
+
 	const onSubmit = () => {
 		if (!userInfo || !auth.currentUser) {
 			showToast('warn', '댓글 쓰기는 로그인 후 가능합니다.');
@@ -49,7 +53,9 @@ const CommentInput = ({
 		addComment({ postId, requestData });
 
 		setIsLoading(false);
-		setCommentInput('');
+
+		resetForm();
+		commentRefresh();
 	};
 
 	return (
