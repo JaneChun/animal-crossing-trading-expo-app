@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { CartItemProps } from '@/types/components';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
 	Image,
 	StyleSheet,
@@ -11,7 +11,7 @@ import {
 	View,
 } from 'react-native';
 
-const Item = ({ item, cart, setCart }: CartItemProps) => {
+const Item = ({ item, updateItem, deleteItemFromCart }: CartItemProps) => {
 	const [quantityInput, setQuantityInput] = useState<number>(
 		item.quantity || 1,
 	);
@@ -19,36 +19,33 @@ const Item = ({ item, cart, setCart }: CartItemProps) => {
 		item.price || 1,
 	);
 
-	const deleteItemFromCart = useCallback(() => {
-		setCart(
-			cart.filter((cartItem) => cartItem.UniqueEntryID !== item.UniqueEntryID),
-		);
-	}, [cart, item.UniqueEntryID, setCart]);
-
-	// 아이템 수량, 가격 변경 또는 아이템 삭제 시 호출
-	useEffect(() => {
-		item.quantity = quantityInput;
-		item.price = milesTicketInput;
-
-		if (item.quantity === 0) {
-			deleteItemFromCart();
-		}
-	}, [quantityInput, milesTicketInput, item, deleteItemFromCart]);
-
 	const onQuantityDecrement = () => {
-		setQuantityInput((prev) => Math.max(prev - 1, 0));
+		if (quantityInput === 1) {
+			deleteItemFromCart(item.UniqueEntryID);
+			return;
+		}
+
+		const newQuantity = quantityInput - 1;
+		setQuantityInput(newQuantity);
+		updateItem({ ...item, quantity: newQuantity });
 	};
 
 	const onQuantityIncrement = () => {
-		setQuantityInput((prev) => prev + 1);
+		const newQuantity = quantityInput + 1;
+		setQuantityInput(newQuantity);
+		updateItem({ ...item, quantity: newQuantity });
 	};
 
 	const onMilesTicketDecrement = () => {
-		setMilesTicketInput((prev) => Math.max(prev - 1, 0));
+		const newPrice = Math.max(milesTicketInput - 1, 0);
+		setMilesTicketInput(newPrice);
+		updateItem({ ...item, price: newPrice });
 	};
 
 	const onMilesTicketIncrement = () => {
-		setMilesTicketInput((prev) => prev + 1);
+		const newPrice = milesTicketInput + 1;
+		setMilesTicketInput(newPrice);
+		updateItem({ ...item, price: newPrice });
 	};
 
 	// 개별 아이템 총계 계산 (수량 × 가격)
@@ -160,6 +157,7 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 	},
 	itemName: {
+		textAlign: 'center',
 		fontSize: 14,
 		marginTop: 5,
 	},

@@ -38,8 +38,8 @@ export type ImageInputProps = {
 
 export type CartItemProps = {
 	item: CartItem;
-	cart: CartItem[];
-	setCart: Dispatch<SetStateAction<CartItem[]>>;
+	updateItem: (updateCartItem: CartItem) => void;
+	deleteItemFromCart: (deleteCartItemId: string) => void;
 };
 
 export type ItemListProps = {
