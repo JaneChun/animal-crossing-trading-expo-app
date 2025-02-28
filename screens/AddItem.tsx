@@ -24,7 +24,7 @@ const AddItem = () => {
 		<Layout>
 			<ItemSelect cart={localCart} setCart={setLocalCart} />
 			<Button color='mint' size='lg' onPress={saveAndGoBack}>
-				추가
+				{localCart.length === 0 ? '추가' : `${localCart.length}개 추가하기`}
 			</Button>
 		</Layout>
 	);

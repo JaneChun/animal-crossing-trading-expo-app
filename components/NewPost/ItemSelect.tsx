@@ -22,7 +22,7 @@ const ItemSelect = ({
 	labelStyle,
 }: ItemSelectProps) => {
 	const { isLoading, setIsLoading, InlineLoadingIndicator } = useLoading();
-	const [category, setCategory] = useState<string | null>(null);
+	const [category, setCategory] = useState<string | null>('All');
 	const [itemData, setItemData] = useState<Item[]>([]);
 	const [searchInput, setSearchInput] = useState<string>('');
 	const [searchedItemData, setSearchedItemData] = useState<Item[]>([]);
@@ -35,10 +35,18 @@ const ItemSelect = ({
 			setIsLoading(true);
 			try {
 				const response = await axios.get(
-					`${process.env.EXPO_PUBLIC_DATABASE_URL}/items/${category}.json`,
+					`${process.env.EXPO_PUBLIC_DATABASE_URL}/items${
+						category === 'All' ? '' : `/${category}`
+					}.json`,
 				);
+
 				if (response.status === 200) {
-					setItemData(response.data);
+					if (category === 'All') {
+						const flattened = Object.values(response.data).flat() as Item[];
+						setItemData(flattened);
+					} else {
+						setItemData(response.data);
+					}
 				} else {
 					throw new Error(response.statusText);
 				}
@@ -55,8 +63,14 @@ const ItemSelect = ({
 	useEffect(() => {
 		if (!itemData) return;
 
-		const filtered = itemData.filter((item) => item.name.includes(searchInput));
-		setSearchedItemData(filtered);
+		try {
+			const filtered = itemData.filter((item) =>
+				item.name.includes(searchInput),
+			);
+			setSearchedItemData(filtered);
+		} catch (e) {
+			setSearchedItemData([]);
+		}
 	}, [searchInput, itemData]);
 
 	const addItemToCart = (item: Item) => {
@@ -74,6 +88,15 @@ const ItemSelect = ({
 
 	return (
 		<View style={[styles.container, containerStyle]}>
+			{/* 검색 인풋 */}
+			<TextInput
+				style={styles.searchInput}
+				placeholder='🔍 아이템 검색..'
+				value={searchInput}
+				onChangeText={setSearchInput}
+			/>
+
+			{/* 카테고리 칩 */}
 			<View style={styles.categoriesContainer}>
 				{categories.map((item) => (
 					<TouchableOpacity
@@ -96,15 +119,9 @@ const ItemSelect = ({
 				))}
 			</View>
 
+			{/* 아이템 목록 */}
 			{category && (
 				<View style={styles.listContainer}>
-					<TextInput
-						style={styles.searchInput}
-						placeholder='아이템 검색..'
-						value={searchInput}
-						onChangeText={setSearchInput}
-					/>
-
 					{isLoading ? (
 						<InlineLoadingIndicator />
 					) : (
@@ -179,11 +196,12 @@ const styles = StyleSheet.create({
 		height: 400,
 	},
 	searchInput: {
-		marginTop: 16,
+		fontSize: 16,
+		marginBottom: 8,
 		padding: 12,
 		borderWidth: 1,
 		borderColor: Colors.border_gray,
-		borderRadius: 8,
+		borderRadius: 20,
 		backgroundColor: Colors.base,
 	},
 	itemList: {
@@ -219,6 +237,7 @@ const styles = StyleSheet.create({
 export default ItemSelect;
 
 const categories = [
+	{ KR: '전체', EN: 'All' },
 	{ KR: '가구', EN: 'Houswares' },
 	{ KR: '잡화', EN: 'Miscellaneous' },
 	{ KR: '벽걸이', EN: 'Wallmounted' },

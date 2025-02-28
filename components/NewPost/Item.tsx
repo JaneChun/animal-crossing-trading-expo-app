@@ -56,7 +56,7 @@ const Item = ({ item, updateItem, deleteItemFromCart }: CartItemProps) => {
 			{/* 이미지 카드 */}
 			<View style={styles.imageContainer}>
 				<TouchableOpacity
-					onPress={deleteItemFromCart}
+					onPress={() => deleteItemFromCart(item.UniqueEntryID)}
 					style={styles.deleteButton}
 				>
 					<Ionicons name='close' color={Colors.font_gray} size={16} />
