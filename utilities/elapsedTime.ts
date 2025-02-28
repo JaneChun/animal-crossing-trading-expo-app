@@ -16,5 +16,5 @@ export const elapsedTime = (date: Timestamp): string => {
 	const days = hours / 24;
 	if (days < 7) return `${Math.floor(days)}일 전`;
 
-	return `${start.toLocaleDateString()}`;
+	return `${start.toLocaleDateString('ko-KR').slice(0, -1)}`;
 };
