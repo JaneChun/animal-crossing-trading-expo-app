@@ -45,6 +45,8 @@ export type CartItemProps = {
 export type ItemListProps = {
 	cart: CartItem[];
 	setCart: Dispatch<SetStateAction<CartItem[]>>;
+	containerStyle?: StyleProp<ViewStyle>;
+	labelStyle?: StyleProp<TextStyle>;
 };
 
 export type ItemSelectProps = {

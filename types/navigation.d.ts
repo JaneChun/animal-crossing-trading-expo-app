@@ -3,12 +3,13 @@ import { UserInfo } from '@/types/user';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { CartItem } from './post';
 
 // 하단 탭 네비게이션
 export type RootTabParamList = {
 	HomeTab: NavigatorScreenParams<HomeStackParamList>;
-	ChatTab: NavigatorScreenParams<Chat>;
-	NewPostTab: { id: string };
+	ChatTab: NavigatorScreenParams<ChatStackParamList>;
+	NewPostTab: NavigatorScreenParams<NewPostStackParamList>;
 	SearchTab: undefined;
 	ProfileTab: NavigatorScreenParams<ProfileStackParamList>;
 };
@@ -17,7 +18,6 @@ export type RootTabParamList = {
 export type HomeStackParamList = {
 	Home: undefined;
 	PostDetail: { id: string };
-	NewPost: { id?: string };
 	EditComment: { postId: string; commentId: string; body: string };
 };
 
@@ -25,6 +25,12 @@ export type HomeStackParamList = {
 export type ChatStackParamList = {
 	Chat: undefined;
 	ChatRoom: { chatId: string; receiverInfo: ReceiverInfo };
+};
+
+// NewPost 스택 네비게이션
+export type NewPostStackParamList = {
+	NewPost: { id?: string; updatedCart?: CartItem[] };
+	AddItem: { cart: CartItem[] };
 };
 
 // Profile 스택 네비게이션
@@ -39,15 +45,18 @@ export type ProfileStackParamList = {
 export type TabNavigation = BottomTabNavigationProp<RootTabParamList>;
 export type HomeStackNavigation = NativeStackNavigationProp<HomeStackParamList>;
 export type ChatStackNavigation = NativeStackNavigationProp<ChatStackParamList>;
+export type NewPostNavigation =
+	NativeStackNavigationProp<NewPostStackParamList>;
 export type ProfileStackNavigation =
 	NativeStackNavigationProp<ProfileStackParamList>;
 
 // 특정 화면에 대한 Route Prop (화면에서 `route.params`를 사용할 때 필요함)
 export type PostDetailRouteProp = RouteProp<HomeStackParamList, 'PostDetail'>;
 export type EditCommentRouteProp = RouteProp<HomeStackParamList, 'EditComment'>;
-export type NewPostRouteProp = RouteProp<HomeStackParamList, 'NewPost'>;
+export type NewPostRouteProp = RouteProp<NewPostStackParamList, 'NewPost'>;
 export type ChatRoomRouteProp = RouteProp<ChatStackParamList, 'ChatRoom'>;
 export type EditProfileRouteProp = RouteProp<
 	ProfileStackParamList,
 	'EditProfile'
 >;
+export type AddItemRouteProp = RouteProp<NewPostStackParamList, 'AddItem'>;

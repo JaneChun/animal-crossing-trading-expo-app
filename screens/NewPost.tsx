@@ -6,13 +6,18 @@ import {
 } from '@/firebase/services/imageService';
 import {
 	HomeStackNavigation,
+	NewPostNavigation,
 	type NewPostRouteProp,
 	type TabNavigation,
 } from '@/types/navigation';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import {
+	useFocusEffect,
+	useNavigation,
+	useRoute,
+} from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useAuthContext } from '../contexts/AuthContext';
@@ -34,12 +39,12 @@ import {
 } from '@/types/post';
 import React from 'react';
 import ItemList from '../components/NewPost/ItemList';
-import ItemSelect from '../components/NewPost/ItemSelect';
 import Button from '../components/ui/Button';
 
 const NewPost = () => {
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<HomeStackNavigation>();
+	const newPostStackNavigation = useNavigation<NewPostNavigation>();
 	const { userInfo } = useAuthContext();
 	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
 
@@ -53,17 +58,25 @@ const NewPost = () => {
 	const route = useRoute<NewPostRouteProp>();
 	const { id: editingId = '' } = route?.params ?? {};
 
-	const { post, error, isLoading: loading } = useGetPostDetail(editingId);
+	useFocusEffect(
+		useCallback(() => {
+			if (route.params?.updatedCart) {
+				setCart(route.params.updatedCart);
+			}
+		}, [route.params]),
+	);
 
-	useEffect(() => {
-		stackNavigation.setOptions({
-			headerRight: () => (
-				<Button color='white' size='md2' onPress={onSubmit}>
-					등록
-				</Button>
-			),
-		});
-	}, [title, body, images, cart]);
+	const { post, isLoading: loading } = useGetPostDetail(editingId);
+
+	// useEffect(() => {
+	// 	stackNavigation.setOptions({
+	// 		headerRight: () => (
+	// 			<Button color='white' size='md2' onPress={onSubmit}>
+	// 				등록
+	// 			</Button>
+	// 		),
+	// 	});
+	// }, [title, body, images, cart]);
 
 	useEffect(() => {
 		if (!post) return;
@@ -198,13 +211,22 @@ const NewPost = () => {
 		}
 	};
 
+	const openAddItem = () => {
+		newPostStackNavigation.navigate('AddItem', { cart });
+		// AddItem.tsx로 아래 props를 navigate할 떄 전달할 수 있나?
+		// cart={cart}
+		// setCart={setCart}
+		// containerStyle={styles.inputContainer}
+		// labelStyle={styles.label}
+	};
+
 	if (isLoading) {
 		return <LoadingIndicator />;
 	}
 
 	return (
 		<Layout>
-			<KeyboardAvoidingView>
+			<KeyboardAvoidingView style={styles.screen}>
 				<FlatList
 					data={[]}
 					renderItem={null}
@@ -235,35 +257,43 @@ const NewPost = () => {
 								labelStyle={styles.label}
 							/>
 
-							<ItemSelect
+							<ItemList
 								cart={cart}
 								setCart={setCart}
 								containerStyle={styles.inputContainer}
 								labelStyle={styles.label}
 							/>
-
-							<ItemList cart={cart} setCart={setCart} />
-
-							<View style={styles.buttonContainer}>
-								<Button color='white' size='lg' onPress={onSubmit}>
-									등록
-								</Button>
-							</View>
 						</>
 					}
-				></FlatList>
+				/>
 			</KeyboardAvoidingView>
+			<View style={styles.buttonContainer}>
+				<Button
+					color='white'
+					size='lg'
+					style={{ flex: 1 }}
+					onPress={openAddItem}
+				>
+					아이템 추가
+				</Button>
+				<Button color='mint' size='lg' style={{ flex: 1 }} onPress={onSubmit}>
+					등록
+				</Button>
+			</View>
 		</Layout>
 	);
 };
 
 const styles = StyleSheet.create({
+	screen: {
+		flex: 1,
+	},
 	inputContainer: {
 		marginVertical: 16,
 	},
 	label: {
 		fontSize: 16,
-		fontWeight: 'semibold',
+		fontWeight: 600,
 		marginBottom: 12,
 		color: Colors.font_black,
 	},
@@ -276,8 +306,10 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.base,
 	},
 	buttonContainer: {
-		flex: 1,
-		justifyContent: 'flex-end',
+		marginTop: 8,
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		gap: 10,
 	},
 });
 

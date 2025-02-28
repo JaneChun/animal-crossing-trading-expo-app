@@ -63,15 +63,17 @@ const ItemSelect = ({
 		const isAlreadyAdded = cart.find(
 			(cartItem) => cartItem.UniqueEntryID === item.UniqueEntryID,
 		);
-		if (!isAlreadyAdded) {
+
+		if (isAlreadyAdded) {
+			showToast('warn', '이미 추가된 아이템이에요.');
+		} else {
 			setCart([...cart, { ...item, quantity: 1, price: 1 }]);
+			showToast('success', `${item.name}이(가) 추가되었어요.`);
 		}
-		showToast('success', `${item.name}이(가) 추가되었어요.`);
 	};
 
 	return (
 		<View style={[styles.container, containerStyle]}>
-			<Text style={labelStyle}>아이템 선택</Text>
 			<View style={styles.categoriesContainer}>
 				{categories.map((item) => (
 					<TouchableOpacity
@@ -143,7 +145,9 @@ const ItemSelect = ({
 };
 
 const styles = StyleSheet.create({
-	container: {},
+	container: {
+		flex: 1,
+	},
 	categoriesContainer: {
 		flexDirection: 'row',
 		flexWrap: 'wrap',

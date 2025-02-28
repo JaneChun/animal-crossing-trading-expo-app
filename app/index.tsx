@@ -14,6 +14,7 @@ import { AuthContextProvider, useAuthContext } from '../contexts/AuthContext';
 
 // 스크린 import
 import { toastConfig } from '@/components/ui/Toast';
+import AddItem from '@/screens/AddItem';
 import Chat from '@/screens/Chat';
 import ChatRoom from '@/screens/ChatRoom';
 import EditComment from '@/screens/EditComment';
@@ -31,6 +32,7 @@ import Setting from '@/screens/Setting';
 const BottomTab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
 const ChatStack = createNativeStackNavigator();
+const NewPostStack = createNativeStackNavigator();
 const ProfileStack = createNativeStackNavigator();
 
 const HomeStackNavigator = () => {
@@ -123,6 +125,23 @@ const ChatStackNavigator = () => {
 	);
 };
 
+const NewPostStackNavigator = () => {
+	return (
+		<NewPostStack.Navigator>
+			<NewPostStack.Screen
+				name='NewPost'
+				component={NewPost}
+				options={{ title: '' }}
+			/>
+			<NewPostStack.Screen
+				name='AddItem'
+				component={AddItem}
+				options={{ title: '아이템 추가' }}
+			/>
+		</NewPostStack.Navigator>
+	);
+};
+
 const BottomTabNavigator = () => {
 	return (
 		<BottomTab.Navigator
@@ -165,7 +184,7 @@ const BottomTabNavigator = () => {
 			/>
 			<BottomTab.Screen
 				name='NewPostTab'
-				component={NewPost}
+				component={NewPostStackNavigator}
 				options={{
 					tabBarIcon: ({ focused }) => (
 						<FontAwesome6
