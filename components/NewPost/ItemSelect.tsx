@@ -1,10 +1,10 @@
 import { Colors } from '@/constants/Color';
+import useLoading from '@/hooks/useLoading';
 import { ItemSelectProps } from '@/types/components';
 import { Item } from '@/types/post';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import {
-	ActivityIndicator,
 	Image,
 	StyleSheet,
 	Text,
@@ -21,7 +21,7 @@ const ItemSelect = ({
 	containerStyle,
 	labelStyle,
 }: ItemSelectProps) => {
-	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const { isLoading, setIsLoading, InlineLoadingIndicator } = useLoading();
 	const [category, setCategory] = useState<string | null>(null);
 	const [itemData, setItemData] = useState<Item[]>([]);
 	const [searchInput, setSearchInput] = useState<string>('');
@@ -104,9 +104,7 @@ const ItemSelect = ({
 					/>
 
 					{isLoading ? (
-						<View style={styles.spinnerContainer}>
-							<ActivityIndicator size='large' color={Colors.primary} />
-						</View>
+						<InlineLoadingIndicator />
 					) : (
 						<FlatList
 							data={searchInput ? searchedItemData : itemData}
