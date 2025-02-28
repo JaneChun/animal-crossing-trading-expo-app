@@ -13,6 +13,7 @@ import {
 	View,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+import { showToast } from '../ui/Toast';
 
 const ItemSelect = ({
 	cart,
@@ -65,6 +66,7 @@ const ItemSelect = ({
 		if (!isAlreadyAdded) {
 			setCart([...cart, { ...item, quantity: 1, price: 1 }]);
 		}
+		showToast('success', `${item.name}이(가) 추가되었어요.`);
 	};
 
 	return (
