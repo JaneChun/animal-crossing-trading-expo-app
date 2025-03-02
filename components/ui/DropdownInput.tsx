@@ -18,10 +18,12 @@ import {
 
 const DropdownInput = ({
 	options,
+	disabled,
 	value,
 	setValue,
 }: {
 	options: string[];
+	disabled?: boolean;
 	value: string;
 	setValue: Dispatch<SetStateAction<string>>;
 }) => {
@@ -52,8 +54,13 @@ const DropdownInput = ({
 		<>
 			<TouchableOpacity
 				ref={comboBoxRef}
-				style={[styles.inputContainer, { paddingLeft: 18 }]}
+				style={[
+					styles.inputContainer,
+					disabled && { backgroundColor: Colors.base },
+					{ paddingLeft: 18 },
+				]}
 				onPress={openModal}
+				disabled={disabled}
 			>
 				<Text style={styles.text}>{value}</Text>
 

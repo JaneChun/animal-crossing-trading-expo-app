@@ -40,7 +40,7 @@ const EditItemModal = ({
 	};
 
 	return (
-		<CustomModal modalHeight='40%' isVisible={isVisible} onClose={onClose}>
+		<CustomModal modalHeight='53%' isVisible={isVisible} onClose={onClose}>
 			<View style={styles.content}>
 				{/* 타이틀 */}
 				<Text style={styles.title}>{item?.name}</Text>
@@ -54,6 +54,7 @@ const EditItemModal = ({
 					/>
 					<DropdownInput
 						options={options}
+						disabled
 						value={selectedUnit}
 						setValue={setSelectedUnit}
 					/>
@@ -129,8 +130,7 @@ const styles = StyleSheet.create({
 		color: Colors.font_black,
 	},
 	totalContainer: {
-		flex: 1,
 		justifyContent: 'flex-end',
-		paddingBottom: 16,
+		marginTop: 8,
 	},
 });

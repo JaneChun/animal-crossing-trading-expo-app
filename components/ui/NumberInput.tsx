@@ -13,6 +13,11 @@ const NumberInput = ({
 	const onDecrement = () => setValue((prev) => Math.max(prev - 1, 0));
 	const onIncrement = () => setValue((prev) => prev + 1);
 
+	const handleChangeText = (text: string) => {
+		const newValue = parseInt(text, 10);
+		if (!isNaN(newValue)) setValue(newValue);
+	};
+
 	return (
 		<View style={styles.inputContainer}>
 			<TouchableOpacity onPress={onDecrement}>
@@ -25,6 +30,8 @@ const NumberInput = ({
 				keyboardType='numeric'
 				value={String(value)}
 				editable={true}
+				onChangeText={handleChangeText}
+				maxLength={6}
 			/>
 
 			<TouchableOpacity onPress={onIncrement}>
