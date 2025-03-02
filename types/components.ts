@@ -69,6 +69,11 @@ export type TypeSelectProps = {
 	setType: Dispatch<SetStateAction<Type>>;
 };
 
+export type EditableItemProps = {
+	item: CartItem;
+	onDeleteItem: (deleteCartItemId: string) => void;
+};
+
 // PostDetail/
 export type ActionButtonsProps = {
 	id: string;

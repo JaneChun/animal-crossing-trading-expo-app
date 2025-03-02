@@ -1,8 +1,9 @@
 import { ItemListProps } from '@/types/components';
 import { CartItem } from '@/types/post';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import Item from './Item';
+import Total from '../PostDetail/Total';
+import EditableItem from './EditableItem.';
 
 const ItemList = ({
 	cart,
@@ -10,20 +11,25 @@ const ItemList = ({
 	containerStyle,
 	labelStyle,
 }: ItemListProps) => {
-	const updateItem = (updatedCartItem: CartItem) => {
-		setCart((prevCart) =>
-			prevCart.map((cartItem) =>
-				cartItem.UniqueEntryID === updatedCartItem.UniqueEntryID
-					? updatedCartItem
-					: cartItem,
-			),
-		);
-	};
+	// CartItem 메서드
+	// const updateItem = (updatedCartItem: CartItem) => {
+	// 	setCart((prevCart) =>
+	// 		prevCart.map((cartItem) =>
+	// 			cartItem.UniqueEntryID === updatedCartItem.UniqueEntryID
+	// 				? updatedCartItem
+	// 				: cartItem,
+	// 		),
+	// 	);
+	// };
 
 	const deleteItemFromCart = (deleteCartItemId: string) => {
 		setCart(
 			cart.filter((cartItem) => cartItem.UniqueEntryID !== deleteCartItemId),
 		);
+	};
+
+	const onEditItem = (item: CartItem) => {
+		console.log(item.UniqueEntryID);
 	};
 
 	return (
@@ -34,13 +40,13 @@ const ItemList = ({
 				data={cart}
 				keyExtractor={(item, index) => item.UniqueEntryID ?? index.toString()}
 				renderItem={({ item }) => (
-					<Item
-						item={item}
-						updateItem={updateItem}
-						deleteItemFromCart={deleteItemFromCart}
-					/>
+					<TouchableOpacity onPress={() => onEditItem(item)}>
+						<EditableItem item={item} onDeleteItem={deleteItemFromCart} />
+					</TouchableOpacity>
 				)}
 			/>
+
+			<Total cart={cart} containerStyle={{ marginTop: 16 }} />
 		</View>
 	);
 };
