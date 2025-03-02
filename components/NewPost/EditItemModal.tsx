@@ -4,8 +4,8 @@ import { EditItemModalProps } from '@/types/components';
 import { CartItem } from '@/types/post';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Modal from 'react-native-modal';
 import Total from '../PostDetail/Total';
+import CustomModal from '../ui/CustomModal';
 import DropdownInput from '../ui/DropdownInput';
 import NumberInput from '../ui/NumberInput';
 
@@ -40,78 +40,59 @@ const EditItemModal = ({
 	};
 
 	return (
-		<Modal
-			isVisible={isVisible}
-			onBackdropPress={onClose}
-			backdropOpacity={0.5}
-			avoidKeyboard={true}
-			style={styles.screen}
-		>
-			<View style={styles.modal}>
-				<View style={styles.content}>
-					{/* 타이틀 */}
-					<Text style={styles.title}>{item?.name}</Text>
+		<CustomModal modalHeight='40%' isVisible={isVisible} onClose={onClose}>
+			<View style={styles.content}>
+				{/* 타이틀 */}
+				<Text style={styles.title}>{item?.name}</Text>
 
-					{/* 개수 */}
-					<View style={styles.row}>
-						<NumberInput value={quantityInput} setValue={setQuantityInput} />
-						<View
-							style={[styles.inputContainer, { backgroundColor: Colors.base }]}
-						>
-							<Text style={styles.text}>개</Text>
-						</View>
-					</View>
-
-					{/* 가격 */}
-					<View style={styles.row}>
-						<NumberInput
-							value={milesTicketInput}
-							setValue={setMilesTicketInput}
-						/>
-						<DropdownInput
-							options={options}
-							value={selectedUnit}
-							setValue={setSelectedUnit}
-						/>
-					</View>
-
-					{/* 총계 */}
-					<View style={styles.totalContainer}>
-						<Total
-							cart={[
-								{
-									...item,
-									quantity: quantityInput,
-									price: milesTicketInput,
-								} as CartItem,
-							]}
-						/>
+				{/* 개수 */}
+				<View style={styles.row}>
+					<NumberInput value={quantityInput} setValue={setQuantityInput} />
+					<View
+						style={[styles.inputContainer, { backgroundColor: Colors.base }]}
+					>
+						<Text style={styles.text}>개</Text>
 					</View>
 				</View>
 
-				{/* 버튼 */}
-				<Button color='mint' size='lg' onPress={onSubmit}>
-					수정하기
-				</Button>
+				{/* 가격 */}
+				<View style={styles.row}>
+					<NumberInput
+						value={milesTicketInput}
+						setValue={setMilesTicketInput}
+					/>
+					<DropdownInput
+						options={options}
+						value={selectedUnit}
+						setValue={setSelectedUnit}
+					/>
+				</View>
+
+				{/* 총계 */}
+				<View style={styles.totalContainer}>
+					<Total
+						cart={[
+							{
+								...item,
+								quantity: quantityInput,
+								price: milesTicketInput,
+							} as CartItem,
+						]}
+					/>
+				</View>
 			</View>
-		</Modal>
+
+			{/* 버튼 */}
+			<Button color='mint' size='lg' onPress={onSubmit}>
+				수정하기
+			</Button>
+		</CustomModal>
 	);
 };
 
 export default EditItemModal;
 
 const styles = StyleSheet.create({
-	screen: {
-		justifyContent: 'flex-end',
-		margin: 0,
-	},
-	modal: {
-		height: '40%',
-		backgroundColor: 'white',
-		borderTopLeftRadius: 20,
-		borderTopRightRadius: 20,
-		padding: 30,
-	},
 	content: {
 		flex: 1,
 		gap: 12,
