@@ -26,7 +26,11 @@ const EditProfile = () => {
 	const stackNavigation = useNavigation<ProfileStackNavigation>();
 	const { userInfo } = route.params;
 	const { setUserInfo } = useAuthContext();
-	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
+	const {
+		isLoading: isUploading,
+		setIsLoading: setIsUploading,
+		LoadingIndicator,
+	} = useLoading();
 
 	const [displayNameInput, setDisplayNameInput] = useState<string>('');
 	const [islandNameInput, setIslandNameInput] = useState<string>('');
@@ -39,7 +43,7 @@ const EditProfile = () => {
 		stackNavigation.setOptions({
 			headerRight: () => (
 				<Button
-					disabled={isLoading || !isValid}
+					disabled={isUploading || !isValid}
 					color='white'
 					size='md2'
 					onPress={() => onSubmit()}
@@ -53,7 +57,7 @@ const EditProfile = () => {
 		islandNameInput,
 		image,
 		isValid,
-		isLoading,
+		isUploading,
 		stackNavigation,
 	]);
 
@@ -82,7 +86,7 @@ const EditProfile = () => {
 		let uploadedImageUrl: string = '';
 
 		try {
-			setIsLoading(true);
+			setIsUploading(true);
 			// 닉네임
 			if (displayNameInput !== userInfo.displayName) {
 				requestData.displayName = displayNameInput;
@@ -147,7 +151,7 @@ const EditProfile = () => {
 			stackNavigation.goBack();
 			console.log(e);
 		} finally {
-			setIsLoading(false);
+			setIsUploading(false);
 		}
 	};
 
@@ -159,7 +163,7 @@ const EditProfile = () => {
 		);
 	}
 
-	if (isLoading) {
+	if (isUploading) {
 		return <LoadingIndicator />;
 	}
 

@@ -15,12 +15,14 @@ const Profile = () => {
 	const { userInfo } = useAuthContext();
 	const stackNavigation = useNavigation<ProfileStackNavigation>();
 	const { LoadingIndicator } = useLoading();
-	const { data, isLoading, isEnd, loadMore } = useGetPosts(
-		{ creatorId: userInfo?.uid },
-		5,
-	);
+	const {
+		data,
+		isLoading: isFetching,
+		isEnd,
+		loadMore,
+	} = useGetPosts({ creatorId: userInfo?.uid }, 5);
 
-	if (!userInfo || (isLoading && data.length === 0)) {
+	if (!userInfo || (isFetching && data.length === 0)) {
 		return <LoadingIndicator />;
 	}
 
@@ -48,7 +50,7 @@ const Profile = () => {
 				ListEmptyComponent={
 					<MyPosts
 						data={data}
-						isLoading={isLoading}
+						isLoading={isFetching}
 						isEnd={isEnd}
 						loadMore={loadMore}
 					/>

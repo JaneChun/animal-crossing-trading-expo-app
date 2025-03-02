@@ -26,17 +26,17 @@ const PostDetail = () => {
 	const { userInfo } = useAuthContext();
 	const {
 		post,
-		isLoading: loading,
+		isLoading: isPostFetching,
 		refresh: postRefresh,
 	} = useGetPostDetail(id);
 	const {
 		comments,
-		isLoading: isCommentsLoading,
+		isLoading: isCommentsFetching,
 		refresh: commentRefresh,
 	} = useGetComments(id);
 	const {
-		isLoading: isCommentUploadLoading,
-		setIsLoading,
+		isLoading: isCommentUploading,
+		setIsLoading: setIsCommentUploading,
 		LoadingIndicator,
 	} = useLoading();
 
@@ -47,7 +47,7 @@ const PostDetail = () => {
 		}, [postRefresh, commentRefresh]),
 	);
 
-	if (loading || isCommentUploadLoading || isCommentsLoading) {
+	if (isPostFetching || isCommentUploading || isCommentsFetching) {
 		return <LoadingIndicator />;
 	}
 
@@ -119,7 +119,7 @@ const PostDetail = () => {
 				/>
 				<CommentInput
 					postId={post.id}
-					setIsLoading={setIsLoading}
+					setIsLoading={setIsCommentUploading}
 					commentRefresh={commentRefresh}
 				/>
 			</KeyboardAvoidingView>

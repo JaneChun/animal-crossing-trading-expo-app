@@ -21,7 +21,11 @@ const ItemSelect = ({
 	containerStyle,
 	labelStyle,
 }: ItemSelectProps) => {
-	const { isLoading, setIsLoading, InlineLoadingIndicator } = useLoading();
+	const {
+		isLoading: isFetching,
+		setIsLoading: setIsFetching,
+		InlineLoadingIndicator,
+	} = useLoading();
 	const [category, setCategory] = useState<string | null>('All');
 	const [itemData, setItemData] = useState<Item[]>([]);
 	const [searchInput, setSearchInput] = useState<string>('');
@@ -32,7 +36,7 @@ const ItemSelect = ({
 		const getData = async () => {
 			if (!category) return;
 
-			setIsLoading(true);
+			setIsFetching(true);
 			try {
 				const response = await axios.get(
 					`${process.env.EXPO_PUBLIC_DATABASE_URL}/items${
@@ -53,7 +57,7 @@ const ItemSelect = ({
 			} catch (error) {
 				console.error('Failed to fetch data:', error);
 			}
-			setIsLoading(false);
+			setIsFetching(false);
 		};
 
 		getData();
@@ -122,7 +126,7 @@ const ItemSelect = ({
 			{/* 아이템 목록 */}
 			{category && (
 				<View style={styles.listContainer}>
-					{isLoading ? (
+					{isFetching ? (
 						<InlineLoadingIndicator />
 					) : (
 						<FlatList

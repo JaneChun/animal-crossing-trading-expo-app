@@ -22,7 +22,11 @@ const EditComment = () => {
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<HomeStackNavigation>();
 	const { userInfo } = useAuthContext();
-	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
+	const {
+		isLoading: isUploading,
+		setIsLoading: setIsUploading,
+		LoadingIndicator,
+	} = useLoading();
 	const [newCommentInput, setNewCommentInput] = useState('');
 
 	const isValid = newCommentInput?.length > 0;
@@ -31,7 +35,7 @@ const EditComment = () => {
 		stackNavigation.setOptions({
 			headerRight: () => (
 				<Button
-					disabled={isLoading || !isValid}
+					disabled={isUploading || !isValid}
 					color='white'
 					size='md2'
 					onPress={onSubmit}
@@ -49,7 +53,7 @@ const EditComment = () => {
 				</Button>
 			),
 		});
-	}, [newCommentInput, isValid, isLoading, stackNavigation]);
+	}, [newCommentInput, isValid, isUploading, stackNavigation]);
 
 	useEffect(() => {
 		setNewCommentInput(body);
@@ -71,16 +75,16 @@ const EditComment = () => {
 			updatedAt: Timestamp.now(),
 		};
 
-		setIsLoading(true);
+		setIsUploading(true);
 		updateComment({ postId, commentId, requestData });
-		setIsLoading(false);
+		setIsUploading(false);
 
 		setNewCommentInput('');
 		stackNavigation.goBack();
 		showToast('success', '댓글이 수정되었습니다.');
 	};
 
-	if (isLoading) {
+	if (isUploading) {
 		return <LoadingIndicator />;
 	}
 

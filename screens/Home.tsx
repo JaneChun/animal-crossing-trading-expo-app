@@ -13,7 +13,13 @@ import { FlatList, RefreshControl } from 'react-native-gesture-handler';
 
 const Home = () => {
 	const { LoadingIndicator, InlineLoadingIndicator } = useLoading();
-	const { data, isLoading, isEnd, loadMore, refresh } = useGetPosts({}, 10);
+	const {
+		data,
+		isLoading: isFetching,
+		isEnd,
+		loadMore,
+		refresh,
+	} = useGetPosts({}, 10);
 	const [isRefreshing, setIsRefreshing] = useState(false); // 새로고침 상태
 	const navigation = useNavigation<HomeStackNavigation>();
 
@@ -35,7 +41,7 @@ const Home = () => {
 		});
 	};
 
-	if (isLoading && data.length === 0) {
+	if (isFetching && data.length === 0) {
 		return <LoadingIndicator />;
 	}
 
@@ -58,7 +64,7 @@ const Home = () => {
 				onEndReached={!isEnd ? loadMore : undefined}
 				onEndReachedThreshold={0.5}
 				ListFooterComponent={
-					isLoading ? (
+					isFetching ? (
 						<InlineLoadingIndicator />
 					) : isEnd ? (
 						<Text style={styles.endText}>마지막 글입니다.</Text>

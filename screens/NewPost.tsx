@@ -44,7 +44,11 @@ const NewPost = () => {
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<HomeStackNavigation>();
 	const { userInfo } = useAuthContext();
-	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
+	const {
+		isLoading: isUploading,
+		setIsLoading: setIsUploading,
+		LoadingIndicator,
+	} = useLoading();
 
 	const [type, setType] = useState<Type>('buy');
 	const [title, setTitle] = useState<string>('');
@@ -70,7 +74,7 @@ const NewPost = () => {
 		}, [route.params]),
 	);
 
-	const { post, isLoading: loading } = useGetPostDetail(editingId);
+	const { post, isLoading: isFetching } = useGetPostDetail(editingId);
 
 	useEffect(() => {
 		if (!post) return;
@@ -160,7 +164,7 @@ const NewPost = () => {
 
 		let createdId;
 		try {
-			setIsLoading(true);
+			setIsUploading(true);
 			let uploadedImageUrls: string[] = [];
 
 			// 새 이미지가 있으면 스토리지에 업로드
@@ -197,18 +201,15 @@ const NewPost = () => {
 
 			resetForm();
 		} finally {
-			setIsLoading(false);
+			setIsUploading(false);
 		}
 	};
 
 	const openAddItem = () => {
-		// NewPost BottomTab에서 이동 시 작동
-		// Home BottomTab에서 이동 시 에러
-		// newPostStackNavigation.navigate('AddItem', { cart });
 		stackNavigation.navigate('AddItem', { cart });
 	};
 
-	if (isLoading || loading) {
+	if (isUploading || (editingId && isFetching)) {
 		return <LoadingIndicator />;
 	}
 
