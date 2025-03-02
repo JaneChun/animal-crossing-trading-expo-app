@@ -44,16 +44,7 @@ const EditItemModal = ({
 			<View style={styles.content}>
 				{/* 타이틀 */}
 				<Text style={styles.title}>{item?.name}</Text>
-
-				{/* 개수 */}
-				<View style={styles.row}>
-					<NumberInput value={quantityInput} setValue={setQuantityInput} />
-					<View
-						style={[styles.inputContainer, { backgroundColor: Colors.base }]}
-					>
-						<Text style={styles.text}>개</Text>
-					</View>
-				</View>
+				{item?.color && <Text style={styles.subTitle}>{item?.color}</Text>}
 
 				{/* 가격 */}
 				<View style={styles.row}>
@@ -66,6 +57,16 @@ const EditItemModal = ({
 						value={selectedUnit}
 						setValue={setSelectedUnit}
 					/>
+				</View>
+
+				{/* 개수 */}
+				<View style={styles.row}>
+					<NumberInput value={quantityInput} setValue={setQuantityInput} />
+					<View
+						style={[styles.inputContainer, { backgroundColor: Colors.base }]}
+					>
+						<Text style={styles.text}>개</Text>
+					</View>
 				</View>
 
 				{/* 총계 */}
@@ -100,6 +101,10 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 18,
 		fontWeight: 'bold',
+	},
+	subTitle: {
+		fontSize: 16,
+		color: Colors.font_gray,
 		marginBottom: 8,
 	},
 	row: {

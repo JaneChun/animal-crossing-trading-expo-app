@@ -71,7 +71,8 @@ export type TypeSelectProps = {
 
 export type EditableItemProps = {
 	item: CartItem;
-	onDeleteItem: (deleteCartItemId: string) => void;
+	readonly?: boolean;
+	onDeleteItem?: (deleteCartItemId: string) => void;
 };
 
 export type EditItemModalProps = {
