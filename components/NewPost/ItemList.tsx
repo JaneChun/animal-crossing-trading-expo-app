@@ -44,7 +44,7 @@ const ItemList = ({
 
 	return (
 		<View style={containerStyle}>
-			<Text style={labelStyle}>아이템 목록 ({cart.length})</Text>
+			<Text style={labelStyle}>아이템 ({cart.length})</Text>
 
 			<FlatList
 				data={cart}

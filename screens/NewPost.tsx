@@ -54,7 +54,13 @@ const NewPost = () => {
 	const [originalImageUrls, setOriginalImageUrls] = useState<string[]>([]); // Firestore에서 가져온 기존 이미지
 
 	const route = useRoute<NewPostRouteProp>();
-	const { id: editingId = '' } = route?.params ?? {};
+	const [editingId, setEditingId] = useState<string>(route.params?.id || '');
+
+	useEffect(() => {
+		if (route.params?.id) {
+			setEditingId(route.params.id);
+		}
+	}, [route.params?.id]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -65,16 +71,6 @@ const NewPost = () => {
 	);
 
 	const { post, isLoading: loading } = useGetPostDetail(editingId);
-
-	// useEffect(() => {
-	// 	stackNavigation.setOptions({
-	// 		headerRight: () => (
-	// 			<Button color='white' size='md2' onPress={onSubmit}>
-	// 				등록
-	// 			</Button>
-	// 		),
-	// 	});
-	// }, [title, body, images, cart]);
 
 	useEffect(() => {
 		if (!post) return;
@@ -115,6 +111,7 @@ const NewPost = () => {
 		setImages([]);
 		setCart([]);
 		setOriginalImageUrls([]);
+		setEditingId('');
 	};
 
 	// images와 originalImageUrls를 비교하여 기존 이미지, 새로 추가된 이미지, 삭제된 이미지 구분
@@ -211,7 +208,7 @@ const NewPost = () => {
 		stackNavigation.navigate('AddItem', { cart });
 	};
 
-	if (isLoading) {
+	if (isLoading || loading) {
 		return <LoadingIndicator />;
 	}
 
