@@ -6,7 +6,6 @@ import {
 } from '@/firebase/services/imageService';
 import {
 	HomeStackNavigation,
-	NewPostNavigation,
 	type NewPostRouteProp,
 	type TabNavigation,
 } from '@/types/navigation';
@@ -44,7 +43,6 @@ import Button from '../components/ui/Button';
 const NewPost = () => {
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<HomeStackNavigation>();
-	const newPostStackNavigation = useNavigation<NewPostNavigation>();
 	const { userInfo } = useAuthContext();
 	const { isLoading, setIsLoading, LoadingIndicator } = useLoading();
 
@@ -196,12 +194,7 @@ const NewPost = () => {
 				const requestData = buildCreatePostRequest(imageUrls);
 				createdId = await createPost(requestData);
 
-				tabNavigation.navigate('HomeTab', {
-					screen: 'PostDetail',
-					params: {
-						id: createdId,
-					},
-				});
+				stackNavigation.popTo('PostDetail', { id: createdId });
 				showToast('success', '글이 작성되었습니다.');
 			}
 
@@ -212,12 +205,10 @@ const NewPost = () => {
 	};
 
 	const openAddItem = () => {
-		newPostStackNavigation.navigate('AddItem', { cart });
-		// AddItem.tsx로 아래 props를 navigate할 떄 전달할 수 있나?
-		// cart={cart}
-		// setCart={setCart}
-		// containerStyle={styles.inputContainer}
-		// labelStyle={styles.label}
+		// NewPost BottomTab에서 이동 시 작동
+		// Home BottomTab에서 이동 시 에러
+		// newPostStackNavigation.navigate('AddItem', { cart });
+		stackNavigation.navigate('AddItem', { cart });
 	};
 
 	if (isLoading) {

@@ -25,14 +25,12 @@ import Login from '@/screens/Login';
 import NewPost from '@/screens/NewPost';
 import PostDetail from '@/screens/PostDetail';
 import Profile from '@/screens/Profile';
-import Search from '@/screens/Search';
 import Setting from '@/screens/Setting';
 
 // 네비게이터 생성
 const BottomTab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
 const ChatStack = createNativeStackNavigator();
-const NewPostStack = createNativeStackNavigator();
 const ProfileStack = createNativeStackNavigator();
 
 const HomeStackNavigator = () => {
@@ -50,10 +48,12 @@ const HomeStackNavigator = () => {
 			<HomeStack.Screen
 				name='NewPost'
 				component={NewPost}
-				options={{
-					presentation: 'modal',
-					title: '글 수정',
-				}}
+				options={{ title: '글 작성/수정' }}
+			/>
+			<HomeStack.Screen
+				name='AddItem'
+				component={AddItem}
+				options={{ title: '아이템 추가', presentation: 'modal' }}
 			/>
 			<HomeStack.Screen
 				name='EditComment'
@@ -125,23 +125,6 @@ const ChatStackNavigator = () => {
 	);
 };
 
-const NewPostStackNavigator = () => {
-	return (
-		<NewPostStack.Navigator>
-			<NewPostStack.Screen
-				name='NewPost'
-				component={NewPost}
-				options={{ title: '' }}
-			/>
-			<NewPostStack.Screen
-				name='AddItem'
-				component={AddItem}
-				options={{ title: '아이템 추가' }}
-			/>
-		</NewPostStack.Navigator>
-	);
-};
-
 const BottomTabNavigator = () => {
 	return (
 		<BottomTab.Navigator
@@ -182,20 +165,7 @@ const BottomTabNavigator = () => {
 					),
 				}}
 			/>
-			<BottomTab.Screen
-				name='NewPostTab'
-				component={NewPostStackNavigator}
-				options={{
-					tabBarIcon: ({ focused }) => (
-						<FontAwesome6
-							name='circle-plus'
-							size={20}
-							color={focused ? Colors.primary : Colors.dark_gray}
-						/>
-					),
-				}}
-			/>
-			<BottomTab.Screen
+			{/* <BottomTab.Screen
 				name='SearchTab'
 				component={Search}
 				options={{
@@ -207,7 +177,7 @@ const BottomTabNavigator = () => {
 						/>
 					),
 				}}
-			/>
+			/> */}
 			<BottomTab.Screen
 				name='ProfileTab'
 				component={ProfileStackNavigator}
