@@ -1,5 +1,7 @@
+import EditItemModal from '@/components/NewPost/EditItemModal';
 import { ItemListProps } from '@/types/components';
 import { CartItem } from '@/types/post';
+import { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Total from '../PostDetail/Total';
@@ -11,16 +13,18 @@ const ItemList = ({
 	containerStyle,
 	labelStyle,
 }: ItemListProps) => {
-	// CartItem 메서드
-	// const updateItem = (updatedCartItem: CartItem) => {
-	// 	setCart((prevCart) =>
-	// 		prevCart.map((cartItem) =>
-	// 			cartItem.UniqueEntryID === updatedCartItem.UniqueEntryID
-	// 				? updatedCartItem
-	// 				: cartItem,
-	// 		),
-	// 	);
-	// };
+	const [isModalVisible, setModalVisible] = useState<boolean>(false);
+	const [selectedItem, setSelectedItem] = useState<CartItem | null>(null);
+
+	const updateItemFromCart = (updatedCartItem: CartItem) => {
+		setCart((prevCart) =>
+			prevCart.map((cartItem) =>
+				cartItem.UniqueEntryID === updatedCartItem.UniqueEntryID
+					? updatedCartItem
+					: cartItem,
+			),
+		);
+	};
 
 	const deleteItemFromCart = (deleteCartItemId: string) => {
 		setCart(
@@ -28,8 +32,14 @@ const ItemList = ({
 		);
 	};
 
-	const onEditItem = (item: CartItem) => {
-		console.log(item.UniqueEntryID);
+	const openEditModal = (item: CartItem) => {
+		setSelectedItem(item);
+		setModalVisible(true);
+	};
+
+	const closeEditModal = () => {
+		setSelectedItem(null);
+		setModalVisible(false);
 	};
 
 	return (
@@ -40,13 +50,20 @@ const ItemList = ({
 				data={cart}
 				keyExtractor={(item, index) => item.UniqueEntryID ?? index.toString()}
 				renderItem={({ item }) => (
-					<TouchableOpacity onPress={() => onEditItem(item)}>
+					<TouchableOpacity onPress={() => openEditModal(item)}>
 						<EditableItem item={item} onDeleteItem={deleteItemFromCart} />
 					</TouchableOpacity>
 				)}
 			/>
 
 			<Total cart={cart} containerStyle={{ marginTop: 16 }} />
+
+			<EditItemModal
+				item={selectedItem}
+				isVisible={isModalVisible}
+				onUpdate={updateItemFromCart}
+				onClose={closeEditModal}
+			/>
 		</View>
 	);
 };

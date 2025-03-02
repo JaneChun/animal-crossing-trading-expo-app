@@ -19,6 +19,7 @@ export type HomeStackParamList = {
 	PostDetail: { id: string };
 	NewPost: { id?: string; updatedCart?: CartItem[] };
 	AddItem: { cart: CartItem[] };
+	EditItem: { item: CartItem };
 	EditComment: { postId: string; commentId: string; body: string };
 };
 
@@ -48,6 +49,7 @@ export type PostDetailRouteProp = RouteProp<HomeStackParamList, 'PostDetail'>;
 export type EditCommentRouteProp = RouteProp<HomeStackParamList, 'EditComment'>;
 export type NewPostRouteProp = RouteProp<HomeStackParamList, 'NewPost'>;
 export type AddItemRouteProp = RouteProp<HomeStackParamList, 'AddItem'>;
+export type EditItemRouteProp = RouteProp<HomeStackParamList, 'EditItem'>;
 export type ChatRoomRouteProp = RouteProp<ChatStackParamList, 'ChatRoom'>;
 export type EditProfileRouteProp = RouteProp<
 	ProfileStackParamList,

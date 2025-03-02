@@ -74,6 +74,13 @@ export type EditableItemProps = {
 	onDeleteItem: (deleteCartItemId: string) => void;
 };
 
+export type EditItemModalProps = {
+	item: CartItem | null;
+	isVisible: boolean;
+	onUpdate: (updatedCartItem: CartItem) => void;
+	onClose: () => void;
+};
+
 // PostDetail/
 export type ActionButtonsProps = {
 	id: string;
