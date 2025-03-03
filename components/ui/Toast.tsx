@@ -60,7 +60,7 @@ export const showToast = (
 	Toast.show({
 		type: type,
 		text1: text,
-		topOffset: 0,
+		topOffset: 5,
 		position: 'top',
 		visibilityTime: 2000,
 	});

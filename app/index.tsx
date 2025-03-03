@@ -14,7 +14,6 @@ import { AuthContextProvider, useAuthContext } from '../contexts/AuthContext';
 
 // 스크린 import
 import { toastConfig } from '@/components/ui/Toast';
-import AddItem from '@/screens/AddItem';
 import Chat from '@/screens/Chat';
 import ChatRoom from '@/screens/ChatRoom';
 import EditComment from '@/screens/EditComment';
@@ -49,11 +48,6 @@ const HomeStackNavigator = () => {
 				name='NewPost'
 				component={NewPost}
 				options={{ title: '글 작성/수정' }}
-			/>
-			<HomeStack.Screen
-				name='AddItem'
-				component={AddItem}
-				options={{ title: '아이템 추가', presentation: 'modal' }}
 			/>
 			<HomeStack.Screen
 				name='EditComment'

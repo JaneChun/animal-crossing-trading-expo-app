@@ -1,6 +1,8 @@
 import React, { ReactNode } from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 import Modal from 'react-native-modal';
+import Toast from 'react-native-toast-message';
+import { toastConfig } from './Toast';
 
 const CustomModal = ({
 	children,
@@ -34,7 +36,10 @@ const CustomModal = ({
 			swipeDirection='down'
 			style={styles.screen}
 		>
-			<View style={[styles.modal, computedHeight]}>{children}</View>
+			<View style={[styles.modal, computedHeight]}>
+				{children}
+				<Toast config={toastConfig} />
+			</View>
 		</Modal>
 	);
 };

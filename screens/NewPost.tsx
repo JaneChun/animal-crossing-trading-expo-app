@@ -37,6 +37,7 @@ import {
 	UpdatePostRequest,
 } from '@/types/post';
 import React from 'react';
+import AddItemModal from '../components/NewPost/AddItemModal';
 import ItemList from '../components/NewPost/ItemList';
 import Button from '../components/ui/Button';
 
@@ -49,6 +50,7 @@ const NewPost = () => {
 		setIsLoading: setIsUploading,
 		LoadingIndicator,
 	} = useLoading();
+	const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
 	const [type, setType] = useState<Type>('buy');
 	const [title, setTitle] = useState<string>('');
@@ -205,8 +207,12 @@ const NewPost = () => {
 		}
 	};
 
-	const openAddItem = () => {
-		stackNavigation.navigate('AddItem', { cart });
+	const openAddItemModal = () => {
+		setModalVisible(true);
+	};
+
+	const closeAddItemModal = () => {
+		setModalVisible(false);
 	};
 
 	if (isUploading || (editingId && isFetching)) {
@@ -261,7 +267,7 @@ const NewPost = () => {
 					color='white'
 					size='lg'
 					style={{ flex: 1 }}
-					onPress={openAddItem}
+					onPress={openAddItemModal}
 				>
 					아이템 추가
 				</Button>
@@ -269,6 +275,15 @@ const NewPost = () => {
 					등록
 				</Button>
 			</View>
+
+			{isModalVisible && (
+				<AddItemModal
+					cart={cart}
+					setCart={setCart}
+					isVisible={isModalVisible}
+					onClose={closeAddItemModal}
+				/>
+			)}
 		</Layout>
 	);
 };

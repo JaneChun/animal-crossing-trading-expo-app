@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
 		color: Colors.font_gray,
 	},
 	listContainer: {
-		height: 400,
+		flex: 1,
 	},
 	searchInput: {
 		fontSize: 16,

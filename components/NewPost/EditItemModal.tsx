@@ -40,7 +40,12 @@ const EditItemModal = ({
 	};
 
 	return (
-		<CustomModal modalHeight='53%' isVisible={isVisible} onClose={onClose}>
+		<CustomModal
+			modalHeight='53%'
+			avoidKeyboard
+			isVisible={isVisible}
+			onClose={onClose}
+		>
 			<View style={styles.content}>
 				{/* 타이틀 */}
 				<Text style={styles.title}>{item?.name}</Text>
