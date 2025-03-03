@@ -4,13 +4,15 @@ import Modal from 'react-native-modal';
 
 const CustomModal = ({
 	children,
-	modalHeight = '50%',
 	isVisible,
+	modalHeight = '50%',
+	avoidKeyboard = false,
 	onClose,
 }: {
 	children: ReactNode;
-	modalHeight?: number | string;
 	isVisible: boolean;
+	modalHeight?: number | string;
+	avoidKeyboard?: boolean;
 	onClose: () => void;
 }) => {
 	const computedHeight: ViewStyle = {
@@ -25,7 +27,11 @@ const CustomModal = ({
 			isVisible={isVisible}
 			onBackdropPress={onClose}
 			backdropOpacity={0.5}
-			avoidKeyboard={true}
+			avoidKeyboard={avoidKeyboard}
+			animationIn='slideInUp'
+			animationOut='slideOutDown'
+			onSwipeComplete={onClose}
+			swipeDirection='down'
 			style={styles.screen}
 		>
 			<View style={[styles.modal, computedHeight]}>{children}</View>

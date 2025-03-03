@@ -83,6 +83,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'flex-start',
+		gap: 4,
 	},
 	image: {
 		width: 30,
@@ -97,7 +98,6 @@ const styles = StyleSheet.create({
 	color: {
 		fontSize: 14,
 		color: Colors.font_gray,
-		marginTop: 4,
 	},
 	quantity: {
 		fontSize: 14,
@@ -106,7 +106,6 @@ const styles = StyleSheet.create({
 	quantityContainer: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		marginTop: 2,
 		gap: 1,
 	},
 	priceContainer: {
