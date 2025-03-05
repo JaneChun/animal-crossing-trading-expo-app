@@ -1,5 +1,4 @@
 import { ReceiverInfo } from '@/hooks/useGetChats';
-import { UserInfo } from '@/types/user';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -31,7 +30,6 @@ export type ChatStackParamList = {
 export type ProfileStackParamList = {
 	Login: undefined;
 	Profile: undefined;
-	EditProfile: { userInfo: UserInfo };
 	Setting: undefined;
 };
 
@@ -47,7 +45,3 @@ export type PostDetailRouteProp = RouteProp<HomeStackParamList, 'PostDetail'>;
 export type EditCommentRouteProp = RouteProp<HomeStackParamList, 'EditComment'>;
 export type NewPostRouteProp = RouteProp<HomeStackParamList, 'NewPost'>;
 export type ChatRoomRouteProp = RouteProp<ChatStackParamList, 'ChatRoom'>;
-export type EditProfileRouteProp = RouteProp<
-	ProfileStackParamList,
-	'EditProfile'
->;

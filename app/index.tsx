@@ -17,7 +17,6 @@ import { toastConfig } from '@/components/ui/Toast';
 import Chat from '@/screens/Chat';
 import ChatRoom from '@/screens/ChatRoom';
 import EditComment from '@/screens/EditComment';
-import EditProfile from '@/screens/EditProfile';
 import ErrorBoundary from '@/screens/ErrorBoundary';
 import Home from '@/screens/Home';
 import Login from '@/screens/Login';
@@ -72,15 +71,6 @@ const ProfileStackNavigator = () => {
 						name='Profile'
 						component={Profile}
 						options={{ title: '프로필' }}
-					/>
-					<ProfileStack.Screen
-						name='EditProfile'
-						component={EditProfile}
-						options={{
-							headerShown: true,
-							presentation: 'modal',
-							title: '프로필 수정',
-						}}
 					/>
 					<ProfileStack.Screen
 						name='Setting'

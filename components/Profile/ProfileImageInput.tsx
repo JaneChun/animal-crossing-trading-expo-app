@@ -7,13 +7,13 @@ import {
 	useMediaLibraryPermissions,
 } from 'expo-image-picker';
 import {
-	Alert,
 	Image,
 	Keyboard,
 	StyleSheet,
 	TouchableOpacity,
 	View,
 } from 'react-native';
+import { showToast } from '../ui/Toast';
 
 const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 	const [, requestPermission, getPermission] = useMediaLibraryPermissions();
@@ -46,10 +46,7 @@ const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 		}
 
 		if (currentPermission.status === 'denied') {
-			Alert.alert(
-				'권한 필요',
-				'이미지를 업로드하려면 사진 접근 권한이 필요합니다.',
-			);
+			showToast('warn', '이미지를 업로드하려면 사진 접근 권한이 필요합니다.');
 			return false;
 		}
 		return currentPermission.status === 'granted';

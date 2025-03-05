@@ -1,5 +1,6 @@
+import { Colors } from '@/constants/Color';
 import React, { ReactNode } from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 import Modal from 'react-native-modal';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './Toast';
@@ -8,12 +9,18 @@ const CustomModal = ({
 	children,
 	isVisible,
 	modalHeight = '50%',
+	title,
+	leftButton,
+	rightButton,
 	avoidKeyboard = false,
 	onClose,
 }: {
 	children: ReactNode;
 	isVisible: boolean;
 	modalHeight?: number | string;
+	title?: string;
+	leftButton?: ReactNode;
+	rightButton?: ReactNode;
 	avoidKeyboard?: boolean;
 	onClose: () => void;
 }) => {
@@ -37,8 +44,25 @@ const CustomModal = ({
 			style={styles.screen}
 		>
 			<View style={[styles.modal, computedHeight]}>
-				{children}
-				<Toast config={toastConfig} />
+				{title && (
+					<View style={styles.header}>
+						{leftButton && (
+							<View style={[styles.headerButton, { left: 0 }]}>
+								{leftButton}
+							</View>
+						)}
+						<Text style={styles.title}>프로필 수정</Text>
+						{rightButton && (
+							<View style={[styles.headerButton, { right: 0 }]}>
+								{rightButton}
+							</View>
+						)}
+					</View>
+				)}
+				<View style={styles.body}>
+					{children}
+					<Toast config={toastConfig} />
+				</View>
 			</View>
 		</Modal>
 	);
@@ -53,8 +77,31 @@ const styles = StyleSheet.create({
 	},
 	modal: {
 		backgroundColor: 'white',
-		borderTopLeftRadius: 20,
-		borderTopRightRadius: 20,
+		borderTopLeftRadius: 16,
+		borderTopRightRadius: 16,
+	},
+	header: {
+		position: 'relative',
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		borderBottomWidth: 1,
+		borderColor: Colors.border_gray,
+		paddingTop: 20,
+		paddingBottom: 16,
+		marginHorizontal: 12,
+	},
+	headerButton: {
+		position: 'absolute',
+	},
+	title: {
+		fontSize: 18,
+		fontWeight: 600,
+		flex: 1,
+		textAlign: 'center',
+	},
+	body: {
 		padding: 30,
+		flex: 1,
 	},
 });

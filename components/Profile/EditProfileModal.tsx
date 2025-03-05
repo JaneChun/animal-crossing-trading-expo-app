@@ -1,6 +1,5 @@
 import ProfileImageInput from '@/components/Profile/ProfileImageInput';
 import ValidationInput from '@/components/Profile/ValidationInput';
-import Button from '@/components/ui/Button';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
@@ -10,22 +9,25 @@ import {
 	uploadObjectToStorage,
 } from '@/firebase/services/imageService';
 import useLoading from '@/hooks/useLoading';
-import {
-	EditProfileRouteProp,
-	ProfileStackNavigation,
-} from '@/types/navigation';
+import { ProfileStackNavigation } from '@/types/navigation';
 import { UserInfo } from '@/types/user';
 import { FontAwesome } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Button from '../ui/Button';
+import CustomModal from '../ui/CustomModal';
 
-const EditProfile = () => {
-	const route = useRoute<EditProfileRouteProp>();
+const EditProfileModal = ({
+	isVisible,
+	onClose,
+}: {
+	isVisible: boolean;
+	onClose: () => void;
+}) => {
 	const stackNavigation = useNavigation<ProfileStackNavigation>();
-	const { userInfo } = route.params;
-	const { setUserInfo } = useAuthContext();
+	const { userInfo, setUserInfo } = useAuthContext();
 	const {
 		isLoading: isUploading,
 		setIsLoading: setIsUploading,
@@ -38,28 +40,6 @@ const EditProfile = () => {
 	const [originalImageUrl, setOriginalImageUrl] = useState<string>(''); // Firestore에서 가져온 기존 이미지
 
 	const isValid = displayNameInput.length > 0 && islandNameInput.length > 0;
-
-	useEffect(() => {
-		stackNavigation.setOptions({
-			headerRight: () => (
-				<Button
-					disabled={isUploading || !isValid}
-					color='white'
-					size='md2'
-					onPress={() => onSubmit()}
-				>
-					완료
-				</Button>
-			),
-		});
-	}, [
-		displayNameInput,
-		islandNameInput,
-		image,
-		isValid,
-		isUploading,
-		stackNavigation,
-	]);
 
 	useEffect(() => {
 		if (!userInfo) return;
@@ -145,60 +125,70 @@ const EditProfile = () => {
 			}
 
 			resetForm();
-			stackNavigation.goBack();
+			onClose();
 		} catch (e) {
 			showToast('error', '프로필 업데이트 중 오류가 발생했습니다.');
-			stackNavigation.goBack();
-			console.log(e);
+			onClose();
 		} finally {
 			setIsUploading(false);
 		}
 	};
 
-	if (!userInfo) {
-		return (
-			<View style={styles.container}>
-				<Text>유저 정보를 불러오는 중...</Text>
-			</View>
-		);
-	}
+	const submitButton = (
+		<Button
+			disabled={isUploading || !isValid}
+			color='white'
+			size='md2'
+			onPress={() => onSubmit()}
+		>
+			완료
+		</Button>
+	);
 
 	if (isUploading) {
 		return <LoadingIndicator />;
 	}
 
 	return (
-		<View style={styles.container}>
-			{/* 이미지 */}
-			<ProfileImageInput image={image} setImage={setImage} />
+		<CustomModal
+			isVisible={isVisible}
+			onClose={onClose}
+			modalHeight='93%'
+			title='프로필 수정'
+			rightButton={submitButton}
+		>
+			<View style={styles.container}>
+				{/* 이미지 */}
+				<ProfileImageInput image={image} setImage={setImage} />
 
-			<View style={styles.info}>
-				{/* 닉네임, 섬 이름 */}
-				<ValidationInput
-					label='닉네임'
-					value={displayNameInput}
-					onChangeText={setDisplayNameInput}
-					placeholder='닉네임을 입력해주세요.'
-				/>
-				<ValidationInput
-					label='섬 이름'
-					value={islandNameInput}
-					onChangeText={setIslandNameInput}
-					placeholder='섬 이름을 입력해주세요.'
-				/>
+				<View style={styles.info}>
+					{/* 닉네임, 섬 이름 */}
+					<ValidationInput
+						label='닉네임'
+						value={displayNameInput}
+						onChangeText={setDisplayNameInput}
+						placeholder='닉네임을 입력해주세요.'
+					/>
+					<ValidationInput
+						label='섬 이름'
+						value={islandNameInput}
+						onChangeText={setIslandNameInput}
+						placeholder='섬 이름을 입력해주세요.'
+					/>
 
-				<View style={styles.messageContainer}>
-					<FontAwesome name='leaf' color={Colors.primary} size={14} />
-					<Text style={styles.infoText}>
-						닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
-					</Text>
+					<View style={styles.messageContainer}>
+						<FontAwesome name='leaf' color={Colors.primary} size={14} />
+						<Text style={styles.infoText}>
+							닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
+						</Text>
+					</View>
 				</View>
 			</View>
-		</View>
+		</CustomModal>
 	);
 };
 
-export default EditProfile;
+export default EditProfileModal;
 
 const styles = StyleSheet.create({
 	container: {
@@ -208,7 +198,7 @@ const styles = StyleSheet.create({
 		gap: 4,
 	},
 	info: {
-		width: '80%',
+		width: '90%',
 	},
 	messageContainer: {
 		paddingHorizontal: 12,
