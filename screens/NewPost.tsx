@@ -141,8 +141,8 @@ const NewPost = () => {
 	const buildCreatePostRequest = (imageUrls: string[]): CreatePostRequest => {
 		return {
 			type,
-			title,
-			body,
+			title: title.trim(),
+			body: body.trim(),
 			images: imageUrls,
 			cart,
 			creatorId: userInfo!.uid,
@@ -154,8 +154,8 @@ const NewPost = () => {
 	const buildUpdatePostRequest = (imageUrls: string[]): UpdatePostRequest => {
 		return {
 			type,
-			title,
-			body,
+			title: title.trim(),
+			body: body.trim(),
 			images: imageUrls,
 			cart,
 		};

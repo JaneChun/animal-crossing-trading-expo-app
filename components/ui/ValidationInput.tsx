@@ -17,7 +17,7 @@ const ValidationInput = ({
 
 	// 유효성 검사 실행 및 상태 업데이트
 	const handleTextChange = (text: string) => {
-		setInput(text.trim());
+		setInput(text);
 	};
 
 	return (
