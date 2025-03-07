@@ -1,15 +1,8 @@
 import { Colors } from '@/constants/Color';
+import { ValidationInputProp } from '@/types/components';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { Dispatch, SetStateAction } from 'react';
-import {
-	StyleProp,
-	StyleSheet,
-	Text,
-	TextInput,
-	TextStyle,
-	View,
-} from 'react-native';
-import { validateInput, VALIDATION_RULES } from '../../utilities/validateInput';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { validateInput } from '../../utilities/validateInput';
 
 const ValidationInput = ({
 	type,
@@ -19,15 +12,7 @@ const ValidationInput = ({
 	inputStyle,
 	multiline = false,
 	isSubmitted = false,
-}: {
-	type: keyof typeof VALIDATION_RULES;
-	input: string;
-	setInput: Dispatch<SetStateAction<string>>;
-	placeholder?: string;
-	inputStyle?: StyleProp<TextStyle>;
-	multiline?: boolean;
-	isSubmitted: boolean;
-}) => {
+}: ValidationInputProp) => {
 	const errorMessage = isSubmitted ? validateInput(type, input) : '';
 
 	// 유효성 검사 실행 및 상태 업데이트

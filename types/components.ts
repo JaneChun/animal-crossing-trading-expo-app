@@ -1,3 +1,4 @@
+import { VALIDATION_RULES } from '@/utilities/validateInput';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
 import { Dispatch, ReactNode, SetStateAction } from 'react';
@@ -147,6 +148,13 @@ export type UserInfoProps = {
 };
 
 // Profile/
+export type EditProfileModalProps = {
+	isVisible: boolean;
+	onClose: () => void;
+};
+
+export type NameInputProp = ValidationInputProp & { label: string };
+
 export type MyPostsProps = {
 	data: PostWithCreatorInfo[];
 	isLoading: boolean;
@@ -169,6 +177,16 @@ export type ButtonProps = {
 	size: ButtonSize;
 	style?: object;
 	disabled?: boolean;
+};
+
+export type ValidationInputProp = {
+	type: keyof typeof VALIDATION_RULES;
+	input: string;
+	setInput: Dispatch<SetStateAction<string>>;
+	placeholder?: string;
+	inputStyle?: StyleProp<TextStyle>;
+	multiline?: boolean;
+	isSubmitted: boolean;
 };
 
 export type InputProps = {

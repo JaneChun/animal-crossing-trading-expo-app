@@ -1,5 +1,4 @@
 import ProfileImageInput from '@/components/Profile/ProfileImageInput';
-import ValidationInput from '@/components/Profile/ValidationInput';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
@@ -9,24 +8,19 @@ import {
 	uploadObjectToStorage,
 } from '@/firebase/services/imageService';
 import useLoading from '@/hooks/useLoading';
-import { ProfileStackNavigation } from '@/types/navigation';
+import { EditProfileModalProps } from '@/types/components';
 import { UserInfo } from '@/types/user';
+import { validateInput } from '@/utilities/validateInput';
 import { FontAwesome } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
 import CustomModal from '../ui/CustomModal';
+import NameInput from './NameInput';
 
-const EditProfileModal = ({
-	isVisible,
-	onClose,
-}: {
-	isVisible: boolean;
-	onClose: () => void;
-}) => {
-	const stackNavigation = useNavigation<ProfileStackNavigation>();
+const EditProfileModal = ({ isVisible, onClose }: EditProfileModalProps) => {
+	const [isSubmitted, setIsSubmitted] = useState(false);
 	const { userInfo, setUserInfo } = useAuthContext();
 	const {
 		isLoading: isUploading,
@@ -53,6 +47,20 @@ const EditProfileModal = ({
 		}
 	}, [userInfo]);
 
+	const validateForm = () => {
+		const displayNameInputError = validateInput(
+			'displayName',
+			displayNameInput,
+		);
+		const islandNameInputError = validateInput('islandName', islandNameInput);
+
+		if (displayNameInputError || islandNameInputError) {
+			return false;
+		}
+
+		return true;
+	};
+
 	const resetForm = () => {
 		setDisplayNameInput('');
 		setIslandNameInput('');
@@ -61,6 +69,10 @@ const EditProfileModal = ({
 
 	const onSubmit = async () => {
 		if (!userInfo) return;
+
+		setIsSubmitted(true);
+
+		if (!validateForm()) return;
 
 		let requestData: Record<string, string> = {};
 		let uploadedImageUrl: string = '';
@@ -163,17 +175,21 @@ const EditProfileModal = ({
 
 				<View style={styles.info}>
 					{/* 닉네임, 섬 이름 */}
-					<ValidationInput
+					<NameInput
 						label='닉네임'
-						value={displayNameInput}
-						onChangeText={setDisplayNameInput}
+						type='displayName'
+						input={displayNameInput}
+						setInput={setDisplayNameInput}
 						placeholder='닉네임을 입력해주세요.'
+						isSubmitted={isSubmitted}
 					/>
-					<ValidationInput
+					<NameInput
 						label='섬 이름'
-						value={islandNameInput}
-						onChangeText={setIslandNameInput}
+						type='islandName'
+						input={islandNameInput}
+						setInput={setIslandNameInput}
 						placeholder='섬 이름을 입력해주세요.'
+						isSubmitted={isSubmitted}
 					/>
 
 					<View style={styles.messageContainer}>

@@ -1,8 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { ProfileStackNavigation } from '@/types/navigation';
 import { FontAwesome } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
@@ -10,13 +8,7 @@ import EditProfileModal from './EditProfileModal';
 
 const Profile = () => {
 	const { userInfo } = useAuthContext();
-	const stackNavigation = useNavigation<ProfileStackNavigation>();
 	const [isModalVisible, setModalVisible] = useState<boolean>(false);
-
-	const editProfile = () => {
-		if (!userInfo) return;
-		stackNavigation.navigate('EditProfile', { userInfo });
-	};
 
 	const openEditProfileModal = () => {
 		setModalVisible(true);
@@ -57,10 +49,12 @@ const Profile = () => {
 				</Button>
 			</View>
 
-			<EditProfileModal
-				isVisible={isModalVisible}
-				onClose={closeEditProfileModal}
-			/>
+			{isModalVisible && (
+				<EditProfileModal
+					isVisible={isModalVisible}
+					onClose={closeEditProfileModal}
+				/>
+			)}
 		</View>
 	);
 };

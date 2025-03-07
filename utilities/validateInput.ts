@@ -44,14 +44,27 @@ export const validateInput = (
 	const trimmedText = text.trim();
 	const { min, max, required, label } = VALIDATION_RULES[type];
 
+	// 빈 문자열 검사
 	if (required && trimmedText.length < min) {
 		return `${label}${getPostposition(label, '을/를')} 입력해주세요.`;
 	}
+
+	// 최대 글자수 검사
 	if (trimmedText.length > max) {
 		return `${label}${getPostposition(
 			label,
 			'은/는',
 		)} 최대 ${max}자까지 입력 가능합니다.`;
+	}
+
+	// 닉네임 & 섬 이름 문자 검사
+	if (type === 'displayName' || type === 'islandName') {
+		if (!/^[a-zA-Z0-9가-힣]+$/.test(text)) {
+			return `${label}${getPostposition(
+				label,
+				'은/는',
+			)} 띄어쓰기 없이 한글, 영문, 숫자만 가능합니다.`;
+		}
 	}
 
 	return '';
@@ -79,3 +92,13 @@ const getPostposition = (word: string, type: '은/는' | '을/를') => {
 
 	return '';
 };
+
+console.log(validateInput('displayName', '홍 길동')); // "닉네임은 띄어쓰기 없이 한글, 영문, 숫자만 가능해요."
+console.log(validateInput('displayName', '김1234')); // ""
+console.log(validateInput('islandName', '제주도 ')); // "섬 이름은 띄어쓰기 없이 한글, 영문, 숫자만 가능해요."
+console.log(
+	validateInput(
+		'postTitle',
+		'공지사항 공지사항 공지사항 공지사항 공지사항 공지사항 공지사항 공지사항',
+	),
+); // "제목은 최대 50자까지 입력 가능합니다."
