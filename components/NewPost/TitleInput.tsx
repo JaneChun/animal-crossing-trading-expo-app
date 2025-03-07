@@ -1,7 +1,7 @@
-import { Colors } from '@/constants/Color';
 import { TitleInputProps } from '@/types/components';
 import React from 'react';
-import { Text, TextInput, View } from 'react-native';
+import { Text, View } from 'react-native';
+import ValidationInput from '../ui/ValidationInput';
 
 const TitleInput = ({
 	title,
@@ -9,16 +9,18 @@ const TitleInput = ({
 	containerStyle,
 	labelStyle,
 	inputStyle,
+	isSubmitted,
 }: TitleInputProps) => {
 	return (
 		<View style={containerStyle}>
 			<Text style={labelStyle}>제목</Text>
-			<TextInput
-				value={title}
-				onChangeText={(text) => setTitle(text)}
+			<ValidationInput
+				type='postTitle'
+				input={title}
+				setInput={setTitle}
 				placeholder='DIY 작업대 레시피 구해요 :)'
-				placeholderTextColor={Colors.font_gray}
-				style={inputStyle}
+				inputStyle={inputStyle}
+				isSubmitted={isSubmitted}
 			/>
 		</View>
 	);

@@ -21,12 +21,27 @@ export type TypeBadgeProps = {
 };
 
 // NewPost/
+export type TypeSelectProps = {
+	type: Type;
+	setType: Dispatch<SetStateAction<Type>>;
+};
+
+export type TitleInputProps = {
+	title: string;
+	setTitle: Dispatch<SetStateAction<string>>;
+	containerStyle?: StyleProp<ViewStyle>;
+	labelStyle?: StyleProp<TextStyle>;
+	inputStyle?: StyleProp<TextStyle>;
+	isSubmitted: boolean;
+};
+
 export type BodyInputProps = {
 	body: string;
 	setBody: Dispatch<SetStateAction<string>>;
 	containerStyle?: StyleProp<ViewStyle>;
 	labelStyle?: StyleProp<TextStyle>;
 	inputStyle?: StyleProp<TextStyle>;
+	isSubmitted: boolean;
 };
 
 export type ImageInputProps = {
@@ -54,19 +69,6 @@ export type ItemSelectProps = {
 	setCart: Dispatch<SetStateAction<CartItem[]>>;
 	containerStyle?: StyleProp<ViewStyle>;
 	labelStyle?: StyleProp<TextStyle>;
-};
-
-export type TitleInputProps = {
-	title: string;
-	setTitle: Dispatch<SetStateAction<string>>;
-	containerStyle?: StyleProp<ViewStyle>;
-	labelStyle?: StyleProp<TextStyle>;
-	inputStyle?: StyleProp<TextStyle>;
-};
-
-export type TypeSelectProps = {
-	type: Type;
-	setType: Dispatch<SetStateAction<Type>>;
 };
 
 export type EditableItemProps = {
@@ -158,13 +160,6 @@ export type ProfileImageInputProps = {
 };
 
 // ui/
-export type ValidationInputProps = {
-	label: string;
-	value: string;
-	onChangeText: (text: string) => void;
-	placeholder?: string;
-};
-
 export type ButtonColor = 'mint' | 'white' | 'gray';
 export type ButtonSize = 'sm' | 'md' | 'md2' | 'lg';
 export type ButtonProps = {

@@ -1,7 +1,7 @@
-import { Colors } from '@/constants/Color';
 import { BodyInputProps } from '@/types/components';
 import React from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import ValidationInput from '../ui/ValidationInput';
 
 const BodyInput = ({
 	body,
@@ -9,17 +9,19 @@ const BodyInput = ({
 	containerStyle,
 	labelStyle,
 	inputStyle,
+	isSubmitted,
 }: BodyInputProps) => {
 	return (
 		<View style={containerStyle}>
 			<Text style={labelStyle}>내용</Text>
-			<TextInput
-				value={body}
-				onChangeText={setBody}
+			<ValidationInput
+				type='postBody'
+				input={body}
+				setInput={setBody}
 				placeholder='2마일에 구매하고 싶어요. 채팅 주세요!'
-				placeholderTextColor={Colors.font_gray}
-				style={[inputStyle, styles.textarea]}
+				inputStyle={[inputStyle, styles.textarea]}
 				multiline
+				isSubmitted={isSubmitted}
 			/>
 		</View>
 	);

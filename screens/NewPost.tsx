@@ -16,7 +16,7 @@ import {
 } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { useAuthContext } from '../contexts/AuthContext';
@@ -36,6 +36,7 @@ import {
 	Type,
 	UpdatePostRequest,
 } from '@/types/post';
+import { validateInput } from '@/utilities/validateInput';
 import React from 'react';
 import AddItemModal from '../components/NewPost/AddItemModal';
 import ItemList from '../components/NewPost/ItemList';
@@ -51,6 +52,8 @@ const NewPost = () => {
 		LoadingIndicator,
 	} = useLoading();
 	const [isModalVisible, setModalVisible] = useState<boolean>(false);
+	const [isSubmitted, setIsSubmitted] = useState(false);
+	const flatListRef = useRef<FlatList>(null);
 
 	const [type, setType] = useState<Type>('buy');
 	const [title, setTitle] = useState<string>('');
@@ -103,10 +106,13 @@ const NewPost = () => {
 	};
 
 	const validateForm = () => {
-		if (!title || !body) {
-			showToast('warn', '제목이나 내용이 비어있는지 확인해주세요.');
+		const titleError = validateInput('postTitle', title);
+		const bodyError = validateInput('postBody', body);
+
+		if (titleError || bodyError) {
 			return false;
 		}
+
 		return true;
 	};
 
@@ -156,11 +162,17 @@ const NewPost = () => {
 	};
 
 	const onSubmit = async () => {
+		setIsSubmitted(true);
+
 		if (!validateUser()) {
 			return tabNavigation.navigate('ProfileTab', { screen: 'Login' });
 		}
 
-		if (!validateForm()) return;
+		if (!validateForm()) {
+			// 유효성 검사 실패 시 위로 스크롤 이동
+			flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+			return;
+		}
 
 		const { newImages, deletedImageUrls } = getFilteredImages();
 
@@ -223,6 +235,7 @@ const NewPost = () => {
 		<Layout>
 			<KeyboardAvoidingView style={styles.screen}>
 				<FlatList
+					ref={flatListRef}
 					data={[]}
 					renderItem={null}
 					ListEmptyComponent={
@@ -235,6 +248,7 @@ const NewPost = () => {
 								containerStyle={styles.inputContainer}
 								labelStyle={styles.label}
 								inputStyle={styles.input}
+								isSubmitted={isSubmitted}
 							/>
 
 							<BodyInput
@@ -243,6 +257,7 @@ const NewPost = () => {
 								containerStyle={styles.inputContainer}
 								labelStyle={styles.label}
 								inputStyle={styles.input}
+								isSubmitted={isSubmitted}
 							/>
 
 							<ImageInput
