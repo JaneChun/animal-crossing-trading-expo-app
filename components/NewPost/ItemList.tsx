@@ -58,12 +58,14 @@ const ItemList = ({
 
 			<Total cart={cart} containerStyle={{ marginTop: 16 }} />
 
-			<EditItemModal
-				item={selectedItem}
-				isVisible={isModalVisible}
-				onUpdate={updateItemFromCart}
-				onClose={closeEditModal}
-			/>
+			{isModalVisible && (
+				<EditItemModal
+					item={selectedItem}
+					isVisible={isModalVisible}
+					onUpdate={updateItemFromCart}
+					onClose={closeEditModal}
+				/>
+			)}
 		</View>
 	);
 };

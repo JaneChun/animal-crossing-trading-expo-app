@@ -17,7 +17,7 @@ const AddItemModal = ({
 }) => {
 	const [localCart, setLocalCart] = useState<CartItem[]>(cart);
 
-	const saveAndGoBack = () => {
+	const onSubmit = () => {
 		setCart(localCart);
 		onClose();
 	};
@@ -28,7 +28,7 @@ const AddItemModal = ({
 			<Button
 				color='mint'
 				size='lg'
-				onPress={saveAndGoBack}
+				onPress={onSubmit}
 				style={{ marginTop: 16 }}
 			>
 				{localCart.length === 0 ? '추가' : `${localCart.length}개 추가하기`}

@@ -61,12 +61,6 @@ const EditProfileModal = ({ isVisible, onClose }: EditProfileModalProps) => {
 		return true;
 	};
 
-	const resetForm = () => {
-		setDisplayNameInput('');
-		setIslandNameInput('');
-		setImage(null);
-	};
-
 	const onSubmit = async () => {
 		if (!userInfo) return;
 
@@ -135,14 +129,11 @@ const EditProfileModal = ({ isVisible, onClose }: EditProfileModalProps) => {
 			} else {
 				console.log('변경된 데이터가 없습니다.');
 			}
-
-			resetForm();
-			onClose();
 		} catch (e) {
 			showToast('error', '프로필 업데이트 중 오류가 발생했습니다.');
-			onClose();
 		} finally {
 			setIsUploading(false);
+			onClose();
 		}
 	};
 
@@ -151,7 +142,7 @@ const EditProfileModal = ({ isVisible, onClose }: EditProfileModalProps) => {
 			disabled={isUploading || !isValid}
 			color='white'
 			size='md2'
-			onPress={() => onSubmit()}
+			onPress={onSubmit}
 		>
 			완료
 		</Button>
