@@ -3,6 +3,7 @@ import useLoading from '@/hooks/useLoading';
 import { ItemSelectProps } from '@/types/components';
 import { Item } from '@/types/post';
 import axios from 'axios';
+import { debounce } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import {
 	Image,
@@ -64,18 +65,10 @@ const ItemSelect = ({
 	}, [category]);
 
 	// 검색어 입력 시 호출
-	useEffect(() => {
-		if (!itemData) return;
-
-		try {
-			const filtered = itemData.filter((item) =>
-				item.name.includes(searchInput),
-			);
-			setSearchedItemData(filtered);
-		} catch (e) {
-			setSearchedItemData([]);
-		}
-	}, [searchInput, itemData]);
+	const handleSearch = debounce((text: string) => {
+		const filtered = itemData.filter((item) => item.name.includes(text));
+		setSearchedItemData(filtered);
+	}, 300);
 
 	const addItemToCart = (item: Item) => {
 		const isAlreadyAdded = cart.find(
@@ -97,7 +90,10 @@ const ItemSelect = ({
 				style={styles.searchInput}
 				placeholder='🔍 아이템 검색..'
 				value={searchInput}
-				onChangeText={setSearchInput}
+				onChangeText={(text) => {
+					setSearchInput(text);
+					handleSearch(text);
+				}}
 			/>
 
 			{/* 카테고리 칩 */}
