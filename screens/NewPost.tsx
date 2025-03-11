@@ -5,6 +5,7 @@ import {
 	uploadObjectToStorage,
 } from '@/firebase/services/imageService';
 import {
+	CommunityStackNavigation,
 	HomeStackNavigation,
 	type NewPostRouteProp,
 	type TabNavigation,
@@ -30,6 +31,7 @@ import { showToast } from '@/components/ui/Toast';
 import { createPost, updatePost } from '@/firebase/services/postService';
 import useGetPostDetail from '@/hooks/useGetPostDetail';
 import useLoading from '@/hooks/useLoading';
+import { Tab } from '@/types/components';
 import {
 	CartItem,
 	CreatePostRequest,
@@ -44,7 +46,12 @@ import Button from '../components/ui/Button';
 
 const NewPost = () => {
 	const tabNavigation = useNavigation<TabNavigation>();
-	const stackNavigation = useNavigation<HomeStackNavigation>();
+	const stackNavigation =
+		useNavigation<
+			typeof tab extends 'market'
+				? HomeStackNavigation
+				: CommunityStackNavigation
+		>();
 	const { userInfo } = useAuthContext();
 	const {
 		isLoading: isUploading,
@@ -55,6 +62,7 @@ const NewPost = () => {
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const flatListRef = useRef<FlatList>(null);
 
+	const [tab, setTab] = useState<Tab>('market');
 	const [type, setType] = useState<Type>('buy');
 	const [title, setTitle] = useState<string>('');
 	const [body, setBody] = useState<string>('');
@@ -66,10 +74,13 @@ const NewPost = () => {
 	const [editingId, setEditingId] = useState<string>(route.params?.id || '');
 
 	useEffect(() => {
+		if (!route.params?.tab) return;
+		setTab(route.params.tab as Tab);
+
 		if (route.params?.id) {
 			setEditingId(route.params.id);
 		}
-	}, [route.params?.id]);
+	}, [route.params?.id, route.params?.tab]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -79,7 +90,7 @@ const NewPost = () => {
 		}, [route.params]),
 	);
 
-	const { post, isLoading: isFetching } = useGetPostDetail(editingId);
+	const { post, isLoading: isFetching } = useGetPostDetail(tab, editingId);
 
 	useEffect(() => {
 		if (!post) return;
@@ -87,7 +98,7 @@ const NewPost = () => {
 		setType(post.type);
 		setTitle(post.title);
 		setBody(post.body);
-		setCart(post.cart);
+		if (post.cart) setCart(post.cart);
 
 		if (post.images?.length) {
 			setOriginalImageUrls(post.images);
@@ -174,6 +185,8 @@ const NewPost = () => {
 			return;
 		}
 
+		const collectionName = tab === 'market' ? 'Boards' : 'Communities';
+
 		const { newImages, deletedImageUrls } = getFilteredImages();
 
 		let createdId;
@@ -184,7 +197,7 @@ const NewPost = () => {
 			// 새 이미지가 있으면 스토리지에 업로드
 			if (newImages.length) {
 				uploadedImageUrls = await uploadObjectToStorage({
-					directory: 'Boards',
+					directory: collectionName,
 					images: newImages,
 				});
 			}
@@ -196,7 +209,7 @@ const NewPost = () => {
 
 			if (editingId) {
 				const requestData = buildUpdatePostRequest(imageUrls);
-				await updatePost(editingId, requestData);
+				await updatePost(collectionName, editingId, requestData);
 
 				// 삭제된 이미지가 있으면 스토리지에서도 삭제
 				if (deletedImageUrls.length) {
@@ -207,9 +220,9 @@ const NewPost = () => {
 				showToast('success', '글이 수정되었습니다.');
 			} else {
 				const requestData = buildCreatePostRequest(imageUrls);
-				createdId = await createPost(requestData);
+				createdId = await createPost(collectionName, requestData);
 
-				stackNavigation.popTo('PostDetail', { id: createdId });
+				stackNavigation.popTo('PostDetail', { tab, id: createdId });
 				showToast('success', '글이 작성되었습니다.');
 			}
 
@@ -240,7 +253,7 @@ const NewPost = () => {
 					renderItem={null}
 					ListEmptyComponent={
 						<>
-							<TypeSelect type={type} setType={setType} />
+							{tab === 'market' && <TypeSelect type={type} setType={setType} />}
 
 							<TitleInput
 								title={title}
@@ -260,32 +273,38 @@ const NewPost = () => {
 								isSubmitted={isSubmitted}
 							/>
 
-							<ImageInput
-								images={images}
-								setImages={setImages}
-								containerStyle={styles.inputContainer}
-								labelStyle={styles.label}
-							/>
+							{tab === 'community' && (
+								<ImageInput
+									images={images}
+									setImages={setImages}
+									containerStyle={styles.inputContainer}
+									labelStyle={styles.label}
+								/>
+							)}
 
-							<ItemList
-								cart={cart}
-								setCart={setCart}
-								containerStyle={styles.inputContainer}
-								labelStyle={styles.label}
-							/>
+							{tab === 'market' && (
+								<ItemList
+									cart={cart}
+									setCart={setCart}
+									containerStyle={styles.inputContainer}
+									labelStyle={styles.label}
+								/>
+							)}
 						</>
 					}
 				/>
 			</KeyboardAvoidingView>
 			<View style={styles.buttonContainer}>
-				<Button
-					color='white'
-					size='lg'
-					style={{ flex: 1 }}
-					onPress={openAddItemModal}
-				>
-					아이템 추가
-				</Button>
+				{tab === 'market' && (
+					<Button
+						color='white'
+						size='lg'
+						style={{ flex: 1 }}
+						onPress={openAddItemModal}
+					>
+						아이템 추가
+					</Button>
+				)}
 				<Button color='mint' size='lg' style={{ flex: 1 }} onPress={onSubmit}>
 					등록
 				</Button>

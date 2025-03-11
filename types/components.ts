@@ -12,12 +12,26 @@ import { Comment, CommentWithCreatorInfo } from './comment';
 import { CartItem, PostWithCreatorInfo, Type } from './post';
 
 // Home/
+export type Tab = 'market' | 'community';
+
+export type PostListProps = {
+	tab: Tab;
+};
+
 export type PostUnitProps = PostWithCreatorInfo & {
-	previewImage: string;
+	tab: Tab;
+	previewImage?: string;
 };
 
 export type TypeBadgeProps = {
 	type: Type;
+	containerStyle?: ViewStyle;
+};
+
+export type BadgeProps = {
+	text: string;
+	textColor: string;
+	bgColor: string;
 	containerStyle?: ViewStyle;
 };
 
@@ -122,12 +136,12 @@ export type CreatedAtProps = {
 };
 
 export type ImageCarouselProps = {
-	images: string[];
+	images?: string[];
 	containerStyle?: ViewStyle;
 };
 
 export type ItemSummaryListProps = {
-	cart: CartItem[];
+	cart?: CartItem[];
 	containerStyle?: ViewStyle;
 };
 
@@ -137,7 +151,7 @@ export type TitleProps = {
 };
 
 export type TotalProps = {
-	cart: CartItem[];
+	cart?: CartItem[];
 	containerStyle?: ViewStyle;
 };
 

@@ -1,0 +1,35 @@
+import Community from '@/screens/Community';
+import EditComment from '@/screens/EditComment';
+import NewPost from '@/screens/NewPost';
+import PostDetail from '@/screens/PostDetail';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+const CommunityStack = createNativeStackNavigator();
+
+const CommunityStackNavigator = () => {
+	return (
+		<CommunityStack.Navigator
+			screenOptions={{
+				title: '커뮤니티',
+			}}
+		>
+			<CommunityStack.Screen name='Community' component={Community} />
+			<CommunityStack.Screen name='PostDetail' component={PostDetail} />
+			<CommunityStack.Screen
+				name='NewPost'
+				component={NewPost}
+				options={{ title: '게시글' }}
+			/>
+			<CommunityStack.Screen
+				name='EditComment'
+				component={EditComment}
+				options={{
+					presentation: 'modal',
+					title: '댓글 수정',
+				}}
+			/>
+		</CommunityStack.Navigator>
+	);
+};
+
+export default CommunityStackNavigator;

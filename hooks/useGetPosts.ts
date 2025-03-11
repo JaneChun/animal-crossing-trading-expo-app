@@ -13,7 +13,11 @@ import {
 } from 'firebase/firestore';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
+const useGetPosts = (
+	collectionName = 'Boards',
+	filter?: { creatorId?: string },
+	pageSize = 10,
+) => {
 	const [data, setData] = useState<PostWithCreatorInfo[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [isEnd, setIsEnd] = useState<boolean>(false); // 더 이상 불러올 데이터가 없을 경우 true
@@ -30,7 +34,7 @@ const useGetPosts = (filter?: { creatorId?: string }, pageSize = 10) => {
 			setIsLoading(true);
 
 			let q = query(
-				collection(db, 'Boards'),
+				collection(db, collectionName),
 				orderBy('createdAt', 'desc'),
 				limit(pageSize),
 			);

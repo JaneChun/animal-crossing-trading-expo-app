@@ -7,8 +7,8 @@ export interface Post {
 	type: Type;
 	title: string;
 	body: string;
-	images: string[];
-	cart: CartItem[];
+	images?: string[];
+	cart?: CartItem[];
 	creatorId: string;
 	createdAt: Timestamp;
 	commentCount: number;

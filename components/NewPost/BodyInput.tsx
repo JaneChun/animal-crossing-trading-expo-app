@@ -18,7 +18,7 @@ const BodyInput = ({
 				type='postBody'
 				input={body}
 				setInput={setBody}
-				placeholder='2마일에 구매하고 싶어요. 채팅 주세요!'
+				placeholder='내용을 입력해주세요.'
 				inputStyle={[inputStyle, styles.textarea]}
 				multiline
 				isSubmitted={isSubmitted}

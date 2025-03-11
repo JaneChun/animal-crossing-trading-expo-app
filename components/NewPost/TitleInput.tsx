@@ -18,7 +18,7 @@ const TitleInput = ({
 				type='postTitle'
 				input={title}
 				setInput={setTitle}
-				placeholder='DIY 작업대 레시피 구해요 :)'
+				placeholder='제목을 입력해주세요.'
 				inputStyle={inputStyle}
 				isSubmitted={isSubmitted}
 			/>

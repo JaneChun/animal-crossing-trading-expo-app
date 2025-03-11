@@ -13,6 +13,7 @@ import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import useGetComments from '@/hooks/useGetComments';
 import useLoading from '@/hooks/useLoading';
+import { Tab } from '@/types/components';
 import { PostDetailRouteProp } from '@/types/navigation';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 import React, { useCallback } from 'react';
@@ -22,13 +23,13 @@ import useGetPostDetail from '../hooks/useGetPostDetail';
 
 const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
-	const { id = '' } = route.params;
+	const { tab, id = '' } = route.params;
 	const { userInfo } = useAuthContext();
 	const {
 		post,
 		isLoading: isPostFetching,
 		refresh: postRefresh,
-	} = useGetPostDetail(id);
+	} = useGetPostDetail(tab as Tab, id);
 	const {
 		comments,
 		isLoading: isCommentsFetching,

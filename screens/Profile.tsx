@@ -20,7 +20,7 @@ const Profile = () => {
 		isLoading: isFetching,
 		isEnd,
 		loadMore,
-	} = useGetPosts({ creatorId: userInfo?.uid }, 5);
+	} = useGetPosts('Boards', { creatorId: userInfo?.uid }, 5);
 
 	if (!userInfo || (isFetching && data.length === 0)) {
 		return <LoadingIndicator />;

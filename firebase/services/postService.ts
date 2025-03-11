@@ -7,10 +7,13 @@ import {
 	updateDocToFirestore,
 } from '../core/firestoreService';
 
-export const getPost = async (postId: string): Promise<Post | null> => {
+export const getPost = async (
+	collectionName: string,
+	postId: string,
+): Promise<Post | null> => {
 	return firestoreRequest('게시글 조회', async () => {
 		const docData = await getDocFromFirestore({
-			collection: 'Boards',
+			collection: collectionName,
 			id: postId,
 		});
 
@@ -35,11 +38,12 @@ export const getPost = async (postId: string): Promise<Post | null> => {
 };
 
 export const createPost = async (
+	collectionName: string,
 	requestData: CreatePostRequest,
 ): Promise<string> => {
 	return firestoreRequest('게시글 생성', async () => {
 		const createdId = await addDocToFirestore({
-			directory: 'Boards',
+			directory: collectionName,
 			requestData,
 		});
 
@@ -49,11 +53,12 @@ export const createPost = async (
 
 export const updatePost = async (
 	id: string,
+	collectionName: string,
 	requestData: UpdatePostRequest,
 ): Promise<void> => {
 	return firestoreRequest('게시글 수정', async () => {
 		await updateDocToFirestore({
-			collection: 'Boards',
+			collection: collectionName,
 			id,
 			requestData,
 		});

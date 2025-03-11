@@ -15,8 +15,16 @@ export type RootTabParamList = {
 // Home 스택 네비게이션
 export type HomeStackParamList = {
 	Home: undefined;
-	PostDetail: { id: string };
-	NewPost: { id?: string; updatedCart?: CartItem[] };
+	PostDetail: { tab: string; id: string };
+	NewPost: { tab: string; id?: string; updatedCart?: CartItem[] };
+	EditComment: { postId: string; commentId: string; body: string };
+};
+
+// Community 스택 네비게이션
+export type CommunityStackParamList = {
+	Community: undefined;
+	PostDetail: { tab: string; id: string; shouldRefresh?: boolean };
+	NewPost: { tab: string; id?: string; updatedCart?: CartItem[] };
 	EditComment: { postId: string; commentId: string; body: string };
 };
 
@@ -36,6 +44,8 @@ export type ProfileStackParamList = {
 // 전체 앱에서 사용할 네비게이션 타입
 export type TabNavigation = BottomTabNavigationProp<RootTabParamList>;
 export type HomeStackNavigation = NativeStackNavigationProp<HomeStackParamList>;
+export type CommunityStackNavigation =
+	NativeStackNavigationProp<CommunityStackParamList>;
 export type ChatStackNavigation = NativeStackNavigationProp<ChatStackParamList>;
 export type ProfileStackNavigation =
 	NativeStackNavigationProp<ProfileStackParamList>;

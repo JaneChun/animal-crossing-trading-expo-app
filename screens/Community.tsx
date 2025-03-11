@@ -1,12 +1,12 @@
 import PostList from '@/components/Home/PostList';
 import Layout from '@/components/ui/Layout';
 
-const Home = () => {
+const Community = () => {
 	return (
-		<Layout title='거래글'>
-			<PostList tab='market' />
+		<Layout title='게시글'>
+			<PostList tab='community' />
 		</Layout>
 	);
 };
 
-export default Home;
+export default Community;
