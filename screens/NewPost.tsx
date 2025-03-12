@@ -151,26 +151,50 @@ const NewPost = () => {
 	};
 
 	const buildCreatePostRequest = (imageUrls: string[]): CreatePostRequest => {
-		return {
+		const baseRequest = {
 			type,
 			title: title.trim(),
 			body: body.trim(),
-			images: imageUrls,
-			cart,
 			creatorId: userInfo!.uid,
 			createdAt: Timestamp.now(),
 			commentCount: 0,
 		};
+
+		if (activeTab === 'Home') {
+			return {
+				...baseRequest,
+				cart,
+			};
+		} else if (activeTab === 'Community') {
+			return {
+				...baseRequest,
+				images: imageUrls,
+			};
+		}
+
+		throw new Error(`Invalid activeTab: ${activeTab}`);
 	};
 
 	const buildUpdatePostRequest = (imageUrls: string[]): UpdatePostRequest => {
-		return {
+		const baseRequest = {
 			type,
 			title: title.trim(),
 			body: body.trim(),
-			images: imageUrls,
-			cart,
 		};
+
+		if (activeTab === 'Home') {
+			return {
+				...baseRequest,
+				cart,
+			};
+		} else if (activeTab === 'Community') {
+			return {
+				...baseRequest,
+				images: imageUrls,
+			};
+		}
+
+		throw new Error(`Invalid activeTab: ${activeTab}`);
 	};
 
 	const onSubmit = async () => {

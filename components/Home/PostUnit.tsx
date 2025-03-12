@@ -1,22 +1,24 @@
 import { Colors } from '@/constants/Color';
 import { useNavigationStore } from '@/store/store';
-import { PostUnitProps } from '@/types/components';
-import { FontAwesome } from '@expo/vector-icons';
+import { PostWithCreatorInfo } from '@/types/post';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { elapsedTime } from '../../utilities/elapsedTime';
+import ItemThumbnail from '../ui/ItemThumbnail';
+import Thumbnail from '../ui/Thumbnail';
 import TypeBadge from './TypeBadge';
 
 const PostUnit = ({
 	id,
 	type,
 	title,
-	previewImage,
+	images,
+	cart,
 	createdAt,
 	creatorDisplayName,
 	commentCount,
-}: PostUnitProps) => {
+}: PostWithCreatorInfo) => {
 	const { activeTab } = useNavigationStore();
 	const stackNavigation = useNavigation<any>();
 
@@ -28,18 +30,13 @@ const PostUnit = ({
 		<TouchableOpacity style={styles.container} onPress={navigateToPost}>
 			{/* 썸네일 */}
 			<View style={styles.thumbnailContainer}>
-				{previewImage ? (
-					<Image
-						style={styles.thumbnail}
-						source={{
-							uri: previewImage,
-						}}
+				{activeTab === 'Home' && (
+					<ItemThumbnail
+						previewImage={cart?.[0]?.imageUrl}
+						itemLength={cart?.length}
 					/>
-				) : (
-					<View style={[styles.thumbnail, styles.emptyThumbnail]}>
-						<FontAwesome name='leaf' color={Colors.font_light_gray} size={18} />
-					</View>
 				)}
+				{activeTab === 'Community' && <Thumbnail previewImage={images?.[0]} />}
 			</View>
 
 			{/* 콘텐츠 */}
@@ -75,17 +72,7 @@ const styles = StyleSheet.create({
 	},
 	thumbnailContainer: {
 		flexShrink: 0,
-	},
-	thumbnail: {
-		width: 42,
-		height: 42,
-		borderRadius: 6,
-		resizeMode: 'cover',
-	},
-	emptyThumbnail: {
-		backgroundColor: Colors.border_gray,
-		justifyContent: 'center',
-		alignItems: 'center',
+		// borderWidth: 1,
 	},
 	contentContainer: {
 		flex: 1,

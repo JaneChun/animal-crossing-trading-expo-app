@@ -55,9 +55,7 @@ const PostList = ({ tab }: PostListProps) => {
 			<FlatList
 				data={data}
 				keyExtractor={({ id }) => id}
-				renderItem={({ item }) => (
-					<PostUnit {...item} previewImage={item?.images?.[0]} />
-				)}
+				renderItem={({ item }) => <PostUnit {...item} />}
 				refreshControl={
 					<RefreshControl
 						tintColor={Colors.border_gray}

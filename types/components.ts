@@ -18,10 +18,6 @@ export type PostListProps = {
 	tab: Tab;
 };
 
-export type PostUnitProps = PostWithCreatorInfo & {
-	previewImage?: string;
-};
-
 export type TypeBadgeProps = {
 	type: Type;
 	containerStyle?: ViewStyle;
@@ -33,6 +29,12 @@ export type BadgeProps = {
 	bgColor: string;
 	containerStyle?: ViewStyle;
 };
+
+export type ThumabnailProps = {
+	previewImage?: string;
+};
+
+export type ItemThumabnailProps = ThumabnailProps & { itemLength?: number };
 
 // NewPost/
 export type TypeSelectProps = {
