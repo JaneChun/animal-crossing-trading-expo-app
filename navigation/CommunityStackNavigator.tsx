@@ -22,7 +22,7 @@ const CommunityStackNavigator = () => {
 			<CommunityStack.Screen
 				name='NewPost'
 				component={NewPost}
-				options={{ title: '게시글' }}
+				options={{ title: '게시글', headerShown: true }}
 			/>
 			<CommunityStack.Screen
 				name='EditComment'

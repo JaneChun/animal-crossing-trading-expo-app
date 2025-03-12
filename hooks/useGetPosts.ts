@@ -15,7 +15,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const useGetPosts = (
 	collectionName: 'Boards' | 'Communities',
-	filter?: { creatorId?: string },
+	filter?: { creatorId?: string; category?: string },
 	pageSize = 10,
 ) => {
 	const [data, setData] = useState<PostWithCreatorInfo[]>([]);
@@ -42,6 +42,12 @@ const useGetPosts = (
 			// 특정 유저의 게시글만 가져오는 필터
 			if (memoizedFilter?.creatorId) {
 				q = query(q, where('creatorId', '==', memoizedFilter.creatorId));
+			}
+
+			// 특정 카테고리의 게시글만 가져오는 필터
+			const category = memoizedFilter?.category;
+			if (category && category !== 'all') {
+				q = query(q, where('type', '==', category));
 			}
 
 			// 스크롤 시 마지막 문서 이후 데이터 가져오기

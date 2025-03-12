@@ -14,6 +14,7 @@ import {
 	View,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+import Categories from '../ui/Categories';
 import { showToast } from '../ui/Toast';
 
 const ItemSelect = ({
@@ -27,7 +28,7 @@ const ItemSelect = ({
 		setIsLoading: setIsFetching,
 		InlineLoadingIndicator,
 	} = useLoading();
-	const [category, setCategory] = useState<string | null>('All');
+	const [category, setCategory] = useState<string>('All');
 	const [itemData, setItemData] = useState<Item[]>([]);
 	const [searchInput, setSearchInput] = useState<string>('');
 	const [searchedItemData, setSearchedItemData] = useState<Item[]>([]);
@@ -97,27 +98,11 @@ const ItemSelect = ({
 			/>
 
 			{/* 카테고리 칩 */}
-			<View style={styles.categoriesContainer}>
-				{categories.map((item) => (
-					<TouchableOpacity
-						key={item.EN}
-						style={[
-							styles.category,
-							category === item.EN && styles.categorySelected,
-						]}
-						onPress={() => setCategory(item.EN)}
-					>
-						<Text
-							style={[
-								styles.categoryText,
-								category === item.EN && styles.categoryTextSelected,
-							]}
-						>
-							{item.KR}
-						</Text>
-					</TouchableOpacity>
-				))}
-			</View>
+			<Categories
+				categories={categories}
+				category={category}
+				setCategory={setCategory}
+			/>
 
 			{/* 아이템 목록 */}
 			{category && (
@@ -165,29 +150,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
-	categoriesContainer: {
-		flexDirection: 'row',
-		flexWrap: 'wrap',
-		gap: 4,
-		alignItems: 'center',
-		marginVertical: 8,
-	},
-	category: {
-		paddingVertical: 8,
-		paddingHorizontal: 14,
-		borderRadius: 16,
-		backgroundColor: Colors.base,
-	},
-	categorySelected: {
-		backgroundColor: Colors.primary,
-	},
-	categoryText: {
-		color: Colors.font_gray,
-		fontSize: 14,
-	},
-	categoryTextSelected: {
-		color: 'white',
-	},
+
 	emptyText: {
 		fontSize: 14,
 		color: Colors.font_gray,

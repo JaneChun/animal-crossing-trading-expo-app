@@ -9,7 +9,11 @@ const TypeSelect = ({ type, setType }: TypeSelectProps) => {
 				style={[
 					styles.button,
 					type === 'buy' && styles.buttonActive,
-					{ borderTopRightRadius: 0, borderBottomRightRadius: 0 },
+					{
+						borderRightWidth: 0,
+						borderTopRightRadius: 0,
+						borderBottomRightRadius: 0,
+					},
 				]}
 				onPress={() => setType('buy')}
 			>
@@ -53,15 +57,15 @@ const styles = StyleSheet.create({
 		borderColor: Colors.border_gray,
 	},
 	buttonActive: {
-		backgroundColor: Colors.border_gray,
+		backgroundColor: Colors.button_pressed,
 	},
 	text: {
 		fontSize: 16,
 		color: Colors.font_black,
-		fontWeight: 'semibold',
+		fontWeight: 400,
 	},
 	textActive: {
 		color: Colors.primary,
-		fontWeight: 'bold',
+		fontWeight: 600,
 	},
 });

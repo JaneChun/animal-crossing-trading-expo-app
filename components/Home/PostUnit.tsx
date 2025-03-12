@@ -5,9 +5,10 @@ import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { elapsedTime } from '../../utilities/elapsedTime';
+import CommunityTypeBadge from '../Community/TypeBadge';
 import ItemThumbnail from '../ui/ItemThumbnail';
 import Thumbnail from '../ui/Thumbnail';
-import TypeBadge from './TypeBadge';
+import MarketTypeBadge from './TypeBadge';
 
 const PostUnit = ({
 	id,
@@ -42,7 +43,8 @@ const PostUnit = ({
 			{/* 콘텐츠 */}
 			<View style={styles.contentContainer}>
 				<View style={styles.titleContainer}>
-					<TypeBadge type={type} />
+					{activeTab === 'Home' && <MarketTypeBadge type={type} />}
+					{activeTab === 'Community' && <CommunityTypeBadge type={type} />}
 					<Text style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
 						{title}
 					</Text>

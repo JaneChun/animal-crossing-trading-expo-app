@@ -1,6 +1,6 @@
 import Button from '@/components/ui/Button';
 import { Colors } from '@/constants/Color';
-import { EditItemModalProps } from '@/types/components';
+import { Currency, EditItemModalProps } from '@/types/components';
 import { CartItem } from '@/types/post';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -17,14 +17,17 @@ const EditItemModal = ({
 }: EditItemModalProps) => {
 	const [quantityInput, setQuantityInput] = useState<number>(1);
 	const [milesTicketInput, setMilesTicketInput] = useState<number>(1);
-	const [selectedUnit, setSelectedUnit] = useState('마일 티켓'); // TODO: enums로 변경
-	const options = ['마일 티켓', '벨']; // TODO: enums로 변경
+	const [selectedUnit, setSelectedUnit] = useState<Currency>('mileticket');
+	const options = [
+		{ text: '마일 티켓', value: 'mileticket' },
+		{ text: '벨', value: 'bell' },
+	];
 
 	useEffect(() => {
 		if (item) {
 			setQuantityInput(item.quantity || 1);
 			setMilesTicketInput(item.price || 1);
-			setSelectedUnit('마일 티켓'); // TODO: item의 unit에서 가져오기
+			setSelectedUnit('mileticket');
 		}
 	}, [item]);
 
@@ -61,7 +64,7 @@ const EditItemModal = ({
 						options={options}
 						disabled
 						value={selectedUnit}
-						setValue={setSelectedUnit}
+						setValue={setSelectedUnit as any}
 					/>
 				</View>
 

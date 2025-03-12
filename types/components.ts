@@ -16,6 +16,7 @@ export type Tab = 'Home' | 'Community' | 'Chat' | 'Profile';
 
 export type PostListProps = {
 	tab: Tab;
+	filter?: { category: string };
 };
 
 export type TypeBadgeProps = {
@@ -215,4 +216,26 @@ export type InputProps = {
 export type LayoutProps = {
 	children: ReactNode;
 	title?: string;
+};
+
+export type Category = { EN: string; KR: string };
+
+export type CategoriesProps = {
+	categories: Category[];
+	category: string;
+	setCategory: Dispatch<SetStateAction<string>>;
+};
+
+export type Currency = 'mileticket' | 'bell';
+
+export type DropdownOption = {
+	text: string;
+	value: string;
+};
+
+export type DropdownOptionProps = {
+	options: DropdownOption[];
+	disabled?: boolean;
+	value: string;
+	setValue: Dispatch<SetStateAction<string>>;
 };

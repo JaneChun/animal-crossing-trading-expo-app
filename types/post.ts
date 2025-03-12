@@ -1,6 +1,18 @@
 import { Timestamp } from 'firebase/firestore';
 
-export type Type = 'buy' | 'sell' | 'done';
+export type MarketType = 'buy' | 'sell' | 'done';
+export type CommunityType =
+	| 'all'
+	| 'general'
+	| 'giveaway'
+	| 'adopt'
+	| 'guide'
+	| 'trade'
+	| 'turnip'
+	| 'dream'
+	| 'design';
+
+export type Type = MarketType | CommunityType;
 
 export interface Post {
 	id: string;

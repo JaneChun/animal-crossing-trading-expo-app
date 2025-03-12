@@ -26,12 +26,14 @@ import BodyInput from '@/components/NewPost/BodyInput';
 import ImageInput from '@/components/NewPost/ImageInput';
 import TitleInput from '@/components/NewPost/TitleInput';
 import TypeSelect from '@/components/NewPost/TypeSelect';
+import DropdownInput from '@/components/ui/DropdownInput';
 import Layout from '@/components/ui/Layout';
 import { showToast } from '@/components/ui/Toast';
 import { createPost, updatePost } from '@/firebase/services/postService';
 import useGetPostDetail from '@/hooks/useGetPostDetail';
 import useLoading from '@/hooks/useLoading';
 import { useNavigationStore } from '@/store/store';
+import { CommunityType } from '@/types/components';
 import {
 	CartItem,
 	CreatePostRequest,
@@ -43,6 +45,7 @@ import React from 'react';
 import AddItemModal from '../components/NewPost/AddItemModal';
 import ItemList from '../components/NewPost/ItemList';
 import Button from '../components/ui/Button';
+import { categories } from './Community';
 
 const NewPost = () => {
 	const { activeTab } = useNavigationStore();
@@ -64,7 +67,9 @@ const NewPost = () => {
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const flatListRef = useRef<FlatList>(null);
 
-	const [type, setType] = useState<Type>('buy');
+	const [type, setType] = useState<Type | CommunityType>(
+		activeTab === 'Home' ? 'buy' : 'general',
+	);
 	const [title, setTitle] = useState<string>('');
 	const [body, setBody] = useState<string>('');
 	const [images, setImages] = useState<ImagePickerAsset[]>([]); // ImagePicker로 추가한 이미지
@@ -73,6 +78,13 @@ const NewPost = () => {
 
 	const route = useRoute<NewPostRouteProp>();
 	const [editingId, setEditingId] = useState<string>(route.params?.id || '');
+
+	const dropdownOptions = categories
+		.map(({ KR, EN }) => ({
+			text: KR,
+			value: EN,
+		}))
+		.filter(({ value }) => value !== 'all');
 
 	useEffect(() => {
 		if (route.params?.id) {
@@ -280,6 +292,21 @@ const NewPost = () => {
 						<>
 							{activeTab === 'Home' && (
 								<TypeSelect type={type} setType={setType} />
+							)}
+							{activeTab === 'Community' && (
+								<View
+									style={{
+										width: '30%',
+										flexDirection: 'row',
+										marginBottom: 16,
+									}}
+								>
+									<DropdownInput
+										options={dropdownOptions}
+										value={type}
+										setValue={setType as any}
+									/>
+								</View>
 							)}
 
 							<TitleInput

@@ -1,4 +1,5 @@
-import TypeBadge from '@/components/Home/TypeBadge';
+import CommunityTypeBadge from '@/components/Community/TypeBadge';
+import MarketTypeBadge from '@/components/Home/TypeBadge';
 import ActionButtons from '@/components/PostDetail/ActionButtons';
 import Body from '@/components/PostDetail/Body';
 import CommentInput from '@/components/PostDetail/CommentInput';
@@ -76,10 +77,18 @@ const PostDetail = () => {
 								{post.creatorId === userInfo?.uid && (
 									<ActionButtons id={post.id} />
 								)}
-								<TypeBadge
-									type={post.type}
-									containerStyle={styles.typeBadgeContainer}
-								/>
+								{activeTab === 'Home' && (
+									<MarketTypeBadge
+										type={post.type}
+										containerStyle={styles.typeBadgeContainer}
+									/>
+								)}
+								{activeTab === 'Community' && (
+									<CommunityTypeBadge
+										type={post.type}
+										containerStyle={styles.typeBadgeContainer}
+									/>
+								)}
 								<Title
 									title={post.title}
 									containerStyle={{ marginBottom: 8 }}

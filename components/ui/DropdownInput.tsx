@@ -1,12 +1,7 @@
 import { Colors } from '@/constants/Color';
+import { DropdownOption, DropdownOptionProps } from '@/types/components';
 import { Feather } from '@expo/vector-icons';
-import React, {
-	Dispatch,
-	SetStateAction,
-	useEffect,
-	useRef,
-	useState,
-} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
 	LayoutRectangle,
 	Modal as RNmodal,
@@ -21,12 +16,7 @@ const DropdownInput = ({
 	disabled,
 	value,
 	setValue,
-}: {
-	options: string[];
-	disabled?: boolean;
-	value: string;
-	setValue: Dispatch<SetStateAction<string>>;
-}) => {
+}: DropdownOptionProps) => {
 	const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
 	const [dropdownPosition, setDropdownPosition] =
 		useState<LayoutRectangle | null>(null);
@@ -35,7 +25,7 @@ const DropdownInput = ({
 
 	const openModal = () => {
 		if (comboBoxRef?.current) {
-			comboBoxRef.current.measure((width, height, pageX, pageY) => {
+			comboBoxRef.current.measure((x, y, width, height, pageX, pageY) => {
 				setDropdownPosition({ x: pageX, y: pageY + height, width, height });
 			});
 		}
@@ -45,8 +35,8 @@ const DropdownInput = ({
 		if (dropdownPosition) setDropdownVisible(true);
 	}, [dropdownPosition]);
 
-	const handleSelect = (option: string) => {
-		setValue(option);
+	const handleSelect = (option: DropdownOption) => {
+		setValue(option.value);
 		setDropdownVisible(false);
 	};
 
@@ -62,7 +52,9 @@ const DropdownInput = ({
 				onPress={openModal}
 				disabled={disabled}
 			>
-				<Text style={styles.text}>{value}</Text>
+				<Text style={styles.text}>
+					{options.find((opt) => opt.value === value)?.text || '선택'}
+				</Text>
 
 				<Feather name='chevron-down' size={24} color={Colors.font_gray} />
 			</TouchableOpacity>
@@ -87,14 +79,14 @@ const DropdownInput = ({
 					>
 						{options.map((item, index) => (
 							<TouchableOpacity
-								key={item}
+								key={item.value}
 								style={[
 									styles.option,
 									index === 0 && styles.optionBorderBottom,
 								]}
 								onPress={() => handleSelect(item)}
 							>
-								<Text style={styles.optionText}>{item}</Text>
+								<Text style={styles.optionText}>{item.text}</Text>
 							</TouchableOpacity>
 						))}
 					</View>

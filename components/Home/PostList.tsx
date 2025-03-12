@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import PostUnit from './PostUnit';
 
-const PostList = ({ tab }: PostListProps) => {
+const PostList = ({ tab, filter }: PostListProps) => {
 	const collectionName = tab === 'Home' ? 'Boards' : 'Communities';
 	const navigation = useNavigation<any>();
 
@@ -25,7 +25,7 @@ const PostList = ({ tab }: PostListProps) => {
 		isEnd,
 		loadMore,
 		refresh,
-	} = useGetPosts(collectionName, {}, 10);
+	} = useGetPosts(collectionName, filter, 10);
 	const [isRefreshing, setIsRefreshing] = useState(false); // 새로고침 상태
 
 	useFocusEffect(
