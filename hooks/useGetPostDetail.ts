@@ -1,20 +1,18 @@
 import { getPost } from '@/firebase/services/postService';
 import { getPublicUserInfo } from '@/firebase/services/userService';
-import { Tab } from '@/types/components';
 import { Post, PostWithCreatorInfo } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
 import { useCallback, useEffect, useState } from 'react';
 
-function useGetPostDetail(tab: Tab, id: string) {
+function useGetPostDetail(collectionName: string, id: string) {
 	const [data, setData] = useState<PostWithCreatorInfo | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 
 	const fetchData = useCallback(async () => {
-		if (!tab || !id) return;
+		if (!collectionName || !id) return;
 
 		setIsLoading(true);
 
-		const collectionName = tab === 'market' ? 'Boards' : 'Communities';
 		const post: Post | null = await getPost(collectionName, id);
 		if (!post) return;
 

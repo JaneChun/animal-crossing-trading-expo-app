@@ -1,13 +1,12 @@
 import { Colors } from '@/constants/Color';
 import { deletePost as deletePostFromDB } from '@/firebase/services/postService';
 import { ActionButtonsProps } from '@/types/components';
-import { HomeStackNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { showToast } from '../ui/Toast';
 
 const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
-	const stackNavigation = useNavigation<HomeStackNavigation>();
+	const stackNavigation = useNavigation<any>();
 
 	const editPost = () => {
 		stackNavigation.navigate('NewPost', { id });

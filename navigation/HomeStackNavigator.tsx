@@ -14,7 +14,11 @@ const HomeStackNavigator = () => {
 			}}
 		>
 			<HomeStack.Screen name='Home' component={Home} />
-			<HomeStack.Screen name='PostDetail' component={PostDetail} />
+			<HomeStack.Screen
+				name='PostDetail'
+				component={PostDetail}
+				options={{ title: '' }}
+			/>
 			<HomeStack.Screen
 				name='NewPost'
 				component={NewPost}

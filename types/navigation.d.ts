@@ -15,16 +15,16 @@ export type RootTabParamList = {
 // Home 스택 네비게이션
 export type HomeStackParamList = {
 	Home: undefined;
-	PostDetail: { tab: string; id: string };
-	NewPost: { tab: string; id?: string; updatedCart?: CartItem[] };
+	PostDetail: { id: string };
+	NewPost: { id?: string; updatedCart?: CartItem[] };
 	EditComment: { postId: string; commentId: string; body: string };
 };
 
 // Community 스택 네비게이션
 export type CommunityStackParamList = {
 	Community: undefined;
-	PostDetail: { tab: string; id: string; shouldRefresh?: boolean };
-	NewPost: { tab: string; id?: string; updatedCart?: CartItem[] };
+	PostDetail: { id: string; shouldRefresh?: boolean };
+	NewPost: { id?: string; updatedCart?: CartItem[] };
 	EditComment: { postId: string; commentId: string; body: string };
 };
 

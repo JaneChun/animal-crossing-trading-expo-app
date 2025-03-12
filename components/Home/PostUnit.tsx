@@ -1,9 +1,6 @@
 import { Colors } from '@/constants/Color';
+import { useNavigationStore } from '@/store/store';
 import { PostUnitProps } from '@/types/components';
-import {
-	CommunityStackNavigation,
-	HomeStackNavigation,
-} from '@/types/navigation';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
@@ -12,7 +9,6 @@ import { elapsedTime } from '../../utilities/elapsedTime';
 import TypeBadge from './TypeBadge';
 
 const PostUnit = ({
-	tab,
 	id,
 	type,
 	title,
@@ -21,15 +17,11 @@ const PostUnit = ({
 	creatorDisplayName,
 	commentCount,
 }: PostUnitProps) => {
-	const stackNavigation =
-		useNavigation<
-			typeof tab extends 'market'
-				? HomeStackNavigation
-				: CommunityStackNavigation
-		>();
+	const { activeTab } = useNavigationStore();
+	const stackNavigation = useNavigation<any>();
 
 	const navigateToPost = () => {
-		stackNavigation.navigate('PostDetail', { tab, id });
+		stackNavigation.navigate('PostDetail', { id });
 	};
 
 	return (
@@ -53,7 +45,7 @@ const PostUnit = ({
 			{/* 콘텐츠 */}
 			<View style={styles.contentContainer}>
 				<View style={styles.titleContainer}>
-					{tab === 'market' && <TypeBadge type={type} />}
+					<TypeBadge type={type} />
 					<Text style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
 						{title}
 					</Text>

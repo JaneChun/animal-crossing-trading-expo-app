@@ -14,7 +14,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const useGetPosts = (
-	collectionName = 'Boards',
+	collectionName: 'Boards' | 'Communities',
 	filter?: { creatorId?: string },
 	pageSize = 10,
 ) => {
@@ -61,7 +61,7 @@ const useGetPosts = (
 			setData((prevData) => (isLoadMore ? [...prevData, ...posts] : posts));
 			setIsLoading(false);
 		},
-		[memoizedFilter, pageSize, isEnd, isLoading],
+		[collectionName, memoizedFilter, pageSize, isEnd, isLoading],
 	);
 
 	const refresh = useCallback(() => {
@@ -70,12 +70,12 @@ const useGetPosts = (
 		lastestDocRef.current = null;
 
 		fetchData(false);
-	}, [fetchData]);
+	}, [fetchData, collectionName]);
 
 	// 초기 로드
 	useEffect(() => {
 		refresh();
-	}, [memoizedFilter, pageSize]);
+	}, [collectionName, memoizedFilter, pageSize]);
 
 	const loadMore = useCallback(() => {
 		if (isLoading || isEnd) return;

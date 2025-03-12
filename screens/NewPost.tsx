@@ -31,7 +31,7 @@ import { showToast } from '@/components/ui/Toast';
 import { createPost, updatePost } from '@/firebase/services/postService';
 import useGetPostDetail from '@/hooks/useGetPostDetail';
 import useLoading from '@/hooks/useLoading';
-import { Tab } from '@/types/components';
+import { useNavigationStore } from '@/store/store';
 import {
 	CartItem,
 	CreatePostRequest,
@@ -45,10 +45,12 @@ import ItemList from '../components/NewPost/ItemList';
 import Button from '../components/ui/Button';
 
 const NewPost = () => {
+	const { activeTab } = useNavigationStore();
+	const collectionName = activeTab === 'Home' ? 'Boards' : 'Communities';
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation =
 		useNavigation<
-			typeof tab extends 'market'
+			typeof activeTab extends 'Home'
 				? HomeStackNavigation
 				: CommunityStackNavigation
 		>();
@@ -62,7 +64,6 @@ const NewPost = () => {
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const flatListRef = useRef<FlatList>(null);
 
-	const [tab, setTab] = useState<Tab>('market');
 	const [type, setType] = useState<Type>('buy');
 	const [title, setTitle] = useState<string>('');
 	const [body, setBody] = useState<string>('');
@@ -74,13 +75,10 @@ const NewPost = () => {
 	const [editingId, setEditingId] = useState<string>(route.params?.id || '');
 
 	useEffect(() => {
-		if (!route.params?.tab) return;
-		setTab(route.params.tab as Tab);
-
 		if (route.params?.id) {
 			setEditingId(route.params.id);
 		}
-	}, [route.params?.id, route.params?.tab]);
+	}, [route.params?.id]);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -90,7 +88,10 @@ const NewPost = () => {
 		}, [route.params]),
 	);
 
-	const { post, isLoading: isFetching } = useGetPostDetail(tab, editingId);
+	const { post, isLoading: isFetching } = useGetPostDetail(
+		collectionName,
+		editingId,
+	);
 
 	useEffect(() => {
 		if (!post) return;
@@ -185,7 +186,7 @@ const NewPost = () => {
 			return;
 		}
 
-		const collectionName = tab === 'market' ? 'Boards' : 'Communities';
+		const collectionName = activeTab === 'Home' ? 'Boards' : 'Communities';
 
 		const { newImages, deletedImageUrls } = getFilteredImages();
 
@@ -222,7 +223,7 @@ const NewPost = () => {
 				const requestData = buildCreatePostRequest(imageUrls);
 				createdId = await createPost(collectionName, requestData);
 
-				stackNavigation.popTo('PostDetail', { tab, id: createdId });
+				stackNavigation.popTo('PostDetail', { id: createdId });
 				showToast('success', '글이 작성되었습니다.');
 			}
 
@@ -253,7 +254,9 @@ const NewPost = () => {
 					renderItem={null}
 					ListEmptyComponent={
 						<>
-							{tab === 'market' && <TypeSelect type={type} setType={setType} />}
+							{activeTab === 'Home' && (
+								<TypeSelect type={type} setType={setType} />
+							)}
 
 							<TitleInput
 								title={title}
@@ -273,7 +276,7 @@ const NewPost = () => {
 								isSubmitted={isSubmitted}
 							/>
 
-							{tab === 'community' && (
+							{activeTab === 'Community' && (
 								<ImageInput
 									images={images}
 									setImages={setImages}
@@ -282,7 +285,7 @@ const NewPost = () => {
 								/>
 							)}
 
-							{tab === 'market' && (
+							{activeTab === 'Home' && (
 								<ItemList
 									cart={cart}
 									setCart={setCart}
@@ -295,7 +298,7 @@ const NewPost = () => {
 				/>
 			</KeyboardAvoidingView>
 			<View style={styles.buttonContainer}>
-				{tab === 'market' && (
+				{activeTab === 'Home' && (
 					<Button
 						color='white'
 						size='lg'

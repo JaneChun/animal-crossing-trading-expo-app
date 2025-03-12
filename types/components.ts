@@ -12,14 +12,13 @@ import { Comment, CommentWithCreatorInfo } from './comment';
 import { CartItem, PostWithCreatorInfo, Type } from './post';
 
 // Home/
-export type Tab = 'market' | 'community';
+export type Tab = 'Home' | 'Community' | 'Chat' | 'Profile';
 
 export type PostListProps = {
 	tab: Tab;
 };
 
 export type PostUnitProps = PostWithCreatorInfo & {
-	tab: Tab;
 	previewImage?: string;
 };
 

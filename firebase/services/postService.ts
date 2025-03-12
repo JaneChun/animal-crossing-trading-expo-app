@@ -52,8 +52,8 @@ export const createPost = async (
 };
 
 export const updatePost = async (
-	id: string,
 	collectionName: string,
+	id: string,
 	requestData: UpdatePostRequest,
 ): Promise<void> => {
 	return firestoreRequest('게시글 수정', async () => {

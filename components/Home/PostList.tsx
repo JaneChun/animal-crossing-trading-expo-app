@@ -2,10 +2,6 @@ import { Colors } from '@/constants/Color';
 import useGetPosts from '@/hooks/useGetPosts';
 import useLoading from '@/hooks/useLoading';
 import { PostListProps } from '@/types/components';
-import {
-	CommunityStackNavigation,
-	HomeStackNavigation,
-} from '@/types/navigation';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from 'expo-router';
 import React, { useCallback, useState } from 'react';
@@ -19,13 +15,8 @@ import {
 import PostUnit from './PostUnit';
 
 const PostList = ({ tab }: PostListProps) => {
-	const collectionName = tab === 'market' ? 'Boards' : 'Communities';
-	const navigation =
-		useNavigation<
-			typeof tab extends 'market'
-				? HomeStackNavigation
-				: CommunityStackNavigation
-		>();
+	const collectionName = tab === 'Home' ? 'Boards' : 'Communities';
+	const navigation = useNavigation<any>();
 
 	const { LoadingIndicator, InlineLoadingIndicator } = useLoading();
 	const {
@@ -50,7 +41,6 @@ const PostList = ({ tab }: PostListProps) => {
 
 	const onPressAddPostButton = () => {
 		navigation.navigate('NewPost', {
-			tab,
 			id: undefined,
 			updatedCart: undefined,
 		});
@@ -66,7 +56,7 @@ const PostList = ({ tab }: PostListProps) => {
 				data={data}
 				keyExtractor={({ id }) => id}
 				renderItem={({ item }) => (
-					<PostUnit {...item} tab={tab} previewImage={item?.images?.[0]} />
+					<PostUnit {...item} previewImage={item?.images?.[0]} />
 				)}
 				refreshControl={
 					<RefreshControl

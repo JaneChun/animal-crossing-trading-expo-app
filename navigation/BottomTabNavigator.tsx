@@ -31,6 +31,7 @@ const BottomTabNavigator = () => {
 	return (
 		<BottomTab.Navigator
 			screenOptions={{
+				popToTopOnBlur: true,
 				headerShown: false,
 				tabBarStyle: {
 					height: 60,

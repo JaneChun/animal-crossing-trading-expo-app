@@ -13,7 +13,7 @@ import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import useGetComments from '@/hooks/useGetComments';
 import useLoading from '@/hooks/useLoading';
-import { Tab } from '@/types/components';
+import { useNavigationStore } from '@/store/store';
 import { PostDetailRouteProp } from '@/types/navigation';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 import React, { useCallback } from 'react';
@@ -23,13 +23,15 @@ import useGetPostDetail from '../hooks/useGetPostDetail';
 
 const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
-	const { tab, id = '' } = route.params;
+	const { id = '' } = route.params;
 	const { userInfo } = useAuthContext();
+	const { activeTab } = useNavigationStore();
+	const collectionName = activeTab === 'Home' ? 'Boards' : 'Communities';
 	const {
 		post,
 		isLoading: isPostFetching,
 		refresh: postRefresh,
-	} = useGetPostDetail(tab as Tab, id);
+	} = useGetPostDetail(collectionName, id);
 	const {
 		comments,
 		isLoading: isCommentsFetching,
