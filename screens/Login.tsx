@@ -1,6 +1,6 @@
 import type { TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Layout from '@/components/ui/Layout';
 import { showToast } from '@/components/ui/Toast';
@@ -25,12 +25,21 @@ const Login = () => {
 	return (
 		<Layout>
 			<View style={styles.container}>
-				<TouchableOpacity activeOpacity={0.7} onPress={handleLogin}>
-					<Image
-						source={require('../assets/images/kakao_login.png')}
-						style={styles.kakaoLoginImage}
-					/>
-				</TouchableOpacity>
+				<View style={styles.header}>
+					<Text style={styles.title}>모동숲 마켓</Text>
+				</View>
+				<View style={styles.body}>
+					<TouchableOpacity
+						activeOpacity={0.7}
+						onPress={handleLogin}
+						style={styles.buttonContainer}
+					>
+						<Image
+							source={require('../assets/images/kakao_login.png')}
+							style={styles.kakaoLoginImage}
+						/>
+					</TouchableOpacity>
+				</View>
 			</View>
 		</Layout>
 	);
@@ -42,7 +51,27 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
-	kakaoLoginImage: {},
+	header: {
+		flex: 1,
+		width: '100%',
+		paddingTop: '30%',
+		alignItems: 'center',
+	},
+	title: {
+		fontWeight: 600,
+		fontSize: 24,
+	},
+	body: {
+		width: '100%',
+		alignItems: 'center',
+	},
+	buttonContainer: {
+		width: '90%',
+	},
+	kakaoLoginImage: {
+		width: '100%',
+		resizeMode: 'contain',
+	},
 });
 
 export default Login;
