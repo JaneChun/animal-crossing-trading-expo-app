@@ -6,6 +6,9 @@ export interface PublicUserInfo {
 }
 
 export interface UserInfo extends PublicUserInfo {
+	oauthType: OauthType;
 	createdAt: Date;
 	lastLogin: Date;
 }
+
+export type OauthType = 'kakao' | 'naver';

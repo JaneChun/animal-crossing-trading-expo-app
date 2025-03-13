@@ -1,5 +1,5 @@
 import { db } from '@/fbase';
-import { PublicUserInfo, UserInfo } from '@/types/user';
+import { OauthType, PublicUserInfo, UserInfo } from '@/types/user';
 import { collection, doc, query, setDoc, where } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
 import { getDocFromFirestore, queryDocs } from '../core/firestoreService';
@@ -29,6 +29,7 @@ export const getUserInfo = async (uid: string): Promise<UserInfo | null> => {
 			islandName: docData.islandName,
 			createdAt: docData.createdAt,
 			lastLogin: docData.lastLogin,
+			oauthType: docData.oauthType,
 		};
 	});
 };
@@ -37,10 +38,12 @@ export const saveUserInfo = async ({
 	uid,
 	displayName,
 	photoURL,
+	oauthType,
 }: {
 	uid: string;
 	displayName: string;
 	photoURL: string;
+	oauthType: OauthType;
 }): Promise<void> => {
 	return firestoreRequest('나의 정보 저장', async () => {
 		await setDoc(
@@ -51,6 +54,7 @@ export const saveUserInfo = async ({
 				islandName: '',
 				createdAt: new Date(),
 				lastLogin: new Date(),
+				oauthType,
 			},
 			{ merge: true },
 		);

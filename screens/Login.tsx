@@ -5,13 +5,17 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Layout from '@/components/ui/Layout';
 import { showToast } from '@/components/ui/Toast';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { OauthType } from '@/types/user';
 
 const Login = () => {
-	const { login } = useAuthContext();
+	const { kakaoLogin, naverLogin } = useAuthContext();
 	const tabNavigation = useNavigation<TabNavigation>();
 
-	const handleLogin = async () => {
-		const isSuccess: boolean | void = await login();
+	const handleLogin = async (oauthType: OauthType) => {
+		let isSuccess: boolean | void = false;
+
+		if (oauthType === 'kakao') isSuccess = await kakaoLogin();
+		else if (oauthType === 'naver') isSuccess = await naverLogin();
 
 		if (Boolean(isSuccess)) {
 			showToast('success', '로그인 성공');
@@ -26,12 +30,28 @@ const Login = () => {
 		<Layout>
 			<View style={styles.container}>
 				<View style={styles.header}>
-					<Text style={styles.title}>모동숲 마켓</Text>
+					<View style={styles.titleContainer}>
+						<Text style={styles.title}>모동숲 마켓</Text>
+						<Image
+							source={require('../assets/images/logo.png')}
+							style={styles.logoImage}
+						/>
+					</View>
 				</View>
 				<View style={styles.body}>
 					<TouchableOpacity
 						activeOpacity={0.7}
-						onPress={handleLogin}
+						onPress={() => handleLogin('naver')}
+						style={styles.buttonContainer}
+					>
+						<Image
+							source={require('../assets/images/naver_login.png')}
+							style={styles.kakaoLoginImage}
+						/>
+					</TouchableOpacity>
+					<TouchableOpacity
+						activeOpacity={0.7}
+						onPress={() => handleLogin('kakao')}
 						style={styles.buttonContainer}
 					>
 						<Image
@@ -54,12 +74,20 @@ const styles = StyleSheet.create({
 	header: {
 		flex: 1,
 		width: '100%',
-		paddingTop: '30%',
+		paddingTop: '20%',
+	},
+	titleContainer: {
+		flexDirection: 'row',
 		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	title: {
-		fontWeight: 600,
+		fontWeight: 'bold',
 		fontSize: 24,
+	},
+	logoImage: {
+		width: 40,
+		resizeMode: 'contain',
 	},
 	body: {
 		width: '100%',
@@ -70,6 +98,7 @@ const styles = StyleSheet.create({
 	},
 	kakaoLoginImage: {
 		width: '100%',
+		height: 60,
 		resizeMode: 'contain',
 	},
 });

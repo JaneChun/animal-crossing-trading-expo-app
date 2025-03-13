@@ -8,7 +8,7 @@ import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 const Setting = () => {
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<ProfileStackNavigation>();
-	const { logout, deleteAccount } = useAuthContext();
+	const { kakaoLogout, naverLogout, kakaoDeleteAccount } = useAuthContext();
 	const { userInfo } = useAuthContext();
 
 	const handleLogout = () => {
@@ -19,7 +19,13 @@ const Setting = () => {
 	};
 
 	const onConfirmLogout = async () => {
-		const isSuccess: boolean | void = await logout();
+		if (!userInfo) return;
+
+		let isSuccess: boolean | void = false;
+
+		console.log(userInfo);
+		if (userInfo.oauthType === 'kakao') isSuccess = await kakaoLogout();
+		else if (userInfo.oauthType === 'naver') isSuccess = await naverLogout();
 
 		if (Boolean(isSuccess)) {
 			tabNavigation.reset({
@@ -50,7 +56,7 @@ const Setting = () => {
 		if (!userInfo) return;
 
 		try {
-			await deleteAccount(userInfo.uid);
+			await kakaoDeleteAccount(userInfo.uid);
 
 			Alert.alert('탈퇴 완료', '탈퇴 처리가 성공적으로 완료되었습니다.');
 			stackNavigation.goBack();
