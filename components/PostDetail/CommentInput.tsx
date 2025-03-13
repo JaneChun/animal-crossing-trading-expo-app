@@ -2,6 +2,7 @@ import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { auth } from '@/fbase';
 import { addComment } from '@/firebase/services/commentService';
+import { useNavigationStore } from '@/store/store';
 import { addCommentRequest } from '@/types/comment';
 import { CommentInputProps } from '@/types/components';
 import { TabNavigation } from '@/types/navigation';
@@ -17,6 +18,9 @@ const CommentInput = ({
 	setIsLoading,
 	commentRefresh,
 }: CommentInputProps) => {
+	const { activeTab } = useNavigationStore();
+	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
+	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const [commentInput, setCommentInput] = useState<string>('');
 	const tabNavigation = useNavigation<TabNavigation>();
 	const { userInfo } = useAuthContext();
@@ -50,7 +54,7 @@ const CommentInput = ({
 
 		setIsLoading(true);
 
-		addComment({ postId, requestData });
+		addComment({ collectionName, postId, requestData });
 
 		setIsLoading(false);
 

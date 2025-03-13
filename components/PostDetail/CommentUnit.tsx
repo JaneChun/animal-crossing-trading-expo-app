@@ -2,7 +2,8 @@ import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { createChatRoom } from '@/firebase/services/chatService';
 import { deleteComment as deleteCommentFromDB } from '@/firebase/services/commentService';
-import { CommentUnitProps } from '@/types/components';
+import { useNavigationStore } from '@/store/store';
+import { Collection, CommentUnitProps } from '@/types/components';
 import { HomeStackNavigation, TabNavigation } from '@/types/navigation';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { useActionSheet } from '@expo/react-native-action-sheet';
@@ -32,6 +33,9 @@ const CommentUnit = ({
 	creatorIslandName,
 	creatorPhotoURL,
 }: CommentUnitProps) => {
+	const { activeTab } = useNavigationStore();
+	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
+	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const { showActionSheetWithOptions } = useActionSheet();
 	const { userInfo } = useAuthContext();
 	const tabNavigation = useNavigation<TabNavigation>();
@@ -56,7 +60,8 @@ const CommentUnit = ({
 			},
 			(buttonIndex) => {
 				if (buttonIndex === 0) editComment({ postId, commentId, body });
-				else if (buttonIndex === 1) deleteComment({ postId, commentId });
+				else if (buttonIndex === 1)
+					deleteComment({ collectionName, postId, commentId });
 			},
 		);
 	};
@@ -74,9 +79,11 @@ const CommentUnit = ({
 	};
 
 	const deleteComment = async ({
+		collectionName,
 		postId,
 		commentId,
 	}: {
+		collectionName: Collection;
 		postId: string;
 		commentId: string;
 	}) => {
@@ -84,20 +91,23 @@ const CommentUnit = ({
 			{ text: '취소', style: 'cancel' },
 			{
 				text: '삭제',
-				onPress: () => handleDeleteComment({ postId, commentId }),
+				onPress: () =>
+					handleDeleteComment({ collectionName, postId, commentId }),
 			},
 		]);
 	};
 
 	const handleDeleteComment = async ({
+		collectionName,
 		postId,
 		commentId,
 	}: {
+		collectionName: Collection;
 		postId: string;
 		commentId: string;
 	}) => {
 		try {
-			await deleteCommentFromDB({ postId, commentId });
+			await deleteCommentFromDB({ collectionName, postId, commentId });
 			showToast('success', '댓글이 삭제되었습니다.');
 			commentRefresh();
 		} catch (e: any) {

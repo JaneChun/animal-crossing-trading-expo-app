@@ -1,10 +1,11 @@
 import { getPost } from '@/firebase/services/postService';
 import { getPublicUserInfo } from '@/firebase/services/userService';
+import { Collection } from '@/types/components';
 import { Post, PostWithCreatorInfo } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
 import { useCallback, useEffect, useState } from 'react';
 
-function useGetPostDetail(collectionName: string, id: string) {
+function useGetPostDetail(collectionName: Collection, id: string) {
 	const [data, setData] = useState<PostWithCreatorInfo | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(true);
 

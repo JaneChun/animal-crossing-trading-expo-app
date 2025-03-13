@@ -1,3 +1,4 @@
+import { Collection } from '@/types/components';
 import { CreatePostRequest, Post, UpdatePostRequest } from '@/types/post';
 import firestoreRequest from '../core/firebaseInterceptor';
 import {
@@ -8,7 +9,7 @@ import {
 } from '../core/firestoreService';
 
 export const getPost = async (
-	collectionName: string,
+	collectionName: Collection,
 	postId: string,
 ): Promise<Post | null> => {
 	return firestoreRequest('게시글 조회', async () => {
@@ -38,7 +39,7 @@ export const getPost = async (
 };
 
 export const createPost = async (
-	collectionName: string,
+	collectionName: Collection,
 	requestData: CreatePostRequest,
 ): Promise<string> => {
 	return firestoreRequest('게시글 생성', async () => {
@@ -52,7 +53,7 @@ export const createPost = async (
 };
 
 export const updatePost = async (
-	collectionName: string,
+	collectionName: Collection,
 	id: string,
 	requestData: UpdatePostRequest,
 ): Promise<void> => {

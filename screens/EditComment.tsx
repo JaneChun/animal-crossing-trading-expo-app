@@ -4,6 +4,7 @@ import { useAuthContext } from '@/contexts/AuthContext';
 import { auth } from '@/fbase';
 import { updateComment } from '@/firebase/services/commentService';
 import useLoading from '@/hooks/useLoading';
+import { useNavigationStore } from '@/store/store';
 import { updateCommentRequest } from '@/types/comment';
 import {
 	EditCommentRouteProp,
@@ -17,6 +18,9 @@ import { StyleSheet, TextInput } from 'react-native';
 import Button from '../components/ui/Button';
 
 const EditComment = () => {
+	const { activeTab } = useNavigationStore();
+	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
+	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const route = useRoute<EditCommentRouteProp>();
 	const { commentId, postId, body } = route.params;
 	const tabNavigation = useNavigation<TabNavigation>();
@@ -76,7 +80,7 @@ const EditComment = () => {
 		};
 
 		setIsUploading(true);
-		updateComment({ postId, commentId, requestData });
+		updateComment({ collectionName, postId, commentId, requestData });
 		setIsUploading(false);
 
 		setNewCommentInput('');

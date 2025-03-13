@@ -8,21 +8,21 @@ const CommunityStack = createNativeStackNavigator();
 
 const CommunityStackNavigator = () => {
 	return (
-		<CommunityStack.Navigator screenOptions={{ headerShown: false }}>
+		<CommunityStack.Navigator>
 			<CommunityStack.Screen
 				name='Community'
 				component={Community}
-				options={{ title: '커뮤니티' }}
+				options={{ title: '커뮤니티', headerShown: false }}
 			/>
 			<CommunityStack.Screen
 				name='PostDetail'
 				component={PostDetail}
-				options={{ headerShown: true, title: '' }}
+				options={{ title: '' }}
 			/>
 			<CommunityStack.Screen
 				name='NewPost'
 				component={NewPost}
-				options={{ title: '게시글', headerShown: true }}
+				options={{ title: '게시글' }}
 			/>
 			<CommunityStack.Screen
 				name='EditComment'

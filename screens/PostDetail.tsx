@@ -39,7 +39,7 @@ const PostDetail = () => {
 		comments,
 		isLoading: isCommentsFetching,
 		refresh: commentRefresh,
-	} = useGetComments(id);
+	} = useGetComments(collectionName, id);
 	const {
 		isLoading: isCommentUploading,
 		setIsLoading: setIsCommentUploading,

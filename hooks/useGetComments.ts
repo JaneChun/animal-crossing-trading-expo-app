@@ -1,10 +1,11 @@
 import { fetchAndPopulateUsers } from '@/firebase/api/fetchAndPopulateUsers';
 import { Comment, CommentWithCreatorInfo } from '@/types/comment';
+import { Collection } from '@/types/components';
 import { collection, orderBy, query } from 'firebase/firestore';
 import { useCallback, useEffect, useState } from 'react';
 import { db } from '../fbase';
 
-function useGetComments(postId: string) {
+function useGetComments(collectionName: Collection, postId: string) {
 	const [comments, setComments] = useState<CommentWithCreatorInfo[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -14,7 +15,7 @@ function useGetComments(postId: string) {
 		setIsLoading(true);
 
 		let q = query(
-			collection(db, `Boards/${postId}/Comments`),
+			collection(db, `${collectionName}/${postId}/Comments`),
 			orderBy('createdAt', 'asc'),
 		);
 
