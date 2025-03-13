@@ -3,11 +3,16 @@ import ProfileBox from '@/components/Profile/Profile';
 import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { useCurrentTab } from '@/hooks/useCurrentTab';
 import useGetPosts from '@/hooks/useGetPosts';
 import useLoading from '@/hooks/useLoading';
+import { useNavigationStore } from '@/store/store';
+import { Tab } from '@/types/components';
 import { ProfileStackNavigation } from '@/types/navigation';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from 'expo-router';
+import { useIsFocused } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from 'expo-router';
+import { useCallback } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -21,6 +26,16 @@ const Profile = () => {
 		isEnd,
 		loadMore,
 	} = useGetPosts('Boards', { creatorId: userInfo?.uid }, 5);
+	const { setActiveTab } = useNavigationStore();
+	const currentTab = useCurrentTab();
+
+	const isFocused = useIsFocused();
+
+	useFocusEffect(
+		useCallback(() => {
+			if (isFocused) setActiveTab(currentTab as Tab);
+		}, [isFocused]),
+	);
 
 	if (!userInfo || (isFetching && data.length === 0)) {
 		return <LoadingIndicator />;

@@ -12,6 +12,7 @@ import { Comment, CommentWithCreatorInfo } from './comment';
 import { CartItem, PostWithCreatorInfo, Type } from './post';
 
 // Home/
+export type Collection = 'Boards' | 'Communities';
 export type Tab = 'Home' | 'Community' | 'Chat' | 'Profile';
 
 export type PostListProps = {

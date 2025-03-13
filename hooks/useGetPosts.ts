@@ -1,5 +1,6 @@
 import { db } from '@/fbase';
 import { fetchAndPopulateUsers } from '@/firebase/api/fetchAndPopulateUsers';
+import { Collection } from '@/types/components';
 import { Post, PostWithCreatorInfo } from '@/types/post';
 import {
 	collection,
@@ -14,7 +15,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const useGetPosts = (
-	collectionName: 'Boards' | 'Communities',
+	collectionName: Collection,
 	filter?: { creatorId?: string; category?: string },
 	pageSize = 10,
 ) => {
@@ -39,12 +40,16 @@ const useGetPosts = (
 				limit(pageSize),
 			);
 
-			// 특정 유저의 게시글만 가져오는 필터
+			// 특정 유저의 거래글(마켓)만 가져오는 필터
 			if (memoizedFilter?.creatorId) {
-				q = query(q, where('creatorId', '==', memoizedFilter.creatorId));
+				q = query(
+					q,
+					where('creatorId', '==', memoizedFilter.creatorId),
+					where('type', 'in', ['buy', 'sell']),
+				);
 			}
 
-			// 특정 카테고리의 게시글만 가져오는 필터
+			// 특정 카테고리의 게시글(커뮤니티)만 가져오는 필터
 			const category = memoizedFilter?.category;
 			if (category && category !== 'all') {
 				q = query(q, where('type', '==', category));

@@ -23,7 +23,7 @@ export type HomeStackParamList = {
 // Community 스택 네비게이션
 export type CommunityStackParamList = {
 	Community: undefined;
-	PostDetail: { id: string; shouldRefresh?: boolean };
+	PostDetail: { id: string };
 	NewPost: { id?: string; updatedCart?: CartItem[] };
 	EditComment: { postId: string; commentId: string; body: string };
 };
@@ -38,6 +38,8 @@ export type ChatStackParamList = {
 export type ProfileStackParamList = {
 	Login: undefined;
 	Profile: undefined;
+	PostDetail: { id: string };
+	NewPost: { id?: string; updatedCart?: CartItem[] };
 	Setting: undefined;
 };
 

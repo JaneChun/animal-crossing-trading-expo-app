@@ -16,9 +16,7 @@ const MyPosts = ({ data, isLoading, isEnd, loadMore }: MyPostsProps) => {
 			<FlatList
 				data={data}
 				keyExtractor={({ id }) => id}
-				renderItem={({ item }) => (
-					<PostUnit {...item} previewImage={item.images?.[0]} />
-				)}
+				renderItem={({ item }) => <PostUnit {...item} />}
 				onEndReached={!isEnd ? loadMore : undefined}
 				onEndReachedThreshold={0.5}
 				ListFooterComponent={

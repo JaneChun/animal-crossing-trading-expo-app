@@ -21,6 +21,9 @@ const PostUnit = ({
 	commentCount,
 }: PostWithCreatorInfo) => {
 	const { activeTab } = useNavigationStore();
+	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
+	const isCommunity = activeTab === 'Community';
+
 	const stackNavigation = useNavigation<any>();
 
 	const navigateToPost = () => {
@@ -31,20 +34,20 @@ const PostUnit = ({
 		<TouchableOpacity style={styles.container} onPress={navigateToPost}>
 			{/* 썸네일 */}
 			<View style={styles.thumbnailContainer}>
-				{activeTab === 'Home' && (
+				{isMarket && (
 					<ItemThumbnail
 						previewImage={cart?.[0]?.imageUrl}
 						itemLength={cart?.length}
 					/>
 				)}
-				{activeTab === 'Community' && <Thumbnail previewImage={images?.[0]} />}
+				{isCommunity && <Thumbnail previewImage={images?.[0]} />}
 			</View>
 
 			{/* 콘텐츠 */}
 			<View style={styles.contentContainer}>
 				<View style={styles.titleContainer}>
-					{activeTab === 'Home' && <MarketTypeBadge type={type} />}
-					{activeTab === 'Community' && <CommunityTypeBadge type={type} />}
+					{isMarket && <MarketTypeBadge type={type} />}
+					{isCommunity && <CommunityTypeBadge type={type} />}
 					<Text style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
 						{title}
 					</Text>

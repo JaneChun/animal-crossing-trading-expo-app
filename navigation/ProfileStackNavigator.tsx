@@ -1,5 +1,7 @@
 import { useAuthContext } from '@/contexts/AuthContext';
 import Login from '@/screens/Login';
+import NewPost from '@/screens/NewPost';
+import PostDetail from '@/screens/PostDetail';
 import Profile from '@/screens/Profile';
 import Setting from '@/screens/Setting';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -17,6 +19,16 @@ const ProfileStackNavigator = () => {
 						name='Profile'
 						component={Profile}
 						options={{ title: '프로필' }}
+					/>
+					<ProfileStack.Screen
+						name='PostDetail'
+						component={PostDetail}
+						options={{ title: '', headerShown: true }}
+					/>
+					<ProfileStack.Screen
+						name='NewPost'
+						component={NewPost}
+						options={{ title: '거래글', headerShown: true }}
 					/>
 					<ProfileStack.Screen
 						name='Setting'

@@ -4,12 +4,7 @@ import {
 	deleteObjectFromStorage,
 	uploadObjectToStorage,
 } from '@/firebase/services/imageService';
-import {
-	CommunityStackNavigation,
-	HomeStackNavigation,
-	type NewPostRouteProp,
-	type TabNavigation,
-} from '@/types/navigation';
+import { type NewPostRouteProp, type TabNavigation } from '@/types/navigation';
 import {
 	useFocusEffect,
 	useNavigation,
@@ -33,7 +28,6 @@ import { createPost, updatePost } from '@/firebase/services/postService';
 import useGetPostDetail from '@/hooks/useGetPostDetail';
 import useLoading from '@/hooks/useLoading';
 import { useNavigationStore } from '@/store/store';
-import { CommunityType } from '@/types/components';
 import {
 	CartItem,
 	CreatePostRequest,
@@ -49,14 +43,11 @@ import { categories } from './Community';
 
 const NewPost = () => {
 	const { activeTab } = useNavigationStore();
-	const collectionName = activeTab === 'Home' ? 'Boards' : 'Communities';
+	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
+	const isCommunity = activeTab === 'Community';
+	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const tabNavigation = useNavigation<TabNavigation>();
-	const stackNavigation =
-		useNavigation<
-			typeof activeTab extends 'Home'
-				? HomeStackNavigation
-				: CommunityStackNavigation
-		>();
+	const stackNavigation = useNavigation<any>();
 	const { userInfo } = useAuthContext();
 	const {
 		isLoading: isUploading,
@@ -67,9 +58,7 @@ const NewPost = () => {
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const flatListRef = useRef<FlatList>(null);
 
-	const [type, setType] = useState<Type | CommunityType>(
-		activeTab === 'Home' ? 'buy' : 'general',
-	);
+	const [type, setType] = useState<Type>(isMarket ? 'buy' : 'general');
 	const [title, setTitle] = useState<string>('');
 	const [body, setBody] = useState<string>('');
 	const [images, setImages] = useState<ImagePickerAsset[]>([]); // ImagePicker로 추가한 이미지
@@ -172,12 +161,12 @@ const NewPost = () => {
 			commentCount: 0,
 		};
 
-		if (activeTab === 'Home') {
+		if (isMarket) {
 			return {
 				...baseRequest,
 				cart,
 			};
-		} else if (activeTab === 'Community') {
+		} else if (isCommunity) {
 			return {
 				...baseRequest,
 				images: imageUrls,
@@ -194,12 +183,12 @@ const NewPost = () => {
 			body: body.trim(),
 		};
 
-		if (activeTab === 'Home') {
+		if (isMarket) {
 			return {
 				...baseRequest,
 				cart,
 			};
-		} else if (activeTab === 'Community') {
+		} else if (isCommunity) {
 			return {
 				...baseRequest,
 				images: imageUrls,
@@ -221,8 +210,6 @@ const NewPost = () => {
 			flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
 			return;
 		}
-
-		const collectionName = activeTab === 'Home' ? 'Boards' : 'Communities';
 
 		const { newImages, deletedImageUrls } = getFilteredImages();
 
@@ -290,10 +277,8 @@ const NewPost = () => {
 					renderItem={null}
 					ListEmptyComponent={
 						<>
-							{activeTab === 'Home' && (
-								<TypeSelect type={type} setType={setType} />
-							)}
-							{activeTab === 'Community' && (
+							{isMarket && <TypeSelect type={type} setType={setType} />}
+							{isCommunity && (
 								<View
 									style={{
 										width: '30%',
@@ -327,7 +312,7 @@ const NewPost = () => {
 								isSubmitted={isSubmitted}
 							/>
 
-							{activeTab === 'Community' && (
+							{isCommunity && (
 								<ImageInput
 									images={images}
 									setImages={setImages}
@@ -336,7 +321,7 @@ const NewPost = () => {
 								/>
 							)}
 
-							{activeTab === 'Home' && (
+							{isMarket && (
 								<ItemList
 									cart={cart}
 									setCart={setCart}
@@ -349,7 +334,7 @@ const NewPost = () => {
 				/>
 			</KeyboardAvoidingView>
 			<View style={styles.buttonContainer}>
-				{activeTab === 'Home' && (
+				{isMarket && (
 					<Button
 						color='white'
 						size='lg'

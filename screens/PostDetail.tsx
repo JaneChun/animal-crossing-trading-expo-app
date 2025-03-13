@@ -27,7 +27,9 @@ const PostDetail = () => {
 	const { id = '' } = route.params;
 	const { userInfo } = useAuthContext();
 	const { activeTab } = useNavigationStore();
-	const collectionName = activeTab === 'Home' ? 'Boards' : 'Communities';
+	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
+	const isCommunity = activeTab === 'Community';
+	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const {
 		post,
 		isLoading: isPostFetching,
@@ -77,13 +79,13 @@ const PostDetail = () => {
 								{post.creatorId === userInfo?.uid && (
 									<ActionButtons id={post.id} />
 								)}
-								{activeTab === 'Home' && (
+								{isMarket && (
 									<MarketTypeBadge
 										type={post.type}
 										containerStyle={styles.typeBadgeContainer}
 									/>
 								)}
-								{activeTab === 'Community' && (
+								{isCommunity && (
 									<CommunityTypeBadge
 										type={post.type}
 										containerStyle={styles.typeBadgeContainer}
@@ -106,16 +108,26 @@ const PostDetail = () => {
 
 							{/* 본문 */}
 							<View style={styles.body}>
-								<ImageCarousel
-									images={post.images}
-									containerStyle={{ marginBottom: 16 }}
-								/>
+								{isCommunity && (
+									<ImageCarousel
+										images={post.images}
+										containerStyle={{ marginBottom: 16 }}
+									/>
+								)}
 								<Body body={post.body} containerStyle={{ marginBottom: 36 }} />
-								<ItemSummaryList
-									cart={post.cart}
-									containerStyle={{ marginBottom: 16 }}
-								/>
-								<Total cart={post.cart} containerStyle={{ marginBottom: 24 }} />
+
+								{isMarket && (
+									<>
+										<ItemSummaryList
+											cart={post.cart}
+											containerStyle={{ marginBottom: 16 }}
+										/>
+										<Total
+											cart={post.cart}
+											containerStyle={{ marginBottom: 24 }}
+										/>
+									</>
+								)}
 							</View>
 
 							{/* 댓글 */}
