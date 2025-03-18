@@ -3,6 +3,7 @@ import { ImagePickerAsset } from 'expo-image-picker';
 import {
 	deleteObject,
 	getDownloadURL,
+	getMetadata,
 	ref,
 	uploadBytes,
 } from 'firebase/storage';
@@ -41,4 +42,15 @@ export const deleteObjectFromStorage = async (
 		const imageRef = ref(storage, imageUrl);
 		await deleteObject(imageRef);
 	});
+};
+
+export const checkIfObjectExistsInStorage = async (imageUrl: string) => {
+	try {
+		const imageRef = ref(storage, imageUrl);
+		await getMetadata(imageRef);
+
+		return true;
+	} catch (e) {
+		return false;
+	}
 };

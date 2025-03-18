@@ -4,6 +4,7 @@ import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { updateDocToFirestore } from '@/firebase/core/firestoreService';
 import {
+	checkIfObjectExistsInStorage,
 	deleteObjectFromStorage,
 	uploadObjectToStorage,
 } from '@/firebase/services/imageService';
@@ -94,10 +95,8 @@ const EditProfileModal = ({ isVisible, onClose }: EditProfileModalProps) => {
 				requestData.photoURL = uploadedImageUrl;
 
 				// 이전 이미지 스토리지에서 삭제
-				if (
-					originalImageUrl &&
-					!originalImageUrl.includes('https://k.kakaocdn.net')
-				) {
+				const exists = await checkIfObjectExistsInStorage(originalImageUrl);
+				if (exists) {
 					await deleteObjectFromStorage(originalImageUrl);
 				}
 			}
@@ -107,7 +106,8 @@ const EditProfileModal = ({ isVisible, onClose }: EditProfileModalProps) => {
 				requestData.photoURL = ''; // 이미지 필드를 빈 문자열로 업데이트
 
 				// 이전 이미지 스토리지에서 삭제
-				if (!originalImageUrl.includes('https://k.kakaocdn.net')) {
+				const exists = await checkIfObjectExistsInStorage(originalImageUrl);
+				if (exists) {
 					await deleteObjectFromStorage(originalImageUrl);
 				}
 			}

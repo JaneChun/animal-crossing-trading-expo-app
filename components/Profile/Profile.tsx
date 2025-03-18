@@ -1,6 +1,5 @@
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
-import { FontAwesome } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
@@ -24,17 +23,16 @@ const Profile = () => {
 				{userInfo?.photoURL ? (
 					<Image source={{ uri: userInfo?.photoURL }} style={styles.image} />
 				) : (
-					<View style={[styles.image, styles.emptyImage]}>
-						<FontAwesome name='leaf' color={Colors.font_light_gray} size={42} />
-					</View>
+					<Image
+						source={require('../../assets/images/empty_image.png')}
+						style={styles.image}
+					/>
 				)}
 			</View>
 			<Text style={styles.displayName}>{userInfo?.displayName}</Text>
 			<View style={styles.islandInfoContainer}>
 				<Image
-					source={{
-						uri: 'https://firebasestorage.googleapis.com/v0/b/animal-crossing-trade-app.appspot.com/o/Src%2FCoconut_Tree_NH_Inv_Icon.png?alt=media&token=cd997010-694e-49b0-9390-483772cdad8a',
-					}}
+					source={require('../../assets/images/island_icon.png')}
 					style={styles.islandIcon}
 				/>
 				<Text style={styles.islandText}>
@@ -109,7 +107,7 @@ const styles = StyleSheet.create({
 	islandIcon: {
 		width: 20,
 		height: 20,
-		marginRight: 6,
+		marginRight: 2,
 	},
 	islandText: {
 		color: Colors.font_gray,

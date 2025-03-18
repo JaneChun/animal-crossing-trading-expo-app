@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { ProfileImageInputProps } from '@/types/components';
 import { useActionSheet } from '@expo/react-native-action-sheet';
-import { Entypo, FontAwesome } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 import {
 	launchImageLibraryAsync,
 	useMediaLibraryPermissions,
@@ -84,9 +84,10 @@ const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 			{image?.uri ? (
 				<Image source={{ uri: image?.uri }} style={styles.image} />
 			) : (
-				<View style={[styles.image, styles.emptyImage]}>
-					<FontAwesome name='leaf' color={Colors.font_light_gray} size={42} />
-				</View>
+				<Image
+					source={require('../../assets/images/empty_image.png')}
+					style={styles.image}
+				/>
 			)}
 			<View style={[styles.image, styles.imageEditIconContainer]}>
 				<View style={styles.imageEditIcon}>
