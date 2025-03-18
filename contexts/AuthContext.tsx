@@ -20,6 +20,7 @@ import {
 	signInWithCredential,
 	signInWithCustomToken,
 } from 'firebase/auth';
+import { Timestamp } from 'firebase/firestore';
 import {
 	createContext,
 	ReactNode,
@@ -126,9 +127,15 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 					displayName: user.displayName ?? '',
 					photoURL: user.photoURL ?? '',
 					oauthType: 'kakao',
+					lastLogin: Timestamp.now(),
 				});
 
 				fetchedUserInfo = await getUserInfo(user.uid);
+			} else {
+				await saveUserInfo({
+					...fetchedUserInfo,
+					lastLogin: Timestamp.now(),
+				});
 			}
 
 			// 로컬 상태 업데이트
@@ -211,9 +218,15 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 					displayName: profileResult.response.nickname ?? '',
 					photoURL: profileResult.response.profile_image ?? '',
 					oauthType: 'naver',
+					lastLogin: Timestamp.now(),
 				});
 
 				fetchedUserInfo = await getUserInfo(user.uid);
+			} else {
+				await saveUserInfo({
+					...fetchedUserInfo,
+					lastLogin: Timestamp.now(),
+				});
 			}
 
 			// 로컬 상태 업데이트
