@@ -42,14 +42,16 @@ export const addDocToFirestore = async ({
 
 export const deleteDocFromFirestore = async ({
 	id,
+	collection,
 }: {
 	id: string;
+	collection: string;
 }): Promise<void> => {
-	const docData = await getDocFromFirestore({ collection: 'Boards', id });
+	const docData = await getDocFromFirestore({ collection: collection, id });
 	if (!docData) return;
 
 	const images = docData.images || [];
-	const docRef = doc(db, 'Boards', id);
+	const docRef = doc(db, collection, id);
 
 	// 1. Firestore에서 문서 삭제
 	await deleteDoc(docRef);

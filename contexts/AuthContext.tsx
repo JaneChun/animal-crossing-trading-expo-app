@@ -1,5 +1,8 @@
-import { updateDocToFirestore } from '@/firebase/core/firestoreService';
-import { getUserInfo, saveUserInfo } from '@/firebase/services/userService';
+import {
+	getUserInfo,
+	moveToDeletedUsers,
+	saveUserInfo,
+} from '@/firebase/services/userService';
 import { UserInfo } from '@/types/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -44,15 +47,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 	const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
-	// KakaoSDK 초기화
 	useEffect(() => {
+		// KakaoSDK 초기화
 		if (process.env.EXPO_PUBLIC_KAKAO_IOS_KEY) {
 			initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_IOS_KEY);
 		}
-	}, []);
 
-	// NaverSDK 초기화
-	useEffect(() => {
+		// NaverSDK 초기화
+
 		NaverLogin.initialize({
 			appName: '모동숲 마켓',
 			consumerKey: process.env.EXPO_PUBLIC_NAVER_CLIENT_ID || '',
@@ -129,7 +131,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 				fetchedUserInfo = await getUserInfo(user.uid);
 			}
 
-			// 상태 업데이트 & AsyncStorage에 저장
+			// 로컬 상태 업데이트
 			setUserInfo(fetchedUserInfo);
 			await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
 
@@ -142,7 +144,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			await logout(); // 카카오 로그아웃
 			await auth.signOut(); // Firebase auth 로그아웃
 
-			// 상태 업데이트 & AsyncStorage에서 삭제
+			// 로컬 상태 초기화
 			setUserInfo(null);
 			await AsyncStorage.removeItem('@user');
 
@@ -165,25 +167,16 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
 			await reauthenticateWithCredential(user, credential);
 
-			// Firebase auth에서 유저 삭제
+			// 탈퇴한 유저 데이터를 DeletedUsers 컬렉션으로 이동
+			await moveToDeletedUsers(userInfo);
+
+			// Firebase Authentication에서 유저 삭제
 			await deleteUser(user);
 
-			// Firestore의 Users 컬렉션 업데이트
-			await updateDocToFirestore({
-				id: userInfo?.uid,
-				collection: 'Users',
-				requestData: {
-					displayName: '탈퇴한 사용자',
-					islandName: '무인도',
-					photoURL: '',
-					isDeletedAccount: true, // 탈퇴 여부 표시
-					oldData: {
-						...userInfo,
-					},
-				},
-			});
+			// 네이버 로그인 토큰 삭제
+			await NaverLogin.deleteToken();
 
-			// 상태 업데이트 & AsyncStorage에서 삭제
+			// 로컬 상태 초기화
 			setUserInfo(null);
 			await AsyncStorage.removeItem('@user');
 
@@ -223,7 +216,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 				fetchedUserInfo = await getUserInfo(user.uid);
 			}
 
-			// 상태 업데이트 & AsyncStorage에 저장
+			// 로컬 상태 업데이트
 			setUserInfo(fetchedUserInfo);
 			await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
 
@@ -236,7 +229,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			await NaverLogin.logout(); // 네이버 로그아웃
 			await auth.signOut(); // Firebase auth 로그아웃
 
-			// 상태 업데이트 & AsyncStorage에서 삭제
+			// 로컬 상태 초기화
 			setUserInfo(null);
 			await AsyncStorage.removeItem('@user');
 
@@ -260,28 +253,16 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
 			await signInWithCustomToken(auth, firebaseCustomToken);
 
-			// Firebase auth에서 유저 삭제
+			// 탈퇴한 유저 데이터를 DeletedUsers 컬렉션으로 이동
+			await moveToDeletedUsers(userInfo);
+
+			// Firebase Authentication에서 유저 삭제
 			await deleteUser(user);
 
-			// 네이버로그인 토큰 삭제
+			// 네이버 로그인 토큰 삭제
 			await NaverLogin.deleteToken();
 
-			// Firestore의 Users 컬렉션 업데이트
-			await updateDocToFirestore({
-				id: userInfo?.uid,
-				collection: 'Users',
-				requestData: {
-					displayName: '탈퇴한 사용자',
-					islandName: '무인도',
-					photoURL: '',
-					isDeletedAccount: true, // 탈퇴 여부 표시
-					oldData: {
-						...userInfo,
-					},
-				},
-			});
-
-			// 상태 업데이트 & AsyncStorage에서 삭제
+			// 로컬 상태 초기화
 			setUserInfo(null);
 			await AsyncStorage.removeItem('@user');
 

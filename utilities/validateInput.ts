@@ -92,13 +92,3 @@ const getPostposition = (word: string, type: '은/는' | '을/를') => {
 
 	return '';
 };
-
-console.log(validateInput('displayName', '홍 길동')); // "닉네임은 띄어쓰기 없이 한글, 영문, 숫자만 가능해요."
-console.log(validateInput('displayName', '김1234')); // ""
-console.log(validateInput('islandName', '제주도 ')); // "섬 이름은 띄어쓰기 없이 한글, 영문, 숫자만 가능해요."
-console.log(
-	validateInput(
-		'postTitle',
-		'공지사항 공지사항 공지사항 공지사항 공지사항 공지사항 공지사항 공지사항',
-	),
-); // "제목은 최대 50자까지 입력 가능합니다."

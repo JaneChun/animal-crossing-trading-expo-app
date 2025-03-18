@@ -1,8 +1,20 @@
 import { db } from '@/fbase';
 import { OauthType, PublicUserInfo, UserInfo } from '@/types/user';
-import { collection, doc, query, setDoc, where } from 'firebase/firestore';
+import {
+	collection,
+	doc,
+	query,
+	setDoc,
+	Timestamp,
+	where,
+} from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
-import { getDocFromFirestore, queryDocs } from '../core/firestoreService';
+import {
+	addDocToFirestore,
+	deleteDocFromFirestore,
+	getDocFromFirestore,
+	queryDocs,
+} from '../core/firestoreService';
 
 const getDefaultPublicUserInfo = (uid: string): PublicUserInfo => ({
 	uid,
@@ -111,4 +123,18 @@ export const getPublicUserInfos = async (
 
 		return publicUserInfoMap;
 	});
+};
+
+export const moveToDeletedUsers = async (userInfo: UserInfo) => {
+	// DeletedUsers 컬렉션에 추가
+	await addDocToFirestore({
+		directory: 'DeletedUsers',
+		requestData: {
+			...userInfo,
+			deletedAt: Timestamp.now(),
+		},
+	});
+
+	// Users 컬렉션에서 유저 삭제
+	await deleteDocFromFirestore({ id: userInfo.uid, collection: 'Users' });
 };

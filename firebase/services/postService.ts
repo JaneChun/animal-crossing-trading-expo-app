@@ -68,6 +68,6 @@ export const updatePost = async (
 
 export const deletePost = async (postId: string) => {
 	return firestoreRequest('게시글 삭제', async () => {
-		await deleteDocFromFirestore({ id: postId });
+		await deleteDocFromFirestore({ id: postId, collection: 'Boards' });
 	});
 };
