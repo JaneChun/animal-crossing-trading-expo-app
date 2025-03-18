@@ -40,7 +40,7 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 				/>
 			) : (
 				<Image
-					source={require('../../assets/images/empty_image.png')}
+					source={require('../../assets/images/empty_profile_image.png')}
 					style={styles.profileImage}
 				/>
 			)}

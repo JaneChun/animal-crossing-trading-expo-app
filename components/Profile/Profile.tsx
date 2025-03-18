@@ -24,7 +24,7 @@ const Profile = () => {
 					<Image source={{ uri: userInfo?.photoURL }} style={styles.image} />
 				) : (
 					<Image
-						source={require('../../assets/images/empty_image.png')}
+						source={require('../../assets/images/empty_profile_image.png')}
 						style={styles.image}
 					/>
 				)}

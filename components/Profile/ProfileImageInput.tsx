@@ -85,7 +85,7 @@ const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 				<Image source={{ uri: image?.uri }} style={styles.image} />
 			) : (
 				<Image
-					source={require('../../assets/images/empty_image.png')}
+					source={require('../../assets/images/empty_profile_image.png')}
 					style={styles.image}
 				/>
 			)}

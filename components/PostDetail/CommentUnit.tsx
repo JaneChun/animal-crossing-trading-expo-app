@@ -143,7 +143,7 @@ const CommentUnit = ({
 				<Image source={{ uri: creatorPhotoURL }} style={styles.profileImage} />
 			) : (
 				<Image
-					source={require('../../assets/images/empty_image.png')}
+					source={require('../../assets/images/empty_profile_image.png')}
 					style={styles.profileImage}
 				/>
 			)}
