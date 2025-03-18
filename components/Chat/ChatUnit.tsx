@@ -33,10 +33,17 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 			onPress={() => enterChatRoom({ chatId: id, receiverInfo })}
 			style={styles.chatItem}
 		>
-			<Image
-				source={{ uri: receiverInfo.photoURL }}
-				style={styles.profileImage}
-			/>
+			{receiverInfo?.photoURL ? (
+				<Image
+					source={{ uri: receiverInfo.photoURL }}
+					style={styles.profileImage}
+				/>
+			) : (
+				<Image
+					source={require('../../assets/images/empty_image.png')}
+					style={styles.profileImage}
+				/>
+			)}
 			<View style={styles.chatInfo}>
 				<View style={styles.chatHeader}>
 					<Text style={styles.chatUserName}>{receiverInfo.displayName}</Text>

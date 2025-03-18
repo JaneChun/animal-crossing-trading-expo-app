@@ -12,9 +12,7 @@ const UserInfo = ({
 			<Text style={styles.displayName}>{displayName}</Text>
 			<View style={styles.IslandContainer}>
 				<Image
-					source={{
-						uri: 'https://firebasestorage.googleapis.com/v0/b/animal-crossing-trade-app.appspot.com/o/Src%2FCoconut_Tree_NH_Inv_Icon.png?alt=media&token=cd997010-694e-49b0-9390-483772cdad8a',
-					}}
+					source={require('../../assets/images/island_icon.png')}
 					style={styles.islandImage}
 				/>
 				{islandName && <Text style={styles.islandName}>{islandName}</Text>}

@@ -121,13 +121,15 @@ const CommentUnit = ({
 
 		const chatId = await createChatRoom(userInfo.uid, receiverId);
 
+		if (!chatId) return;
+
 		tabNavigation.navigate('ChatTab', {
 			screen: 'ChatRoom',
 			params: {
 				chatId,
 				receiverInfo: {
-					uid: creatorId,
-					diaplayName: creatorDisplayName,
+					uid: receiverId,
+					displayName: creatorDisplayName,
 					islandName: creatorIslandName,
 					photoURL: creatorPhotoURL,
 				},
@@ -137,7 +139,15 @@ const CommentUnit = ({
 
 	return (
 		<View style={styles.container}>
-			<Image source={{ uri: creatorPhotoURL }} style={styles.profileImage} />
+			{creatorPhotoURL ? (
+				<Image source={{ uri: creatorPhotoURL }} style={styles.profileImage} />
+			) : (
+				<Image
+					source={require('../../assets/images/empty_image.png')}
+					style={styles.profileImage}
+				/>
+			)}
+
 			<View style={styles.commentContent}>
 				{/* 헤더 */}
 				<View style={styles.commentHeader}>

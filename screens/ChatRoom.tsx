@@ -168,10 +168,18 @@ const ChatRoom = () => {
 							color={Colors.font_black}
 						/>
 					</TouchableOpacity>
-					<Image
-						source={{ uri: receiverInfo.photoURL }}
-						style={styles.profileImage}
-					/>
+					{receiverInfo?.photoURL ? (
+						<Image
+							source={{ uri: receiverInfo.photoURL }}
+							style={styles.profileImage}
+						/>
+					) : (
+						<Image
+							source={require('../assets/images/empty_image.png')}
+							style={styles.profileImage}
+						/>
+					)}
+
 					<Text style={styles.displayName}>{receiverInfo.displayName}</Text>
 					<TouchableOpacity
 						style={styles.iconContainer}

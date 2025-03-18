@@ -6,7 +6,13 @@ const ChatStack = createNativeStackNavigator();
 
 const ChatStackNavigator = () => {
 	return (
-		<ChatStack.Navigator screenOptions={{ headerShown: false }}>
+		<ChatStack.Navigator
+			screenOptions={{
+				headerShown: false,
+				gestureDirection: 'horizontal',
+				animation: 'slide_from_left',
+			}}
+		>
 			<ChatStack.Screen name='Chat' component={Chat} />
 			<ChatStack.Screen name='ChatRoom' component={ChatRoom} />
 		</ChatStack.Navigator>

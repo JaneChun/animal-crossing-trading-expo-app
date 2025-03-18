@@ -18,8 +18,8 @@ import {
 
 const getDefaultPublicUserInfo = (uid: string): PublicUserInfo => ({
 	uid,
-	displayName: 'Unknown User',
-	islandName: '',
+	displayName: '탈퇴한 사용자',
+	islandName: '무인도',
 	photoURL: '',
 });
 
@@ -51,11 +51,13 @@ export const saveUserInfo = async ({
 	displayName,
 	photoURL,
 	oauthType,
+	lastLogin,
 }: {
 	uid: string;
 	displayName: string;
 	photoURL: string;
 	oauthType: OauthType;
+	lastLogin?: Timestamp;
 }): Promise<void> => {
 	return firestoreRequest('나의 정보 저장', async () => {
 		await setDoc(
@@ -64,8 +66,8 @@ export const saveUserInfo = async ({
 				displayName: displayName ?? '',
 				photoURL: photoURL ?? '',
 				islandName: '',
-				createdAt: new Date(),
-				lastLogin: new Date(),
+				createdAt: Timestamp.now(),
+				lastLogin,
 				oauthType,
 			},
 			{ merge: true },
@@ -89,8 +91,8 @@ export const getPublicUserInfo = async (
 
 			return {
 				uid: creatorId,
-				displayName: docData.displayName || 'Unknown User',
-				islandName: docData.islandName || '',
+				displayName: docData.displayName || '탈퇴한 사용자',
+				islandName: docData.islandName || '무인도',
 				photoURL: docData.photoURL || '',
 			};
 		});
