@@ -92,7 +92,7 @@ const ChatRoom = () => {
 				chatId,
 				senderId: userInfo.uid,
 				receiverId: receiverInfo.uid,
-				message: chatInput,
+				message: chatInput.trim(),
 			});
 		} catch (e) {
 			console.log(e);
