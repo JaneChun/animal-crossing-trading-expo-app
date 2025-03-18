@@ -50,15 +50,23 @@ export const fetchMyChats = async <T extends Chat, U>(
 			await getPublicUserInfos(uniqueReceiverIds);
 
 		const populatedData: U[] = data.map((item) => {
-			const receiverId = item.participants.find((uid) => uid !== userId) || '';
-			const { displayName, islandName, photoURL } = publicUserInfos[receiverId];
+			const receiverId =
+				item.participants.find((uid) => uid !== userId) ?? null;
+			const receiverInfo =
+				receiverId && publicUserInfos[receiverId]
+					? publicUserInfos[receiverId]
+					: {
+							displayName: '탈퇴한 사용자',
+							islandName: '무인도',
+							photoURL: '',
+					  };
 
 			return {
 				...item,
 				receiverInfo: {
-					displayName,
-					islandName,
-					photoURL,
+					displayName: receiverInfo.displayName,
+					islandName: receiverInfo.islandName,
+					photoURL: receiverInfo.photoURL,
 				},
 			} as U;
 		});

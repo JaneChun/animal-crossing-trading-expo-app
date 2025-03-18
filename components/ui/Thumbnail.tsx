@@ -1,8 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { ThumabnailProps } from '@/types/components';
-import { FontAwesome } from '@expo/vector-icons';
 import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 
 const Thumbnail = ({ previewImage }: ThumabnailProps) => {
 	return (
@@ -15,9 +14,10 @@ const Thumbnail = ({ previewImage }: ThumabnailProps) => {
 					}}
 				/>
 			) : (
-				<View style={[styles.thumbnail, styles.emptyThumbnail]}>
-					<FontAwesome name='leaf' color={Colors.font_light_gray} size={18} />
-				</View>
+				<Image
+					style={styles.thumbnail}
+					source={require('../../assets/images/empty_image.png')}
+				/>
 			)}
 		</>
 	);

@@ -39,14 +39,17 @@ export const fetchAndPopulateUsers = async <T extends { creatorId: string }, U>(
 
 		// 4. 유저 정보와 데이터 병합
 		const populatedData: U[] = data.map((item) => {
-			const { displayName, islandName, photoURL } =
-				publicUserInfos[item.creatorId];
+			const userInfo = publicUserInfos[item.creatorId] || {
+				displayName: '탈퇴한 사용자',
+				islandName: '무인도',
+				photoURL: '',
+			};
 
 			return {
 				...item,
-				creatorDisplayName: displayName,
-				creatorIslandName: islandName,
-				creatorPhotoURL: photoURL,
+				creatorDisplayName: userInfo.displayName,
+				creatorIslandName: userInfo.islandName,
+				creatorPhotoURL: userInfo.photoURL,
 			} as U;
 		});
 

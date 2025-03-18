@@ -1,31 +1,33 @@
 import { Colors } from '@/constants/Color';
 import { ItemThumabnailProps } from '@/types/components';
-import { FontAwesome } from '@expo/vector-icons';
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
 const ItemThumbnail = ({ previewImage, itemLength }: ItemThumabnailProps) => {
 	return (
 		<>
-			{previewImage ? (
-				<View style={styles.container}>
+			<View style={styles.container}>
+				{previewImage ? (
+					<>
+						<Image
+							style={[styles.thumbnail, { padding: 2 }]}
+							source={{
+								uri: previewImage,
+							}}
+						/>
+						<View style={styles.badgeContainer}>
+							{itemLength && (
+								<Text style={styles.badgeText}>{itemLength - 1}</Text>
+							)}
+						</View>
+					</>
+				) : (
 					<Image
 						style={styles.thumbnail}
-						source={{
-							uri: previewImage,
-						}}
+						source={require('../../assets/images/empty_image.png')}
 					/>
-					<View style={styles.badgeContainer}>
-						{itemLength && (
-							<Text style={styles.badgeText}>{itemLength - 1}</Text>
-						)}
-					</View>
-				</View>
-			) : (
-				<View style={[styles.thumbnail, styles.emptyThumbnail]}>
-					<FontAwesome name='leaf' color={Colors.font_light_gray} size={18} />
-				</View>
-			)}
+				)}
+			</View>
 		</>
 	);
 };
@@ -41,7 +43,6 @@ const styles = StyleSheet.create({
 		resizeMode: 'cover',
 		borderWidth: 1,
 		borderColor: Colors.border_gray,
-		padding: 2,
 	},
 	badgeContainer: {
 		position: 'absolute',
