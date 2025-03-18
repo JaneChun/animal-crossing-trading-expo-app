@@ -8,7 +8,6 @@ import {
 	deleteObjectFromStorage,
 	uploadObjectToStorage,
 } from '@/firebase/services/imageService';
-import useLoading from '@/hooks/useLoading';
 import { EditProfileModalProps } from '@/types/components';
 import { UserInfo } from '@/types/user';
 import { validateInput } from '@/utilities/validateInput';
@@ -20,15 +19,14 @@ import Button from '../ui/Button';
 import CustomModal from '../ui/CustomModal';
 import NameInput from './NameInput';
 
-const EditProfileModal = ({ isVisible, onClose }: EditProfileModalProps) => {
+const EditProfileModal = ({
+	isVisible,
+	onClose,
+	isUploading,
+	setIsUploading,
+}: EditProfileModalProps) => {
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const { userInfo, setUserInfo } = useAuthContext();
-	const {
-		isLoading: isUploading,
-		setIsLoading: setIsUploading,
-		LoadingIndicator,
-	} = useLoading();
-
 	const [displayNameInput, setDisplayNameInput] = useState<string>('');
 	const [islandNameInput, setIslandNameInput] = useState<string>('');
 	const [image, setImage] = useState<ImagePickerAsset | null>(null); // ImagePicker로 추가한 이미지

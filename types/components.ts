@@ -165,7 +165,12 @@ export type UserInfoProps = {
 };
 
 // Profile/
-export type EditProfileModalProps = {
+export type ProfileProps = {
+	isUploading: boolean;
+	setIsUploading: Dispatch<SetStateAction<boolean>>;
+};
+
+export type EditProfileModalProps = ProfileProps & {
 	isVisible: boolean;
 	onClose: () => void;
 };

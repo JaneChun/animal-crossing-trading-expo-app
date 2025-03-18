@@ -19,7 +19,11 @@ import { FlatList } from 'react-native-gesture-handler';
 const Profile = () => {
 	const { userInfo } = useAuthContext();
 	const stackNavigation = useNavigation<ProfileStackNavigation>();
-	const { LoadingIndicator } = useLoading();
+	const {
+		isLoading: isUploading,
+		setIsLoading: setIsUploading,
+		LoadingIndicator,
+	} = useLoading();
 	const {
 		data,
 		isLoading: isFetching,
@@ -37,7 +41,7 @@ const Profile = () => {
 		}, [isFocused]),
 	);
 
-	if (!userInfo || (isFetching && data.length === 0)) {
+	if (!userInfo || (isFetching && data.length === 0) || isUploading) {
 		return <LoadingIndicator />;
 	}
 
@@ -61,7 +65,12 @@ const Profile = () => {
 			<FlatList
 				data={[]}
 				renderItem={null}
-				ListHeaderComponent={<ProfileBox />}
+				ListHeaderComponent={
+					<ProfileBox
+						isUploading={isUploading}
+						setIsUploading={setIsUploading}
+					/>
+				}
 				ListEmptyComponent={
 					<MyPosts
 						data={data}

@@ -1,11 +1,12 @@
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { ProfileProps } from '@/types/components';
 import React, { useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
 import EditProfileModal from './EditProfileModal';
 
-const Profile = () => {
+const Profile = ({ isUploading, setIsUploading }: ProfileProps) => {
 	const { userInfo } = useAuthContext();
 	const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
@@ -51,6 +52,8 @@ const Profile = () => {
 				<EditProfileModal
 					isVisible={isModalVisible}
 					onClose={closeEditProfileModal}
+					isUploading={isUploading}
+					setIsUploading={setIsUploading}
 				/>
 			)}
 		</View>
