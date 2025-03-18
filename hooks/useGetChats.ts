@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 const useGetChats = () => {
 	const { userInfo } = useAuthContext();
 	const [chats, setChats] = useState<ChatWithReceiverInfo[]>([]);
-	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const fetchData = async (uid: string) => {
 		setIsLoading(true);
@@ -26,12 +26,12 @@ const useGetChats = () => {
 	};
 
 	const refresh = useCallback(() => {
-		if (!userInfo) return;
-		fetchData(userInfo.uid);
+		fetchData(userInfo!.uid);
 	}, [fetchData]);
 
 	// 초기 로드
 	useEffect(() => {
+		if (!userInfo) return;
 		refresh();
 	}, [userInfo]);
 
