@@ -36,6 +36,7 @@ type AuthContextType = {
 	kakaoDeleteAccount: (uid: string) => void;
 	naverLogin: () => void;
 	naverLogout: () => void;
+	naverDeleteAccount: (uid: string) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -152,7 +153,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 	const kakaoDeleteAccount = async (uid: string) => {
 		return firebaseRequest('회원 탈퇴', async () => {
 			const user = auth.currentUser;
-			if (!user || !userInfo) return;
+			if (!user || !userInfo) return false;
 
 			// 재인증 후 탈퇴 가능
 			const kakaoTokenInfo = await login();
@@ -181,6 +182,12 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 					},
 				},
 			});
+
+			// 상태 업데이트 & AsyncStorage에서 삭제
+			setUserInfo(null);
+			await AsyncStorage.removeItem('@user');
+
+			return true;
 		});
 	};
 
@@ -188,7 +195,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 		return firebaseRequest('로그인', async () => {
 			const { failureResponse, successResponse } = await NaverLogin.login();
 
-			if (failureResponse) return;
+			if (failureResponse) return false;
 
 			const firebaseCustomToken = await getFirebaseCustomToken(
 				successResponse!.accessToken,
@@ -237,6 +244,51 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 		});
 	};
 
+	const naverDeleteAccount = async (uid: string) => {
+		return firebaseRequest('회원 탈퇴', async () => {
+			const user = auth.currentUser;
+			if (!user || !userInfo) return false;
+
+			// 재인증 후 탈퇴 가능
+			const { failureResponse, successResponse } = await NaverLogin.login();
+
+			if (failureResponse) return false;
+
+			const firebaseCustomToken = await getFirebaseCustomToken(
+				successResponse!.accessToken,
+			);
+
+			await signInWithCustomToken(auth, firebaseCustomToken);
+
+			// Firebase auth에서 유저 삭제
+			await deleteUser(user);
+
+			// 네이버로그인 토큰 삭제
+			await NaverLogin.deleteToken();
+
+			// Firestore의 Users 컬렉션 업데이트
+			await updateDocToFirestore({
+				id: userInfo?.uid,
+				collection: 'Users',
+				requestData: {
+					displayName: '탈퇴한 사용자',
+					islandName: '무인도',
+					photoURL: '',
+					isDeletedAccount: true, // 탈퇴 여부 표시
+					oldData: {
+						...userInfo,
+					},
+				},
+			});
+
+			// 상태 업데이트 & AsyncStorage에서 삭제
+			setUserInfo(null);
+			await AsyncStorage.removeItem('@user');
+
+			return true;
+		});
+	};
+
 	const getFirebaseCustomToken = async (accessToken: string) => {
 		try {
 			const response = await axios.post(
@@ -262,6 +314,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 				kakaoDeleteAccount,
 				naverLogin,
 				naverLogout,
+				naverDeleteAccount,
 			}}
 		>
 			{children}

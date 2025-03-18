@@ -5,9 +5,9 @@ const firestoreRequest = async (
 	operation: () => Promise<any>,
 ) => {
 	try {
-		console.log(`📡 Firestore 요청 : ${requestName} 시작...`);
+		// console.log(`📡 Firestore 요청 : ${requestName} 시작...`);
 		const result = await operation();
-		console.log(`✅ Firestore 요청 : ${requestName} 성공`);
+		// console.log(`✅ Firestore 요청 : ${requestName} 성공`);
 		return result;
 	} catch (error: any) {
 		console.log(`❌ Firestore 요청 : ${requestName} 실패`, error);
