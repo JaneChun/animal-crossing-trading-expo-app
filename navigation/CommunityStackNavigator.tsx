@@ -1,3 +1,4 @@
+import { Colors } from '@/constants/Color';
 import Community from '@/screens/Community';
 import EditComment from '@/screens/EditComment';
 import NewPost from '@/screens/NewPost';
@@ -8,11 +9,19 @@ const CommunityStack = createNativeStackNavigator();
 
 const CommunityStackNavigator = () => {
 	return (
-		<CommunityStack.Navigator>
+		<CommunityStack.Navigator
+			screenOptions={{
+				headerTintColor: Colors.font_black,
+				headerBackButtonDisplayMode: 'minimal',
+			}}
+		>
 			<CommunityStack.Screen
 				name='Community'
 				component={Community}
-				options={{ title: '커뮤니티', headerShown: false }}
+				options={{
+					title: '커뮤니티',
+					headerShown: false,
+				}}
 			/>
 			<CommunityStack.Screen
 				name='PostDetail'

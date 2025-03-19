@@ -1,3 +1,4 @@
+import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import Login from '@/screens/Login';
 import NewPost from '@/screens/NewPost';
@@ -12,7 +13,13 @@ const ProfileStackNavigator = () => {
 	const { userInfo } = useAuthContext();
 
 	return (
-		<ProfileStack.Navigator screenOptions={{ headerShown: false }}>
+		<ProfileStack.Navigator
+			screenOptions={{
+				headerShown: false,
+				headerTintColor: Colors.font_black,
+				headerBackButtonDisplayMode: 'minimal',
+			}}
+		>
 			{userInfo ? (
 				<>
 					<ProfileStack.Screen

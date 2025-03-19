@@ -1,3 +1,4 @@
+import { Colors } from '@/constants/Color';
 import EditComment from '@/screens/EditComment';
 import Home from '@/screens/Home';
 import NewPost from '@/screens/NewPost';
@@ -11,18 +12,30 @@ const HomeStackNavigator = () => {
 		<HomeStack.Navigator
 			screenOptions={{
 				title: '모동숲 마켓',
+				headerTintColor: Colors.font_black,
+				headerBackButtonDisplayMode: 'minimal',
 			}}
 		>
-			<HomeStack.Screen name='Home' component={Home} />
+			<HomeStack.Screen
+				name='Home'
+				component={Home}
+				options={{
+					headerShown: false,
+				}}
+			/>
 			<HomeStack.Screen
 				name='PostDetail'
 				component={PostDetail}
-				options={{ title: '' }}
+				options={{
+					title: '',
+				}}
 			/>
 			<HomeStack.Screen
 				name='NewPost'
 				component={NewPost}
-				options={{ title: '거래글' }}
+				options={{
+					title: '거래글',
+				}}
 			/>
 			<HomeStack.Screen
 				name='EditComment'
