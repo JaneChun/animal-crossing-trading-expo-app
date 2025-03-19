@@ -38,8 +38,5 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-app-example
-
-app.json
-eas.json
+# config.gypi
 config.gypi

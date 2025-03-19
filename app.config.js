@@ -66,8 +66,7 @@ export default {
 			[
 				'expo-image-picker',
 				{
-					photosPermission:
-						'The app accesses your photos to let you share them with your friends.',
+					photosPermission: '사진 업로드를 위해 갤러리 접근 권한이 필요합니다.',
 				},
 			],
 			[
@@ -88,5 +87,6 @@ export default {
 				projectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID,
 			},
 		},
+		owner: 'janechun',
 	},
 };
