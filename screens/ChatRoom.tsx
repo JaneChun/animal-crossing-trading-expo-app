@@ -88,7 +88,7 @@ const ChatRoom = () => {
 		flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
 	};
 
-	const showActionOptions = () => {
+	const showActionOptions = ({ chatId }: { chatId: string }) => {
 		const options = ['나가기', '취소'];
 		const cancelButtonIndex = 1;
 
@@ -98,7 +98,7 @@ const ChatRoom = () => {
 				cancelButtonIndex,
 			},
 			(buttonIndex) => {
-				if (buttonIndex === 0) leaveChat({ chatId: chat.id });
+				if (buttonIndex === 0) leaveChat({ chatId });
 			},
 		);
 	};
@@ -169,7 +169,7 @@ const ChatRoom = () => {
 				<Text style={styles.displayName}>{receiverInfo.displayName}</Text>
 				<TouchableOpacity
 					style={styles.iconContainer}
-					onPress={showActionOptions}
+					onPress={() => showActionOptions({ chatId })}
 				>
 					<Entypo
 						name='dots-three-vertical'

@@ -19,7 +19,12 @@ const useGetChats = () => {
 
 	// 채팅방 목록 실시간 구독
 	useEffect(() => {
-		if (!userInfo) return;
+		if (!userInfo) {
+			setChats([]);
+			setUnreadCount(0);
+			setIsLoading(false);
+			return;
+		}
 
 		const q = query(
 			collection(db, 'Chats'),

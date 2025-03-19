@@ -1,6 +1,7 @@
 import ChatUnit from '@/components/Chat/ChatUnit';
 import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
+import { useAuthContext } from '@/contexts/AuthContext';
 import useGetChats from '@/hooks/useGetChats';
 import useLoading from '@/hooks/useLoading';
 import { ChatWithReceiverInfo } from '@/types/chat';
@@ -8,6 +9,7 @@ import React from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 const Chat = () => {
+	const { userInfo } = useAuthContext();
 	const { chats, isLoading } = useGetChats();
 	const { LoadingIndicator } = useLoading();
 
@@ -21,7 +23,7 @@ const Chat = () => {
 
 	return (
 		<Layout title='채팅'>
-			{chats.length === 0 ? (
+			{!userInfo || chats.length === 0 ? (
 				<View style={styles.emptyContainer}>
 					<Text style={styles.emptyText}>참여 중인 채팅방이 없습니다.</Text>
 				</View>

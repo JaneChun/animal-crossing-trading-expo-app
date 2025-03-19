@@ -31,7 +31,7 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 		stackNavigation.navigate('ChatRoom', { chatId, receiverInfo });
 	};
 
-	const unreadMessageCount = unreadCount?.[userInfo!.uid] ?? '0';
+	const unreadMessageCount = userInfo ? unreadCount?.[userInfo.uid] ?? 0 : 0;
 
 	return (
 		<TouchableOpacity
