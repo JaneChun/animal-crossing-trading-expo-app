@@ -6,6 +6,7 @@ export interface Chat {
 	participants: string[];
 	lastMessage: string;
 	lastMessageSenderId: string;
+	unreadCount: { [id: string]: number };
 	updatedAt: Timestamp;
 }
 
