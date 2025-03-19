@@ -14,8 +14,11 @@ import {
 } from 'react-native';
 import PostUnit from './PostUnit';
 
-const PostList = ({ tab, filter }: PostListProps) => {
-	const collectionName = tab === 'Home' ? 'Boards' : 'Communities';
+const PostList = ({
+	collectionName,
+	filter,
+	isAddPostButtonVisible = false,
+}: PostListProps) => {
 	const navigation = useNavigation<any>();
 
 	const { LoadingIndicator, InlineLoadingIndicator } = useLoading();
@@ -74,12 +77,15 @@ const PostList = ({ tab, filter }: PostListProps) => {
 					) : null
 				}
 			/>
-			<TouchableOpacity
-				style={styles.addPostButton}
-				onPress={onPressAddPostButton}
-			>
-				<FontAwesome6 name='circle-plus' size={48} color={Colors.primary} />
-			</TouchableOpacity>
+
+			{isAddPostButtonVisible && (
+				<TouchableOpacity
+					style={styles.addPostButton}
+					onPress={onPressAddPostButton}
+				>
+					<FontAwesome6 name='circle-plus' size={48} color={Colors.primary} />
+				</TouchableOpacity>
+			)}
 		</>
 	);
 };

@@ -4,7 +4,6 @@ import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { useCurrentTab } from '@/hooks/useCurrentTab';
-import useGetPosts from '@/hooks/useGetPosts';
 import useLoading from '@/hooks/useLoading';
 import { useNavigationStore } from '@/store/store';
 import { Tab } from '@/types/components';
@@ -24,12 +23,6 @@ const Profile = () => {
 		setIsLoading: setIsUploading,
 		LoadingIndicator,
 	} = useLoading();
-	const {
-		data,
-		isLoading: isFetching,
-		isEnd,
-		loadMore,
-	} = useGetPosts('Boards', { creatorId: userInfo?.uid }, 5);
 	const { setActiveTab } = useNavigationStore();
 	const currentTab = useCurrentTab();
 
@@ -41,7 +34,7 @@ const Profile = () => {
 		}, [isFocused]),
 	);
 
-	if (!userInfo || (isFetching && data.length === 0) || isUploading) {
+	if (!userInfo || isUploading) {
 		return <LoadingIndicator />;
 	}
 
@@ -71,14 +64,7 @@ const Profile = () => {
 						setIsUploading={setIsUploading}
 					/>
 				}
-				ListEmptyComponent={
-					<MyPosts
-						data={data}
-						isLoading={isFetching}
-						isEnd={isEnd}
-						loadMore={loadMore}
-					/>
-				}
+				ListEmptyComponent={<MyPosts />}
 			/>
 		</Layout>
 	);

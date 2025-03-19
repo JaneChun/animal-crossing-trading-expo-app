@@ -20,7 +20,7 @@ const Home = () => {
 
 	return (
 		<Layout title='거래글'>
-			<PostList tab={currentTab as Tab} />
+			<PostList collectionName='Boards' isAddPostButtonVisible />
 		</Layout>
 	);
 };

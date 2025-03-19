@@ -27,7 +27,11 @@ const Community = () => {
 				setCategory={setCategory}
 			/>
 
-			<PostList tab={currentTab as Tab} filter={{ category }} />
+			<PostList
+				collectionName='Communities'
+				filter={{ category }}
+				isAddPostButtonVisible
+			/>
 		</Layout>
 	);
 };

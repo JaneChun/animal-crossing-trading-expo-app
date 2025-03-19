@@ -9,15 +9,16 @@ import {
 	ViewStyle,
 } from 'react-native';
 import { Comment, CommentWithCreatorInfo } from './comment';
-import { CartItem, PostWithCreatorInfo, Type } from './post';
+import { CartItem, Type } from './post';
 
 // Home/
 export type Collection = 'Boards' | 'Communities';
 export type Tab = 'Home' | 'Community' | 'Chat' | 'Profile';
 
 export type PostListProps = {
-	tab: Tab;
-	filter?: { category: string };
+	collectionName: Collection;
+	filter?: { category?: string; creatorId?: string };
+	isAddPostButtonVisible?: boolean;
 };
 
 export type TypeBadgeProps = {
@@ -176,13 +177,6 @@ export type EditProfileModalProps = ProfileProps & {
 };
 
 export type NameInputProp = ValidationInputProp & { label: string };
-
-export type MyPostsProps = {
-	data: PostWithCreatorInfo[];
-	isLoading: boolean;
-	isEnd: boolean;
-	loadMore: () => void;
-};
 
 export type ProfileImageInputProps = {
 	image: ImagePickerAsset | null;
