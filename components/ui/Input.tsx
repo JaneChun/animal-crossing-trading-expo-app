@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { InputProps } from '@/types/components';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome6 } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import {
 	Keyboard,
@@ -55,7 +55,7 @@ const Input = ({
 				multiline
 			/>
 			<TouchableOpacity style={styles.iconContainer} onPress={onPress}>
-				<FontAwesome name='send' color={Colors.primary} size={24} />
+				<FontAwesome6 name='circle-arrow-up' size={28} color={Colors.primary} />
 			</TouchableOpacity>
 		</View>
 	);
@@ -84,6 +84,6 @@ const styles = StyleSheet.create({
 		color: Colors.font_gray,
 	},
 	iconContainer: {
-		marginRight: 24,
+		marginRight: 16,
 	},
 });

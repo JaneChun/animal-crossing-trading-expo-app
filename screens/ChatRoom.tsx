@@ -18,7 +18,7 @@ import {
 	orderBy,
 	query,
 } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
 	Image,
 	KeyboardAvoidingView,
@@ -36,6 +36,7 @@ const ChatRoom = () => {
 	const [chat, setChat] = useState<any | null>(null); // 타입
 	const [messages, setMessages] = useState<any[]>([]);
 	const [chatInput, setChatInput] = useState('');
+	const flatListRef = useRef<FlatList>(null);
 
 	const route = useRoute<ChatRoomRouteProp>();
 	const { chatId, receiverInfo } = route.params;
@@ -98,6 +99,7 @@ const ChatRoom = () => {
 			console.log(e);
 		} finally {
 			setChatInput('');
+			flatListRef.current?.scrollToOffset({ offset: 99999, animated: true });
 		}
 	};
 
@@ -149,67 +151,66 @@ const ChatRoom = () => {
 	};
 
 	return (
-		<View style={styles.screen}>
-			<KeyboardAvoidingView style={styles.container} behavior='padding'>
-				{/* 헤더 */}
-				<View style={styles.header}>
-					<TouchableOpacity
-						style={styles.iconContainer}
-						onPress={() =>
-							stackNavigation.reset({
-								index: 0,
-								routes: [{ name: 'Chat' }],
-							})
-						}
-					>
-						<Ionicons
-							name='chevron-back-outline'
-							size={24}
-							color={Colors.font_black}
-						/>
-					</TouchableOpacity>
-					{receiverInfo?.photoURL ? (
-						<Image
-							source={{ uri: receiverInfo.photoURL }}
-							style={styles.profileImage}
-						/>
-					) : (
-						<Image
-							source={require('../assets/images/empty_profile_image.png')}
-							style={styles.profileImage}
-						/>
-					)}
+		<KeyboardAvoidingView style={styles.screen} behavior='padding'>
+			{/* 헤더 */}
+			<View style={styles.header}>
+				<TouchableOpacity
+					style={styles.iconContainer}
+					onPress={() =>
+						stackNavigation.reset({
+							index: 0,
+							routes: [{ name: 'Chat' }],
+						})
+					}
+				>
+					<Ionicons
+						name='chevron-back-outline'
+						size={24}
+						color={Colors.font_black}
+					/>
+				</TouchableOpacity>
+				{receiverInfo?.photoURL ? (
+					<Image
+						source={{ uri: receiverInfo.photoURL }}
+						style={styles.profileImage}
+					/>
+				) : (
+					<Image
+						source={require('../assets/images/empty_profile_image.png')}
+						style={styles.profileImage}
+					/>
+				)}
 
-					<Text style={styles.displayName}>{receiverInfo.displayName}</Text>
-					<TouchableOpacity
-						style={styles.iconContainer}
-						onPress={showActionOptions}
-					>
-						<Entypo
-							name='dots-three-vertical'
-							size={18}
-							color={Colors.font_black}
-						/>
-					</TouchableOpacity>
-				</View>
+				<Text style={styles.displayName}>{receiverInfo.displayName}</Text>
+				<TouchableOpacity
+					style={styles.iconContainer}
+					onPress={showActionOptions}
+				>
+					<Entypo
+						name='dots-three-vertical'
+						size={18}
+						color={Colors.font_black}
+					/>
+				</TouchableOpacity>
+			</View>
 
-				{/* 본문 */}
-				<FlatList
-					data={messages}
-					keyExtractor={({ id }) => id}
-					renderItem={renderMessage}
-					contentContainerStyle={styles.content}
-				/>
+			{/* 본문 */}
+			<FlatList
+				ref={flatListRef}
+				data={messages}
+				keyExtractor={({ id }) => id}
+				renderItem={renderMessage}
+				contentContainerStyle={styles.content}
+			/>
 
-				{/* 인풋 */}
-				<Input
-					input={chatInput}
-					setInput={setChatInput}
-					placeholder='메세지 보내기'
-					onPress={onSubmit}
-				/>
-			</KeyboardAvoidingView>
-		</View>
+			{/* 인풋 */}
+			<Input
+				input={chatInput}
+				setInput={setChatInput}
+				placeholder='메세지 보내기'
+				onPress={onSubmit}
+			/>
+		</KeyboardAvoidingView>
 	);
 };
 
@@ -218,11 +219,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: 'white',
 	},
-	container: {
-		flex: 1,
-	},
 	content: {
-		flex: 1,
 		padding: 24,
 	},
 	header: {
