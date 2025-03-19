@@ -16,9 +16,7 @@ const ItemThumbnail = ({ previewImage, itemLength }: ItemThumabnailProps) => {
 							}}
 						/>
 						<View style={styles.badgeContainer}>
-							{itemLength && (
-								<Text style={styles.badgeText}>{itemLength - 1}</Text>
-							)}
+							{itemLength && <Text style={styles.badgeText}>{itemLength}</Text>}
 						</View>
 					</>
 				) : (

@@ -111,11 +111,10 @@ const styles = StyleSheet.create({
 	},
 	count: {
 		borderRadius: 25,
-		backgroundColor: Colors.primary,
+		backgroundColor: Colors.badge_red,
 		color: 'white',
 		paddingVertical: 2,
-		paddingHorizontal: 8,
-		fontWeight: 600,
+		paddingHorizontal: 7,
 	},
 	lastMessage: {
 		flex: 1,

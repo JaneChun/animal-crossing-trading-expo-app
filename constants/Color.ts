@@ -27,4 +27,7 @@ export const Colors = {
 	lavendar_background: '#E6E6FA',
 	purple_text: '#B150CD',
 	purple_background: '#F0DBF6',
+
+	// badge
+	badge_red: '#ff3a30',
 };

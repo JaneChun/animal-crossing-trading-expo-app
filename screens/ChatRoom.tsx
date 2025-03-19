@@ -11,13 +11,7 @@ import { ChatRoomRouteProp, ChatStackNavigation } from '@/types/navigation';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo, Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import {
-	collection,
-	doc,
-	onSnapshot,
-	orderBy,
-	query,
-} from 'firebase/firestore';
+import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import {
 	Image,
@@ -52,29 +46,16 @@ const ChatRoom = () => {
 		readMessages();
 	}, [chatId, userInfo]);
 
-	// 🔹 ✅ 채팅방 정보 실시간 구독
+	// 메시지 목록(서브컬렉션) 실시간 구독
 	useEffect(() => {
 		if (!chatId) return;
 
-		const chatRef = doc(db, 'Chats', chatId);
+		const q = query(
+			collection(db, 'Chats', chatId, 'Messages'),
+			orderBy('createdAt', 'asc'),
+		);
 
-		const unsubscribe = onSnapshot(chatRef, (doc) => {
-			if (doc.exists()) {
-				setChat(doc.data());
-			}
-		});
-
-		return () => unsubscribe();
-	}, [chatId]);
-
-	// 🔹 ✅ 메시지 목록 실시간 구독 (서브컬렉션)
-	useEffect(() => {
-		if (!chatId) return;
-
-		const messagesRef = collection(db, 'Chats', chatId, 'Messages');
-		const messagesQuery = query(messagesRef, orderBy('createdAt', 'asc'));
-
-		const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
+		const unsubscribe = onSnapshot(q, (snapshot) => {
 			const newMessages = snapshot.docs.map((doc) => ({
 				id: doc.id,
 				...doc.data(),

@@ -1,5 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
+import useGetChats from '@/hooks/useGetChats';
 import {
 	Entypo,
 	FontAwesome6,
@@ -27,6 +28,7 @@ const getTabBarIcon =
 
 const BottomTabNavigator = () => {
 	const { userInfo } = useAuthContext();
+	const { unreadCount } = useGetChats();
 
 	return (
 		<BottomTab.Navigator
@@ -65,6 +67,10 @@ const BottomTabNavigator = () => {
 				options={{
 					title: '채팅',
 					tabBarIcon: getTabBarIcon('chat', MaterialCommunityIcons),
+					tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
+					tabBarBadgeStyle: {
+						marginTop: 8,
+					},
 				}}
 			/>
 			{/* <BottomTab.Screen
