@@ -15,13 +15,16 @@ const ActionButtons = ({ id, containerStyles }: ActionButtonsProps) => {
 	const deletePost = async (id: string) => {
 		Alert.alert('게시글 삭제', '정말로 삭제하겠습니까?', [
 			{ text: '취소', style: 'cancel' },
-			{ text: '삭제', onPress: handleDeletePost },
+			{
+				text: '삭제',
+				onPress: async () => await handleDeletePost({ postId: id }),
+			},
 		]);
 	};
 
-	const handleDeletePost = async () => {
+	const handleDeletePost = async ({ postId }: { postId: string }) => {
 		try {
-			await deletePostFromDB(id);
+			await deletePostFromDB(postId);
 			showToast('success', '게시글이 삭제되었습니다.');
 			stackNavigation.goBack();
 		} catch (e) {

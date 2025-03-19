@@ -91,8 +91,8 @@ const CommentUnit = ({
 			{ text: '취소', style: 'cancel' },
 			{
 				text: '삭제',
-				onPress: () =>
-					handleDeleteComment({ collectionName, postId, commentId }),
+				onPress: async () =>
+					await handleDeleteComment({ collectionName, postId, commentId }),
 			},
 		]);
 	};

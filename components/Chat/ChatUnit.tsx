@@ -1,12 +1,26 @@
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
+import { leaveChatRoom } from '@/firebase/services/chatService';
 import { ChatWithReceiverInfo } from '@/types/chat';
 import { ChatStackNavigation } from '@/types/navigation';
 import { PublicUserInfo } from '@/types/user';
 import { elapsedTime } from '@/utilities/elapsedTime';
+import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+	Alert,
+	Image,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from 'react-native';
+import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Reanimated, {
+	SharedValue,
+	useAnimatedStyle,
+} from 'react-native-reanimated';
 
 const ChatUnit = (props: ChatWithReceiverInfo) => {
 	const {
@@ -31,41 +45,82 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 		stackNavigation.navigate('ChatRoom', { chatId, receiverInfo });
 	};
 
+	const deleteChat = async (id: string) => {
+		const title = receiverInfo.displayName || '채팅방 나가기';
+		Alert.alert(title, '채팅방을 나가시겠어요?', [
+			{ text: '취소', style: 'cancel' },
+			{
+				text: '나가기',
+				onPress: async () => await handleLeaveChat({ chatId: id }),
+			},
+		]);
+	};
+
+	const handleLeaveChat = async ({ chatId }: { chatId: string }) => {
+		if (!userInfo) return;
+
+		await leaveChatRoom({ chatId, userId: userInfo.uid });
+	};
+
 	const unreadMessageCount = userInfo ? unreadCount?.[userInfo.uid] ?? 0 : 0;
 
+	const RightAction = (
+		prog: SharedValue<number>,
+		drag: SharedValue<number>,
+	) => {
+		const animatedStyle = useAnimatedStyle(() => {
+			return {
+				transform: [{ translateX: drag.value + 80 }],
+			};
+		});
+
+		return (
+			<Reanimated.View style={animatedStyle}>
+				<TouchableOpacity
+					style={styles.rightActionContainer}
+					onPress={async () => await deleteChat(id)}
+				>
+					<FontAwesome name='trash' color='white' size={24} />
+				</TouchableOpacity>
+			</Reanimated.View>
+		);
+	};
+
 	return (
-		<TouchableOpacity
-			onPress={() => enterChatRoom({ chatId: id, receiverInfo })}
-			style={styles.container}
-		>
-			<View style={styles.header}>
-				{receiverInfo?.photoURL ? (
-					<Image
-						source={{ uri: receiverInfo.photoURL }}
-						style={styles.profileImage}
-					/>
-				) : (
-					<Image
-						source={require('../../assets/images/empty_profile_image.png')}
-						style={styles.profileImage}
-					/>
-				)}
-			</View>
-			<View style={styles.body}>
-				<View style={styles.title}>
-					<Text style={styles.chatUserName}>{receiverInfo.displayName}</Text>
-					<Text style={styles.chatTime}>{elapsedTime(updatedAt)}</Text>
-				</View>
-				<View style={styles.content}>
-					<Text style={styles.lastMessage} numberOfLines={1}>
-						{lastMessage}
-					</Text>
-					{unreadMessageCount > 0 && (
-						<Text style={styles.count}>{unreadMessageCount.toString()}</Text>
+		<Swipeable friction={2} renderRightActions={RightAction}>
+			<TouchableOpacity
+				onPress={() => enterChatRoom({ chatId: id, receiverInfo })}
+				style={styles.container}
+			>
+				<View style={styles.header}>
+					{receiverInfo?.photoURL ? (
+						<Image
+							source={{ uri: receiverInfo.photoURL }}
+							style={styles.profileImage}
+						/>
+					) : (
+						<Image
+							source={require('../../assets/images/empty_profile_image.png')}
+							style={styles.profileImage}
+						/>
 					)}
 				</View>
-			</View>
-		</TouchableOpacity>
+				<View style={styles.body}>
+					<View style={styles.title}>
+						<Text style={styles.chatUserName}>{receiverInfo.displayName}</Text>
+						<Text style={styles.chatTime}>{elapsedTime(updatedAt)}</Text>
+					</View>
+					<View style={styles.content}>
+						<Text style={styles.lastMessage} numberOfLines={1}>
+							{lastMessage}
+						</Text>
+						{unreadMessageCount > 0 && (
+							<Text style={styles.count}>{unreadMessageCount.toString()}</Text>
+						)}
+					</View>
+				</View>
+			</TouchableOpacity>
+		</Swipeable>
 	);
 };
 
@@ -120,5 +175,12 @@ const styles = StyleSheet.create({
 		flex: 1,
 		fontSize: 14,
 		color: Colors.font_gray,
+	},
+	rightActionContainer: {
+		backgroundColor: Colors.badge_red,
+		width: 80,
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 });
