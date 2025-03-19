@@ -52,7 +52,7 @@ const ChatRoom = () => {
 
 		const q = query(
 			collection(db, 'Chats', chatId, 'Messages'),
-			orderBy('createdAt', 'asc'),
+			orderBy('createdAt', 'desc'),
 		);
 
 		const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -80,8 +80,12 @@ const ChatRoom = () => {
 			console.log(e);
 		} finally {
 			setChatInput('');
-			flatListRef.current?.scrollToOffset({ offset: 99999, animated: true });
+			scrollToBottom();
 		}
+	};
+
+	const scrollToBottom = () => {
+		flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
 	};
 
 	const showActionOptions = () => {
@@ -182,6 +186,7 @@ const ChatRoom = () => {
 				keyExtractor={({ id }) => id}
 				renderItem={renderMessage}
 				contentContainerStyle={styles.content}
+				inverted={true}
 			/>
 
 			{/* 인풋 */}
