@@ -1,6 +1,5 @@
 import CommunityTypeBadge from '@/components/Community/TypeBadge';
 import MarketTypeBadge from '@/components/Home/TypeBadge';
-import ActionButtons from '@/components/PostDetail/ActionButtons';
 import Body from '@/components/PostDetail/Body';
 import CommentInput from '@/components/PostDetail/CommentInput';
 import CommentsList from '@/components/PostDetail/CommentsList';
@@ -10,15 +9,27 @@ import ItemSummaryList from '@/components/PostDetail/ItemSummaryList';
 import Title from '@/components/PostDetail/Title';
 import Total from '@/components/PostDetail/Total';
 import UserInfo from '@/components/PostDetail/UserInfo';
+import ActionSheetButton from '@/components/ui/ActionSheetButton';
+import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
 import useGetComments from '@/hooks/useGetComments';
 import useLoading from '@/hooks/useLoading';
 import { useNavigationStore } from '@/store/store';
 import { PostDetailRouteProp } from '@/types/navigation';
-import { useFocusEffect, useRoute } from '@react-navigation/native';
+import {
+	useFocusEffect,
+	useNavigation,
+	useRoute,
+} from '@react-navigation/native';
 import React, { useCallback } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
+import {
+	Alert,
+	KeyboardAvoidingView,
+	StyleSheet,
+	Text,
+	View,
+} from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import useGetPostDetail from '../hooks/useGetPostDetail';
 
@@ -30,6 +41,7 @@ const PostDetail = () => {
 	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
 	const isCommunity = activeTab === 'Community';
 	const collectionName = isMarket ? 'Boards' : 'Communities';
+	const stackNavigation = useNavigation<any>();
 	const {
 		post,
 		isLoading: isPostFetching,
@@ -52,6 +64,30 @@ const PostDetail = () => {
 			commentRefresh();
 		}, [postRefresh, commentRefresh]),
 	);
+
+	const editPost = (id: string) => {
+		stackNavigation.navigate('NewPost', { id });
+	};
+
+	const deletePost = async (id: string) => {
+		Alert.alert('게시글 삭제', '정말로 삭제하겠습니까?', [
+			{ text: '취소', style: 'cancel' },
+			{
+				text: '삭제',
+				onPress: async () => await handleDeletePost({ postId: id }),
+			},
+		]);
+	};
+
+	const handleDeletePost = async ({ postId }: { postId: string }) => {
+		try {
+			await deletePostFromDB(postId);
+			showToast('success', '게시글이 삭제되었습니다.');
+			stackNavigation.goBack();
+		} catch (e) {
+			showToast('error', '게시글 삭제 중 오류가 발생했습니다.');
+		}
+	};
 
 	if (isPostFetching || isCommentUploading || isCommentsFetching) {
 		return <LoadingIndicator />;
@@ -76,21 +112,31 @@ const PostDetail = () => {
 						<View style={styles.content}>
 							{/* 헤더 */}
 							<View style={styles.header}>
-								{post.creatorId === userInfo?.uid && (
-									<ActionButtons id={post.id} />
-								)}
-								{isMarket && (
-									<MarketTypeBadge
-										type={post.type}
-										containerStyle={styles.typeBadgeContainer}
-									/>
-								)}
-								{isCommunity && (
-									<CommunityTypeBadge
-										type={post.type}
-										containerStyle={styles.typeBadgeContainer}
-									/>
-								)}
+								<View style={styles.row}>
+									{isMarket && (
+										<MarketTypeBadge
+											type={post.type}
+											containerStyle={styles.typeBadgeContainer}
+										/>
+									)}
+									{isCommunity && (
+										<CommunityTypeBadge
+											type={post.type}
+											containerStyle={styles.typeBadgeContainer}
+										/>
+									)}
+									{post.creatorId === userInfo?.uid && (
+										<ActionSheetButton
+											color={Colors.font_gray}
+											size={18}
+											options={[
+												{ label: '수정', onPress: () => editPost(id) },
+												{ label: '삭제', onPress: () => deletePost(id) },
+												{ label: '취소', onPress: () => {} },
+											]}
+										/>
+									)}
+								</View>
 								<Title
 									title={post.title}
 									containerStyle={{ marginBottom: 8 }}
@@ -170,6 +216,11 @@ const styles = StyleSheet.create({
 		borderColor: Colors.border_gray,
 		marginBottom: 16,
 	},
+	row: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+	},
 	body: {
 		borderBottomWidth: 1,
 		borderColor: Colors.border_gray,
@@ -191,3 +242,6 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 	},
 });
+function deletePostFromDB(postId: string) {
+	throw new Error('Function not implemented.');
+}

@@ -6,8 +6,7 @@ import { useNavigationStore } from '@/store/store';
 import { Collection, CommentUnitProps } from '@/types/components';
 import { HomeStackNavigation, TabNavigation } from '@/types/navigation';
 import { elapsedTime } from '@/utilities/elapsedTime';
-import { useActionSheet } from '@expo/react-native-action-sheet';
-import { AntDesign, Entypo } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {
@@ -18,6 +17,7 @@ import {
 	TouchableOpacity,
 	View,
 } from 'react-native';
+import ActionSheetButton from '../ui/ActionSheetButton';
 import { showToast } from '../ui/Toast';
 
 const CommentUnit = ({
@@ -36,37 +36,11 @@ const CommentUnit = ({
 	const { activeTab } = useNavigationStore();
 	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
 	const collectionName = isMarket ? 'Boards' : 'Communities';
-	const { showActionSheetWithOptions } = useActionSheet();
 	const { userInfo } = useAuthContext();
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<HomeStackNavigation>();
 
-	const showCommentEditOptions = ({
-		postId,
-		commentId,
-		body,
-	}: {
-		postId: string;
-		commentId: string;
-		body: string;
-	}) => {
-		const options = ['수정', '삭제', '취소'];
-		const cancelButtonIndex = 2;
-
-		showActionSheetWithOptions(
-			{
-				options,
-				cancelButtonIndex,
-			},
-			(buttonIndex) => {
-				if (buttonIndex === 0) editComment({ postId, commentId, body });
-				else if (buttonIndex === 1)
-					deleteComment({ collectionName, postId, commentId });
-			},
-		);
-	};
-
-	const editComment = async ({
+	const editComment = ({
 		postId,
 		commentId,
 		body,
@@ -160,19 +134,26 @@ const CommentUnit = ({
 						)}
 					</View>
 					{creatorId === userInfo?.uid && (
-						<TouchableOpacity
-							onPress={() =>
-								showCommentEditOptions({ postId, commentId: id, body })
-							}
-						>
-							<View style={styles.menu}>
-								<Entypo
-									name='dots-three-vertical'
-									size={14}
-									color={Colors.font_gray}
-								/>
-							</View>
-						</TouchableOpacity>
+						<ActionSheetButton
+							color={Colors.font_gray}
+							size={14}
+							options={[
+								{
+									label: '수정',
+									onPress: () => editComment({ postId, commentId: id, body }),
+								},
+								{
+									label: '삭제',
+									onPress: async () =>
+										await deleteComment({
+											collectionName,
+											postId,
+											commentId: id,
+										}),
+								},
+								{ label: '취소', onPress: () => {} },
+							]}
+						/>
 					)}
 				</View>
 

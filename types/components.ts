@@ -104,11 +104,6 @@ export type EditItemModalProps = {
 };
 
 // PostDetail/
-export type ActionButtonsProps = {
-	id: string;
-	containerStyles?: ViewStyle;
-};
-
 export type BodyProps = {
 	body: string;
 	containerStyle?: ViewStyle;
@@ -238,4 +233,11 @@ export type DropdownOptionProps = {
 	disabled?: boolean;
 	value: string;
 	setValue: Dispatch<SetStateAction<string>>;
+};
+
+export type ActionSheetButtonProps = {
+	color: string;
+	size: number;
+	options: { label: string; onPress: () => void }[];
+	cancelIndex?: number;
 };

@@ -1,3 +1,4 @@
+import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import Input from '@/components/ui/Input';
 import { Colors } from '@/constants/Color';
 import { useAuthContext } from '@/contexts/AuthContext';
@@ -8,8 +9,7 @@ import {
 	sendMessage,
 } from '@/firebase/services/chatService';
 import { ChatRoomRouteProp, ChatStackNavigation } from '@/types/navigation';
-import { useActionSheet } from '@expo/react-native-action-sheet';
-import { Entypo, Ionicons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
@@ -24,10 +24,8 @@ import {
 import { FlatList } from 'react-native-gesture-handler';
 
 const ChatRoom = () => {
-	const { showActionSheetWithOptions } = useActionSheet();
 	const stackNavigation = useNavigation<ChatStackNavigation>();
 	const { userInfo } = useAuthContext();
-	const [chat, setChat] = useState<any | null>(null); // 타입
 	const [messages, setMessages] = useState<any[]>([]);
 	const [chatInput, setChatInput] = useState('');
 	const flatListRef = useRef<FlatList>(null);
@@ -86,21 +84,6 @@ const ChatRoom = () => {
 
 	const scrollToBottom = () => {
 		flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-	};
-
-	const showActionOptions = ({ chatId }: { chatId: string }) => {
-		const options = ['나가기', '취소'];
-		const cancelButtonIndex = 1;
-
-		showActionSheetWithOptions(
-			{
-				options,
-				cancelButtonIndex,
-			},
-			(buttonIndex) => {
-				if (buttonIndex === 0) leaveChat({ chatId });
-			},
-		);
 	};
 
 	const leaveChat = async ({ chatId }: { chatId: string }) => {
@@ -167,16 +150,14 @@ const ChatRoom = () => {
 				)}
 
 				<Text style={styles.displayName}>{receiverInfo.displayName}</Text>
-				<TouchableOpacity
-					style={styles.iconContainer}
-					onPress={() => showActionOptions({ chatId })}
-				>
-					<Entypo
-						name='dots-three-vertical'
-						size={18}
-						color={Colors.font_black}
-					/>
-				</TouchableOpacity>
+				<ActionSheetButton
+					color={Colors.font_gray}
+					size={24}
+					options={[
+						{ label: '나가기', onPress: () => leaveChat({ chatId }) },
+						{ label: '취소', onPress: () => {} },
+					]}
+				/>
 			</View>
 
 			{/* 본문 */}
