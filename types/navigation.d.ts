@@ -7,8 +7,9 @@ import { CartItem } from './post';
 // 하단 탭 네비게이션
 export type RootTabParamList = {
 	HomeTab: NavigatorScreenParams<HomeStackParamList>;
+	CommunityTab: NavigatorScreenParams<CommunityStackParamList>;
+	NoticeTab: undefined;
 	ChatTab: NavigatorScreenParams<ChatStackParamList>;
-	SearchTab: undefined;
 	ProfileTab: NavigatorScreenParams<ProfileStackParamList>;
 };
 

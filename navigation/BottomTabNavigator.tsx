@@ -11,6 +11,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ChatStackNavigator from './ChatStackNavigator';
 import CommunityStackNavigator from './CommunityStackNavigator';
 import HomeStackNavigator from './HomeStackNavigator';
+import NoticeStackNavigator from './NoticeNavigator';
 import ProfileStackNavigator from './ProfileStackNavigator';
 
 const BottomTab = createBottomTabNavigator();
@@ -59,6 +60,18 @@ const BottomTabNavigator = () => {
 				options={{
 					title: '커뮤니티',
 					tabBarIcon: getTabBarIcon('article', MaterialIcons, 26),
+				}}
+			/>
+			<BottomTab.Screen
+				name='NoticeTab'
+				component={NoticeStackNavigator}
+				options={{
+					title: '알림',
+					tabBarIcon: getTabBarIcon('bell', Entypo),
+					tabBarBadge: unreadCount > 0 ? unreadCount : undefined,
+					tabBarBadgeStyle: {
+						marginTop: 8,
+					},
 				}}
 			/>
 			<BottomTab.Screen
