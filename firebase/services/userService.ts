@@ -7,6 +7,7 @@ import {
 	setDoc,
 	Timestamp,
 	where,
+	writeBatch,
 } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
 import {
@@ -125,6 +126,54 @@ export const getPublicUserInfos = async (
 
 		return publicUserInfoMap;
 	});
+};
+
+export const archiveUserData = async (userInfo: UserInfo) => {
+	// 1. 탈퇴한 유저 데이터를 DeletedUsers 컬렉션으로 이동
+	await moveToDeletedUsers(userInfo);
+
+	// 2. 유저가 생성한 모든 게시글을 isDeleted = true로 변경
+	await archiveUserPosts(userInfo.uid);
+};
+
+const archiveUserPosts = async (uid: string) => {
+	const collections = ['Boards', 'Communities'];
+	const batch = writeBatch(db);
+
+	for (const col of collections) {
+		const colRef = collection(db, col);
+		const q = query(colRef, where('creatorId', '==', uid));
+		const docs = await queryDocs(q);
+
+		docs.forEach(({ id }) => {
+			const docRef = doc(db, col, id);
+			batch.update(docRef, { isDeleted: true });
+		});
+	}
+
+	await batch.commit();
+};
+
+export const restoreUserPosts = async (uid: string) => {
+	const collections = ['Boards', 'Communities'];
+	const batch = writeBatch(db);
+
+	for (const col of collections) {
+		const colRef = collection(db, col);
+		const q = query(
+			colRef,
+			where('creatorId', '==', uid),
+			where('isDeleted', '==', true),
+		);
+		const docs = await queryDocs(q);
+
+		docs.forEach(({ id }) => {
+			const docRef = doc(db, col, id);
+			batch.update(docRef, { isDeleted: false });
+		});
+	}
+
+	await batch.commit();
 };
 
 export const moveToDeletedUsers = async (userInfo: UserInfo) => {

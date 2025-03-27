@@ -1,6 +1,6 @@
 import {
+	archiveUserData,
 	getUserInfo,
-	moveToDeletedUsers,
 	saveUserInfo,
 } from '@/firebase/services/userService';
 import { OauthType, UserInfo } from '@/types/user';
@@ -109,16 +109,12 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 			await reauthenticateWithCredential(user, credential);
 
-			// 탈퇴한 유저 데이터를 DeletedUsers 컬렉션으로 이동
 			const userInfo = useAuthStore.getState().userInfo;
 			if (!userInfo) return false;
-			await moveToDeletedUsers(userInfo);
+			await archiveUserData(userInfo);
 
 			// Firebase Authentication에서 유저 삭제
 			await deleteUser(user);
-
-			// 네이버 로그인 토큰 삭제
-			await NaverLogin.deleteToken();
 
 			// 로컬 상태 초기화
 			set({ userInfo: null });
@@ -202,10 +198,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 			await signInWithCustomToken(auth, firebaseCustomToken);
 
-			// 탈퇴한 유저 데이터를 DeletedUsers 컬렉션으로 이동
 			const userInfo = useAuthStore.getState().userInfo;
 			if (!userInfo) return false;
-			await moveToDeletedUsers(userInfo);
+			await archiveUserData(userInfo);
 
 			// Firebase Authentication에서 유저 삭제
 			await deleteUser(user);
