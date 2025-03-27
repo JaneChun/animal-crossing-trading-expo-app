@@ -1,8 +1,8 @@
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
 import { auth } from '@/fbase';
 import { addComment } from '@/firebase/services/commentService';
-import { useNavigationStore } from '@/store/store';
+import { useActiveTabStore } from '@/stores/ActiveTabstore';
+import { useAuthStore } from '@/stores/AuthStore';
 import { addCommentRequest } from '@/types/comment';
 import { CommentInputProps } from '@/types/components';
 import { TabNavigation } from '@/types/navigation';
@@ -18,12 +18,12 @@ const CommentInput = ({
 	setIsLoading,
 	commentRefresh,
 }: CommentInputProps) => {
-	const { activeTab } = useNavigationStore();
+	const activeTab = useActiveTabStore((state) => state.activeTab);
 	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
 	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const [commentInput, setCommentInput] = useState<string>('');
 	const tabNavigation = useNavigation<TabNavigation>();
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 
 	const resetForm = () => {
 		setCommentInput('');

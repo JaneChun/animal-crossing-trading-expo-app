@@ -1,11 +1,11 @@
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/stores/AuthStore';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import PostList from '../Home/PostList';
 
 const MyPosts = () => {
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 
 	return (
 		<View style={styles.container}>

@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
 import { leaveChatRoom } from '@/firebase/services/chatService';
+import { useAuthStore } from '@/stores/AuthStore';
 import { ChatWithReceiverInfo } from '@/types/chat';
 import { ChatStackNavigation } from '@/types/navigation';
 import { PublicUserInfo } from '@/types/user';
@@ -33,7 +33,7 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 		receiverInfo,
 	} = props;
 	const stackNavigation = useNavigation<ChatStackNavigation>();
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 
 	const enterChatRoom = ({
 		chatId,

@@ -1,6 +1,6 @@
-import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/fbase';
 import { fetchMyChats } from '@/firebase/services/chatService';
+import { useAuthStore } from '@/stores/AuthStore';
 import { Chat, ChatWithReceiverInfo } from '@/types/chat';
 import {
 	collection,
@@ -12,7 +12,7 @@ import {
 import { useEffect, useState } from 'react';
 
 const useGetChats = () => {
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 	const [chats, setChats] = useState<ChatWithReceiverInfo[]>([]);
 	const [unreadCount, setUnreadCount] = useState<number>(0);
 	const [isLoading, setIsLoading] = useState<boolean>(false);

@@ -15,7 +15,7 @@ import { Timestamp } from 'firebase/firestore';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { useAuthContext } from '../contexts/AuthContext';
+import { useAuthStore } from '../stores/AuthStore';
 
 import BodyInput from '@/components/NewPost/BodyInput';
 import ImageInput from '@/components/NewPost/ImageInput';
@@ -27,7 +27,7 @@ import { showToast } from '@/components/ui/Toast';
 import { createPost, updatePost } from '@/firebase/services/postService';
 import useGetPostDetail from '@/hooks/useGetPostDetail';
 import useLoading from '@/hooks/useLoading';
-import { useNavigationStore } from '@/store/store';
+import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import {
 	CartItem,
 	CreatePostRequest,
@@ -42,13 +42,13 @@ import Button from '../components/ui/Button';
 import { categories } from './Community';
 
 const NewPost = () => {
-	const { activeTab } = useNavigationStore();
+	const activeTab = useActiveTabStore((state) => state.activeTab);
 	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
 	const isCommunity = activeTab === 'Community';
 	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<any>();
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 	const {
 		isLoading: isUploading,
 		setIsLoading: setIsUploading,

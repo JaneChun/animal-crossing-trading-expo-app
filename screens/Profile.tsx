@@ -2,10 +2,10 @@ import MyPosts from '@/components/Profile/MyPosts';
 import ProfileBox from '@/components/Profile/Profile';
 import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
 import { useCurrentTab } from '@/hooks/useCurrentTab';
 import useLoading from '@/hooks/useLoading';
-import { useNavigationStore } from '@/store/store';
+import { useActiveTabStore } from '@/stores/ActiveTabstore';
+import { useAuthStore } from '@/stores/AuthStore';
 import { Tab } from '@/types/components';
 import { ProfileStackNavigation } from '@/types/navigation';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,14 +16,14 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 const Profile = () => {
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 	const stackNavigation = useNavigation<ProfileStackNavigation>();
 	const {
 		isLoading: isUploading,
 		setIsLoading: setIsUploading,
 		LoadingIndicator,
 	} = useLoading();
-	const { setActiveTab } = useNavigationStore();
+	const setActiveTab = useActiveTabStore((state) => state.setActiveTab);
 	const currentTab = useCurrentTab();
 
 	const isFocused = useIsFocused();

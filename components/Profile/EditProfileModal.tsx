@@ -1,13 +1,13 @@
 import ProfileImageInput from '@/components/Profile/ProfileImageInput';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
 import { updateDocToFirestore } from '@/firebase/core/firestoreService';
 import {
 	checkIfObjectExistsInStorage,
 	deleteObjectFromStorage,
 	uploadObjectToStorage,
 } from '@/firebase/services/imageService';
+import { useAuthStore } from '@/stores/AuthStore';
 import { EditProfileModalProps } from '@/types/components';
 import { UserInfo } from '@/types/user';
 import { validateInput } from '@/utilities/validateInput';
@@ -26,7 +26,8 @@ const EditProfileModal = ({
 	setIsUploading,
 }: EditProfileModalProps) => {
 	const [isSubmitted, setIsSubmitted] = useState(false);
-	const { userInfo, setUserInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
+	const setUserInfo = useAuthStore((state) => state.setUserInfo);
 	const [displayNameInput, setDisplayNameInput] = useState<string>('');
 	const [islandNameInput, setIslandNameInput] = useState<string>('');
 	const [image, setImage] = useState<ImagePickerAsset | null>(null); // ImagePicker로 추가한 이미지

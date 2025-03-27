@@ -1,13 +1,13 @@
 import PostList from '@/components/Home/PostList';
 import Layout from '@/components/ui/Layout';
 import { useCurrentTab } from '@/hooks/useCurrentTab';
-import { useNavigationStore } from '@/store/store';
+import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { Tab } from '@/types/components';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { useCallback } from 'react';
 
 const Home = () => {
-	const { setActiveTab } = useNavigationStore();
+	const setActiveTab = useActiveTabStore((state) => state.setActiveTab);
 	const currentTab = useCurrentTab();
 
 	const isFocused = useIsFocused();

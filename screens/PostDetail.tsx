@@ -12,10 +12,10 @@ import UserInfo from '@/components/PostDetail/UserInfo';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
 import useGetComments from '@/hooks/useGetComments';
 import useLoading from '@/hooks/useLoading';
-import { useNavigationStore } from '@/store/store';
+import { useActiveTabStore } from '@/stores/ActiveTabstore';
+import { useAuthStore } from '@/stores/AuthStore';
 import { PostDetailRouteProp } from '@/types/navigation';
 import {
 	useFocusEffect,
@@ -36,8 +36,8 @@ import useGetPostDetail from '../hooks/useGetPostDetail';
 const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
 	const { id = '' } = route.params;
-	const { userInfo } = useAuthContext();
-	const { activeTab } = useNavigationStore();
+	const userInfo = useAuthStore((state) => state.userInfo);
+	const activeTab = useActiveTabStore((state) => state.activeTab);
 	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
 	const isCommunity = activeTab === 'Community';
 	const collectionName = isMarket ? 'Boards' : 'Communities';

@@ -1,13 +1,13 @@
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import Input from '@/components/ui/Input';
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/fbase';
 import {
 	leaveChatRoom,
 	markMessagesAsRead,
 	sendMessage,
 } from '@/firebase/services/chatService';
+import { useAuthStore } from '@/stores/AuthStore';
 import { ChatRoomRouteProp, ChatStackNavigation } from '@/types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -25,7 +25,7 @@ import { FlatList } from 'react-native-gesture-handler';
 
 const ChatRoom = () => {
 	const stackNavigation = useNavigation<ChatStackNavigation>();
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 	const [messages, setMessages] = useState<any[]>([]);
 	const [chatInput, setChatInput] = useState('');
 	const flatListRef = useRef<FlatList>(null);

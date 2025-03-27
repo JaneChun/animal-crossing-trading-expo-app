@@ -2,15 +2,15 @@ import CommunityNotices from '@/components/Notice/CommunityNotices';
 import MarketNotices from '@/components/Notice/MarketNotices';
 import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
 import useGetChats from '@/hooks/useGetChats';
 import useLoading from '@/hooks/useLoading';
+import { useAuthStore } from '@/stores/AuthStore';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 
 const Notice = () => {
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 	const { chats, isLoading } = useGetChats();
 	const { LoadingIndicator } = useLoading();
 	const Tab = createMaterialTopTabNavigator();

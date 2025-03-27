@@ -1,6 +1,6 @@
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/stores/AuthStore';
 import { ProfileStackNavigation, TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -8,9 +8,11 @@ import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 const Setting = () => {
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<ProfileStackNavigation>();
-	const { kakaoLogout, naverLogout, kakaoDeleteAccount, naverDeleteAccount } =
-		useAuthContext();
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
+	const kakaoLogout = useAuthStore((state) => state.kakaoLogout);
+	const naverLogout = useAuthStore((state) => state.naverLogout);
+	const kakaoDeleteAccount = useAuthStore((state) => state.kakaoDeleteAccount);
+	const naverDeleteAccount = useAuthStore((state) => state.naverDeleteAccount);
 
 	const handleLogout = () => {
 		Alert.alert('로그아웃', '정말로 로그아웃할까요?', [

@@ -1,16 +1,16 @@
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
 import Login from '@/screens/Login';
 import NewPost from '@/screens/NewPost';
 import PostDetail from '@/screens/PostDetail';
 import Profile from '@/screens/Profile';
 import Setting from '@/screens/Setting';
+import { useAuthStore } from '@/stores/AuthStore';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const ProfileStack = createNativeStackNavigator();
 
 const ProfileStackNavigator = () => {
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 
 	return (
 		<ProfileStack.Navigator

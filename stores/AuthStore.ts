@@ -5,10 +5,7 @@ import {
 } from '@/firebase/services/userService';
 import { UserInfo } from '@/types/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-	// getKeyHashAndroid,
-	initializeKakaoSDK,
-} from '@react-native-kakao/core';
+import { initializeKakaoSDK } from '@react-native-kakao/core';
 import { login, logout } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
 import axios from 'axios';
@@ -21,91 +18,27 @@ import {
 	signInWithCustomToken,
 } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
-import {
-	createContext,
-	ReactNode,
-	useContext,
-	useEffect,
-	useState,
-} from 'react';
+import { useEffect } from 'react';
 import { Alert } from 'react-native';
+import { create } from 'zustand';
 import { auth } from '../fbase';
 import firebaseRequest from '../firebase/core/firebaseInterceptor';
 
-type AuthContextType = {
+type AuthState = {
 	userInfo: UserInfo | null;
 	setUserInfo: (user: UserInfo | null) => void;
-	kakaoLogin: () => void;
-	kakaoLogout: () => void;
-	kakaoDeleteAccount: (uid: string) => void;
-	naverLogin: () => void;
-	naverLogout: () => void;
-	naverDeleteAccount: (uid: string) => void;
+	kakaoLogin: () => Promise<boolean>;
+	kakaoLogout: () => Promise<boolean>;
+	kakaoDeleteAccount: (uid: string) => Promise<boolean>;
+	naverLogin: () => Promise<boolean>;
+	naverLogout: () => Promise<boolean>;
+	naverDeleteAccount: (uid: string) => Promise<boolean>;
 };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
-	const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-
-	useEffect(() => {
-		// KakaoSDK 초기화
-		if (process.env.EXPO_PUBLIC_KAKAO_IOS_KEY) {
-			initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_IOS_KEY);
-		}
-
-		// NaverSDK 초기화
-
-		NaverLogin.initialize({
-			appName: '모동숲 마켓',
-			consumerKey: process.env.EXPO_PUBLIC_NAVER_CLIENT_ID || '',
-			consumerSecret: process.env.EXPO_PUBLIC_NAVER_SECRET || '',
-			serviceUrlSchemeIOS: process.env.EXPO_PUBLIC_NAVER_SERVICE_URL_SCHEME,
-			disableNaverAppAuthIOS: true,
-		});
-	}, []);
-
-	// Firebase Auth 상태 변화 감지
-	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, async (user) => {
-			if (user) {
-				const fetchedUserInfo = await getUserInfo(user.uid);
-
-				if (!fetchedUserInfo) {
-					Alert.alert(
-						'계정 정보 없음',
-						'유저 정보를 불러올 수 없습니다. 다시 로그인해 주세요.',
-						[{ text: '확인', onPress: () => auth.signOut() }],
-					);
-
-					setUserInfo(null);
-					await AsyncStorage.removeItem('@user');
-					return;
-				}
-
-				setUserInfo(fetchedUserInfo);
-				await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
-			} else {
-				setUserInfo(null);
-				await AsyncStorage.removeItem('@user');
-			}
-		});
-		return () => unsubscribe(); // 언마운트 시 구독 해제
-	}, []);
-
-	// 앱 시작 시 AsyncStorage에서 유저 정보 로드
-	useEffect(() => {
-		const loadUser = async () => {
-			const storedUser = await AsyncStorage.getItem('@user');
-			if (storedUser) {
-				setUserInfo(JSON.parse(storedUser));
-			}
-		};
-
-		loadUser();
-	}, []);
-
-	const kakaoLogin = async (): Promise<boolean> => {
+export const useAuthStore = create<AuthState>((set) => ({
+	userInfo: null,
+	setUserInfo: (user) => set({ userInfo: user }),
+	kakaoLogin: async () => {
 		return firebaseRequest('로그인', async () => {
 			const kakaoTokenInfo = await login();
 			const provider = new OAuthProvider('oidc.kakao');
@@ -139,30 +72,28 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			}
 
 			// 로컬 상태 업데이트
-			setUserInfo(fetchedUserInfo);
-			await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
+			set({ userInfo: fetchedUserInfo });
+			await AsyncStorage.setItem('@user', JSON.stringify(fetchedUserInfo));
 
 			return true;
 		});
-	};
-
-	const kakaoLogout = async (): Promise<boolean> => {
+	},
+	kakaoLogout: async () => {
 		return firebaseRequest('로그아웃', async () => {
 			await logout(); // 카카오 로그아웃
 			await auth.signOut(); // Firebase auth 로그아웃
 
 			// 로컬 상태 초기화
-			setUserInfo(null);
+			set({ userInfo: null });
 			await AsyncStorage.removeItem('@user');
 
 			return true;
 		});
-	};
-
-	const kakaoDeleteAccount = async (uid: string) => {
+	},
+	kakaoDeleteAccount: async (uid) => {
 		return firebaseRequest('회원 탈퇴', async () => {
 			const user = auth.currentUser;
-			if (!user || !userInfo) return false;
+			if (!user || !useAuthStore.getState().userInfo) return false;
 
 			// 재인증 후 탈퇴 가능
 			const kakaoTokenInfo = await login();
@@ -175,6 +106,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			await reauthenticateWithCredential(user, credential);
 
 			// 탈퇴한 유저 데이터를 DeletedUsers 컬렉션으로 이동
+			const userInfo = useAuthStore.getState().userInfo;
+			if (!userInfo) return false;
 			await moveToDeletedUsers(userInfo);
 
 			// Firebase Authentication에서 유저 삭제
@@ -184,14 +117,13 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			await NaverLogin.deleteToken();
 
 			// 로컬 상태 초기화
-			setUserInfo(null);
+			set({ userInfo: null });
 			await AsyncStorage.removeItem('@user');
 
 			return true;
 		});
-	};
-
-	const naverLogin = async (): Promise<void> => {
+	},
+	naverLogin: async () => {
 		return firebaseRequest('로그인', async () => {
 			const { failureResponse, successResponse } = await NaverLogin.login();
 
@@ -230,30 +162,28 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			}
 
 			// 로컬 상태 업데이트
-			setUserInfo(fetchedUserInfo);
-			await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
+			set({ userInfo: fetchedUserInfo });
+			await AsyncStorage.setItem('@user', JSON.stringify(fetchedUserInfo));
 
 			return true;
 		});
-	};
-
-	const naverLogout = () => {
+	},
+	naverLogout: async () => {
 		return firebaseRequest('로그아웃', async () => {
 			await NaverLogin.logout(); // 네이버 로그아웃
 			await auth.signOut(); // Firebase auth 로그아웃
 
 			// 로컬 상태 초기화
-			setUserInfo(null);
+			set({ userInfo: null });
 			await AsyncStorage.removeItem('@user');
 
 			return true;
 		});
-	};
-
-	const naverDeleteAccount = async (uid: string) => {
+	},
+	naverDeleteAccount: async (uid) => {
 		return firebaseRequest('회원 탈퇴', async () => {
 			const user = auth.currentUser;
-			if (!user || !userInfo) return false;
+			if (!user || !useAuthStore.getState().userInfo) return false;
 
 			// 재인증 후 탈퇴 가능
 			const { failureResponse, successResponse } = await NaverLogin.login();
@@ -267,6 +197,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			await signInWithCustomToken(auth, firebaseCustomToken);
 
 			// 탈퇴한 유저 데이터를 DeletedUsers 컬렉션으로 이동
+			const userInfo = useAuthStore.getState().userInfo;
+			if (!userInfo) return false;
 			await moveToDeletedUsers(userInfo);
 
 			// Firebase Authentication에서 유저 삭제
@@ -276,50 +208,84 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 			await NaverLogin.deleteToken();
 
 			// 로컬 상태 초기화
-			setUserInfo(null);
+			set({ userInfo: null });
 			await AsyncStorage.removeItem('@user');
 
 			return true;
 		});
-	};
+	},
+}));
 
-	const getFirebaseCustomToken = async (accessToken: string) => {
-		try {
-			const response = await axios.post(
-				process.env.EXPO_PUBLIC_GET_CUSTOM_TOKEN_URL || '',
-				{ accessToken },
-				{ headers: { 'Content-Type': 'application/json' } },
-			);
+export const useAuthInitializer = () => {
+	const setUserInfo = useAuthStore((state) => state.setUserInfo);
 
-			return response.data.firebaseToken;
-		} catch (error) {
-			console.error('Error getting Firebase custom token:', error);
-			throw error;
+	// 앱이 실행될 때 Kakao, Naver SDK 초기화
+	useEffect(() => {
+		if (process.env.EXPO_PUBLIC_KAKAO_IOS_KEY) {
+			initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_IOS_KEY);
 		}
-	};
 
-	return (
-		<AuthContext.Provider
-			value={{
-				userInfo,
-				setUserInfo,
-				kakaoLogin,
-				kakaoLogout,
-				kakaoDeleteAccount,
-				naverLogin,
-				naverLogout,
-				naverDeleteAccount,
-			}}
-		>
-			{children}
-		</AuthContext.Provider>
-	);
+		NaverLogin.initialize({
+			appName: '모동숲 마켓',
+			consumerKey: process.env.EXPO_PUBLIC_NAVER_CLIENT_ID || '',
+			consumerSecret: process.env.EXPO_PUBLIC_NAVER_SECRET || '',
+			serviceUrlSchemeIOS: process.env.EXPO_PUBLIC_NAVER_SERVICE_URL_SCHEME,
+			disableNaverAppAuthIOS: true,
+		});
+	}, []);
+
+	// Firebase Auth 상태 변화 감지하여 userInfo 저장
+	useEffect(() => {
+		const unsubscribe = onAuthStateChanged(auth, async (user) => {
+			if (user) {
+				const fetchedUserInfo = await getUserInfo(user.uid);
+
+				if (!fetchedUserInfo) {
+					Alert.alert(
+						'계정 정보 없음',
+						'유저 정보를 불러올 수 없습니다. 다시 로그인해 주세요.',
+						[{ text: '확인', onPress: () => auth.signOut() }],
+					);
+
+					setUserInfo(null);
+					await AsyncStorage.removeItem('@user');
+					return;
+				}
+
+				setUserInfo(fetchedUserInfo);
+				await AsyncStorage.setItem('@user', JSON.stringify(fetchedUserInfo));
+			} else {
+				setUserInfo(null);
+				await AsyncStorage.removeItem('@user');
+			}
+		});
+		return () => unsubscribe();
+	}, [setUserInfo]);
+
+	// 로컬 저장소(AsyncStorage)와 상태를 동기화
+	useEffect(() => {
+		const loadUser = async () => {
+			const storedUser = await AsyncStorage.getItem('@user');
+			if (storedUser) {
+				setUserInfo(JSON.parse(storedUser));
+			}
+		};
+
+		loadUser();
+	}, [setUserInfo]);
 };
 
-export const useAuthContext = () => {
-	const context = useContext(AuthContext);
-	if (!context) {
-		throw new Error('useAuth는 AuthProvider 안에서 사용되어야 합니다.');
+const getFirebaseCustomToken = async (accessToken: string) => {
+	try {
+		const response = await axios.post(
+			process.env.EXPO_PUBLIC_GET_CUSTOM_TOKEN_URL || '',
+			{ accessToken },
+			{ headers: { 'Content-Type': 'application/json' } },
+		);
+
+		return response.data.firebaseToken;
+	} catch (error) {
+		console.error('Error getting Firebase custom token:', error);
+		throw error;
 	}
-	return context;
 };
