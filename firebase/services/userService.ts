@@ -117,8 +117,8 @@ export const getPublicUserInfos = async (
 		usersData.forEach((user) => {
 			publicUserInfoMap[user.id] = {
 				uid: user.id,
-				displayName: user.displayName || 'Unknown User',
-				islandName: user.islandName || '',
+				displayName: user.displayName || '탈퇴한 사용자',
+				islandName: user.islandName || '무인도',
 				photoURL: user.photoURL || '',
 			};
 		});

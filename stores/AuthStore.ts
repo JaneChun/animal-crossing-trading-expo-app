@@ -3,7 +3,7 @@ import {
 	moveToDeletedUsers,
 	saveUserInfo,
 } from '@/firebase/services/userService';
-import { UserInfo } from '@/types/user';
+import { OauthType, UserInfo } from '@/types/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
 import { login, logout } from '@react-native-kakao/user';
@@ -27,6 +27,7 @@ import firebaseRequest from '../firebase/core/firebaseInterceptor';
 type AuthState = {
 	userInfo: UserInfo | null;
 	setUserInfo: (user: UserInfo | null) => void;
+	oauthType: OauthType | null;
 	kakaoLogin: () => Promise<boolean>;
 	kakaoLogout: () => Promise<boolean>;
 	kakaoDeleteAccount: (uid: string) => Promise<boolean>;
@@ -37,9 +38,12 @@ type AuthState = {
 
 export const useAuthStore = create<AuthState>((set) => ({
 	userInfo: null,
+	oauthType: null,
 	setUserInfo: (user) => set({ userInfo: user }),
 	kakaoLogin: async () => {
 		return firebaseRequest('로그인', async () => {
+			set({ oauthType: 'kakao' });
+
 			const kakaoTokenInfo = await login();
 			const provider = new OAuthProvider('oidc.kakao');
 
@@ -125,6 +129,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 	},
 	naverLogin: async () => {
 		return firebaseRequest('로그인', async () => {
+			set({ oauthType: 'naver' });
+
 			const { failureResponse, successResponse } = await NaverLogin.login();
 
 			if (failureResponse) return false;
@@ -237,9 +243,26 @@ export const useAuthInitializer = () => {
 	// Firebase Auth 상태 변화 감지하여 userInfo 저장
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
-			if (user) {
-				const fetchedUserInfo = await getUserInfo(user.uid);
+			const oauthType = useAuthStore((state) => state.oauthType);
 
+			if (!oauthType) return;
+
+			if (user) {
+				let fetchedUserInfo = await getUserInfo(user.uid);
+
+				// Firestore에 유저 정보가 없으면 저장 후 다시 가져오기
+				if (!fetchedUserInfo) {
+					await saveUserInfo({
+						uid: user.uid,
+						displayName: user.displayName ?? '',
+						photoURL: user.photoURL ?? '',
+						oauthType,
+						lastLogin: Timestamp.now(),
+					});
+					fetchedUserInfo = await getUserInfo(user.uid);
+				}
+
+				// 여전히 유저 정보가 없으면 Alert 표시
 				if (!fetchedUserInfo) {
 					Alert.alert(
 						'계정 정보 없음',
@@ -249,11 +272,14 @@ export const useAuthInitializer = () => {
 
 					setUserInfo(null);
 					await AsyncStorage.removeItem('@user');
+					useAuthStore.setState({ oauthType: null });
+
 					return;
 				}
 
 				setUserInfo(fetchedUserInfo);
 				await AsyncStorage.setItem('@user', JSON.stringify(fetchedUserInfo));
+				useAuthStore.setState({ oauthType: null });
 			} else {
 				setUserInfo(null);
 				await AsyncStorage.removeItem('@user');
