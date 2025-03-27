@@ -20,7 +20,6 @@ export default {
 				backgroundColor: '#ffffff',
 			},
 			package: 'com.janechun.animalcrossingtradingapp',
-			googleServicesFile: './google-services.json',
 		},
 		web: {
 			bundler: 'metro',
