@@ -30,10 +30,10 @@ const Setting = () => {
 		else if (userInfo.oauthType === 'naver') isSuccess = await naverLogout();
 
 		if (Boolean(isSuccess)) {
-			tabNavigation.reset({
-				index: 0,
-				routes: [{ name: 'HomeTab' }],
-			});
+			// tabNavigation.reset({
+			// 	index: 0,
+			// 	routes: [{ name: 'HomeTab' }],
+			// });
 			showToast('success', '로그아웃되었습니다.');
 		} else {
 			showToast('error', '로그아웃 실패. 다시 시도해주세요.');
