@@ -211,12 +211,14 @@ const ChatRoom = () => {
 			/>
 
 			{/* 인풋 */}
-			<Input
-				input={chatInput}
-				setInput={setChatInput}
-				placeholder='메세지 보내기'
-				onPress={onSubmit}
-			/>
+			{receiverInfo.displayName !== '탈퇴한 사용자' && (
+				<Input
+					input={chatInput}
+					setInput={setChatInput}
+					placeholder='메세지 보내기'
+					onPress={onSubmit}
+				/>
+			)}
 		</KeyboardAvoidingView>
 	);
 };
