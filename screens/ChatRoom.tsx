@@ -1,3 +1,4 @@
+import Message from '@/components/Chat/Message';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import Input from '@/components/ui/Input';
 import { Colors } from '@/constants/Color';
@@ -112,28 +113,7 @@ const ChatRoom = () => {
 	};
 
 	const renderMessage = ({ item }: { item: any }) => {
-		const formattedDate = item.createdAt
-			.toDate()
-			.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
-
-		return item.senderId === userInfo?.uid ? (
-			<View style={[styles.messageContainer, { alignSelf: 'flex-end' }]}>
-				{item.isReadBy.includes(receiverInfo?.uid) && (
-					<Text style={styles.readText}>읽음</Text>
-				)}
-				<Text style={styles.messageTime}>{formattedDate}</Text>
-				<View style={[styles.messageBubble, styles.sentBackground]}>
-					<Text style={styles.sentText}>{item.body}</Text>
-				</View>
-			</View>
-		) : (
-			<View style={[styles.messageContainer, { alignSelf: 'flex-start' }]}>
-				<View style={[styles.messageBubble, styles.receivedBackground]}>
-					<Text style={styles.receivedText}>{item.body}</Text>
-				</View>
-				<Text style={styles.messageTime}>{formattedDate}</Text>
-			</View>
-		);
+		return <Message message={item} receiverId={receiverInfo!.uid} />;
 	};
 
 	if (!chatId || !receiverInfo) return <LoadingIndicator />;
@@ -231,40 +211,6 @@ const styles = StyleSheet.create({
 	},
 	iconContainer: {
 		padding: 5,
-	},
-	messageContainer: {
-		flexDirection: 'row',
-		alignItems: 'flex-end',
-		gap: 6,
-		marginVertical: 8,
-	},
-	messageBubble: {
-		maxWidth: '75%',
-		padding: 10,
-		borderRadius: 8,
-	},
-	sentBackground: {
-		backgroundColor: Colors.primary,
-	},
-	receivedBackground: {
-		backgroundColor: Colors.border_gray,
-	},
-	sentText: {
-		fontSize: 14,
-		color: 'white',
-	},
-	receivedText: {
-		fontSize: 14,
-		color: Colors.font_black,
-	},
-	messageTime: {
-		fontSize: 10,
-		color: Colors.font_gray,
-	},
-	readText: {
-		fontSize: 10,
-		color: Colors.font_gray,
-		paddingBottom: 1,
 	},
 });
 
