@@ -82,7 +82,7 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 	return (
 		<Swipeable friction={2} renderRightActions={RightAction}>
 			<TouchableOpacity
-				onPress={() => enterChatRoom(id)}
+				onPress={() => enterChatRoom({ chatId: id })}
 				style={styles.container}
 			>
 				<View style={styles.header}>

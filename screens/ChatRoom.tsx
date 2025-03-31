@@ -8,6 +8,7 @@ import {
 	sendMessage,
 } from '@/firebase/services/chatService';
 import { getPublicUserInfo } from '@/firebase/services/userService';
+import useLoading from '@/hooks/useLoading';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ChatRoomRouteProp, ChatStackNavigation } from '@/types/navigation';
 import { PublicUserInfo } from '@/types/user';
@@ -26,15 +27,10 @@ import {
 import { FlatList } from 'react-native-gesture-handler';
 
 const ChatRoom = () => {
+	const { LoadingIndicator } = useLoading();
 	const stackNavigation = useNavigation<ChatStackNavigation>();
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const [receiverInfo, setReceiverInfo] = useState<PublicUserInfo | null>(null);
-	// receiverInfo: {
-	// 	uid: receiverId,
-	// 	displayName: creatorDisplayName,
-	// 	islandName: creatorIslandName,
-	// 	photoURL: creatorPhotoURL,
-	// },
 	const [messages, setMessages] = useState<any[]>([]);
 	const [chatInput, setChatInput] = useState('');
 	const flatListRef = useRef<FlatList>(null);
@@ -122,6 +118,9 @@ const ChatRoom = () => {
 
 		return item.senderId === userInfo?.uid ? (
 			<View style={[styles.messageContainer, { alignSelf: 'flex-end' }]}>
+				{item.isReadBy.includes(receiverInfo?.uid) && (
+					<Text style={styles.readText}>읽음</Text>
+				)}
 				<Text style={styles.messageTime}>{formattedDate}</Text>
 				<View style={[styles.messageBubble, styles.sentBackground]}>
 					<Text style={styles.sentText}>{item.body}</Text>
@@ -133,14 +132,11 @@ const ChatRoom = () => {
 					<Text style={styles.receivedText}>{item.body}</Text>
 				</View>
 				<Text style={styles.messageTime}>{formattedDate}</Text>
-				{item.isReadBy.includes(receiverInfo?.uid) && (
-					<Text style={styles.readText}>읽음</Text>
-				)}
 			</View>
 		);
 	};
 
-	if (!receiverInfo) return null;
+	if (!chatId || !receiverInfo) return <LoadingIndicator />;
 
 	return (
 		<KeyboardAvoidingView style={styles.screen} behavior='padding'>
