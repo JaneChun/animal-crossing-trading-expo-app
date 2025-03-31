@@ -1,6 +1,7 @@
 import { Colors } from '@/constants/Color';
 import useGetPosts from '@/hooks/useGetPosts';
 import useLoading from '@/hooks/useLoading';
+import { useRefreshStore } from '@/stores/RefreshStore';
 import { PostListProps } from '@/types/components';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from 'expo-router';
@@ -30,11 +31,17 @@ const PostList = ({
 		refresh,
 	} = useGetPosts(collectionName, filter, 10);
 	const [isRefreshing, setIsRefreshing] = useState(false); // 새로고침 상태
+	const { shouldRefreshPostList, setRefreshPostList } = useRefreshStore(
+		(state) => state,
+	);
 
 	useFocusEffect(
 		useCallback(() => {
-			refresh();
-		}, []),
+			if (shouldRefreshPostList) {
+				refresh();
+				setRefreshPostList(false);
+			}
+		}, [shouldRefreshPostList]),
 	);
 
 	const onRefresh = useCallback(async () => {

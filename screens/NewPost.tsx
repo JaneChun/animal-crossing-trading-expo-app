@@ -28,6 +28,7 @@ import { createPost, updatePost } from '@/firebase/services/postService';
 import useGetPostDetail from '@/hooks/useGetPostDetail';
 import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
+import { useRefreshStore } from '@/stores/RefreshStore';
 import {
 	CartItem,
 	CreatePostRequest,
@@ -57,6 +58,9 @@ const NewPost = () => {
 	const [isModalVisible, setModalVisible] = useState<boolean>(false);
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const flatListRef = useRef<FlatList>(null);
+	const { setRefreshPostList, setRefreshPostDetail } = useRefreshStore(
+		(state) => state,
+	);
 
 	const [type, setType] = useState<Type>(isMarket ? 'buy' : 'general');
 	const [title, setTitle] = useState<string>('');
@@ -240,12 +244,16 @@ const NewPost = () => {
 					await Promise.all(deletedImageUrls.map(deleteObjectFromStorage));
 				}
 
+				setRefreshPostList(true);
+				setRefreshPostDetail(true);
 				stackNavigation.goBack();
 				showToast('success', '글이 수정되었습니다.');
 			} else {
 				const requestData = buildCreatePostRequest(imageUrls);
 				createdId = await createPost(collectionName, requestData);
 
+				setRefreshPostList(true);
+				setRefreshPostDetail(true);
 				stackNavigation.popTo('PostDetail', { id: createdId });
 				showToast('success', '글이 작성되었습니다.');
 			}

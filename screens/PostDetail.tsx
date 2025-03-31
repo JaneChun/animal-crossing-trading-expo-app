@@ -16,6 +16,7 @@ import useGetComments from '@/hooks/useGetComments';
 import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
+import { useRefreshStore } from '@/stores/RefreshStore';
 import { PostDetailRouteProp } from '@/types/navigation';
 import {
 	useFocusEffect,
@@ -57,12 +58,18 @@ const PostDetail = () => {
 		setIsLoading: setIsCommentUploading,
 		LoadingIndicator,
 	} = useLoading();
+	const { shouldRefreshPostDetail, setRefreshPostDetail } = useRefreshStore(
+		(state) => state,
+	);
 
 	useFocusEffect(
 		useCallback(() => {
-			postRefresh();
-			commentRefresh();
-		}, [postRefresh, commentRefresh]),
+			if (shouldRefreshPostDetail) {
+				postRefresh();
+				commentRefresh();
+				setRefreshPostDetail(false);
+			}
+		}, [postRefresh, commentRefresh, shouldRefreshPostDetail]),
 	);
 
 	const editPost = (id: string) => {
