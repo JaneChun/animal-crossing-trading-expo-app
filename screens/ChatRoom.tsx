@@ -63,13 +63,42 @@ const ChatRoom = () => {
 		readMessages();
 	}, [chatId, userInfo]);
 
+	const groupMessagesByDate = (messages: any[]) => {
+		const groupedMessages: any[] = [];
+		let lastDate = '';
+
+		messages.forEach((message) => {
+			const formattedDate = new Date(
+				message.createdAt?.toDate(),
+			).toLocaleDateString('ko-KR', {
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric',
+			});
+
+			if (formattedDate !== lastDate) {
+				groupedMessages.push({
+					id: `date-${formattedDate}`,
+					isDateSeparator: true,
+					date: formattedDate,
+				});
+
+				lastDate = formattedDate;
+			}
+
+			groupedMessages.push(message);
+		});
+
+		return groupedMessages.reverse();
+	};
+
 	// 메시지 목록(서브컬렉션) 실시간 구독
 	useEffect(() => {
 		if (!chatId) return;
 
 		const q = query(
 			collection(db, 'Chats', chatId, 'Messages'),
-			orderBy('createdAt', 'desc'),
+			orderBy('createdAt', 'asc'),
 		);
 
 		const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -77,7 +106,10 @@ const ChatRoom = () => {
 				id: doc.id,
 				...doc.data(),
 			}));
-			setMessages(newMessages);
+
+			const groupedMessages = groupMessagesByDate(newMessages);
+
+			setMessages(groupedMessages);
 		});
 
 		return () => unsubscribe();
@@ -113,6 +145,14 @@ const ChatRoom = () => {
 	};
 
 	const renderMessage = ({ item }: { item: any }) => {
+		if (item.isDateSeparator) {
+			return (
+				<View style={styles.dateSeparator}>
+					<Text style={styles.dateSeparatorText}>{item.date}</Text>
+				</View>
+			);
+		}
+
 		return <Message message={item} receiverId={receiverInfo!.uid} />;
 	};
 
@@ -211,6 +251,14 @@ const styles = StyleSheet.create({
 	},
 	iconContainer: {
 		padding: 5,
+	},
+	dateSeparator: {
+		alignItems: 'center',
+		marginVertical: 8,
+	},
+	dateSeparatorText: {
+		color: Colors.font_gray,
+		fontSize: 12,
 	},
 });
 
