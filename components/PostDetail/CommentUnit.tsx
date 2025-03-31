@@ -101,12 +101,6 @@ const CommentUnit = ({
 			screen: 'ChatRoom',
 			params: {
 				chatId,
-				receiverInfo: {
-					uid: receiverId,
-					displayName: creatorDisplayName,
-					islandName: creatorIslandName,
-					photoURL: creatorPhotoURL,
-				},
 			},
 		});
 	};

@@ -7,8 +7,10 @@ import {
 	markMessagesAsRead,
 	sendMessage,
 } from '@/firebase/services/chatService';
+import { getPublicUserInfo } from '@/firebase/services/userService';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ChatRoomRouteProp, ChatStackNavigation } from '@/types/navigation';
+import { PublicUserInfo } from '@/types/user';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
@@ -26,12 +28,32 @@ import { FlatList } from 'react-native-gesture-handler';
 const ChatRoom = () => {
 	const stackNavigation = useNavigation<ChatStackNavigation>();
 	const userInfo = useAuthStore((state) => state.userInfo);
+	const [receiverInfo, setReceiverInfo] = useState<PublicUserInfo | null>(null);
+	// receiverInfo: {
+	// 	uid: receiverId,
+	// 	displayName: creatorDisplayName,
+	// 	islandName: creatorIslandName,
+	// 	photoURL: creatorPhotoURL,
+	// },
 	const [messages, setMessages] = useState<any[]>([]);
 	const [chatInput, setChatInput] = useState('');
 	const flatListRef = useRef<FlatList>(null);
 
 	const route = useRoute<ChatRoomRouteProp>();
-	const { chatId, receiverInfo } = route.params;
+	const { chatId } = route.params;
+
+	// 채팅방에 참여한 유저 정보 가져오기
+	useEffect(() => {
+		const getReceiverInfo = async () => {
+			const receiverId = chatId.split('_').find((id) => id !== userInfo?.uid);
+			if (!receiverId) return;
+
+			const receiver = await getPublicUserInfo(receiverId);
+			setReceiverInfo(receiver);
+		};
+
+		getReceiverInfo();
+	}, [chatId, userInfo]);
 
 	// 유저가 채팅방에 들어올 때 markMessagesAsRead 실행
 	useEffect(() => {
@@ -111,12 +133,14 @@ const ChatRoom = () => {
 					<Text style={styles.receivedText}>{item.body}</Text>
 				</View>
 				<Text style={styles.messageTime}>{formattedDate}</Text>
-				{item.isReadBy.includes(receiverInfo.uid) && (
+				{item.isReadBy.includes(receiverInfo?.uid) && (
 					<Text style={styles.readText}>읽음</Text>
 				)}
 			</View>
 		);
 	};
+
+	if (!receiverInfo) return null;
 
 	return (
 		<KeyboardAvoidingView style={styles.screen} behavior='padding'>
