@@ -1,6 +1,7 @@
 import axios from 'axios';
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
+import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 
 admin.initializeApp();
 
@@ -37,6 +38,52 @@ export const getFirebaseToken = functions.https.onRequest(
 		} catch (error) {
 			console.error('Firebase 토큰 생성 실패:', error);
 			return res.status(500).json({ error: 'Firebase Custom Token 생성 실패' });
+		}
+	},
+);
+
+export const sendChatNotification = onDocumentCreated(
+	'Chats/{chatId}/Messages/{messageId}',
+	async (event) => {
+		const snapshot = event.data;
+
+		if (!snapshot) return;
+
+		const message = snapshot.data();
+		const { receiverId, senderId, body } = message;
+
+		if (!receiverId || !senderId || !body) return;
+
+		const receiverDoc = await admin
+			.firestore()
+			.doc(`Users/${receiverId}`)
+			.get();
+		const senderDoc = await admin.firestore().doc(`Users/${senderId}`).get();
+
+		const receiverInfo = receiverDoc.data();
+		const senderInfo = senderDoc.data();
+
+		const expoPushToken = receiverInfo?.pushToken;
+		if (!expoPushToken) return;
+
+		const messagePayload = {
+			to: expoPushToken,
+			title: `${senderInfo?.displayName}님으로부터 새 메시지`,
+			body: body.length > 50 ? body.substring(0, 50) + '...' : body,
+			data: {
+				chatId: event.params.chatId,
+				senderId,
+			},
+		};
+
+		try {
+			await axios.post('https://exp.host/--/api/v2/push/send', messagePayload, {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
+		} catch (e) {
+			console.error(e);
 		}
 	},
 );
