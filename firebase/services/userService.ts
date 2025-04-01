@@ -15,6 +15,7 @@ import {
 	deleteDocFromFirestore,
 	getDocFromFirestore,
 	queryDocs,
+	updateDocToFirestore,
 } from '../core/firestoreService';
 
 const getDefaultPublicUserInfo = (uid: string): PublicUserInfo => ({
@@ -188,4 +189,22 @@ export const moveToDeletedUsers = async (userInfo: UserInfo) => {
 
 	// Users 컬렉션에서 유저 삭제
 	await deleteDocFromFirestore({ id: userInfo.uid, collection: 'Users' });
+};
+
+export const savePushTokenToFirestore = async ({
+	uid,
+	pushToken,
+}: {
+	uid: string;
+	pushToken: string;
+}) => {
+	return firestoreRequest('유저 푸시 토큰 저장', async () => {
+		await updateDocToFirestore({
+			id: uid,
+			collection: 'Users',
+			requestData: {
+				pushToken,
+			},
+		});
+	});
 };

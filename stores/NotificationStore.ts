@@ -42,7 +42,7 @@ export const useNotificationInitializer = () => {
 
 	useEffect(() => {
 		registerForPushNotificationsAsync().then(
-			(token) => setExpoPushToken(token),
+			(token) => setExpoPushToken(token ?? null),
 			(error) => setError(error),
 		);
 

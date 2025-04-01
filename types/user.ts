@@ -3,6 +3,7 @@ export interface PublicUserInfo {
 	displayName: string;
 	islandName: string;
 	photoURL: string;
+	pushToken?: string;
 }
 
 export interface UserInfo extends PublicUserInfo {

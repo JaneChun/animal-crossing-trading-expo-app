@@ -1,6 +1,7 @@
 import {
 	archiveUserData,
 	getUserInfo,
+	savePushTokenToFirestore,
 	saveUserInfo,
 } from '@/firebase/services/userService';
 import { OauthType, UserInfo } from '@/types/user';
@@ -23,6 +24,7 @@ import { Alert } from 'react-native';
 import { create } from 'zustand';
 import { auth } from '../fbase';
 import firebaseRequest from '../firebase/core/firebaseInterceptor';
+import { useNotificationStore } from './NotificationStore';
 
 type AuthState = {
 	userInfo: UserInfo | null;
@@ -183,6 +185,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 		});
 	},
 	naverDeleteAccount: async (uid) => {
+		const userInfo = useAuthStore.getState().userInfo;
+		if (!userInfo) return false;
+
 		return firebaseRequest('회원 탈퇴', async () => {
 			const user = auth.currentUser;
 			if (!user || !useAuthStore.getState().userInfo) return false;
@@ -198,8 +203,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 			await signInWithCustomToken(auth, firebaseCustomToken);
 
-			const userInfo = useAuthStore.getState().userInfo;
-			if (!userInfo) return false;
+			// 탈퇴한 유저 정보 아카이브
 			await archiveUserData(userInfo);
 
 			// Firebase Authentication에서 유저 삭제
@@ -218,7 +222,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 }));
 
 export const useAuthInitializer = () => {
+	const userInfo = useAuthStore((state) => state.userInfo);
 	const setUserInfo = useAuthStore((state) => state.setUserInfo);
+	const expoPushToken = useNotificationStore((state) => state.expoPushToken);
 
 	// 앱이 실행될 때 Kakao, Naver SDK 초기화
 	useEffect(() => {
@@ -274,6 +280,7 @@ export const useAuthInitializer = () => {
 
 				setUserInfo(fetchedUserInfo);
 				await AsyncStorage.setItem('@user', JSON.stringify(fetchedUserInfo));
+
 				useAuthStore.setState({ oauthType: null });
 			} else {
 				setUserInfo(null);
@@ -294,6 +301,14 @@ export const useAuthInitializer = () => {
 
 		loadUser();
 	}, [setUserInfo]);
+
+	useEffect(() => {
+		console.log('🔐 유저 로그인 후 푸시 토큰 저장', expoPushToken);
+		if (!userInfo || !expoPushToken) return;
+		if (userInfo.pushToken === expoPushToken) return;
+
+		savePushTokenToFirestore({ uid: userInfo.uid, pushToken: expoPushToken });
+	}, [userInfo, expoPushToken]);
 };
 
 const getFirebaseCustomToken = async (accessToken: string) => {
