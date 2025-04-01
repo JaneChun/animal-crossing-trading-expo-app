@@ -36,6 +36,8 @@ const useGetPosts = (
 
 			let q = query(
 				collection(db, collectionName),
+				where('isDeleted', '!=', true),
+				orderBy('isDeleted'),
 				orderBy('createdAt', 'desc'),
 				limit(pageSize),
 			);
@@ -43,9 +45,12 @@ const useGetPosts = (
 			// 특정 유저의 거래글(마켓)만 가져오는 필터
 			if (memoizedFilter?.creatorId) {
 				q = query(
-					q,
+					collection(db, collectionName),
 					where('creatorId', '==', memoizedFilter.creatorId),
-					where('type', 'in', ['buy', 'sell']),
+					where('isDeleted', '!=', true),
+					orderBy('isDeleted'),
+					orderBy('createdAt', 'desc'),
+					limit(pageSize),
 				);
 			}
 

@@ -4,11 +4,12 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Layout from '@/components/ui/Layout';
 import { showToast } from '@/components/ui/Toast';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/stores/AuthStore';
 import { OauthType } from '@/types/user';
 
 const Login = () => {
-	const { kakaoLogin, naverLogin } = useAuthContext();
+	const kakaoLogin = useAuthStore((state) => state.kakaoLogin);
+	const naverLogin = useAuthStore((state) => state.naverLogin);
 	const tabNavigation = useNavigation<TabNavigation>();
 
 	const handleLogin = async (oauthType: OauthType) => {

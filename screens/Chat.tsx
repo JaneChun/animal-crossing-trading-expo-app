@@ -1,15 +1,15 @@
 import ChatUnit from '@/components/Chat/ChatUnit';
 import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
 import useGetChats from '@/hooks/useGetChats';
 import useLoading from '@/hooks/useLoading';
+import { useAuthStore } from '@/stores/AuthStore';
 import { ChatWithReceiverInfo } from '@/types/chat';
 import React from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 
 const Chat = () => {
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 	const { chats, isLoading } = useGetChats();
 	const { LoadingIndicator } = useLoading();
 

@@ -1,9 +1,8 @@
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
 import { leaveChatRoom } from '@/firebase/services/chatService';
+import { useAuthStore } from '@/stores/AuthStore';
 import { ChatWithReceiverInfo } from '@/types/chat';
 import { ChatStackNavigation } from '@/types/navigation';
-import { PublicUserInfo } from '@/types/user';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -33,16 +32,10 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 		receiverInfo,
 	} = props;
 	const stackNavigation = useNavigation<ChatStackNavigation>();
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 
-	const enterChatRoom = ({
-		chatId,
-		receiverInfo,
-	}: {
-		chatId: string;
-		receiverInfo: PublicUserInfo;
-	}) => {
-		stackNavigation.navigate('ChatRoom', { chatId, receiverInfo });
+	const enterChatRoom = ({ chatId }: { chatId: string }) => {
+		stackNavigation.navigate('ChatRoom', { chatId });
 	};
 
 	const deleteChat = async (id: string) => {
@@ -89,7 +82,7 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 	return (
 		<Swipeable friction={2} renderRightActions={RightAction}>
 			<TouchableOpacity
-				onPress={() => enterChatRoom({ chatId: id, receiverInfo })}
+				onPress={() => enterChatRoom({ chatId: id })}
 				style={styles.container}
 			>
 				<View style={styles.header}>

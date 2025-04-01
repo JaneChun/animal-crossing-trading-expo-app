@@ -160,6 +160,16 @@ export type UserInfoProps = {
 	containerStyle?: ViewStyle;
 };
 
+// Chat/
+export type Message = {
+	id: string;
+	body: string;
+	senderId: string;
+	receiverId: string;
+	createdAt: Timestamp;
+	isReadBy: string[];
+};
+
 // Profile/
 export type ProfileProps = {
 	isUploading: boolean;

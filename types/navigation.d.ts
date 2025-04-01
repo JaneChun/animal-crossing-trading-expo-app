@@ -1,4 +1,3 @@
-import { ReceiverInfo } from '@/hooks/useGetChats';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -32,7 +31,7 @@ export type CommunityStackParamList = {
 // Chat 스택 네비게이션
 export type ChatStackParamList = {
 	Chat: undefined;
-	ChatRoom: { chatId: string; receiverInfo: ReceiverInfo };
+	ChatRoom: { chatId: string };
 };
 
 // Profile 스택 네비게이션

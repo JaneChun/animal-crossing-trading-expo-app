@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/stores/AuthStore';
 import { ProfileProps } from '@/types/components';
 import React, { useState } from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
@@ -7,7 +7,7 @@ import Button from '../ui/Button';
 import EditProfileModal from './EditProfileModal';
 
 const Profile = ({ isUploading, setIsUploading }: ProfileProps) => {
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 	const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
 	const openEditProfileModal = () => {

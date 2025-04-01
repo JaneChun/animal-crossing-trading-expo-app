@@ -5,14 +5,16 @@ import {
 } from '@/contexts/NotificationContext';
 import BottomTabNavigator from '@/navigation/BottomTabNavigator';
 import ErrorBoundary from '@/screens/ErrorBoundary';
+import { useAuthInitializer } from '@/stores/AuthStore';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import * as Notifications from 'expo-notifications';
 import { useEffect } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
-import { AuthContextProvider } from '../contexts/AuthContext';
 
 export default function Index() {
+	useAuthInitializer();
+
 	const { notification, expoPushToken, error } = useNotification();
 	console.log('expoPushToken', expoPushToken);
 
@@ -39,14 +41,12 @@ export default function Index() {
 	return (
 		<ErrorBoundary>
 			<NotificationProvider>
-				<AuthContextProvider>
-					<ActionSheetProvider>
-						<GestureHandlerRootView>
-							<BottomTabNavigator />
-							<Toast config={toastConfig} />
-						</GestureHandlerRootView>
-					</ActionSheetProvider>
-				</AuthContextProvider>
+				<ActionSheetProvider>
+					<GestureHandlerRootView>
+						<BottomTabNavigator />
+						<Toast config={toastConfig} />
+					</GestureHandlerRootView>
+				</ActionSheetProvider>
 			</NotificationProvider>
 		</ErrorBoundary>
 	);

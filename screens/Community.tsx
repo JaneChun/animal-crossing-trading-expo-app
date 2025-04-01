@@ -2,13 +2,13 @@ import PostList from '@/components/Home/PostList';
 import Categories from '@/components/ui/Categories';
 import Layout from '@/components/ui/Layout';
 import { useCurrentTab } from '@/hooks/useCurrentTab';
-import { useNavigationStore } from '@/store/store';
+import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { Tab } from '@/types/components';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
 
 const Community = () => {
-	const { setActiveTab } = useNavigationStore();
+	const setActiveTab = useActiveTabStore((state) => state.setActiveTab);
 	const currentTab = useCurrentTab();
 	const isFocused = useIsFocused();
 	const [category, setCategory] = useState<string>('all');

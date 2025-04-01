@@ -1,8 +1,8 @@
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
 import { createChatRoom } from '@/firebase/services/chatService';
 import { deleteComment as deleteCommentFromDB } from '@/firebase/services/commentService';
-import { useNavigationStore } from '@/store/store';
+import { useActiveTabStore } from '@/stores/ActiveTabstore';
+import { useAuthStore } from '@/stores/AuthStore';
 import { Collection, CommentUnitProps } from '@/types/components';
 import { HomeStackNavigation, TabNavigation } from '@/types/navigation';
 import { elapsedTime } from '@/utilities/elapsedTime';
@@ -33,10 +33,10 @@ const CommentUnit = ({
 	creatorIslandName,
 	creatorPhotoURL,
 }: CommentUnitProps) => {
-	const { activeTab } = useNavigationStore();
+	const activeTab = useActiveTabStore((state) => state.activeTab);
 	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
 	const collectionName = isMarket ? 'Boards' : 'Communities';
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<HomeStackNavigation>();
 
@@ -90,10 +90,20 @@ const CommentUnit = ({
 	};
 
 	// 채팅 시작
-	const onChatClick = async (receiverId: string) => {
+	const onChatClick = async ({
+		commentCreatorId,
+		initialMessage,
+	}: {
+		commentCreatorId: string;
+		initialMessage: string;
+	}) => {
 		if (!userInfo) return;
 
-		const chatId = await createChatRoom(userInfo.uid, receiverId);
+		const chatId = await createChatRoom({
+			postCreatorId: userInfo.uid,
+			commentCreatorId,
+			initialMessage,
+		});
 
 		if (!chatId) return;
 
@@ -101,12 +111,6 @@ const CommentUnit = ({
 			screen: 'ChatRoom',
 			params: {
 				chatId,
-				receiverInfo: {
-					uid: receiverId,
-					displayName: creatorDisplayName,
-					islandName: creatorIslandName,
-					photoURL: creatorPhotoURL,
-				},
 			},
 		});
 	};
@@ -166,7 +170,12 @@ const CommentUnit = ({
 					{postCreatorId === userInfo?.uid && postCreatorId !== creatorId && (
 						<TouchableOpacity
 							style={styles.chatButtonContainer}
-							onPress={() => onChatClick(creatorId)}
+							onPress={() =>
+								onChatClick({
+									commentCreatorId: creatorId,
+									initialMessage: body,
+								})
+							}
 						>
 							<Text style={styles.chatText}>채팅하기</Text>
 							<AntDesign

@@ -1,10 +1,10 @@
 import Layout from '@/components/ui/Layout';
 import { showToast } from '@/components/ui/Toast';
-import { useAuthContext } from '@/contexts/AuthContext';
 import { auth } from '@/fbase';
 import { updateComment } from '@/firebase/services/commentService';
 import useLoading from '@/hooks/useLoading';
-import { useNavigationStore } from '@/store/store';
+import { useActiveTabStore } from '@/stores/ActiveTabstore';
+import { useAuthStore } from '@/stores/AuthStore';
 import { updateCommentRequest } from '@/types/comment';
 import {
 	EditCommentRouteProp,
@@ -18,14 +18,14 @@ import { StyleSheet, TextInput } from 'react-native';
 import Button from '../components/ui/Button';
 
 const EditComment = () => {
-	const { activeTab } = useNavigationStore();
+	const activeTab = useActiveTabStore((state) => state.activeTab);
 	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
 	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const route = useRoute<EditCommentRouteProp>();
 	const { commentId, postId, body } = route.params;
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<HomeStackNavigation>();
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 	const {
 		isLoading: isUploading,
 		setIsLoading: setIsUploading,

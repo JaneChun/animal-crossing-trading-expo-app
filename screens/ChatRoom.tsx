@@ -1,14 +1,18 @@
+import Message from '@/components/Chat/Message';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import Input from '@/components/ui/Input';
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
 import { db } from '@/fbase';
 import {
 	leaveChatRoom,
 	markMessagesAsRead,
 	sendMessage,
 } from '@/firebase/services/chatService';
+import { getPublicUserInfo } from '@/firebase/services/userService';
+import useLoading from '@/hooks/useLoading';
+import { useAuthStore } from '@/stores/AuthStore';
 import { ChatRoomRouteProp, ChatStackNavigation } from '@/types/navigation';
+import { PublicUserInfo } from '@/types/user';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
@@ -24,14 +28,29 @@ import {
 import { FlatList } from 'react-native-gesture-handler';
 
 const ChatRoom = () => {
+	const { LoadingIndicator } = useLoading();
 	const stackNavigation = useNavigation<ChatStackNavigation>();
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
+	const [receiverInfo, setReceiverInfo] = useState<PublicUserInfo | null>(null);
 	const [messages, setMessages] = useState<any[]>([]);
 	const [chatInput, setChatInput] = useState('');
 	const flatListRef = useRef<FlatList>(null);
 
 	const route = useRoute<ChatRoomRouteProp>();
-	const { chatId, receiverInfo } = route.params;
+	const { chatId } = route.params;
+
+	// 채팅방에 참여한 유저 정보 가져오기
+	useEffect(() => {
+		const getReceiverInfo = async () => {
+			const receiverId = chatId.split('_').find((id) => id !== userInfo?.uid);
+			if (!receiverId) return;
+
+			const receiver = await getPublicUserInfo(receiverId);
+			setReceiverInfo(receiver);
+		};
+
+		getReceiverInfo();
+	}, [chatId, userInfo]);
 
 	// 유저가 채팅방에 들어올 때 markMessagesAsRead 실행
 	useEffect(() => {
@@ -44,13 +63,42 @@ const ChatRoom = () => {
 		readMessages();
 	}, [chatId, userInfo]);
 
+	const groupMessagesByDate = (messages: any[]) => {
+		const groupedMessages: any[] = [];
+		let lastDate = '';
+
+		messages.forEach((message) => {
+			const formattedDate = new Date(
+				message.createdAt?.toDate(),
+			).toLocaleDateString('ko-KR', {
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric',
+			});
+
+			if (formattedDate !== lastDate) {
+				groupedMessages.push({
+					id: `date-${formattedDate}`,
+					isDateSeparator: true,
+					date: formattedDate,
+				});
+
+				lastDate = formattedDate;
+			}
+
+			groupedMessages.push(message);
+		});
+
+		return groupedMessages.reverse();
+	};
+
 	// 메시지 목록(서브컬렉션) 실시간 구독
 	useEffect(() => {
 		if (!chatId) return;
 
 		const q = query(
 			collection(db, 'Chats', chatId, 'Messages'),
-			orderBy('createdAt', 'desc'),
+			orderBy('createdAt', 'asc'),
 		);
 
 		const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -58,7 +106,10 @@ const ChatRoom = () => {
 				id: doc.id,
 				...doc.data(),
 			}));
-			setMessages(newMessages);
+
+			const groupedMessages = groupMessagesByDate(newMessages);
+
+			setMessages(groupedMessages);
 		});
 
 		return () => unsubscribe();
@@ -94,29 +145,18 @@ const ChatRoom = () => {
 	};
 
 	const renderMessage = ({ item }: { item: any }) => {
-		const formattedDate = item.createdAt
-			.toDate()
-			.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+		if (item.isDateSeparator) {
+			return (
+				<View style={styles.dateSeparator}>
+					<Text style={styles.dateSeparatorText}>{item.date}</Text>
+				</View>
+			);
+		}
 
-		return item.senderId === userInfo?.uid ? (
-			<View style={[styles.messageContainer, { alignSelf: 'flex-end' }]}>
-				<Text style={styles.messageTime}>{formattedDate}</Text>
-				<View style={[styles.messageBubble, styles.sentBackground]}>
-					<Text style={styles.sentText}>{item.body}</Text>
-				</View>
-			</View>
-		) : (
-			<View style={[styles.messageContainer, { alignSelf: 'flex-start' }]}>
-				<View style={[styles.messageBubble, styles.receivedBackground]}>
-					<Text style={styles.receivedText}>{item.body}</Text>
-				</View>
-				<Text style={styles.messageTime}>{formattedDate}</Text>
-				{item.isReadBy.includes(receiverInfo.uid) && (
-					<Text style={styles.readText}>읽음</Text>
-				)}
-			</View>
-		);
+		return <Message message={item} receiverId={receiverInfo!.uid} />;
 	};
+
+	if (!chatId || !receiverInfo) return <LoadingIndicator />;
 
 	return (
 		<KeyboardAvoidingView style={styles.screen} behavior='padding'>
@@ -171,12 +211,14 @@ const ChatRoom = () => {
 			/>
 
 			{/* 인풋 */}
-			<Input
-				input={chatInput}
-				setInput={setChatInput}
-				placeholder='메세지 보내기'
-				onPress={onSubmit}
-			/>
+			{receiverInfo.displayName !== '탈퇴한 사용자' && (
+				<Input
+					input={chatInput}
+					setInput={setChatInput}
+					placeholder='메세지 보내기'
+					onPress={onSubmit}
+				/>
+			)}
 		</KeyboardAvoidingView>
 	);
 };
@@ -212,39 +254,13 @@ const styles = StyleSheet.create({
 	iconContainer: {
 		padding: 5,
 	},
-	messageContainer: {
-		flexDirection: 'row',
-		alignItems: 'flex-end',
-		gap: 6,
+	dateSeparator: {
+		alignItems: 'center',
 		marginVertical: 8,
 	},
-	messageBubble: {
-		maxWidth: '75%',
-		padding: 10,
-		borderRadius: 8,
-	},
-	sentBackground: {
-		backgroundColor: Colors.primary,
-	},
-	receivedBackground: {
-		backgroundColor: Colors.border_gray,
-	},
-	sentText: {
-		fontSize: 14,
-		color: 'white',
-	},
-	receivedText: {
-		fontSize: 14,
-		color: Colors.font_black,
-	},
-	messageTime: {
-		fontSize: 10,
+	dateSeparatorText: {
 		color: Colors.font_gray,
-	},
-	readText: {
-		fontSize: 10,
-		color: Colors.font_gray,
-		paddingBottom: 1,
+		fontSize: 12,
 	},
 });
 

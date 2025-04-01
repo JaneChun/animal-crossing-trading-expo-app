@@ -45,7 +45,10 @@ export const createPost = async (
 	return firestoreRequest('게시글 생성', async () => {
 		const createdId = await addDocToFirestore({
 			directory: collectionName,
-			requestData,
+			requestData: {
+				...requestData,
+				isDeleted: false,
+			},
 		});
 
 		return createdId;

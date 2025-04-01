@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Color';
-import { useNavigationStore } from '@/store/store';
+import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { PostWithCreatorInfo } from '@/types/post';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
@@ -20,7 +20,7 @@ const PostUnit = ({
 	creatorDisplayName,
 	commentCount,
 }: PostWithCreatorInfo) => {
-	const { activeTab } = useNavigationStore();
+	const activeTab = useActiveTabStore((state) => state.activeTab);
 	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
 	const isCommunity = activeTab === 'Community';
 

@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Color';
-import { useAuthContext } from '@/contexts/AuthContext';
 import useGetChats from '@/hooks/useGetChats';
+import { useAuthStore } from '@/stores/AuthStore';
 import {
 	Entypo,
 	FontAwesome6,
@@ -28,7 +28,7 @@ const getTabBarIcon =
 		);
 
 const BottomTabNavigator = () => {
-	const { userInfo } = useAuthContext();
+	const userInfo = useAuthStore((state) => state.userInfo);
 	const { unreadCount } = useGetChats();
 
 	return (
