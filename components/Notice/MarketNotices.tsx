@@ -1,10 +1,10 @@
-import { useNotification } from '@/contexts/NotificationContext';
+import { useNotificationStore } from '@/stores/NotificationStore';
 import axios from 'axios';
 import React from 'react';
 import { Button, Text, View } from 'react-native';
 
 const MarketNotices = () => {
-	const { notification, expoPushToken, error } = useNotification();
+	const { expoPushToken, notification, error } = useNotificationStore();
 
 	const sendNotifiaction = async () => {
 		try {
@@ -13,7 +13,6 @@ const MarketNotices = () => {
 				title: '알림 테스트',
 				body: '알림 테스트입니다.',
 			});
-			console.log('result', result);
 		} catch (e) {
 			console.error(e);
 		}
