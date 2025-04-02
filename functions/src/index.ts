@@ -87,3 +87,55 @@ export const sendChatNotification = onDocumentCreated(
 		}
 	},
 );
+
+export const sendCommentNotification = onDocumentCreated(
+	'Notifications/{notificationId}',
+	async (event) => {
+		const snapshot = event.data;
+
+		if (!snapshot) return;
+
+		const notification = snapshot.data();
+		const { receiverId, senderId, type, postId, body } = notification;
+
+		if (!receiverId || !senderId || !body) return;
+
+		const receiverDoc = await admin
+			.firestore()
+			.doc(`Users/${receiverId}`)
+			.get();
+		const senderDoc = await admin.firestore().doc(`Users/${senderId}`).get();
+		const postDoc = await admin.firestore().doc(`${type}/${postId}`).get();
+
+		if (!postDoc.exists) return;
+
+		const receiverInfo = receiverDoc.data();
+		const senderInfo = senderDoc.data();
+		const post = postDoc.data();
+
+		const expoPushToken = receiverInfo?.pushToken;
+		if (!expoPushToken) return;
+
+		const collectionName = type === 'Boards' ? '마켓' : '커뮤니티';
+
+		const messagePayload = {
+			to: expoPushToken,
+			title: `[${collectionName}] ${senderInfo?.displayName}님이 ${post?.title}에 댓글을 남겼습니다.`,
+			body: body.length > 50 ? body.substring(0, 50) + '...' : body,
+			data: {
+				postId,
+				senderId,
+			},
+		};
+
+		try {
+			await axios.post('https://exp.host/--/api/v2/push/send', messagePayload, {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
+		} catch (e) {
+			console.error(e);
+		}
+	},
+);
