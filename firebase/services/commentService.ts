@@ -57,7 +57,7 @@ export const addComment = async ({
 				postId,
 				body: requestData.body,
 				createdAt: Timestamp.now(),
-				isReadBy: false,
+				isRead: false,
 			});
 		}
 		await batch.commit();

@@ -9,6 +9,7 @@ import {
 	ViewStyle,
 } from 'react-native';
 import { Comment, CommentWithCreatorInfo } from './comment';
+import { NotificationWithReceiverInfo } from './notification';
 import { CartItem, Type } from './post';
 
 // Home/
@@ -158,6 +159,21 @@ export type UserInfoProps = {
 	displayName: string;
 	islandName: string;
 	containerStyle?: ViewStyle;
+};
+
+// Notification/
+export type NotificationUnitProp = {
+	tab: 'Market' | 'Community';
+	item: NotificationWithReceiverInfo;
+};
+
+export type NoticeTabProps = {
+	notifications: NotificationWithReceiverInfo[];
+};
+
+export type TabBarLabelProps = {
+	label: string;
+	hasUnread: boolean;
 };
 
 // Chat/
