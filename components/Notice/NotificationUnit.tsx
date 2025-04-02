@@ -1,5 +1,8 @@
 import { Colors } from '@/constants/Color';
-import { markNotificationAsRead } from '@/firebase/services/notificationService';
+import {
+	deleteNotification,
+	markNotificationAsRead,
+} from '@/firebase/services/notificationService';
 import { getPost } from '@/firebase/services/postService';
 import { getPublicUserInfo } from '@/firebase/services/userService';
 import { NotificationTab, NotificationUnitProp } from '@/types/components';
@@ -7,9 +10,15 @@ import { TabNavigation } from '@/types/navigation';
 import { Post } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
 import { elapsedTime } from '@/utilities/elapsedTime';
+import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Reanimated, {
+	SharedValue,
+	useAnimatedStyle,
+} from 'react-native-reanimated';
 import ItemThumbnail from '../ui/ItemThumbnail';
 import Thumbnail from '../ui/Thumbnail';
 
@@ -59,40 +68,70 @@ const NotificationUnit = ({ tab, item }: NotificationUnitProp) => {
 		});
 	};
 
+	const handleDeleteNotification = async (notificationId: string) => {
+		await deleteNotification(notificationId);
+	};
+
+	const RightAction = (
+		prog: SharedValue<number>,
+		drag: SharedValue<number>,
+	) => {
+		const animatedStyle = useAnimatedStyle(() => {
+			return {
+				transform: [{ translateX: drag.value + 80 }],
+			};
+		});
+
+		return (
+			<Reanimated.View style={animatedStyle}>
+				<TouchableOpacity
+					style={styles.rightActionContainer}
+					onPress={() => handleDeleteNotification(id)}
+				>
+					<FontAwesome name='trash' color='white' size={24} />
+				</TouchableOpacity>
+			</Reanimated.View>
+		);
+	};
+
 	if (!post || !senderInfo) return null;
 
 	return (
-		<TouchableOpacity
-			style={[
-				styles.container,
-				isRead ? styles.readBackground : styles.unreadBackground,
-			]}
-			onPress={() => onPressNotification({ tab, postId })}
-			activeOpacity={0.8}
-		>
-			{/* 썸네일 */}
-			<View style={styles.thumbnailContainer}>
-				{tab === 'Market' && (
-					<ItemThumbnail
-						previewImage={post?.cart?.[0]?.imageUrl}
-						itemLength={post?.cart?.length}
-					/>
-				)}
-				{tab === 'Community' && <Thumbnail previewImage={post?.images?.[0]} />}
-			</View>
+		<Swipeable friction={2} renderRightActions={RightAction}>
+			<TouchableOpacity
+				style={[
+					styles.container,
+					isRead ? styles.readBackground : styles.unreadBackground,
+				]}
+				onPress={() => onPressNotification({ tab, postId })}
+				activeOpacity={0.8}
+			>
+				{/* 썸네일 */}
+				<View style={styles.thumbnailContainer}>
+					{tab === 'Market' && (
+						<ItemThumbnail
+							previewImage={post?.cart?.[0]?.imageUrl}
+							itemLength={post?.cart?.length}
+						/>
+					)}
+					{tab === 'Community' && (
+						<Thumbnail previewImage={post?.images?.[0]} />
+					)}
+				</View>
 
-			{/* 콘텐츠 */}
-			<View style={styles.content}>
-				<Text style={styles.title} numberOfLines={2}>
-					<Text style={styles.boldText}>{senderInfo.displayName}</Text>님이{' '}
-					<Text style={styles.boldText}>{title}</Text>에 댓글을 남겼습니다.
-				</Text>
-				<Text style={styles.body} numberOfLines={2}>
-					"{body}"
-				</Text>
-				<Text style={styles.date}>{elapsedTime(createdAt)}</Text>
-			</View>
-		</TouchableOpacity>
+				{/* 콘텐츠 */}
+				<View style={styles.content}>
+					<Text style={styles.title} numberOfLines={2}>
+						<Text style={styles.boldText}>{senderInfo.displayName}</Text>님이{' '}
+						<Text style={styles.boldText}>{title}</Text>에 댓글을 남겼습니다.
+					</Text>
+					<Text style={styles.body} numberOfLines={2}>
+						"{body}"
+					</Text>
+					<Text style={styles.date}>{elapsedTime(createdAt)}</Text>
+				</View>
+			</TouchableOpacity>
+		</Swipeable>
 	);
 };
 
@@ -137,5 +176,12 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		color: Colors.font_light_gray,
 		textAlign: 'right',
+	},
+	rightActionContainer: {
+		backgroundColor: Colors.badge_red,
+		width: 80,
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 });
