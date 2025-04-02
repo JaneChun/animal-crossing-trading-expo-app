@@ -12,11 +12,13 @@ import UserInfo from '@/components/PostDetail/UserInfo';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
+import { deletePost as deletePostFromDB } from '@/firebase/services/postService';
 import useGetComments from '@/hooks/useGetComments';
 import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useRefreshStore } from '@/stores/RefreshStore';
+import { Collection } from '@/types/components';
 import { PostDetailRouteProp } from '@/types/navigation';
 import {
 	useFocusEffect,
@@ -76,19 +78,32 @@ const PostDetail = () => {
 		stackNavigation.navigate('NewPost', { id });
 	};
 
-	const deletePost = async (id: string) => {
+	const deletePost = async ({
+		collectionName,
+		id,
+	}: {
+		collectionName: Collection;
+		id: string;
+	}) => {
 		Alert.alert('게시글 삭제', '정말로 삭제하겠습니까?', [
 			{ text: '취소', style: 'cancel' },
 			{
 				text: '삭제',
-				onPress: async () => await handleDeletePost({ postId: id }),
+				onPress: async () =>
+					await handleDeletePost({ collectionName, postId: id }),
 			},
 		]);
 	};
 
-	const handleDeletePost = async ({ postId }: { postId: string }) => {
+	const handleDeletePost = async ({
+		collectionName,
+		postId,
+	}: {
+		collectionName: Collection;
+		postId: string;
+	}) => {
 		try {
-			await deletePostFromDB(postId);
+			await deletePostFromDB({ collectionName, postId });
 			showToast('success', '게시글이 삭제되었습니다.');
 			stackNavigation.goBack();
 		} catch (e) {
@@ -138,7 +153,10 @@ const PostDetail = () => {
 											size={18}
 											options={[
 												{ label: '수정', onPress: () => editPost(id) },
-												{ label: '삭제', onPress: () => deletePost(id) },
+												{
+													label: '삭제',
+													onPress: () => deletePost({ collectionName, id }),
+												},
 												{ label: '취소', onPress: () => {} },
 											]}
 										/>
@@ -249,6 +267,3 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 	},
 });
-function deletePostFromDB(postId: string) {
-	throw new Error('Function not implemented.');
-}

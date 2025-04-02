@@ -69,8 +69,14 @@ export const updatePost = async (
 	});
 };
 
-export const deletePost = async (postId: string) => {
+export const deletePost = async ({
+	collectionName,
+	postId,
+}: {
+	collectionName: Collection;
+	postId: string;
+}) => {
 	return firestoreRequest('게시글 삭제', async () => {
-		await deleteDocFromFirestore({ id: postId, collection: 'Boards' });
+		await deleteDocFromFirestore({ id: postId, collection: collectionName });
 	});
 };
