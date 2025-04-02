@@ -2,6 +2,7 @@ import { Notification } from '@/types/notification';
 import { PublicUserInfo } from '@/types/user';
 import { getDocs, Query } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
+import { updateDocToFirestore } from '../core/firestoreService';
 import { getPublicUserInfos } from './userService';
 
 export const fetchMyNotifications = async <T extends Notification, U>(
@@ -56,5 +57,19 @@ export const fetchMyNotifications = async <T extends Notification, U>(
 		return {
 			data: populatedData,
 		};
+	});
+};
+
+export const markNotificationAsRead = async (
+	notificationId: string,
+): Promise<void> => {
+	return firestoreRequest('알림 읽음 처리', async () => {
+		await updateDocToFirestore({
+			id: notificationId,
+			collection: 'Notifications',
+			requestData: {
+				isRead: true,
+			},
+		});
 	});
 };

@@ -162,8 +162,10 @@ export type UserInfoProps = {
 };
 
 // Notification/
+export type NotificationTab = 'Market' | 'Community';
+
 export type NotificationUnitProp = {
-	tab: 'Market' | 'Community';
+	tab: NotificationTab;
 	item: NotificationWithReceiverInfo;
 };
 

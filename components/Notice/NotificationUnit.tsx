@@ -1,16 +1,20 @@
 import { Colors } from '@/constants/Color';
+import { markNotificationAsRead } from '@/firebase/services/notificationService';
 import { getPost } from '@/firebase/services/postService';
 import { getPublicUserInfo } from '@/firebase/services/userService';
-import { NotificationUnitProp } from '@/types/components';
+import { NotificationTab, NotificationUnitProp } from '@/types/components';
+import { TabNavigation } from '@/types/navigation';
 import { Post } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
 import { elapsedTime } from '@/utilities/elapsedTime';
+import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ItemThumbnail from '../ui/ItemThumbnail';
 import Thumbnail from '../ui/Thumbnail';
 
 const NotificationUnit = ({ tab, item }: NotificationUnitProp) => {
+	const tabNavigation = useNavigation<TabNavigation>();
 	const { id, type, body, postId, receiverId, senderId, createdAt, isRead } =
 		item;
 	const [post, setPost] = useState<Post | null>(null);
@@ -36,14 +40,34 @@ const NotificationUnit = ({ tab, item }: NotificationUnitProp) => {
 			post.title.length > 5 ? `${post.title.substring(0, 5)}...` : post.title;
 	}
 
-	const onPressNotification = () => {};
+	const onPressNotification = async ({
+		tab,
+		postId,
+	}: {
+		tab: NotificationTab;
+		postId: string;
+	}) => {
+		// 읽음 처리
+		await markNotificationAsRead(id);
+
+		// 이동
+		tabNavigation.navigate(tab === 'Market' ? 'HomeTab' : 'CommunityTab', {
+			screen: 'PostDetail',
+			params: {
+				id: postId,
+			},
+		});
+	};
 
 	if (!post || !senderInfo) return null;
 
 	return (
 		<TouchableOpacity
-			style={[styles.container, isRead ? styles.read : styles.unread]}
-			onPress={onPressNotification}
+			style={[
+				styles.container,
+				isRead ? styles.readBackground : styles.unreadBackground,
+			]}
+			onPress={() => onPressNotification({ tab, postId })}
 			activeOpacity={0.8}
 		>
 			{/* 썸네일 */}
@@ -77,15 +101,16 @@ export default NotificationUnit;
 const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'row',
-		padding: 16,
+		paddingHorizontal: 12,
+		paddingVertical: 16,
 		borderBottomWidth: 1,
 		borderColor: Colors.border_gray,
 		gap: 16,
 	},
-	unread: {
+	unreadBackground: {
 		backgroundColor: Colors.base,
 	},
-	read: {
+	readBackground: {
 		backgroundColor: 'white',
 	},
 	thumbnailContainer: {
