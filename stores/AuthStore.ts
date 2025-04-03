@@ -294,8 +294,27 @@ export const useAuthInitializer = () => {
 	useEffect(() => {
 		const loadUser = async () => {
 			const storedUser = await AsyncStorage.getItem('@user');
-			if (storedUser) {
-				setUserInfo(JSON.parse(storedUser));
+
+			if (!storedUser) {
+				setUserInfo(null);
+				return;
+			}
+
+			// 데이터 검증
+			try {
+				const parsedUser = JSON.parse(storedUser);
+
+				if (!parsedUser.uid || typeof parsedUser.uid !== 'string') {
+					setUserInfo(null);
+					await AsyncStorage.removeItem('@user');
+					return;
+				}
+
+				setUserInfo(parsedUser);
+			} catch (e) {
+				console.log('AsyncStorage 유저 파싱 실패:', e);
+				setUserInfo(null);
+				await AsyncStorage.removeItem('@user');
 			}
 		};
 
