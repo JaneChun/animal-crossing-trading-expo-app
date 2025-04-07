@@ -9,8 +9,11 @@ import { useAuthStore } from '@/stores/AuthStore';
 import { Tab } from '@/types/components';
 import { ProfileStackNavigation } from '@/types/navigation';
 import { Ionicons } from '@expo/vector-icons';
-import { useIsFocused } from '@react-navigation/native';
-import { useFocusEffect, useNavigation } from 'expo-router';
+import {
+	useFocusEffect,
+	useIsFocused,
+	useNavigation,
+} from '@react-navigation/native';
 import { useCallback } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';

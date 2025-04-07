@@ -4,6 +4,7 @@ import {
 	deleteObjectFromStorage,
 	uploadObjectToStorage,
 } from '@/firebase/services/imageService';
+import { useAuthStore } from '@/stores/AuthStore';
 import { type NewPostRouteProp, type TabNavigation } from '@/types/navigation';
 import {
 	useFocusEffect,
@@ -15,7 +16,6 @@ import { Timestamp } from 'firebase/firestore';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { useAuthStore } from '../stores/AuthStore';
 
 import BodyInput from '@/components/NewPost/BodyInput';
 import ImageInput from '@/components/NewPost/ImageInput';

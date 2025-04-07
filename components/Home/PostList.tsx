@@ -4,7 +4,7 @@ import useLoading from '@/hooks/useLoading';
 import { useRefreshStore } from '@/stores/RefreshStore';
 import { PostListProps } from '@/types/components';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { useFocusEffect, useNavigation } from 'expo-router';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
 import {
 	FlatList,
