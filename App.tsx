@@ -1,6 +1,7 @@
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { NavigationContainer } from '@react-navigation/native';
 import * as Linking from 'expo-linking';
+import { SafeAreaView } from 'react-native';
 import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
@@ -27,7 +28,7 @@ export default function App() {
 	return (
 		<ErrorBoundary>
 			<ActionSheetProvider>
-				<GestureHandlerRootView>
+				<GestureHandlerRootView style={{ flex: 1 }}>
 					<NavigationContainer
 						linking={linking}
 						onReady={() => {
@@ -40,7 +41,9 @@ export default function App() {
 							);
 						}}
 					>
-						<BottomTabNavigator />
+						<SafeAreaView style={{ flex: 1 }}>
+							<BottomTabNavigator />
+						</SafeAreaView>
 					</NavigationContainer>
 					<Toast config={toastConfig} />
 				</GestureHandlerRootView>

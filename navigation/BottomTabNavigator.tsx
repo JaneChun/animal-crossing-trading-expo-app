@@ -40,7 +40,6 @@ const BottomTabNavigator = () => {
 				headerShown: false,
 				tabBarStyle: {
 					height: 60,
-					paddingBottom: 0,
 				},
 				tabBarActiveBackgroundColor: Colors.base,
 				tabBarIconStyle: { flex: 1 },
