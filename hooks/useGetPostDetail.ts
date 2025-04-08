@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 function useGetPostDetail(collectionName: Collection, id: string) {
 	const [data, setData] = useState<PostWithCreatorInfo | null>(null);
-	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	const fetchData = useCallback(async () => {
 		if (!collectionName || !id) return;
@@ -15,7 +15,10 @@ function useGetPostDetail(collectionName: Collection, id: string) {
 		setIsLoading(true);
 
 		const post: Post | null = await getPost(collectionName, id);
-		if (!post) return;
+		if (!post) {
+			setIsLoading(false);
+			return;
+		}
 
 		const publicUserInfo: PublicUserInfo = await getPublicUserInfo(
 			post.creatorId,

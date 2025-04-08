@@ -17,11 +17,24 @@ const linking = {
 	prefixes: [prefix, 'animal-crossing-trading-app://'],
 	config: {
 		screens: {
-			HomeTab: { path: 'home' },
-			CommunityTab: { path: 'community' },
-			NoticeTab: { path: 'notice' },
-			ChatTab: { path: 'chat' },
-			ProfileTab: { path: 'profile' },
+			HomeTab: {
+				path: 'home',
+				screens: {
+					PostDetail: 'post/:id',
+				},
+			},
+			CommunityTab: {
+				path: 'community',
+				screens: {
+					PostDetail: 'post/:id',
+				},
+			},
+			ChatTab: {
+				path: 'chat',
+				screens: {
+					ChatRoom: 'room/:chatId',
+				},
+			},
 		},
 	},
 };
@@ -36,15 +49,15 @@ export default function App() {
 				<GestureHandlerRootView style={{ flex: 1 }}>
 					<NavigationContainer
 						linking={linking}
-						onReady={() => {
-							console.log('🔵 Navigation Ready');
-						}}
-						onStateChange={(state) => {
-							console.log(
-								'🟡 Navigation State:',
-								JSON.stringify(state, null, 2),
-							);
-						}}
+						// onReady={() => {
+						// 	console.log('🔵 Navigation Ready');
+						// }}
+						// onStateChange={(state) => {
+						// 	console.log(
+						// 		'🟡 Navigation State:',
+						// 		JSON.stringify(state, null, 2),
+						// 	);
+						// }}
 					>
 						<SafeAreaView style={{ flex: 1 }}>
 							<BottomTabNavigator />
