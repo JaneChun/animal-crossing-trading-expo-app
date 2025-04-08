@@ -66,13 +66,14 @@ export const sendChatNotification = onDocumentCreated(
 		const expoPushToken = receiverInfo?.pushToken;
 		if (!expoPushToken) return;
 
+		const chatId = event.params.chatId;
+
 		const messagePayload = {
 			to: expoPushToken,
 			title: `${senderInfo?.displayName}님으로부터 새 메시지`,
 			body: body.length > 50 ? body.substring(0, 50) + '...' : body,
 			data: {
-				chatId: event.params.chatId,
-				senderId,
+				url: `animal-crossing-trading-app://chat/room/${chatId}`,
 			},
 		};
 
@@ -117,14 +118,14 @@ export const sendCommentNotification = onDocumentCreated(
 		if (!expoPushToken) return;
 
 		const collectionName = type === 'Boards' ? '마켓' : '커뮤니티';
+		const path = type === 'Boards' ? 'home' : 'community';
 
 		const messagePayload = {
 			to: expoPushToken,
 			title: `[${collectionName}] ${senderInfo?.displayName}님이 ${post?.title}에 댓글을 남겼습니다.`,
 			body: body.length > 50 ? body.substring(0, 50) + '...' : body,
 			data: {
-				postId,
-				senderId,
+				url: `animal-crossing-trading-app://${path}/post/${postId}`,
 			},
 		};
 
