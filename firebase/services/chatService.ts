@@ -81,17 +81,12 @@ export const fetchMyChats = async <T extends Chat, U>(
 	});
 };
 
-export const createChatRoom = async ({
-	postCreatorId,
-	commentCreatorId,
-	initialMessage,
-}: {
-	postCreatorId: string;
-	commentCreatorId: string;
-	initialMessage: string;
-}): Promise<string | undefined> => {
+export const createChatRoom = async (
+	user1: string,
+	user2: string,
+): Promise<string | undefined> => {
 	return firestoreRequest('채팅방 생성', async () => {
-		const chatId = generateChatId(postCreatorId, commentCreatorId);
+		const chatId = generateChatId(user1, user2);
 
 		const chatRef = doc(db, 'Chats', chatId);
 		const chatSnap = await getDoc(chatRef);
@@ -100,26 +95,18 @@ export const createChatRoom = async ({
 		if (!chatSnap.exists()) {
 			await setDoc(chatRef, {
 				id: chatId,
-				participants: [postCreatorId, commentCreatorId],
+				participants: [user1, user2],
 				lastMessage: '',
 				lastMessageSenderId: '',
 				updatedAt: Timestamp.now(),
 			});
 
 			console.log(`새 채팅방 생성: ${chatId}`);
-
-			// 초기 메시지 전송
-			await sendMessage({
-				chatId,
-				senderId: commentCreatorId,
-				receiverId: postCreatorId,
-				message: initialMessage,
-			});
 		} else {
 			const participants = chatSnap.data().participants;
 
 			// 기존 채팅방이 있는데, 사용자가 나간 채팅방이라면 (participants 배열에 없다면) 다시 추가
-			if (!participants.includes(postCreatorId)) {
+			if (!participants.includes(user1)) {
 				await rejoinChatRoom({ chatId });
 			} else {
 				console.log(`기존 채팅방 사용: ${chatId}`);
