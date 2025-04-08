@@ -2,14 +2,28 @@ import { Colors } from '@/constants/Color';
 import { LayoutProps } from '@/types/components';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 
-const Layout = ({ title, children }: LayoutProps) => {
-	const { width } = Dimensions.get('window');
-	const isIphoneMini = width <= 375;
+const { width } = Dimensions.get('window');
+const isIphoneMini = width <= 375;
+export const PADDING = isIphoneMini ? 18 : 24;
 
+const Layout = ({
+	title,
+	titleRightComponent,
+	containerStyle,
+	children,
+}: LayoutProps) => {
 	return (
-		<View style={[styles.screen, isIphoneMini && styles.miniScreen]}>
-			{title && <Text style={styles.title}>{title}</Text>}
-			{children}
+		<View style={[styles.screen, containerStyle]}>
+			{/* 헤더나 제목 등 패딩이 필요한 부분 */}
+			{title && (
+				<View style={styles.header}>
+					<Text style={styles.title}>{title}</Text>
+					{titleRightComponent && titleRightComponent}
+				</View>
+			)}
+
+			{/* 본문 영역 (스크롤 가능한 컴포넌트 포함) */}
+			<View style={{ flex: 1 }}>{children}</View>
 		</View>
 	);
 };
@@ -19,11 +33,15 @@ export default Layout;
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		padding: 24,
 		backgroundColor: 'white',
 	},
-	miniScreen: {
-		padding: 18,
+	header: {
+		paddingHorizontal: PADDING,
+		paddingTop: PADDING,
+		paddingBottom: PADDING / 2,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
 	},
 	title: {
 		fontSize: 20,

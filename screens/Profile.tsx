@@ -1,6 +1,6 @@
 import MyPosts from '@/components/Profile/MyPosts';
 import ProfileBox from '@/components/Profile/Profile';
-import Layout from '@/components/ui/Layout';
+import Layout, { PADDING } from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
 import { useCurrentTab } from '@/hooks/useCurrentTab';
 import useLoading from '@/hooks/useLoading';
@@ -15,7 +15,7 @@ import {
 	useNavigation,
 } from '@react-navigation/native';
 import { useCallback } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 const Profile = () => {
@@ -46,9 +46,9 @@ const Profile = () => {
 	};
 
 	return (
-		<Layout>
-			<View style={styles.header}>
-				<Text style={styles.title}>프로필</Text>
+		<Layout
+			title='프로필'
+			titleRightComponent={
 				<TouchableOpacity style={styles.iconContainer} onPress={onPressSetting}>
 					<Ionicons
 						name='settings-outline'
@@ -56,16 +56,18 @@ const Profile = () => {
 						size={24}
 					/>
 				</TouchableOpacity>
-			</View>
-
+			}
+		>
 			<FlatList
 				data={[]}
 				renderItem={null}
 				ListHeaderComponent={
-					<ProfileBox
-						isUploading={isUploading}
-						setIsUploading={setIsUploading}
-					/>
+					<View style={{ paddingHorizontal: PADDING }}>
+						<ProfileBox
+							isUploading={isUploading}
+							setIsUploading={setIsUploading}
+						/>
+					</View>
 				}
 				ListEmptyComponent={<MyPosts />}
 			/>
@@ -74,20 +76,7 @@ const Profile = () => {
 };
 
 const styles = StyleSheet.create({
-	header: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		marginBottom: 8,
-	},
-	title: {
-		fontSize: 20,
-		fontWeight: 'bold',
-		color: Colors.font_black,
-	},
-	iconContainer: {
-		padding: 5,
-	},
+	iconContainer: { paddingRight: 5 },
 });
 
 export default Profile;

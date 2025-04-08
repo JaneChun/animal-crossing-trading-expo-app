@@ -1,5 +1,5 @@
 import PostList from '@/components/Home/PostList';
-import Layout from '@/components/ui/Layout';
+import Layout, { PADDING } from '@/components/ui/Layout';
 import { useCurrentTab } from '@/hooks/useCurrentTab';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { Tab } from '@/types/components';
@@ -20,7 +20,11 @@ const Home = () => {
 
 	return (
 		<Layout title='거래글'>
-			<PostList collectionName='Boards' isAddPostButtonVisible />
+			<PostList
+				collectionName='Boards'
+				isAddPostButtonVisible
+				containerStyle={{ paddingHorizontal: PADDING }}
+			/>
 		</Layout>
 	);
 };

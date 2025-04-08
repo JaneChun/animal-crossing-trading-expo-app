@@ -140,8 +140,8 @@ export default NotificationUnit;
 const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'row',
-		paddingHorizontal: 12,
-		paddingVertical: 16,
+		paddingHorizontal: 24,
+		paddingVertical: 12,
 		borderBottomWidth: 1,
 		borderColor: Colors.border_gray,
 		gap: 16,

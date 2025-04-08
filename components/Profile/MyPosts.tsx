@@ -1,17 +1,21 @@
 import { Colors } from '@/constants/Color';
 import { useAuthStore } from '@/stores/AuthStore';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import PostList from '../Home/PostList';
+import Layout, { PADDING } from '../ui/Layout';
 
 const MyPosts = () => {
 	const userInfo = useAuthStore((state) => state.userInfo);
 
 	return (
-		<View style={styles.container}>
-			<Text style={styles.title}>작성한 글</Text>
-			<PostList collectionName='Boards' filter={{ creatorId: userInfo?.uid }} />
-		</View>
+		<Layout title='작성한 글'>
+			<PostList
+				collectionName='Boards'
+				filter={{ creatorId: userInfo?.uid }}
+				containerStyle={{ paddingHorizontal: PADDING }}
+			/>
+		</Layout>
 	);
 };
 

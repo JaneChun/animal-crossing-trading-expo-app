@@ -1,6 +1,6 @@
 import PostList from '@/components/Home/PostList';
 import Categories from '@/components/ui/Categories';
-import Layout from '@/components/ui/Layout';
+import Layout, { PADDING } from '@/components/ui/Layout';
 import { useCurrentTab } from '@/hooks/useCurrentTab';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { Tab } from '@/types/components';
@@ -25,12 +25,14 @@ const Community = () => {
 				categories={categories}
 				category={category}
 				setCategory={setCategory}
+				containerStyle={{ paddingHorizontal: PADDING }}
 			/>
 
 			<PostList
 				collectionName='Communities'
 				filter={{ category }}
 				isAddPostButtonVisible
+				containerStyle={{ paddingHorizontal: PADDING }}
 			/>
 		</Layout>
 	);

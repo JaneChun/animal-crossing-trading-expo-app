@@ -3,9 +3,14 @@ import { CategoriesProps, Category } from '@/types/components';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const Categories = ({ categories, category, setCategory }: CategoriesProps) => {
+const Categories = ({
+	categories,
+	category,
+	setCategory,
+	containerStyle,
+}: CategoriesProps) => {
 	return (
-		<View style={styles.categoriesContainer}>
+		<View style={[styles.categoriesContainer, containerStyle]}>
 			{categories.map((item: Category) => (
 				<TouchableOpacity
 					key={item.EN}

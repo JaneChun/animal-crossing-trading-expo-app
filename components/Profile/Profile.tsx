@@ -6,7 +6,11 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
 import EditProfileModal from './EditProfileModal';
 
-const Profile = ({ isUploading, setIsUploading }: ProfileProps) => {
+const Profile = ({
+	isUploading,
+	setIsUploading,
+	containerStyle,
+}: ProfileProps) => {
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const [isModalVisible, setModalVisible] = useState<boolean>(false);
 
@@ -19,7 +23,7 @@ const Profile = ({ isUploading, setIsUploading }: ProfileProps) => {
 	};
 
 	return (
-		<View style={styles.container}>
+		<View style={[styles.container, containerStyle]}>
 			<View style={styles.imageContainer}>
 				{userInfo?.photoURL ? (
 					<Image source={{ uri: userInfo?.photoURL }} style={styles.image} />

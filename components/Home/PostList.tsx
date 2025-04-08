@@ -19,6 +19,7 @@ const PostList = ({
 	collectionName,
 	filter,
 	isAddPostButtonVisible = false,
+	containerStyle,
 }: PostListProps) => {
 	const navigation = useNavigation<any>();
 
@@ -66,6 +67,7 @@ const PostList = ({
 				data={data}
 				keyExtractor={({ id }) => id}
 				renderItem={({ item }) => <PostUnit {...item} />}
+				style={[containerStyle]}
 				refreshControl={
 					<RefreshControl
 						tintColor={Colors.border_gray}

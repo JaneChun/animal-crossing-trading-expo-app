@@ -20,6 +20,7 @@ export type PostListProps = {
 	collectionName: Collection;
 	filter?: { category?: string; creatorId?: string };
 	isAddPostButtonVisible?: boolean;
+	containerStyle?: StyleProp<ViewStyle>;
 };
 
 export type TypeBadgeProps = {
@@ -192,6 +193,7 @@ export type Message = {
 export type ProfileProps = {
 	isUploading: boolean;
 	setIsUploading: Dispatch<SetStateAction<boolean>>;
+	containerStyle?: StyleProp<ViewStyle>;
 };
 
 export type EditProfileModalProps = ProfileProps & {
@@ -238,7 +240,9 @@ export type InputProps = {
 
 export type LayoutProps = {
 	children: ReactNode;
+	containerStyle?: StyleProp<ViewStyle>;
 	title?: string;
+	titleRightComponent?: React.ReactNode;
 };
 
 export type Category = { EN: string; KR: string };
@@ -247,6 +251,7 @@ export type CategoriesProps = {
 	categories: Category[];
 	category: string;
 	setCategory: Dispatch<SetStateAction<string>>;
+	containerStyle?: StyleProp<ViewStyle>;
 };
 
 export type Currency = 'mileticket' | 'bell';

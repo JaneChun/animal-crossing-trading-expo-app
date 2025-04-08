@@ -8,6 +8,8 @@ import Toast from 'react-native-toast-message';
 import { toastConfig } from './components/ui/Toast';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import ErrorBoundary from './screens/ErrorBoundary';
+import { useAuthInitializer } from './stores/AuthStore';
+import { useNotificationInitializer } from './stores/NotificationStore';
 
 const prefix = Linking.createURL('/');
 
@@ -25,6 +27,9 @@ const linking = {
 };
 
 export default function App() {
+	useAuthInitializer();
+	useNotificationInitializer();
+
 	return (
 		<ErrorBoundary>
 			<ActionSheetProvider>
@@ -43,9 +48,9 @@ export default function App() {
 					>
 						<SafeAreaView style={{ flex: 1 }}>
 							<BottomTabNavigator />
+							<Toast config={toastConfig} />
 						</SafeAreaView>
 					</NavigationContainer>
-					<Toast config={toastConfig} />
 				</GestureHandlerRootView>
 			</ActionSheetProvider>
 		</ErrorBoundary>

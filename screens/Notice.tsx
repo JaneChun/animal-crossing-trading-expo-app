@@ -1,7 +1,7 @@
 import CommunityNotices from '@/components/Notice/CommunityNotices';
 import MarketNotices from '@/components/Notice/MarketNotices';
 import TabBarLabel from '@/components/Notice/TabBarLabel';
-import Layout from '@/components/ui/Layout';
+import Layout, { PADDING } from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
 import useGetNotifications from '@/hooks/useGetNotifications';
 import useLoading from '@/hooks/useLoading';
@@ -37,7 +37,7 @@ const Notice = () => {
 			<Tab.Navigator
 				screenOptions={{
 					tabBarLabelStyle: { fontSize: 14, fontWeight: 600 },
-					tabBarStyle: { backgroundColor: 'white' },
+					tabBarStyle: { backgroundColor: 'white', marginHorizontal: PADDING },
 					tabBarIndicatorStyle: { backgroundColor: Colors.primary }, // 선택된 탭 밑줄 색상
 					tabBarActiveTintColor: Colors.primary, // 활성 탭 색상
 					tabBarInactiveTintColor: Colors.font_gray, // 비활성 탭 색상
@@ -68,16 +68,6 @@ const Notice = () => {
 	);
 };
 
-const styles = StyleSheet.create({
-	emptyContainer: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	emptyText: {
-		fontSize: 14,
-		color: Colors.font_gray,
-	},
-});
+const styles = StyleSheet.create({});
 
 export default Notice;

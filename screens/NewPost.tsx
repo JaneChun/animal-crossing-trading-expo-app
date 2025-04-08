@@ -22,7 +22,7 @@ import ImageInput from '@/components/NewPost/ImageInput';
 import TitleInput from '@/components/NewPost/TitleInput';
 import TypeSelect from '@/components/NewPost/TypeSelect';
 import DropdownInput from '@/components/ui/DropdownInput';
-import Layout from '@/components/ui/Layout';
+import Layout, { PADDING } from '@/components/ui/Layout';
 import { showToast } from '@/components/ui/Toast';
 import { createPost, updatePost } from '@/firebase/services/postService';
 import useGetPostDetail from '@/hooks/useGetPostDetail';
@@ -277,7 +277,7 @@ const NewPost = () => {
 	}
 
 	return (
-		<Layout>
+		<Layout containerStyle={{ padding: PADDING }}>
 			<KeyboardAvoidingView style={styles.screen}>
 				<FlatList
 					ref={flatListRef}

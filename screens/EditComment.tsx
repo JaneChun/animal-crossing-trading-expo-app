@@ -1,4 +1,4 @@
-import Layout from '@/components/ui/Layout';
+import Layout, { PADDING } from '@/components/ui/Layout';
 import { showToast } from '@/components/ui/Toast';
 import { auth } from '@/fbase';
 import { updateComment } from '@/firebase/services/commentService';
@@ -93,7 +93,7 @@ const EditComment = () => {
 	}
 
 	return (
-		<Layout>
+		<Layout containerStyle={{ padding: PADDING }}>
 			<TextInput
 				style={styles.textInput}
 				value={newCommentInput}
