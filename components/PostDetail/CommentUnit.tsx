@@ -170,21 +170,24 @@ const CommentUnit = ({
 				{/* 푸터 */}
 				<View style={styles.commentFooter}>
 					<Text style={styles.time}>{elapsedTime(createdAt)}</Text>
-					{postCreatorId === userInfo?.uid && postCreatorId !== creatorId && (
-						<TouchableOpacity
-							style={styles.chatButtonContainer}
-							onPress={() =>
-								onChatClick({ collectionName, postId, receiverId: creatorId })
-							}
-						>
-							<Text style={styles.chatText}>채팅하기</Text>
-							<AntDesign
-								name='arrowright'
-								color={Colors.font_black}
-								size={14}
-							/>
-						</TouchableOpacity>
-					)}
+					{/* 내 게시글의 다른 사람 댓글만 표시 */}
+					{postCreatorId === userInfo?.uid &&
+						postCreatorId !== creatorId &&
+						creatorDisplayName !== '탈퇴한 사용자' && (
+							<TouchableOpacity
+								style={styles.chatButtonContainer}
+								onPress={() =>
+									onChatClick({ collectionName, postId, receiverId: creatorId })
+								}
+							>
+								<Text style={styles.chatText}>채팅하기</Text>
+								<AntDesign
+									name='arrowright'
+									color={Colors.font_black}
+									size={14}
+								/>
+							</TouchableOpacity>
+						)}
 				</View>
 			</View>
 		</View>
