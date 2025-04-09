@@ -1,8 +1,12 @@
 import { Colors } from '@/constants/Color';
+import { getPost } from '@/firebase/services/postService';
 import { useAuthStore } from '@/stores/AuthStore';
 import { Message as MessageType } from '@/types/components';
-import React from 'react';
+import { Post } from '@/types/post';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import PostSummary from './PostSummary';
+import PostSummaryLoading from './PostSummaryLoading';
 
 const Message = ({
 	message,
@@ -11,11 +15,36 @@ const Message = ({
 	message: MessageType;
 	receiverId: string;
 }) => {
+	const [post, setPost] = useState<Post | null>(null);
 	const userInfo = useAuthStore((state) => state.userInfo);
+
+	useEffect(() => {
+		if (message.senderId !== 'system') return;
+
+		const getPostInfo = async () => {
+			const { collectionName, postId } = JSON.parse(message.body);
+			if (!collectionName || !postId) return;
+
+			const postInfo = await getPost(collectionName, postId);
+			if (!postInfo) return;
+
+			setPost(postInfo);
+		};
+
+		getPostInfo();
+	}, []);
 
 	const formattedDate = message.createdAt
 		.toDate()
 		.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+
+	if (message.senderId === 'system') {
+		return (
+			<View style={styles.postSummaryContainer}>
+				{post ? <PostSummary {...post} /> : <PostSummaryLoading />}
+			</View>
+		);
+	}
 
 	return message.senderId === userInfo?.uid ? (
 		<View style={[styles.messageContainer, { alignSelf: 'flex-end' }]}>
@@ -73,5 +102,10 @@ const styles = StyleSheet.create({
 		fontSize: 10,
 		color: Colors.font_gray,
 		paddingBottom: 1,
+	},
+	postSummaryContainer: {
+		width: '100%',
+		alignSelf: 'center',
+		marginVertical: 16,
 	},
 });

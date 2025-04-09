@@ -90,10 +90,23 @@ const CommentUnit = ({
 	};
 
 	// 채팅 시작
-	const onChatClick = async (receiverId: string) => {
+	const onChatClick = async ({
+		collectionName,
+		postId,
+		receiverId,
+	}: {
+		collectionName: Collection;
+		postId: string;
+		receiverId: string;
+	}) => {
 		if (!userInfo) return;
 
-		const chatId = await createChatRoom(userInfo.uid, receiverId);
+		const chatId = await createChatRoom({
+			collectionName,
+			postId,
+			user1: userInfo.uid,
+			user2: receiverId,
+		});
 
 		if (!chatId) return;
 
@@ -160,7 +173,9 @@ const CommentUnit = ({
 					{postCreatorId === userInfo?.uid && postCreatorId !== creatorId && (
 						<TouchableOpacity
 							style={styles.chatButtonContainer}
-							onPress={() => onChatClick(creatorId)}
+							onPress={() =>
+								onChatClick({ collectionName, postId, receiverId: creatorId })
+							}
 						>
 							<Text style={styles.chatText}>채팅하기</Text>
 							<AntDesign

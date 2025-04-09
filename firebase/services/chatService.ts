@@ -1,5 +1,6 @@
 import { db } from '@/fbase';
 import { Chat } from '@/types/chat';
+import { Collection } from '@/types/components';
 import { PublicUserInfo } from '@/types/user';
 import {
 	addDoc,
@@ -81,10 +82,17 @@ export const fetchMyChats = async <T extends Chat, U>(
 	});
 };
 
-export const createChatRoom = async (
-	user1: string,
-	user2: string,
-): Promise<string | undefined> => {
+export const createChatRoom = async ({
+	collectionName,
+	postId,
+	user1,
+	user2,
+}: {
+	collectionName: Collection;
+	postId: string;
+	user1: string;
+	user2: string;
+}): Promise<string | undefined> => {
 	return firestoreRequest('채팅방 생성', async () => {
 		const chatId = generateChatId(user1, user2);
 
@@ -112,6 +120,18 @@ export const createChatRoom = async (
 				console.log(`기존 채팅방 사용: ${chatId}`);
 			}
 		}
+
+		// 채팅이 시작한 게시글 정보 추가
+		// 하지만 푸시 알림은 발생시키지 않아야 함
+		await sendMessage({
+			chatId,
+			senderId: 'system',
+			receiverId: 'system',
+			message: JSON.stringify({
+				collectionName,
+				postId,
+			}),
+		});
 
 		return chatId;
 	});
@@ -156,6 +176,8 @@ export const sendMessage = async ({
 			createdAt: Timestamp.now(),
 			isReadBy: [senderId],
 		});
+
+		if (senderId === 'system') return;
 
 		// 2. 채팅방 정보 업데이트 (최근 메시지, 보낸 사람, 시간)
 		const chatRef = doc(db, 'Chats', chatId);

@@ -52,7 +52,8 @@ export const sendChatNotification = onDocumentCreated(
 		const message = snapshot.data();
 		const { receiverId, senderId, body } = message;
 
-		if (!receiverId || !senderId || !body) return;
+		// 시스템 메세지는 채팅 알림 발생 X
+		if (senderId === 'system' || !senderId || !receiverId || !body) return;
 
 		const receiverDoc = await admin
 			.firestore()
@@ -70,8 +71,12 @@ export const sendChatNotification = onDocumentCreated(
 
 		const messagePayload = {
 			to: expoPushToken,
-			title: `${senderInfo?.displayName}님으로부터 새 메시지`,
-			body: body.length > 50 ? body.substring(0, 50) + '...' : body,
+			title: '💬 새로운 채팅 메세지가 왔어구리!',
+			body: `${senderInfo?.displayName}: ${
+				body.length > 50 ? body.substring(0, 50) + '...' : body
+			}`,
+			// title: `${senderInfo?.displayName}님으로부터 새 메시지`,
+			// body: body.length > 50 ? body.substring(0, 50) + '...' : body,
 			data: {
 				url: `animal-crossing-trading-app://chat/room/${chatId}`,
 			},
@@ -105,25 +110,31 @@ export const sendCommentNotification = onDocumentCreated(
 			.firestore()
 			.doc(`Users/${receiverId}`)
 			.get();
-		const senderDoc = await admin.firestore().doc(`Users/${senderId}`).get();
+		// const senderDoc = await admin.firestore().doc(`Users/${senderId}`).get();
 		const postDoc = await admin.firestore().doc(`${type}/${postId}`).get();
 
 		if (!postDoc.exists) return;
 
 		const receiverInfo = receiverDoc.data();
-		const senderInfo = senderDoc.data();
+		// const senderInfo = senderDoc.data();
 		const post = postDoc.data();
 
 		const expoPushToken = receiverInfo?.pushToken;
 		if (!expoPushToken) return;
 
-		const collectionName = type === 'Boards' ? '마켓' : '커뮤니티';
+		// const collectionName = type === 'Boards' ? '마켓' : '커뮤니티';
 		const path = type === 'Boards' ? 'home' : 'community';
 
 		const messagePayload = {
 			to: expoPushToken,
-			title: `[${collectionName}] ${senderInfo?.displayName}님이 ${post?.title}에 댓글을 남겼습니다.`,
-			body: body.length > 50 ? body.substring(0, 50) + '...' : body,
+			title: `📝 새로운 댓글이 달렸어구리!`,
+			body: `[${
+				post?.title.length > 5
+					? `${post?.title.substring(0, 5)}...`
+					: post?.title
+			}] ${body.length > 50 ? body.substring(0, 50) + '...' : body}`,
+			// title: `[${collectionName}] ${senderInfo?.displayName}님이 ${post?.title}에 댓글을 남겼습니다.`,
+			// body: body.length > 50 ? body.substring(0, 50) + '...' : body,
 			data: {
 				url: `animal-crossing-trading-app://${path}/post/${postId}`,
 			},
