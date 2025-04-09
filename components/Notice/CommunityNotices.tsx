@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { markAllNotificationAsRead } from '@/firebase/services/notificationService';
 import { NoticeTabProps } from '@/types/components';
 import { NotificationWithReceiverInfo } from '@/types/notification';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -6,6 +7,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import NotificationUnit from './NotificationUnit';
+import ReadAllButton from './ReadAllButton';
 
 const CommunityNotices = ({ notifications }: NoticeTabProps) => {
 	const renderNotificationItem = ({
@@ -14,6 +16,14 @@ const CommunityNotices = ({ notifications }: NoticeTabProps) => {
 		item: NotificationWithReceiverInfo;
 	}) => {
 		return <NotificationUnit item={item} tab='Community' />;
+	};
+
+	const readAllNotifications = async () => {
+		const unReadNotificationIds = notifications
+			.filter(({ isRead }) => !isRead)
+			.map(({ id }) => id);
+
+		await markAllNotificationAsRead(unReadNotificationIds);
 	};
 
 	return (
@@ -29,11 +39,14 @@ const CommunityNotices = ({ notifications }: NoticeTabProps) => {
 					<Text style={styles.emptyText}>새로운 알림이 없습니다.</Text>
 				</View>
 			) : (
-				<FlatList
-					data={notifications}
-					keyExtractor={({ id }) => id}
-					renderItem={renderNotificationItem}
-				/>
+				<>
+					<ReadAllButton onPress={readAllNotifications} />
+					<FlatList
+						data={notifications}
+						keyExtractor={({ id }) => id}
+						renderItem={renderNotificationItem}
+					/>
+				</>
 			)}
 		</View>
 	);

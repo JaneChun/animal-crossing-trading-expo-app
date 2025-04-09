@@ -1,6 +1,7 @@
+import { db } from '@/fbase';
 import { Notification } from '@/types/notification';
 import { PublicUserInfo } from '@/types/user';
-import { getDocs, Query } from 'firebase/firestore';
+import { doc, getDocs, Query, writeBatch } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
 import {
 	deleteDocFromFirestore,
@@ -74,6 +75,22 @@ export const markNotificationAsRead = async (
 				isRead: true,
 			},
 		});
+	});
+};
+
+export const markAllNotificationAsRead = async (
+	notificationIds: string[],
+): Promise<void> => {
+	return firestoreRequest('알림 읽음 처리', async () => {
+		const batch = writeBatch(db);
+
+		notificationIds.forEach((notificationId) => {
+			const noticeRef = doc(db, `Notifications/${notificationId}`);
+
+			batch.update(noticeRef, { isRead: true });
+		});
+
+		await batch.commit();
 	});
 };
 
