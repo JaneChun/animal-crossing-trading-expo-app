@@ -56,11 +56,12 @@ export const toastConfig = {
 export const showToast = (
 	type: 'success' | 'error' | 'warn' | 'info',
 	text: string,
+	topOffset?: number,
 ) => {
 	Toast.show({
 		type: type,
 		text1: text,
-		topOffset: 5,
+		topOffset: topOffset ? topOffset : 50,
 		position: 'top',
 		visibilityTime: 2000,
 	});
