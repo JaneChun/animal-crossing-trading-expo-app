@@ -7,7 +7,6 @@ const CommentsList = ({
 	postCreatorId,
 	comments,
 	containerStyle,
-	commentRefresh,
 }: CommentsListProps) => {
 	return (
 		<View style={[styles.container, containerStyle]}>
@@ -18,7 +17,6 @@ const CommentsList = ({
 				keyExtractor={({ id }) => id}
 				renderItem={({ item }) => (
 					<CommentUnit
-						commentRefresh={commentRefresh}
 						postId={postId}
 						postCreatorId={postCreatorId}
 						{...item}

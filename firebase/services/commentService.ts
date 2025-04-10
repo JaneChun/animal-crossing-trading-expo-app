@@ -1,5 +1,5 @@
 import { db } from '@/fbase';
-import { addCommentRequest, updateCommentRequest } from '@/types/comment';
+import { AddCommentRequest, UpdateCommentRequest } from '@/types/comment';
 import { Collection } from '@/types/components';
 import {
 	collection,
@@ -13,21 +13,20 @@ import { Alert } from 'react-native';
 import firestoreRequest from '../core/firebaseInterceptor';
 import { getDocFromFirestore } from '../core/firestoreService';
 
-export const addComment = async ({
-	collectionName,
-	postId,
-	requestData,
-}: {
-	collectionName: Collection;
-	postId: string;
-	requestData: addCommentRequest;
-}): Promise<void> => {
+export const addComment = async (
+	collectionName: Collection,
+	postId: string,
+	requestData: AddCommentRequest,
+): Promise<void> => {
 	return firestoreRequest('댓글 작성', async () => {
 		const batch = writeBatch(db);
 
 		// 1. 댓글 문서 추가
 		const commentRef = doc(collection(db, collectionName, postId, 'Comments'));
-		batch.set(commentRef, requestData);
+		batch.set(commentRef, {
+			...requestData,
+			createdAt: Timestamp.now(),
+		});
 
 		// 2. post 문서의 commentCount 필드 수정
 		const postRef = doc(db, collectionName, postId);
@@ -64,33 +63,27 @@ export const addComment = async ({
 	});
 };
 
-export const updateComment = async ({
-	collectionName,
-	postId,
-	commentId,
-	requestData,
-}: {
-	collectionName: Collection;
-	postId: string;
-	commentId: string;
-	requestData: updateCommentRequest;
-}): Promise<void> => {
+export const updateComment = async (
+	collectionName: Collection,
+	postId: string,
+	commentId: string,
+	requestData: UpdateCommentRequest,
+): Promise<void> => {
 	return firestoreRequest('댓글 수정', async () => {
 		// 1. 댓글 문서 수정
 		const commentRef = doc(db, collectionName, postId, 'Comments', commentId);
-		await updateDoc(commentRef, requestData);
+		await updateDoc(commentRef, {
+			...requestData,
+			updatedAt: Timestamp.now(),
+		});
 	});
 };
 
-export const deleteComment = async ({
-	collectionName,
-	postId,
-	commentId,
-}: {
-	collectionName: Collection;
-	postId: string;
-	commentId: string;
-}): Promise<void> => {
+export const deleteComment = async (
+	collectionName: Collection,
+	postId: string,
+	commentId: string,
+): Promise<void> => {
 	return firestoreRequest('댓글 삭제', async () => {
 		const batch = writeBatch(db);
 

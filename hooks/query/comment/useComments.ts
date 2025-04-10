@@ -1,7 +1,8 @@
 import { db } from '@/fbase';
 import { fetchAndPopulateUsers } from '@/firebase/api/fetchAndPopulateUsers';
-import { CommentWithCreatorInfo } from '@/types/comment';
+import { Comment, CommentDoc, CommentWithCreatorInfo } from '@/types/comment';
 import { Collection } from '@/types/components';
+import { DocumentData } from '@google-cloud/firestore';
 import { useQuery } from '@tanstack/react-query';
 import { collection, orderBy, query } from 'firebase/firestore';
 
@@ -14,7 +15,11 @@ const fetchComments = async (
 		orderBy('createdAt', 'asc'),
 	);
 
-	const { data } = await fetchAndPopulateUsers(q);
+	const { data } = await fetchAndPopulateUsers<Comment, CommentWithCreatorInfo>(
+		q,
+		(doc: DocumentData, id: string) => ({ id, ...doc } as CommentDoc),
+	);
+
 	return data;
 };
 

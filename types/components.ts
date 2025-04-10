@@ -8,7 +8,7 @@ import {
 	TextStyle,
 	ViewStyle,
 } from 'react-native';
-import { Comment, CommentWithCreatorInfo } from './comment';
+import { CommentWithCreatorInfo } from './comment';
 import { NotificationWithReceiverInfo } from './notification';
 import { CartItem, Type } from './post';
 
@@ -113,21 +113,17 @@ export type BodyProps = {
 
 export type CommentInputProps = {
 	postId: string;
-	setIsLoading: Dispatch<SetStateAction<boolean>>;
-	postRefresh: () => void;
-	commentRefresh: () => void;
+	setIsCommentUploading: Dispatch<SetStateAction<boolean>>;
 };
 
 export type CommentsListProps = {
 	postId: string;
 	postCreatorId: string;
-	comments: Comment[];
+	comments: CommentWithCreatorInfo[];
 	containerStyle?: ViewStyle;
-	commentRefresh: () => void;
 };
 
 export interface CommentUnitProps extends CommentWithCreatorInfo {
-	commentRefresh: () => void;
 	postId: string;
 	postCreatorId: string;
 }

@@ -6,10 +6,14 @@ import {
 	Filter,
 	FirestoreQueryParams,
 	PaginatedPosts,
+	Post,
+	PostDoc,
+	PostWithCreatorInfo,
 } from '@/types/post';
 import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
 import {
 	collection,
+	DocumentData,
 	limit,
 	orderBy,
 	query,
@@ -65,7 +69,10 @@ export const fetchPostsByCursor = async ({
 	lastDoc = null,
 }: FirestoreQueryParams): Promise<PaginatedPosts> => {
 	const q = getFirestoreQuery({ collectionName, filter, lastDoc });
-	const { data, lastDoc: _lastDoc } = await fetchAndPopulateUsers(q);
+	const { data, lastDoc: _lastDoc } = await fetchAndPopulateUsers<
+		Post,
+		PostWithCreatorInfo
+	>(q, (doc: DocumentData, id: string) => ({ id, ...doc } as PostDoc));
 	return { data, lastDoc: _lastDoc };
 };
 

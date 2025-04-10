@@ -1,18 +1,17 @@
 import Layout, { PADDING } from '@/components/ui/Layout';
 import { showToast } from '@/components/ui/Toast';
 import { auth } from '@/fbase';
-import { updateComment } from '@/firebase/services/commentService';
+import { useUpdateComment } from '@/hooks/mutation/comment/useUpdateComment';
 import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
-import { updateCommentRequest } from '@/types/comment';
+import { UpdateCommentRequest } from '@/types/comment';
 import {
 	EditCommentRouteProp,
 	HomeStackNavigation,
 	TabNavigation,
 } from '@/types/navigation';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useQueryClient } from '@tanstack/react-query';
 import { Timestamp } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, TextInput } from 'react-native';
@@ -27,13 +26,13 @@ const EditComment = () => {
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<HomeStackNavigation>();
 	const userInfo = useAuthStore((state) => state.userInfo);
-	const {
-		isLoading: isUploading,
-		setIsLoading: setIsUploading,
-		LoadingIndicator,
-	} = useLoading();
+	const { LoadingIndicator } = useLoading();
 	const [newCommentInput, setNewCommentInput] = useState('');
-	const queryClient = useQueryClient();
+	const { mutate: updateComment, isPending: isUpdating } = useUpdateComment(
+		collectionName,
+		postId,
+		commentId,
+	);
 
 	const isValid = newCommentInput?.length > 0;
 
@@ -41,7 +40,7 @@ const EditComment = () => {
 		stackNavigation.setOptions({
 			headerRight: () => (
 				<Button
-					disabled={isUploading || !isValid}
+					disabled={isUpdating || !isValid}
 					color='white'
 					size='md2'
 					onPress={onSubmit}
@@ -59,7 +58,7 @@ const EditComment = () => {
 				</Button>
 			),
 		});
-	}, [newCommentInput, isValid, isUploading, stackNavigation]);
+	}, [newCommentInput, isValid, isUpdating, stackNavigation]);
 
 	useEffect(() => {
 		setNewCommentInput(body);
@@ -84,32 +83,24 @@ const EditComment = () => {
 
 		if (newCommentInput.trim() === '') return;
 
-		const requestData: updateCommentRequest = {
+		const requestData: UpdateCommentRequest = {
 			body: newCommentInput,
 			updatedAt: Timestamp.now(),
 		};
 
-		try {
-			setIsUploading(true);
-
-			await updateComment({ collectionName, postId, commentId, requestData });
-
-			resetForm();
-
-			// 해당 게시글 쿼리 캐시 무효화
-			queryClient.invalidateQueries({
-				queryKey: ['postDetail', collectionName, postId],
-			});
-			stackNavigation.goBack();
-			showToast('success', '댓글이 수정되었습니다.');
-		} catch (e) {
-			showToast('error', '댓글 수정 중 오류가 발생했습니다.');
-		} finally {
-			setIsUploading(false);
-		}
+		updateComment(requestData, {
+			onSuccess: () => {
+				resetForm();
+				stackNavigation.goBack();
+				showToast('success', '댓글이 수정되었습니다.');
+			},
+			onError: (e) => {
+				showToast('error', '댓글 수정 중 오류가 발생했습니다.');
+			},
+		});
 	};
 
-	if (isUploading) {
+	if (isUpdating) {
 		return <LoadingIndicator />;
 	}
 

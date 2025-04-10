@@ -1,41 +1,49 @@
 import { getPublicUserInfos } from '@/firebase/services/userService';
-import { Post, PostDoc, PostWithCreatorInfo } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
-import { toPost } from '@/utilities/toPost';
 import { DocumentData, getDocs, Query } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
 
-export const fetchAndPopulateUsers = async (q: Query<DocumentData>) => {
+export const fetchAndPopulateUsers = async <
+	T extends { creatorId: string },
+	U extends T & {
+		creatorDisplayName: string;
+		creatorIslandName: string;
+		creatorPhotoURL: string;
+	},
+>(
+	q: Query<DocumentData>,
+	transform: (doc: DocumentData, id: string) => T,
+) => {
 	return firestoreRequest('컬렉션 데이터 조회', async () => {
 		// 1. 데이터 조회
 		const querySnapshot = await getDocs(q);
 
 		if (querySnapshot.empty) return { data: [], lastDoc: null };
 
-		const data: Post[] = [];
+		// 2. 데이터 변환
+		const data: T[] = [];
 
 		querySnapshot.docs.forEach((doc) => {
 			const docData = doc.data();
+			const id = doc.id;
 
 			if (docData) {
-				const post = toPost({ id: doc.id, ...docData } as PostDoc);
-				data.push(post);
+				const transformed = transform(docData, id) as T;
+				data.push(transformed);
 			}
 		});
 
-		// console.log('data', data);
-
-		// 2. 데이터에서 creatorId 추출
+		// 3. 데이터에서 creatorId 추출
 		const uniqueCreatorIds: string[] = [
 			...new Set(data.map((item) => item.creatorId)),
 		];
 
-		// 3. 유저 정보 한 번에 조회
+		// 4. 유저 정보 한 번에 조회
 		const publicUserInfos: Record<string, PublicUserInfo> =
 			await getPublicUserInfos(uniqueCreatorIds);
 
-		// 4. 유저 정보와 데이터 병합
-		const populatedData: PostWithCreatorInfo[] = data.map((item) => {
+		// 5. 유저 정보와 데이터 병합
+		const populatedData: U[] = data.map((item) => {
 			const userInfo = publicUserInfos[item.creatorId] || {
 				displayName: '탈퇴한 사용자',
 				islandName: '무인도',
@@ -47,7 +55,7 @@ export const fetchAndPopulateUsers = async (q: Query<DocumentData>) => {
 				creatorDisplayName: userInfo.displayName,
 				creatorIslandName: userInfo.islandName,
 				creatorPhotoURL: userInfo.photoURL,
-			};
+			} as U;
 		});
 
 		return {

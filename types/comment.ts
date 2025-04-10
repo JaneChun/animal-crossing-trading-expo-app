@@ -6,14 +6,21 @@ export interface Comment {
 	body: string;
 	creatorId: string;
 	createdAt: Timestamp;
+}
+
+export interface CommentDoc extends Comment {
 	updatedAt?: Timestamp;
 }
 
 export interface CommentWithCreatorInfo extends Comment, CreatorInfo {}
 
-export type addCommentRequest = Omit<Comment, 'id' | 'updatedAt'>;
+// firebase/services/commentService.ts
+export type AddCommentRequest = {
+	body: string;
+	creatorId: string;
+};
 
-export type updateCommentRequest = Omit<
-	Comment,
-	'id' | 'creatorId' | 'createdAt'
->;
+export type UpdateCommentRequest = {
+	body: string;
+	creatorId: string;
+};

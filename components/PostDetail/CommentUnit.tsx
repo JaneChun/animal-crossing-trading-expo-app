@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { createChatRoom } from '@/firebase/services/chatService';
-import { deleteComment as deleteCommentFromDB } from '@/firebase/services/commentService';
+import { useDeleteComment } from '@/hooks/mutation/comment/useDeleteComment';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
 import { Collection, CommentUnitProps } from '@/types/components';
@@ -21,7 +21,6 @@ import ActionSheetButton from '../ui/ActionSheetButton';
 import { showToast } from '../ui/Toast';
 
 const CommentUnit = ({
-	commentRefresh,
 	postId,
 	postCreatorId,
 	id,
@@ -39,8 +38,13 @@ const CommentUnit = ({
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<HomeStackNavigation>();
+	const { mutate: deleteComment, isPending: isDeleting } = useDeleteComment(
+		collectionName,
+		postId,
+		id,
+	);
 
-	const editComment = ({
+	const handleEditComment = ({
 		postId,
 		commentId,
 		body,
@@ -52,41 +56,25 @@ const CommentUnit = ({
 		stackNavigation.navigate('EditComment', { postId, commentId, body });
 	};
 
-	const deleteComment = async ({
-		collectionName,
-		postId,
-		commentId,
-	}: {
-		collectionName: Collection;
-		postId: string;
-		commentId: string;
-	}) => {
+	const handleDeleteComment = async () => {
 		Alert.alert('댓글 삭제', '정말로 삭제하겠습니까?', [
 			{ text: '취소', style: 'cancel' },
 			{
 				text: '삭제',
-				onPress: async () =>
-					await handleDeleteComment({ collectionName, postId, commentId }),
+				onPress: async () => await onConfirmDeleteComment(),
 			},
 		]);
 	};
 
-	const handleDeleteComment = async ({
-		collectionName,
-		postId,
-		commentId,
-	}: {
-		collectionName: Collection;
-		postId: string;
-		commentId: string;
-	}) => {
-		try {
-			await deleteCommentFromDB({ collectionName, postId, commentId });
-			showToast('success', '댓글이 삭제되었습니다.');
-			commentRefresh();
-		} catch (e: any) {
-			showToast('error', '댓글 삭제 중 오류가 발생했습니다.');
-		}
+	const onConfirmDeleteComment = async () => {
+		deleteComment(undefined, {
+			onSuccess: () => {
+				showToast('success', '댓글이 삭제되었습니다.');
+			},
+			onError: (e) => {
+				showToast('error', '댓글 삭제 중 오류가 발생했습니다.');
+			},
+		});
 	};
 
 	// 채팅 시작
@@ -147,16 +135,12 @@ const CommentUnit = ({
 							options={[
 								{
 									label: '수정',
-									onPress: () => editComment({ postId, commentId: id, body }),
+									onPress: () =>
+										handleEditComment({ postId, commentId: id, body }),
 								},
 								{
 									label: '삭제',
-									onPress: async () =>
-										await deleteComment({
-											collectionName,
-											postId,
-											commentId: id,
-										}),
+									onPress: handleDeleteComment,
 								},
 								{ label: '취소', onPress: () => {} },
 							]}

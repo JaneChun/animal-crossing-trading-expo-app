@@ -56,7 +56,6 @@ const NewPost = () => {
 		collectionName,
 		editingId,
 	);
-
 	const {
 		isLoading: isSubmitting,
 		setIsLoading: setIsSubmitting,

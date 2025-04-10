@@ -1,8 +1,8 @@
 import { auth } from '@/fbase';
-import { addComment } from '@/firebase/services/commentService';
+import { useCreateComment } from '@/hooks/mutation/comment/useCreateComment';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
-import { addCommentRequest } from '@/types/comment';
+import { AddCommentRequest } from '@/types/comment';
 import { CommentInputProps } from '@/types/components';
 import { TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
@@ -11,18 +11,17 @@ import { useState } from 'react';
 import Input from '../ui/Input';
 import { showToast } from '../ui/Toast';
 
-const CommentInput = ({
-	postId,
-	setIsLoading,
-	postRefresh,
-	commentRefresh,
-}: CommentInputProps) => {
+const CommentInput = ({ postId, setIsCommentUploading }: CommentInputProps) => {
 	const activeTab = useActiveTabStore((state) => state.activeTab);
 	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
 	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const [commentInput, setCommentInput] = useState<string>('');
 	const tabNavigation = useNavigation<TabNavigation>();
 	const userInfo = useAuthStore((state) => state.userInfo);
+	const { mutate: createComment, isPending: isCreating } = useCreateComment(
+		collectionName,
+		postId,
+	);
 
 	const resetForm = () => {
 		setCommentInput('');
@@ -43,27 +42,26 @@ const CommentInput = ({
 
 		if (commentInput.trim() === '') return;
 
-		const requestData: addCommentRequest = {
+		const requestData: AddCommentRequest = {
 			creatorId: userInfo.uid,
 			body: commentInput,
 			createdAt: Timestamp.now(),
 		};
 
 		try {
-			setIsLoading(true);
+			setIsCommentUploading(true);
 
-			await addComment({ collectionName, postId, requestData });
-
-			resetForm();
-
-			postRefresh();
-			commentRefresh();
-
-			showToast('success', '댓글이 등록되었습니다.');
-		} catch (e) {
-			showToast('error', '댓글 등록 중 오류가 발생했습니다.');
+			createComment(requestData, {
+				onSuccess: (id) => {
+					resetForm();
+					showToast('success', '댓글이 등록되었습니다.');
+				},
+				onError: (e) => {
+					showToast('error', '댓글 등록 중 오류가 발생했습니다.');
+				},
+			});
 		} finally {
-			setIsLoading(false);
+			setIsCommentUploading(false);
 		}
 	};
 

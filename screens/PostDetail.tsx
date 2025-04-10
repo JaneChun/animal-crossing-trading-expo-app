@@ -18,7 +18,6 @@ import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
-import { Collection } from '@/types/components';
 import { PostDetailRouteProp } from '@/types/navigation';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React from 'react';
@@ -40,16 +39,14 @@ const PostDetail = () => {
 	const isCommunity = activeTab === 'Community';
 	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const stackNavigation = useNavigation<any>();
-	const {
-		data: post,
-		isLoading: isPostFetching,
-		refetch: postRefetch,
-	} = usePostDetail(collectionName, id);
-	const {
-		data: comments = [],
-		isLoading: isCommentsFetching,
-		refetch: commentRefetch,
-	} = useComments(collectionName, id);
+	const { data: post, isLoading: isPostFetching } = usePostDetail(
+		collectionName,
+		id,
+	);
+	const { data: comments = [], isLoading: isCommentsFetching } = useComments(
+		collectionName,
+		id,
+	);
 	const {
 		isLoading: isCommentUploading,
 		setIsLoading: setIsCommentUploading,
@@ -64,30 +61,17 @@ const PostDetail = () => {
 		stackNavigation.navigate('NewPost', { id });
 	};
 
-	const handleDeletePost = async ({
-		collectionName,
-		id,
-	}: {
-		collectionName: Collection;
-		id: string;
-	}) => {
+	const handleDeletePost = async () => {
 		Alert.alert('게시글 삭제', '정말로 삭제하겠습니까?', [
 			{ text: '취소', style: 'cancel' },
 			{
 				text: '삭제',
-				onPress: async () =>
-					await onConfirmDeletePost({ collectionName, postId: id }),
+				onPress: async () => await onConfirmDeletePost(),
 			},
 		]);
 	};
 
-	const onConfirmDeletePost = async ({
-		collectionName,
-		postId,
-	}: {
-		collectionName: Collection;
-		postId: string;
-	}) => {
+	const onConfirmDeletePost = async () => {
 		deletePost(undefined, {
 			onSuccess: () => {
 				showToast('success', '게시글이 삭제되었습니다.');
@@ -148,8 +132,7 @@ const PostDetail = () => {
 												{ label: '수정', onPress: () => handleEditPost(id) },
 												{
 													label: '삭제',
-													onPress: () =>
-														handleDeletePost({ collectionName, id }),
+													onPress: handleDeletePost,
 												},
 												{ label: '취소', onPress: () => {} },
 											]}
@@ -201,16 +184,13 @@ const PostDetail = () => {
 								postCreatorId={post.creatorId}
 								comments={comments}
 								containerStyle={{ marginBottom: 60 }}
-								commentRefresh={commentRefetch}
 							/>
 						</View>
 					}
 				/>
 				<CommentInput
 					postId={post.id}
-					setIsLoading={setIsCommentUploading}
-					postRefresh={postRefetch}
-					commentRefresh={commentRefetch}
+					setIsCommentUploading={setIsCommentUploading}
 				/>
 			</KeyboardAvoidingView>
 		</View>
