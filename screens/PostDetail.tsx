@@ -13,8 +13,8 @@ import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { deletePost as deletePostFromDB } from '@/firebase/services/postService';
+import useComments from '@/hooks/query/useComments';
 import { usePostDetail } from '@/hooks/query/usePostDetail';
-import useGetComments from '@/hooks/useGetComments';
 import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
@@ -48,13 +48,13 @@ const PostDetail = () => {
 	const {
 		data: post,
 		isLoading: isPostFetching,
-		refetch: postRetch,
+		refetch: postRefetch,
 	} = usePostDetail(collectionName, id);
 	const {
-		comments,
+		data: comments = [],
 		isLoading: isCommentsFetching,
-		refresh: commentRefresh,
-	} = useGetComments(collectionName, id);
+		refetch: commentRefetch,
+	} = useComments(collectionName, id);
 	const {
 		isLoading: isCommentUploading,
 		setIsLoading: setIsCommentUploading,
@@ -67,11 +67,11 @@ const PostDetail = () => {
 	useFocusEffect(
 		useCallback(() => {
 			if (shouldRefreshPostDetail) {
-				postRetch();
-				commentRefresh();
+				postRefetch();
+				commentRefetch();
 				setRefreshPostDetail(false);
 			}
-		}, [postRetch, commentRefresh, shouldRefreshPostDetail]),
+		}, [postRefetch, commentRefetch, shouldRefreshPostDetail]),
 	);
 
 	const editPost = (id: string) => {
@@ -207,7 +207,7 @@ const PostDetail = () => {
 								postCreatorId={post.creatorId}
 								comments={comments}
 								containerStyle={{ marginBottom: 60 }}
-								commentRefresh={commentRefresh}
+								commentRefresh={commentRefetch}
 							/>
 						</View>
 					}
@@ -215,7 +215,8 @@ const PostDetail = () => {
 				<CommentInput
 					postId={post.id}
 					setIsLoading={setIsCommentUploading}
-					commentRefresh={commentRefresh}
+					postRefresh={postRefetch}
+					commentRefresh={commentRefetch}
 				/>
 			</KeyboardAvoidingView>
 		</View>

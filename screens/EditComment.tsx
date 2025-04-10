@@ -5,6 +5,7 @@ import { updateComment } from '@/firebase/services/commentService';
 import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
+import { useRefreshStore } from '@/stores/RefreshStore';
 import { updateCommentRequest } from '@/types/comment';
 import {
 	EditCommentRouteProp,
@@ -32,6 +33,9 @@ const EditComment = () => {
 		LoadingIndicator,
 	} = useLoading();
 	const [newCommentInput, setNewCommentInput] = useState('');
+	const setRefreshPostDetail = useRefreshStore(
+		(state) => state.setRefreshPostDetail,
+	);
 
 	const isValid = newCommentInput?.length > 0;
 
@@ -63,29 +67,46 @@ const EditComment = () => {
 		setNewCommentInput(body);
 	}, [body]);
 
-	const onSubmit = () => {
+	const resetForm = () => {
+		setNewCommentInput('');
+	};
+
+	const onSubmit = async () => {
 		if (!userInfo || !auth.currentUser) {
 			showToast('warn', '댓글 쓰기는 로그인 후 가능합니다.');
 			tabNavigation.navigate('ProfileTab', { screen: 'Login' });
 			return;
 		}
 
-		if (newCommentInput.trim() === '') {
+		if (!postId) {
+			showToast('error', '게시글을 찾을 수 없습니다.');
+			tabNavigation.navigate('ProfileTab', { screen: 'Login' });
 			return;
 		}
+
+		if (newCommentInput.trim() === '') return;
 
 		const requestData: updateCommentRequest = {
 			body: newCommentInput,
 			updatedAt: Timestamp.now(),
 		};
 
-		setIsUploading(true);
-		updateComment({ collectionName, postId, commentId, requestData });
-		setIsUploading(false);
+		try {
+			setIsUploading(true);
 
-		setNewCommentInput('');
-		stackNavigation.goBack();
-		showToast('success', '댓글이 수정되었습니다.');
+			await updateComment({ collectionName, postId, commentId, requestData });
+
+			resetForm();
+
+			setRefreshPostDetail(true);
+
+			stackNavigation.goBack();
+			showToast('success', '댓글이 수정되었습니다.');
+		} catch (e) {
+			showToast('error', '댓글 수정 중 오류가 발생했습니다.');
+		} finally {
+			setIsUploading(false);
+		}
 	};
 
 	if (isUploading) {

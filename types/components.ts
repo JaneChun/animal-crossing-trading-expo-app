@@ -114,6 +114,7 @@ export type BodyProps = {
 export type CommentInputProps = {
 	postId: string;
 	setIsLoading: Dispatch<SetStateAction<boolean>>;
+	postRefresh: () => void;
 	commentRefresh: () => void;
 };
 

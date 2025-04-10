@@ -1,4 +1,3 @@
-import { Colors } from '@/constants/Color';
 import { auth } from '@/fbase';
 import { addComment } from '@/firebase/services/commentService';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
@@ -9,13 +8,13 @@ import { TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { Timestamp } from 'firebase/firestore';
 import { useState } from 'react';
-import { StyleSheet } from 'react-native';
 import Input from '../ui/Input';
 import { showToast } from '../ui/Toast';
 
 const CommentInput = ({
 	postId,
 	setIsLoading,
+	postRefresh,
 	commentRefresh,
 }: CommentInputProps) => {
 	const activeTab = useActiveTabStore((state) => state.activeTab);
@@ -29,7 +28,7 @@ const CommentInput = ({
 		setCommentInput('');
 	};
 
-	const onSubmit = () => {
+	const onSubmit = async () => {
 		if (!userInfo || !auth.currentUser) {
 			showToast('warn', '댓글 쓰기는 로그인 후 가능합니다.');
 			tabNavigation.navigate('ProfileTab', { screen: 'Login' });
@@ -42,9 +41,7 @@ const CommentInput = ({
 			return;
 		}
 
-		if (commentInput.trim() === '') {
-			return;
-		}
+		if (commentInput.trim() === '') return;
 
 		const requestData: addCommentRequest = {
 			creatorId: userInfo.uid,
@@ -52,14 +49,22 @@ const CommentInput = ({
 			createdAt: Timestamp.now(),
 		};
 
-		setIsLoading(true);
+		try {
+			setIsLoading(true);
 
-		addComment({ collectionName, postId, requestData });
+			await addComment({ collectionName, postId, requestData });
 
-		setIsLoading(false);
+			resetForm();
 
-		resetForm();
-		commentRefresh();
+			postRefresh();
+			commentRefresh();
+
+			showToast('success', '댓글이 등록되었습니다.');
+		} catch (e) {
+			showToast('error', '댓글 등록 중 오류가 발생했습니다.');
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
@@ -74,31 +79,3 @@ const CommentInput = ({
 };
 
 export default CommentInput;
-
-const styles = StyleSheet.create({
-	inputContainer: {
-		position: 'absolute',
-		left: 0,
-		right: 0,
-		backgroundColor: 'white',
-		flexDirection: 'row',
-		alignItems: 'center',
-		borderTopWidth: 1,
-		borderColor: Colors.border_gray,
-	},
-	inputText: {
-		flex: 1,
-		borderWidth: 1,
-		borderColor: Colors.border_gray,
-		backgroundColor: Colors.base,
-		borderRadius: 20,
-		paddingVertical: 10,
-		paddingHorizontal: 16,
-		margin: 8,
-		fontSize: 16,
-		color: Colors.font_gray,
-	},
-	iconContainer: {
-		marginRight: 24,
-	},
-});
