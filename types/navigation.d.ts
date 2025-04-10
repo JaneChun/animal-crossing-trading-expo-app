@@ -7,7 +7,7 @@ import { CartItem } from './post';
 export type RootTabParamList = {
 	HomeTab: NavigatorScreenParams<HomeStackParamList>;
 	CommunityTab: NavigatorScreenParams<CommunityStackParamList>;
-	NoticeTab: undefined;
+	NoticeTab: NavigatorScreenParams<NoticeStackParamList>;
 	ChatTab: NavigatorScreenParams<ChatStackParamList>;
 	ProfileTab: NavigatorScreenParams<ProfileStackParamList>;
 };
@@ -28,10 +28,17 @@ export type CommunityStackParamList = {
 	EditComment: { postId: string; commentId: string; body: string };
 };
 
+// Notice 스택 네비게이션
+export type NoticeStackParamList = {
+	Notice: undefined;
+	PostDetail: { id: string };
+};
+
 // Chat 스택 네비게이션
 export type ChatStackParamList = {
 	Chat: undefined;
 	ChatRoom: { chatId: string };
+	PostDetail: { id: string };
 };
 
 // Profile 스택 네비게이션
@@ -48,6 +55,8 @@ export type TabNavigation = BottomTabNavigationProp<RootTabParamList>;
 export type HomeStackNavigation = NativeStackNavigationProp<HomeStackParamList>;
 export type CommunityStackNavigation =
 	NativeStackNavigationProp<CommunityStackParamList>;
+export type NoticeStackNavigation =
+	NativeStackNavigationProp<NoticeStackParamList>;
 export type ChatStackNavigation = NativeStackNavigationProp<ChatStackParamList>;
 export type ProfileStackNavigation =
 	NativeStackNavigationProp<ProfileStackParamList>;

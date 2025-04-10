@@ -3,11 +3,10 @@ import {
 	deleteNotification,
 	markNotificationAsRead,
 } from '@/firebase/services/notificationService';
-import { getPost } from '@/firebase/services/postService';
 import { getPublicUserInfo } from '@/firebase/services/userService';
+import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import { NotificationTab, NotificationUnitProp } from '@/types/components';
-import { TabNavigation } from '@/types/navigation';
-import { Post } from '@/types/post';
+import { NoticeStackNavigation } from '@/types/navigation';
 import { PublicUserInfo } from '@/types/user';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { FontAwesome } from '@expo/vector-icons';
@@ -23,23 +22,18 @@ import ItemThumbnail from '../ui/ItemThumbnail';
 import Thumbnail from '../ui/Thumbnail';
 
 const NotificationUnit = ({ tab, item }: NotificationUnitProp) => {
-	const tabNavigation = useNavigation<TabNavigation>();
+	const stackNavigation = useNavigation<NoticeStackNavigation>();
 	const { id, type, body, postId, receiverId, senderId, createdAt, isRead } =
 		item;
-	const [post, setPost] = useState<Post | null>(null);
+	const { data: post } = usePostDetail(type, postId);
 	const [senderInfo, setSenderInfo] = useState<PublicUserInfo | null>(null);
 
 	useEffect(() => {
-		const fetchPost = async () => {
-			const postData = await getPost(type, postId);
-			setPost(postData);
-		};
 		const fetchSenderInfo = async () => {
 			const sender = await getPublicUserInfo(senderId);
 			setSenderInfo(sender);
 		};
 
-		fetchPost();
 		fetchSenderInfo();
 	}, []);
 
@@ -60,12 +54,7 @@ const NotificationUnit = ({ tab, item }: NotificationUnitProp) => {
 		await markNotificationAsRead(id);
 
 		// 이동
-		tabNavigation.navigate(tab === 'Market' ? 'HomeTab' : 'CommunityTab', {
-			screen: 'PostDetail',
-			params: {
-				id: postId,
-			},
-		});
+		stackNavigation.navigate('PostDetail', { id: postId });
 	};
 
 	const handleDeleteNotification = async (notificationId: string) => {
