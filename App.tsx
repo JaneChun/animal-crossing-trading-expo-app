@@ -46,7 +46,6 @@ export default function App() {
 	useAuthInitializer();
 	useNotificationInitializer();
 
-	// query
 	const queryClient = new QueryClient({
 		defaultOptions: { queries: { retry: 2 } },
 	});

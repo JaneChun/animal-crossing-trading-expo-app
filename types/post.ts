@@ -1,4 +1,9 @@
-import { Timestamp } from 'firebase/firestore';
+import {
+	DocumentData,
+	QueryDocumentSnapshot,
+	Timestamp,
+} from 'firebase/firestore';
+import { Collection } from './components';
 
 export type MarketType = 'buy' | 'sell' | 'done';
 export type CommunityType =
@@ -46,8 +51,28 @@ export interface CartItem extends Item {
 
 export interface PostWithCreatorInfo extends Post, CreatorInfo {}
 
+// firebase/services/postService.ts
 export type CreatePostRequest = Omit<Post, 'id'>;
 
 export type UpdatePostRequest = Partial<
 	Omit<CreatePostRequest, 'createdAt' | 'creatorId' | 'commentCount'>
 >;
+
+// hooks/query/useInfinitePosts.ts
+export type Doc = QueryDocumentSnapshot<DocumentData> | null;
+
+export type Filter = {
+	creatorId?: string;
+	category?: string;
+};
+
+export interface FirestoreQueryParams {
+	collectionName: Collection;
+	filter?: Filter;
+	lastDoc?: Doc;
+}
+
+export interface PaginatedPosts {
+	data: PostWithCreatorInfo[];
+	lastDoc: Doc;
+}
