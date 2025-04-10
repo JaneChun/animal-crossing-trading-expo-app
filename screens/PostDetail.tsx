@@ -13,6 +13,7 @@ import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { deletePost as deletePostFromDB } from '@/firebase/services/postService';
+import { usePostDetail } from '@/hooks/query/usePostDetail';
 import useGetComments from '@/hooks/useGetComments';
 import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
@@ -34,7 +35,6 @@ import {
 	View,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import useGetPostDetail from '../hooks/useGetPostDetail';
 
 const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
@@ -46,10 +46,10 @@ const PostDetail = () => {
 	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const stackNavigation = useNavigation<any>();
 	const {
-		post,
+		data: post,
 		isLoading: isPostFetching,
-		refresh: postRefresh,
-	} = useGetPostDetail(collectionName, id);
+		refetch: postRetch,
+	} = usePostDetail(collectionName, id);
 	const {
 		comments,
 		isLoading: isCommentsFetching,
@@ -67,11 +67,11 @@ const PostDetail = () => {
 	useFocusEffect(
 		useCallback(() => {
 			if (shouldRefreshPostDetail) {
-				postRefresh();
+				postRetch();
 				commentRefresh();
 				setRefreshPostDetail(false);
 			}
-		}, [postRefresh, commentRefresh, shouldRefreshPostDetail]),
+		}, [postRetch, commentRefresh, shouldRefreshPostDetail]),
 	);
 
 	const editPost = (id: string) => {

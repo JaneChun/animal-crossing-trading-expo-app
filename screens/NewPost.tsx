@@ -25,7 +25,7 @@ import DropdownInput from '@/components/ui/DropdownInput';
 import Layout, { PADDING } from '@/components/ui/Layout';
 import { showToast } from '@/components/ui/Toast';
 import { createPost, updatePost } from '@/firebase/services/postService';
-import useGetPostDetail from '@/hooks/useGetPostDetail';
+import { usePostDetail } from '@/hooks/query/usePostDetail';
 import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useRefreshStore } from '@/stores/RefreshStore';
@@ -50,6 +50,13 @@ const NewPost = () => {
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<any>();
 	const userInfo = useAuthStore((state) => state.userInfo);
+	const route = useRoute<NewPostRouteProp>();
+	const [editingId, setEditingId] = useState<string>(route.params?.id || '');
+	const { data: post, isLoading: isFetching } = usePostDetail(
+		collectionName,
+		editingId,
+	);
+
 	const {
 		isLoading: isUploading,
 		setIsLoading: setIsUploading,
@@ -68,9 +75,6 @@ const NewPost = () => {
 	const [images, setImages] = useState<ImagePickerAsset[]>([]); // ImagePicker로 추가한 이미지
 	const [cart, setCart] = useState<CartItem[]>([]);
 	const [originalImageUrls, setOriginalImageUrls] = useState<string[]>([]); // Firestore에서 가져온 기존 이미지
-
-	const route = useRoute<NewPostRouteProp>();
-	const [editingId, setEditingId] = useState<string>(route.params?.id || '');
 
 	const dropdownOptions = categories
 		.map(({ KR, EN }) => ({
@@ -91,11 +95,6 @@ const NewPost = () => {
 				setCart(route.params.updatedCart);
 			}
 		}, [route.params]),
-	);
-
-	const { post, isLoading: isFetching } = useGetPostDetail(
-		collectionName,
-		editingId,
 	);
 
 	useEffect(() => {
