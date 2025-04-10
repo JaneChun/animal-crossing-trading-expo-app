@@ -1,10 +1,10 @@
 import { Colors } from '@/constants/Color';
-import { getPost } from '@/firebase/services/postService';
+import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import { useAuthStore } from '@/stores/AuthStore';
 import { Message as MessageType } from '@/types/components';
-import { Post } from '@/types/post';
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import PostNotExist from './PostNotExist';
 import PostSummary from './PostSummary';
 import PostSummaryLoading from './PostSummaryLoading';
 
@@ -15,24 +15,25 @@ const Message = ({
 	message: MessageType;
 	receiverId: string;
 }) => {
-	const [post, setPost] = useState<Post | null>(null);
 	const userInfo = useAuthStore((state) => state.userInfo);
 
-	useEffect(() => {
-		if (message.senderId !== 'system') return;
+	// system 메시지가 아닐 경우에는 post 쿼리를 실행하지 않음
+	const { postId, collectionName } = useMemo(() => {
+		if (message.senderId !== 'system')
+			return { postId: null, collectionName: null };
 
-		const getPostInfo = async () => {
-			const { collectionName, postId } = JSON.parse(message.body);
-			if (!collectionName || !postId) return;
+		try {
+			const { postId, collectionName } = JSON.parse(message.body);
+			return { postId, collectionName };
+		} catch {
+			return { postId: null, collectionName: null };
+		}
+	}, [message]);
 
-			const postInfo = await getPost(collectionName, postId);
-			if (!postInfo) return;
-
-			setPost(postInfo);
-		};
-
-		getPostInfo();
-	}, []);
+	const { data: post, isLoading: isPostLoading } = usePostDetail(
+		collectionName,
+		postId,
+	);
 
 	const formattedDate = message.createdAt
 		.toDate()
@@ -41,7 +42,13 @@ const Message = ({
 	if (message.senderId === 'system') {
 		return (
 			<View style={styles.postSummaryContainer}>
-				{post ? <PostSummary {...post} /> : <PostSummaryLoading />}
+				{isPostLoading ? (
+					<PostSummaryLoading />
+				) : post ? (
+					<PostSummary {...post} />
+				) : (
+					<PostNotExist />
+				)}
 			</View>
 		);
 	}
