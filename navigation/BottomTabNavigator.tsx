@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Color';
-import { useNotifications } from '@/hooks/query/notification/useNotifications';
 import useGetChats from '@/hooks/useGetChats';
 import { useAuthStore } from '@/stores/AuthStore';
+import { useNotiStore } from '@/stores/NotiStore';
 import {
 	Entypo,
 	FontAwesome6,
@@ -31,7 +31,7 @@ const getTabBarIcon =
 const BottomTabNavigator = () => {
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const { unreadCount: unreadChatCount } = useGetChats();
-	const { unreadCount: unreadNotificationCount } = useNotifications();
+	const notiUnreadCount = useNotiStore((state) => state.count);
 
 	return (
 		<BottomTab.Navigator
@@ -69,8 +69,7 @@ const BottomTabNavigator = () => {
 				options={{
 					title: '알림',
 					tabBarIcon: getTabBarIcon('bell', Entypo),
-					tabBarBadge:
-						unreadNotificationCount > 0 ? unreadNotificationCount : undefined,
+					tabBarBadge: notiUnreadCount > 0 ? notiUnreadCount : undefined,
 					tabBarBadgeStyle: {
 						marginTop: 8,
 					},

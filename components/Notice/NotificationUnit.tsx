@@ -1,9 +1,7 @@
 import { Colors } from '@/constants/Color';
-import {
-	deleteNotification,
-	markNotificationAsRead,
-} from '@/firebase/services/notificationService';
 import { getPublicUserInfo } from '@/firebase/services/userService';
+import { useDeleteNotification } from '@/hooks/mutation/notification/useDeleteNotification';
+import { useMarkAsRead } from '@/hooks/mutation/notification/useMarkAsRead';
 import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import { NotificationTab, NotificationUnitProp } from '@/types/components';
 import { NoticeStackNavigation } from '@/types/navigation';
@@ -28,6 +26,9 @@ const NotificationUnit = ({ tab, item }: NotificationUnitProp) => {
 	const { data: post } = usePostDetail(type, postId);
 	const [senderInfo, setSenderInfo] = useState<PublicUserInfo | null>(null);
 
+	const { mutate: markAsRead } = useMarkAsRead(id);
+	const { mutate: deleteNotification } = useDeleteNotification(id);
+
 	useEffect(() => {
 		const fetchSenderInfo = async () => {
 			const sender = await getPublicUserInfo(senderId);
@@ -50,15 +51,15 @@ const NotificationUnit = ({ tab, item }: NotificationUnitProp) => {
 		tab: NotificationTab;
 		postId: string;
 	}) => {
-		// 읽음 처리
-		await markNotificationAsRead(id);
-
-		// 이동
-		stackNavigation.navigate('PostDetail', { id: postId });
+		markAsRead(undefined, {
+			onSuccess: () => {
+				stackNavigation.navigate('PostDetail', { id: postId });
+			},
+		});
 	};
 
 	const handleDeleteNotification = async (notificationId: string) => {
-		await deleteNotification(notificationId);
+		deleteNotification();
 	};
 
 	const RightAction = (

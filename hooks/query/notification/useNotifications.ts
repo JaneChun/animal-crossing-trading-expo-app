@@ -1,6 +1,7 @@
 import { db } from '@/fbase';
 import { fetchAndPopulateSenderInfo } from '@/firebase/services/notificationService';
 import { useAuthStore } from '@/stores/AuthStore';
+import { useNotiStore } from '@/stores/NotiStore';
 import { Collection } from '@/types/components';
 import {
 	Notification,
@@ -48,13 +49,15 @@ export const useNotifications = (collectionName?: Collection) => {
 			NotificationWithSenderInfo
 		>(q);
 
-		// 안읽은 메세지 계산
+		// 안읽은 알림 수 계산
 		const unread = data.reduce(
 			(acc: number, { isRead }: { isRead: boolean }) =>
 				!isRead ? acc + 1 : acc,
 			0,
 		);
-		setUnreadCount(unread);
+
+		// 전역 상태에 저장
+		useNotiStore.getState().setCount(unread);
 
 		return data;
 	};

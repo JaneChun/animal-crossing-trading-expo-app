@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Color';
-import { markAllNotificationAsRead } from '@/firebase/services/notificationService';
+import { useMarkAllAsRead } from '@/hooks/mutation/notification/useMarkAllAsRead';
 import { NoticeTabProps } from '@/types/components';
 import { NotificationWithReceiverInfo } from '@/types/notification';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -10,6 +10,8 @@ import NotificationUnit from './NotificationUnit';
 import ReadAllButton from './ReadAllButton';
 
 const MarketNotices = ({ notifications }: NoticeTabProps) => {
+	const { mutate: markAllAsRead } = useMarkAllAsRead();
+
 	const renderNotificationItem = ({
 		item,
 	}: {
@@ -23,7 +25,7 @@ const MarketNotices = ({ notifications }: NoticeTabProps) => {
 			.filter(({ isRead }) => !isRead)
 			.map(({ id }) => id);
 
-		await markAllNotificationAsRead(unReadNotificationIds);
+		markAllAsRead(unReadNotificationIds);
 	};
 
 	return (
