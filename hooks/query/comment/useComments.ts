@@ -1,5 +1,5 @@
 import { db } from '@/fbase';
-import { fetchAndPopulateUsers } from '@/firebase/api/fetchAndPopulateUsers';
+import { fetchAndPopulateUsers } from '@/firebase/services/postService';
 import { Comment, CommentDoc, CommentWithCreatorInfo } from '@/types/comment';
 import { Collection } from '@/types/components';
 import { DocumentData } from '@google-cloud/firestore';
