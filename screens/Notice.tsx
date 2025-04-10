@@ -3,16 +3,16 @@ import MarketNotices from '@/components/Notice/MarketNotices';
 import TabBarLabel from '@/components/Notice/TabBarLabel';
 import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
-import useGetNotifications from '@/hooks/useGetNotifications';
+import { useNotifications } from '@/hooks/query/notification/useNotifications';
 import useLoading from '@/hooks/useLoading';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React from 'react';
 import { StyleSheet } from 'react-native';
 
 const Notice = () => {
-	const { notifications, isLoading } = useGetNotifications();
-	const { LoadingIndicator } = useLoading();
 	const Tab = createMaterialTopTabNavigator();
+	const { LoadingIndicator } = useLoading();
+	const { data: notifications, isLoading } = useNotifications();
 
 	const marketNotifications = notifications.filter(
 		({ type }) => type === 'Boards',

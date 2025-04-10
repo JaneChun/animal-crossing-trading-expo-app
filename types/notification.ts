@@ -13,6 +13,10 @@ export interface Notification {
 	isRead: boolean;
 }
 
+export interface NotificationWithSenderInfo extends Notification {
+	senderInfo: PublicUserInfo;
+}
+
 export interface NotificationWithReceiverInfo extends Notification {
 	receiverInfo: PublicUserInfo;
 }

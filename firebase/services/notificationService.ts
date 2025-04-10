@@ -1,5 +1,4 @@
 import { db } from '@/fbase';
-import { Notification } from '@/types/notification';
 import { PublicUserInfo } from '@/types/user';
 import { doc, getDocs, Query, writeBatch } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
@@ -9,9 +8,11 @@ import {
 } from '../core/firestoreService';
 import { getPublicUserInfos } from './userService';
 
-export const fetchMyNotifications = async <T extends Notification, U>(
+export const fetchAndPopulateSenderInfo = async <
+	T extends { senderId: string },
+	U,
+>(
 	q: Query,
-	userId: string,
 ) => {
 	return firestoreRequest('알림 조회', async () => {
 		const querySnapshot = await getDocs(q);
@@ -20,8 +21,10 @@ export const fetchMyNotifications = async <T extends Notification, U>(
 
 		const data: T[] = querySnapshot.docs.map((doc) => {
 			const docData = doc.data();
+			const id = doc.id;
+
 			return {
-				id: doc.id,
+				id,
 				...docData,
 			} as unknown as T;
 		});
