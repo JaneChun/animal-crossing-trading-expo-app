@@ -19,25 +19,6 @@ import {
 
 const PAGE_SIZE = 10;
 
-export const useInfinitePosts = (
-	collectionName: Collection,
-	filter?: Filter,
-) => {
-	return useInfiniteQuery<
-		PaginatedPosts, // fetch 함수 반환 타입
-		Error, // 에러 타입
-		InfiniteData<PaginatedPosts>, // 리턴될 data 타입
-		[string, Collection, Filter?], // queryKey 타입
-		Doc // pageParam의 타입
-	>({
-		queryKey: ['posts', collectionName, filter],
-		queryFn: ({ pageParam }) =>
-			fetchPostsByCursor({ collectionName, filter, lastDoc: pageParam }),
-		initialPageParam: null,
-		getNextPageParam: (lastPage: PaginatedPosts) => lastPage.lastDoc,
-	});
-};
-
 // Firestore 쿼리 구성 함수
 const getFirestoreQuery = ({
 	collectionName,
@@ -86,4 +67,23 @@ export const fetchPostsByCursor = async ({
 	const q = getFirestoreQuery({ collectionName, filter, lastDoc });
 	const { data, lastDoc: _lastDoc } = await fetchAndPopulateUsers(q);
 	return { data, lastDoc: _lastDoc };
+};
+
+export const useInfinitePosts = (
+	collectionName: Collection,
+	filter?: Filter,
+) => {
+	return useInfiniteQuery<
+		PaginatedPosts, // fetch 함수 반환 타입
+		Error, // 에러 타입
+		InfiniteData<PaginatedPosts>, // 리턴될 data 타입
+		[string, Collection, Filter?], // queryKey 타입
+		Doc // pageParam의 타입
+	>({
+		queryKey: ['posts', collectionName, filter],
+		queryFn: ({ pageParam }) =>
+			fetchPostsByCursor({ collectionName, filter, lastDoc: pageParam }),
+		initialPageParam: null,
+		getNextPageParam: (lastPage: PaginatedPosts) => lastPage.lastDoc,
+	});
 };

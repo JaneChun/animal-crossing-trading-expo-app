@@ -1,22 +1,3 @@
-import { Colors } from '@/constants/Color';
-import { auth } from '@/fbase';
-import {
-	deleteObjectFromStorage,
-	uploadObjectToStorage,
-} from '@/firebase/services/imageService';
-import { useAuthStore } from '@/stores/AuthStore';
-import { type NewPostRouteProp, type TabNavigation } from '@/types/navigation';
-import {
-	useFocusEffect,
-	useNavigation,
-	useRoute,
-} from '@react-navigation/native';
-import { ImagePickerAsset } from 'expo-image-picker';
-import { Timestamp } from 'firebase/firestore';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
-
 import BodyInput from '@/components/NewPost/BodyInput';
 import ImageInput from '@/components/NewPost/ImageInput';
 import TitleInput from '@/components/NewPost/TitleInput';
@@ -24,11 +5,18 @@ import TypeSelect from '@/components/NewPost/TypeSelect';
 import DropdownInput from '@/components/ui/DropdownInput';
 import Layout, { PADDING } from '@/components/ui/Layout';
 import { showToast } from '@/components/ui/Toast';
+import { Colors } from '@/constants/Color';
+import { auth } from '@/fbase';
+import {
+	deleteObjectFromStorage,
+	uploadObjectToStorage,
+} from '@/firebase/services/imageService';
 import { createPost, updatePost } from '@/firebase/services/postService';
 import { usePostDetail } from '@/hooks/query/usePostDetail';
 import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
-import { useRefreshStore } from '@/stores/RefreshStore';
+import { useAuthStore } from '@/stores/AuthStore';
+import { type NewPostRouteProp, type TabNavigation } from '@/types/navigation';
 import {
 	CartItem,
 	CreatePostRequest,
@@ -36,7 +24,17 @@ import {
 	UpdatePostRequest,
 } from '@/types/post';
 import { validateInput } from '@/utilities/validateInput';
-import React from 'react';
+import {
+	useFocusEffect,
+	useNavigation,
+	useRoute,
+} from '@react-navigation/native';
+import { useQueryClient } from '@tanstack/react-query';
+import { ImagePickerAsset } from 'expo-image-picker';
+import { Timestamp } from 'firebase/firestore';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import AddItemModal from '../components/NewPost/AddItemModal';
 import ItemList from '../components/NewPost/ItemList';
 import Button from '../components/ui/Button';
@@ -56,6 +54,7 @@ const NewPost = () => {
 		collectionName,
 		editingId,
 	);
+	const queryClient = useQueryClient();
 
 	const {
 		isLoading: isUploading,
@@ -65,10 +64,6 @@ const NewPost = () => {
 	const [isModalVisible, setModalVisible] = useState<boolean>(false);
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const flatListRef = useRef<FlatList>(null);
-	const { setRefreshPostList, setRefreshPostDetail } = useRefreshStore(
-		(state) => state,
-	);
-
 	const [type, setType] = useState<Type>(isMarket ? 'buy' : 'general');
 	const [title, setTitle] = useState<string>('');
 	const [body, setBody] = useState<string>('');
@@ -243,16 +238,20 @@ const NewPost = () => {
 					await Promise.all(deletedImageUrls.map(deleteObjectFromStorage));
 				}
 
-				setRefreshPostList(true);
-				setRefreshPostDetail(true);
+				// 글 목록 쿼리를 캐시 무효화
+				queryClient.invalidateQueries({ queryKey: ['posts', collectionName] });
+				// 해당 게시글 쿼리 캐시 무효화
+				queryClient.invalidateQueries({
+					queryKey: ['postDetail', collectionName, editingId],
+				});
 				stackNavigation.goBack();
 				showToast('success', '글이 수정되었습니다.');
 			} else {
 				const requestData = buildCreatePostRequest(imageUrls);
 				createdId = await createPost(collectionName, requestData);
 
-				setRefreshPostList(true);
-				setRefreshPostDetail(true);
+				// 글 목록 쿼리를 캐시 무효화
+				queryClient.invalidateQueries({ queryKey: ['posts', collectionName] });
 				stackNavigation.popTo('PostDetail', { id: createdId });
 				showToast('success', '글이 작성되었습니다.');
 			}

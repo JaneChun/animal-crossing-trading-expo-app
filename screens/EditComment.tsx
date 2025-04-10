@@ -5,7 +5,6 @@ import { updateComment } from '@/firebase/services/commentService';
 import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
-import { useRefreshStore } from '@/stores/RefreshStore';
 import { updateCommentRequest } from '@/types/comment';
 import {
 	EditCommentRouteProp,
@@ -13,6 +12,7 @@ import {
 	TabNavigation,
 } from '@/types/navigation';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useQueryClient } from '@tanstack/react-query';
 import { Timestamp } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, TextInput } from 'react-native';
@@ -33,9 +33,7 @@ const EditComment = () => {
 		LoadingIndicator,
 	} = useLoading();
 	const [newCommentInput, setNewCommentInput] = useState('');
-	const setRefreshPostDetail = useRefreshStore(
-		(state) => state.setRefreshPostDetail,
-	);
+	const queryClient = useQueryClient();
 
 	const isValid = newCommentInput?.length > 0;
 
@@ -98,8 +96,10 @@ const EditComment = () => {
 
 			resetForm();
 
-			setRefreshPostDetail(true);
-
+			// 해당 게시글 쿼리 캐시 무효화
+			queryClient.invalidateQueries({
+				queryKey: ['postDetail', collectionName, postId],
+			});
 			stackNavigation.goBack();
 			showToast('success', '댓글이 수정되었습니다.');
 		} catch (e) {

@@ -18,15 +18,10 @@ import { usePostDetail } from '@/hooks/query/usePostDetail';
 import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
-import { useRefreshStore } from '@/stores/RefreshStore';
 import { Collection } from '@/types/components';
 import { PostDetailRouteProp } from '@/types/navigation';
-import {
-	useFocusEffect,
-	useNavigation,
-	useRoute,
-} from '@react-navigation/native';
-import React, { useCallback } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import React from 'react';
 import {
 	Alert,
 	KeyboardAvoidingView,
@@ -60,19 +55,6 @@ const PostDetail = () => {
 		setIsLoading: setIsCommentUploading,
 		LoadingIndicator,
 	} = useLoading();
-	const { shouldRefreshPostDetail, setRefreshPostDetail } = useRefreshStore(
-		(state) => state,
-	);
-
-	useFocusEffect(
-		useCallback(() => {
-			if (shouldRefreshPostDetail) {
-				postRefetch();
-				commentRefetch();
-				setRefreshPostDetail(false);
-			}
-		}, [postRefetch, commentRefetch, shouldRefreshPostDetail]),
-	);
 
 	const editPost = (id: string) => {
 		stackNavigation.navigate('NewPost', { id });
