@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Color';
-import { useInfinitePosts } from '@/hooks/query/useInfinitePosts';
+import { useInfinitePosts } from '@/hooks/query/post/useInfinitePosts';
 import useLoading from '@/hooks/useLoading';
 import { PostListProps } from '@/types/components';
 import { FontAwesome6 } from '@expo/vector-icons';

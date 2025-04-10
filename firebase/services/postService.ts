@@ -1,5 +1,12 @@
 import { Collection } from '@/types/components';
-import { CreatePostRequest, Post, UpdatePostRequest } from '@/types/post';
+import {
+	CreatePostRequest,
+	Post,
+	PostDoc,
+	UpdatePostRequest,
+} from '@/types/post';
+import { toPost } from '@/utilities/toPost';
+import { Timestamp } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
 import {
 	addDocToFirestore,
@@ -13,28 +20,12 @@ export const getPost = async (
 	postId: string,
 ): Promise<Post | null> => {
 	return firestoreRequest('게시글 조회', async () => {
-		const docData = await getDocFromFirestore({
+		const docData = (await getDocFromFirestore({
 			collection: collectionName,
 			id: postId,
-		});
+		})) as PostDoc;
 
-		if (!docData) {
-			return null;
-		}
-
-		const post: Post = {
-			id: docData.id,
-			type: docData.type,
-			title: docData.title,
-			body: docData.body,
-			images: docData.images,
-			creatorId: docData.creatorId,
-			createdAt: docData.createdAt,
-			cart: docData.cart,
-			commentCount: docData.commentCount,
-		};
-
-		return post;
+		return docData ? toPost(docData) : null;
 	});
 };
 
@@ -47,7 +38,9 @@ export const createPost = async (
 			directory: collectionName,
 			requestData: {
 				...requestData,
+				createdAt: Timestamp.now(),
 				isDeleted: false,
+				commentCount: 0,
 			},
 		});
 
@@ -64,18 +57,15 @@ export const updatePost = async (
 		await updateDocToFirestore({
 			collection: collectionName,
 			id,
-			requestData,
+			requestData: { ...requestData, updatedAt: Timestamp.now() },
 		});
 	});
 };
 
-export const deletePost = async ({
-	collectionName,
-	postId,
-}: {
-	collectionName: Collection;
-	postId: string;
-}) => {
+export const deletePost = async (
+	collectionName: Collection,
+	postId: string,
+) => {
 	return firestoreRequest('게시글 삭제', async () => {
 		await deleteDocFromFirestore({ id: postId, collection: collectionName });
 	});

@@ -11,8 +11,9 @@ import {
 	deleteObjectFromStorage,
 	uploadObjectToStorage,
 } from '@/firebase/services/imageService';
-import { createPost, updatePost } from '@/firebase/services/postService';
-import { usePostDetail } from '@/hooks/query/usePostDetail';
+import { useCreatePost } from '@/hooks/mutation/post/useCreatePost';
+import { useUpdatePost } from '@/hooks/mutation/post/useUpdatePost';
+import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
@@ -29,9 +30,7 @@ import {
 	useNavigation,
 	useRoute,
 } from '@react-navigation/native';
-import { useQueryClient } from '@tanstack/react-query';
 import { ImagePickerAsset } from 'expo-image-picker';
-import { Timestamp } from 'firebase/firestore';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -50,15 +49,17 @@ const NewPost = () => {
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const route = useRoute<NewPostRouteProp>();
 	const [editingId, setEditingId] = useState<string>(route.params?.id || '');
-	const { data: post, isLoading: isFetching } = usePostDetail(
+	const { data: post, isLoading } = usePostDetail(collectionName, editingId);
+	const { mutate: createPost, isPending: isCreating } =
+		useCreatePost(collectionName);
+	const { mutate: updatePost, isPending: isUpdating } = useUpdatePost(
 		collectionName,
 		editingId,
 	);
-	const queryClient = useQueryClient();
 
 	const {
-		isLoading: isUploading,
-		setIsLoading: setIsUploading,
+		isLoading: isSubmitting,
+		setIsLoading: setIsSubmitting,
 		LoadingIndicator,
 	} = useLoading();
 	const [isModalVisible, setModalVisible] = useState<boolean>(false);
@@ -155,8 +156,6 @@ const NewPost = () => {
 			title: title.trim(),
 			body: body.trim(),
 			creatorId: userInfo!.uid,
-			createdAt: Timestamp.now(),
-			commentCount: 0,
 		};
 
 		if (isMarket) {
@@ -196,69 +195,89 @@ const NewPost = () => {
 		throw new Error(`Invalid activeTab: ${activeTab}`);
 	};
 
+	const createPostFlow = async (imageUrls: string[]) => {
+		const requestData = buildCreatePostRequest(imageUrls);
+
+		createPost(requestData, {
+			onSuccess: (id) => {
+				resetForm();
+				stackNavigation.popTo('PostDetail', { id });
+				showToast('success', '게시글이 작성되었습니다.');
+			},
+			onError: (e) => {
+				showToast('error', '게시글 작성 중 오류가 발생했습니다.');
+			},
+		});
+	};
+
+	const updatePostFlow = async (imageUrls: string[]) => {
+		const requestData = buildUpdatePostRequest(imageUrls);
+
+		updatePost(requestData, {
+			onSuccess: () => {
+				resetForm();
+				stackNavigation.goBack();
+				showToast('success', '게시글이 수정되었습니다.');
+			},
+			onError: (e) => {
+				showToast('error', '게시글 수정 중 오류가 발생했습니다.');
+			},
+		});
+	};
+
+	const handleImageUpload = async (): Promise<string[]> => {
+		const { newImages, deletedImageUrls } = getFilteredImages();
+
+		let uploadedImageUrls: string[] = [];
+
+		// 새로운 이미지 처리: 스토리지에 업로드
+		if (newImages.length) {
+			uploadedImageUrls = await uploadObjectToStorage({
+				directory: collectionName,
+				images: newImages,
+			});
+		}
+
+		// 삭제된 이미지 처리: 스토리지에서 삭제
+		if (deletedImageUrls.length) {
+			await Promise.all(deletedImageUrls.map(deleteObjectFromStorage));
+		}
+
+		// 최종적으로 DB에 저장할 imageUrls: 기존 이미지 + 새 이미지 - 삭제된 이미지
+		const imageUrls = [...originalImageUrls, ...uploadedImageUrls].filter(
+			(url) => !deletedImageUrls.includes(url),
+		);
+
+		return imageUrls;
+	};
+
 	const onSubmit = async () => {
 		setIsSubmitted(true);
+		setIsSubmitting(true);
 
 		if (!validateUser()) {
-			return tabNavigation.navigate('ProfileTab', { screen: 'Login' });
+			tabNavigation.navigate('ProfileTab', { screen: 'Login' });
+			setIsSubmitting(false);
+			return;
 		}
 
 		if (!validateForm()) {
 			// 유효성 검사 실패 시 위로 스크롤 이동
 			flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+			setIsSubmitting(false);
 			return;
 		}
 
-		const { newImages, deletedImageUrls } = getFilteredImages();
-
-		let createdId;
 		try {
-			setIsUploading(true);
-			let uploadedImageUrls: string[] = [];
-
-			// 새 이미지가 있으면 스토리지에 업로드
-			if (newImages.length) {
-				uploadedImageUrls = await uploadObjectToStorage({
-					directory: collectionName,
-					images: newImages,
-				});
-			}
-
-			// 기존 이미지 + 새 이미지 - 삭제된 이미지
-			const imageUrls = [...originalImageUrls, ...uploadedImageUrls].filter(
-				(url) => !deletedImageUrls.includes(url),
-			);
+			const imageUrls = await handleImageUpload();
 
 			if (editingId) {
-				const requestData = buildUpdatePostRequest(imageUrls);
-				await updatePost(collectionName, editingId, requestData);
-
-				// 삭제된 이미지가 있으면 스토리지에서도 삭제
-				if (deletedImageUrls.length) {
-					await Promise.all(deletedImageUrls.map(deleteObjectFromStorage));
-				}
-
-				// 글 목록 쿼리를 캐시 무효화
-				queryClient.invalidateQueries({ queryKey: ['posts', collectionName] });
-				// 해당 게시글 쿼리 캐시 무효화
-				queryClient.invalidateQueries({
-					queryKey: ['postDetail', collectionName, editingId],
-				});
-				stackNavigation.goBack();
-				showToast('success', '글이 수정되었습니다.');
+				await updatePostFlow(imageUrls);
 			} else {
-				const requestData = buildCreatePostRequest(imageUrls);
-				createdId = await createPost(collectionName, requestData);
-
-				// 글 목록 쿼리를 캐시 무효화
-				queryClient.invalidateQueries({ queryKey: ['posts', collectionName] });
-				stackNavigation.popTo('PostDetail', { id: createdId });
-				showToast('success', '글이 작성되었습니다.');
+				await createPostFlow(imageUrls);
 			}
-
-			resetForm();
 		} finally {
-			setIsUploading(false);
+			setIsSubmitting(false);
 		}
 	};
 
@@ -270,7 +289,7 @@ const NewPost = () => {
 		setModalVisible(false);
 	};
 
-	if (isUploading || (editingId && isFetching)) {
+	if (isSubmitting || isCreating || isUpdating || (editingId && isLoading)) {
 		return <LoadingIndicator />;
 	}
 

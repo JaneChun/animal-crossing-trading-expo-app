@@ -12,9 +12,9 @@ import UserInfo from '@/components/PostDetail/UserInfo';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
-import { deletePost as deletePostFromDB } from '@/firebase/services/postService';
-import useComments from '@/hooks/query/useComments';
-import { usePostDetail } from '@/hooks/query/usePostDetail';
+import { useDeletePost } from '@/hooks/mutation/post/useDeletePost';
+import useComments from '@/hooks/query/comment/useComments';
+import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
@@ -55,12 +55,16 @@ const PostDetail = () => {
 		setIsLoading: setIsCommentUploading,
 		LoadingIndicator,
 	} = useLoading();
+	const { mutate: deletePost, isPending: isDeleting } = useDeletePost(
+		collectionName,
+		id,
+	);
 
-	const editPost = (id: string) => {
+	const handleEditPost = (id: string) => {
 		stackNavigation.navigate('NewPost', { id });
 	};
 
-	const deletePost = async ({
+	const handleDeletePost = async ({
 		collectionName,
 		id,
 	}: {
@@ -72,28 +76,35 @@ const PostDetail = () => {
 			{
 				text: '삭제',
 				onPress: async () =>
-					await handleDeletePost({ collectionName, postId: id }),
+					await onConfirmDeletePost({ collectionName, postId: id }),
 			},
 		]);
 	};
 
-	const handleDeletePost = async ({
+	const onConfirmDeletePost = async ({
 		collectionName,
 		postId,
 	}: {
 		collectionName: Collection;
 		postId: string;
 	}) => {
-		try {
-			await deletePostFromDB({ collectionName, postId });
-			showToast('success', '게시글이 삭제되었습니다.');
-			stackNavigation.goBack();
-		} catch (e) {
-			showToast('error', '게시글 삭제 중 오류가 발생했습니다.');
-		}
+		deletePost(undefined, {
+			onSuccess: () => {
+				showToast('success', '게시글이 삭제되었습니다.');
+				stackNavigation.goBack();
+			},
+			onError: (e) => {
+				showToast('error', '게시글 삭제 중 오류가 발생했습니다.');
+			},
+		});
 	};
 
-	if (isPostFetching || isCommentUploading || isCommentsFetching) {
+	if (
+		isPostFetching ||
+		isCommentsFetching ||
+		isDeleting ||
+		isCommentUploading
+	) {
 		return <LoadingIndicator />;
 	}
 
@@ -134,10 +145,11 @@ const PostDetail = () => {
 											color={Colors.font_gray}
 											size={18}
 											options={[
-												{ label: '수정', onPress: () => editPost(id) },
+												{ label: '수정', onPress: () => handleEditPost(id) },
 												{
 													label: '삭제',
-													onPress: () => deletePost({ collectionName, id }),
+													onPress: () =>
+														handleDeletePost({ collectionName, id }),
 												},
 												{ label: '취소', onPress: () => {} },
 											]}

@@ -1,6 +1,7 @@
 import { getPublicUserInfos } from '@/firebase/services/userService';
-import { Post, PostWithCreatorInfo } from '@/types/post';
+import { Post, PostDoc, PostWithCreatorInfo } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
+import { toPost } from '@/utilities/toPost';
 import { DocumentData, getDocs, Query } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
 
@@ -11,13 +12,18 @@ export const fetchAndPopulateUsers = async (q: Query<DocumentData>) => {
 
 		if (querySnapshot.empty) return { data: [], lastDoc: null };
 
-		const data: Post[] = querySnapshot.docs.map((doc) => {
+		const data: Post[] = [];
+
+		querySnapshot.docs.forEach((doc) => {
 			const docData = doc.data();
-			return {
-				id: doc.id,
-				...docData,
-			} as Post;
+
+			if (docData) {
+				const post = toPost({ id: doc.id, ...docData } as PostDoc);
+				data.push(post);
+			}
 		});
+
+		// console.log('data', data);
 
 		// 2. 데이터에서 creatorId 추출
 		const uniqueCreatorIds: string[] = [

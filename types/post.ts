@@ -31,6 +31,11 @@ export interface Post {
 	commentCount: number;
 }
 
+export interface PostDoc extends Post {
+	isDeleted: boolean;
+	updatedAt?: Timestamp;
+}
+
 export interface CreatorInfo {
 	creatorDisplayName: string;
 	creatorIslandName: string;
@@ -52,11 +57,22 @@ export interface CartItem extends Item {
 export interface PostWithCreatorInfo extends Post, CreatorInfo {}
 
 // firebase/services/postService.ts
-export type CreatePostRequest = Omit<Post, 'id'>;
+export interface CreatePostRequest {
+	type: Type;
+	title: string;
+	body: string;
+	images?: string[];
+	cart?: CartItem[];
+	creatorId: string;
+}
 
-export type UpdatePostRequest = Partial<
-	Omit<CreatePostRequest, 'createdAt' | 'creatorId' | 'commentCount'>
->;
+export interface UpdatePostRequest {
+	type?: Type;
+	title?: string;
+	body?: string;
+	images?: string[];
+	cart?: CartItem[];
+}
 
 // hooks/query/useInfinitePosts.ts
 export type Doc = QueryDocumentSnapshot<DocumentData> | null;
