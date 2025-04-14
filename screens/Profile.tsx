@@ -1,9 +1,10 @@
 import MyPosts from '@/components/Profile/MyPosts';
 import ProfileBox from '@/components/Profile/Profile';
 import Layout, { PADDING } from '@/components/ui/Layout';
+import LoadingIndicator from '@/components/ui/LoadingIndicator';
 import { Colors } from '@/constants/Color';
+import useLoading from '@/hooks/shared/useLoading';
 import { useCurrentTab } from '@/hooks/useCurrentTab';
-import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
 import { Tab } from '@/types/components';
@@ -21,11 +22,7 @@ import { FlatList } from 'react-native-gesture-handler';
 const Profile = () => {
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const stackNavigation = useNavigation<ProfileStackNavigation>();
-	const {
-		isLoading: isUploading,
-		setIsLoading: setIsUploading,
-		LoadingIndicator,
-	} = useLoading();
+	const { isLoading: isUploading, setIsLoading: setIsUploading } = useLoading();
 	const setActiveTab = useActiveTabStore((state) => state.setActiveTab);
 	const currentTab = useCurrentTab();
 

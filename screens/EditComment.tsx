@@ -1,8 +1,8 @@
 import Layout, { PADDING } from '@/components/ui/Layout';
+import LoadingIndicator from '@/components/ui/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { auth } from '@/fbase';
 import { useUpdateComment } from '@/hooks/mutation/comment/useUpdateComment';
-import useLoading from '@/hooks/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
 import { UpdateCommentRequest } from '@/types/comment';
@@ -26,7 +26,6 @@ const EditComment = () => {
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<HomeStackNavigation>();
 	const userInfo = useAuthStore((state) => state.userInfo);
-	const { LoadingIndicator } = useLoading();
 	const [newCommentInput, setNewCommentInput] = useState('');
 	const { mutate: updateComment, isPending: isUpdating } = useUpdateComment(
 		collectionName,

@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Color';
-import useLoading from '@/hooks/useLoading';
+import useLoading from '@/hooks/shared/useLoading';
 import { ItemSelectProps } from '@/types/components';
 import { Item } from '@/types/post';
 import axios from 'axios';
@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Categories from '../ui/Categories';
+import InlineLoadingIndicator from '../ui/InlineLoadingIndicator';
 import { showToast } from '../ui/Toast';
 
 const ItemSelect = ({
@@ -23,11 +24,7 @@ const ItemSelect = ({
 	containerStyle,
 	labelStyle,
 }: ItemSelectProps) => {
-	const {
-		isLoading: isFetching,
-		setIsLoading: setIsFetching,
-		InlineLoadingIndicator,
-	} = useLoading();
+	const { isLoading: isFetching, setIsLoading: setIsFetching } = useLoading();
 	const [category, setCategory] = useState<string>('All');
 	const [itemData, setItemData] = useState<Item[]>([]);
 	const [searchInput, setSearchInput] = useState<string>('');

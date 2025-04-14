@@ -14,7 +14,7 @@ import {
 import { useCreatePost } from '@/hooks/mutation/post/useCreatePost';
 import { useUpdatePost } from '@/hooks/mutation/post/useUpdatePost';
 import { usePostDetail } from '@/hooks/query/post/usePostDetail';
-import useLoading from '@/hooks/useLoading';
+import useLoading from '@/hooks/shared/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
 import { type NewPostRouteProp, type TabNavigation } from '@/types/navigation';

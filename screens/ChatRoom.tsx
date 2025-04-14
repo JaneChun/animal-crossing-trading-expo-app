@@ -7,7 +7,7 @@ import { useLeaveChatRoom } from '@/hooks/mutation/chat/useLeaveChatRoom';
 import { useMarkMessagesAsRead } from '@/hooks/mutation/chat/useMarkMessagesAsRead';
 import { useSendMessage } from '@/hooks/mutation/chat/useSendMessage';
 import { useReceiverInfo } from '@/hooks/query/chat/useReceiverInfo';
-import useLoading from '@/hooks/useLoading';
+import useLoading from '@/hooks/shared/useLoading';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ChatRoomRouteProp, ChatStackNavigation } from '@/types/navigation';
 import { Ionicons } from '@expo/vector-icons';

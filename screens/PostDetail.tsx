@@ -10,12 +10,13 @@ import Title from '@/components/PostDetail/Title';
 import Total from '@/components/PostDetail/Total';
 import UserInfo from '@/components/PostDetail/UserInfo';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
+import LoadingIndicator from '@/components/ui/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { useDeletePost } from '@/hooks/mutation/post/useDeletePost';
 import useComments from '@/hooks/query/comment/useComments';
 import { usePostDetail } from '@/hooks/query/post/usePostDetail';
-import useLoading from '@/hooks/useLoading';
+import useLoading from '@/hooks/shared/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
 import { PostDetailRouteProp } from '@/types/navigation';
@@ -47,11 +48,8 @@ const PostDetail = () => {
 		collectionName,
 		id,
 	);
-	const {
-		isLoading: isCommentUploading,
-		setIsLoading: setIsCommentUploading,
-		LoadingIndicator,
-	} = useLoading();
+	const { isLoading: isCommentUploading, setIsLoading: setIsCommentUploading } =
+		useLoading();
 	const { mutate: deletePost, isPending: isDeleting } = useDeletePost(
 		collectionName,
 		id,
