@@ -2,6 +2,7 @@ import Message from '@/components/Chat/Message';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import Input from '@/components/ui/Input';
 import { Colors } from '@/constants/Color';
+import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { useGetChatMessages } from '@/hooks/firebase/useGetChatMessages';
 import { useLeaveChatRoom } from '@/hooks/mutation/chat/useLeaveChatRoom';
 import { useMarkMessagesAsRead } from '@/hooks/mutation/chat/useMarkMessagesAsRead';
@@ -174,7 +175,7 @@ const ChatRoom = () => {
 			/>
 
 			{/* 인풋 */}
-			{receiverInfo.displayName !== '탈퇴한 사용자' && (
+			{receiverInfo.displayName !== DEFAULT_USER_DISPLAY_NAME && (
 				<Input
 					input={chatInput}
 					setInput={setChatInput}

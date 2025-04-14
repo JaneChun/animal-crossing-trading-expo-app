@@ -6,6 +6,7 @@ import {
 	UpdatePostRequest,
 } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
+import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { toPost } from '@/utilities/toPost';
 import { DocumentData, getDocs, Query, Timestamp } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
@@ -51,11 +52,8 @@ export const fetchAndPopulateUsers = async <T extends { creatorId: string }, U>(
 
 		// 5. 유저 정보와 데이터 병합
 		const populatedData: U[] = data.map((item) => {
-			const userInfo = publicUserInfos[item.creatorId] || {
-				displayName: '탈퇴한 사용자',
-				islandName: '무인도',
-				photoURL: '',
-			};
+			const userInfo =
+				publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);
 
 			return {
 				...item,

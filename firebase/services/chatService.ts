@@ -7,6 +7,7 @@ import {
 	SendChatMessageParams,
 } from '@/types/chat';
 import { PublicUserInfo } from '@/types/user';
+import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import {
 	addDoc,
 	arrayRemove,
@@ -61,12 +62,7 @@ export const fetchAndPopulateReceiverInfo = async <T extends Chat, U>(
 			const receiverId =
 				item.participants.find((uid) => uid !== userId) ?? null;
 
-			let receiverInfo = {
-				uid: receiverId,
-				displayName: '탈퇴한 사용자',
-				islandName: '무인도',
-				photoURL: '',
-			};
+			let receiverInfo = getDefaultUserInfo(receiverId!);
 
 			if (receiverId && publicUserInfos[receiverId]) {
 				receiverInfo = publicUserInfos[receiverId];

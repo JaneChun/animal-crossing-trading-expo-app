@@ -1,5 +1,6 @@
 import { db } from '@/fbase';
 import { PublicUserInfo } from '@/types/user';
+import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { doc, getDocs, Query, writeBatch } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
 import {
@@ -39,12 +40,7 @@ export const fetchAndPopulateSenderInfo = async <
 		const populatedData: U[] = data.map((item) => {
 			const senderId = item.senderId;
 
-			let senderInfo = {
-				uid: senderId,
-				displayName: '탈퇴한 사용자',
-				islandName: '무인도',
-				photoURL: '',
-			};
+			let senderInfo = getDefaultUserInfo(senderId);
 
 			if (senderId && publicUserInfos[senderId]) {
 				senderInfo = publicUserInfos[senderId];

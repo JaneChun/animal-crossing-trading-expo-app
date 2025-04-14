@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { useCreateChatRoom } from '@/hooks/mutation/chat/useCreateChatRoom';
 import { useDeleteComment } from '@/hooks/mutation/comment/useDeleteComment';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
@@ -155,7 +156,7 @@ const CommentUnit = ({
 					{/* 내 게시글의 다른 사람 댓글만 표시 */}
 					{postCreatorId === userInfo?.uid &&
 						postCreatorId !== creatorId &&
-						creatorDisplayName !== '탈퇴한 사용자' && (
+						creatorDisplayName !== DEFAULT_USER_DISPLAY_NAME && (
 							<TouchableOpacity
 								style={styles.chatButtonContainer}
 								onPress={() =>

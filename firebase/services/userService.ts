@@ -1,5 +1,11 @@
+import {
+	DEFAULT_USER_DISPLAY_NAME,
+	DEFAULT_USER_ISLAND_NAME,
+	DEFAULT_USER_PHOTO_URL,
+} from '@/constants/defaultUserInfo';
 import { db } from '@/fbase';
 import { OauthType, PublicUserInfo, UserInfo } from '@/types/user';
+import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import {
 	collection,
 	doc,
@@ -17,13 +23,6 @@ import {
 	queryDocs,
 	updateDocToFirestore,
 } from '../core/firestoreService';
-
-const getDefaultPublicUserInfo = (uid: string): PublicUserInfo => ({
-	uid,
-	displayName: '탈퇴한 사용자',
-	islandName: '무인도',
-	photoURL: '',
-});
 
 export const getUserInfo = async (uid: string): Promise<UserInfo | null> => {
 	return firestoreRequest('나의 정보 조회', async () => {
@@ -88,18 +87,18 @@ export const getPublicUserInfo = async (
 			});
 
 			if (!docData) {
-				return getDefaultPublicUserInfo(creatorId);
+				return getDefaultUserInfo(creatorId);
 			}
 
 			return {
 				uid: creatorId,
-				displayName: docData.displayName || '탈퇴한 사용자',
-				islandName: docData.islandName || '무인도',
-				photoURL: docData.photoURL || '',
+				displayName: docData.displayName || DEFAULT_USER_DISPLAY_NAME,
+				islandName: docData.islandName || DEFAULT_USER_ISLAND_NAME,
+				photoURL: docData.photoURL || DEFAULT_USER_PHOTO_URL,
 			};
 		});
 	} catch (e) {
-		return getDefaultPublicUserInfo(creatorId);
+		return getDefaultUserInfo(creatorId);
 	}
 };
 
@@ -119,9 +118,9 @@ export const getPublicUserInfos = async (
 		usersData.forEach((user) => {
 			publicUserInfoMap[user.id] = {
 				uid: user.id,
-				displayName: user.displayName || '탈퇴한 사용자',
-				islandName: user.islandName || '무인도',
-				photoURL: user.photoURL || '',
+				displayName: user.displayName || DEFAULT_USER_DISPLAY_NAME,
+				islandName: user.islandName || DEFAULT_USER_ISLAND_NAME,
+				photoURL: user.photoURL || DEFAULT_USER_PHOTO_URL,
 			};
 		});
 
