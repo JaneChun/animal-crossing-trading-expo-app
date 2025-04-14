@@ -3,8 +3,9 @@ import MarketNotices from '@/components/Notice/MarketNotices';
 import TabBarLabel from '@/components/Notice/TabBarLabel';
 import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
-import { useNotifications } from '@/hooks/query/notification/useNotifications';
+import useGetNotifications from '@/hooks/firebase/useGetNotifications';
 import useLoading from '@/hooks/useLoading';
+import { Collection } from '@/types/components';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React from 'react';
 import { StyleSheet } from 'react-native';
@@ -12,18 +13,20 @@ import { StyleSheet } from 'react-native';
 const Notice = () => {
 	const Tab = createMaterialTopTabNavigator();
 	const { LoadingIndicator } = useLoading();
-	const { data: notifications, isLoading } = useNotifications();
+	const { notifications, isLoading } = useGetNotifications();
 
 	const marketNotifications = notifications.filter(
-		({ type }) => type === 'Boards',
+		({ type }: { type: Collection }) => type === 'Boards',
 	);
 	const communityNotifications = notifications.filter(
-		({ type }) => type === 'Communities',
+		({ type }: { type: Collection }) => type === 'Communities',
 	);
 
-	const hasUnreadMarket = marketNotifications.some(({ isRead }) => !isRead);
+	const hasUnreadMarket = marketNotifications.some(
+		({ isRead }: { isRead: boolean }) => !isRead,
+	);
 	const hasUnreadCommunity = communityNotifications.some(
-		({ isRead }) => !isRead,
+		({ isRead }: { isRead: boolean }) => !isRead,
 	);
 
 	if (isLoading) {

@@ -7,8 +7,5 @@ export const useMarkAllAsRead = () => {
 	return useMutation({
 		mutationFn: (notificationIds: string[]) =>
 			markAllNotificationAsRead(notificationIds),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['notifications'] });
-		},
 	});
 };
