@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Color';
-import { createChatRoom } from '@/firebase/services/chatService';
+import { useCreateChatRoom } from '@/hooks/mutation/chat/useCreateChatRoom';
 import { useDeleteComment } from '@/hooks/mutation/comment/useDeleteComment';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
@@ -27,7 +27,6 @@ const CommentUnit = ({
 	body,
 	creatorId,
 	createdAt,
-	updatedAt,
 	creatorDisplayName,
 	creatorIslandName,
 	creatorPhotoURL,
@@ -38,11 +37,10 @@ const CommentUnit = ({
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const tabNavigation = useNavigation<TabNavigation>();
 	const stackNavigation = useNavigation<HomeStackNavigation>();
-	const { mutate: deleteComment, isPending: isDeleting } = useDeleteComment(
-		collectionName,
-		postId,
-		id,
-	);
+	const { mutate: deleteComment, isPending: isDeletingComment } =
+		useDeleteComment(collectionName, postId, id);
+	const { mutateAsync: createChatRoom, isPending: isCreatingChatRoom } =
+		useCreateChatRoom();
 
 	const handleEditComment = ({
 		postId,

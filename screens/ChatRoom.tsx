@@ -2,20 +2,16 @@ import Message from '@/components/Chat/Message';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import Input from '@/components/ui/Input';
 import { Colors } from '@/constants/Color';
-import { db } from '@/fbase';
-import {
-	leaveChatRoom,
-	markMessagesAsRead,
-	sendMessage,
-} from '@/firebase/services/chatService';
-import { getPublicUserInfo } from '@/firebase/services/userService';
+import { useGetChatMessages } from '@/hooks/firebase/useGetChatMessages';
+import { useLeaveChatRoom } from '@/hooks/mutation/chat/useLeaveChatRoom';
+import { useMarkMessagesAsRead } from '@/hooks/mutation/chat/useMarkMessagesAsRead';
+import { useSendMessage } from '@/hooks/mutation/chat/useSendMessage';
+import { useReceiverInfo } from '@/hooks/query/chat/useReceiverInfo';
 import useLoading from '@/hooks/useLoading';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ChatRoomRouteProp, ChatStackNavigation } from '@/types/navigation';
-import { PublicUserInfo } from '@/types/user';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import {
 	Image,
@@ -28,31 +24,24 @@ import {
 import { FlatList } from 'react-native-gesture-handler';
 
 const ChatRoom = () => {
-	const { LoadingIndicator } = useLoading();
+	const route = useRoute<ChatRoomRouteProp>();
+	const { chatId } = route.params;
 	const stackNavigation = useNavigation<ChatStackNavigation>();
+	const { LoadingIndicator } = useLoading();
 	const userInfo = useAuthStore((state) => state.userInfo);
-	const [receiverInfo, setReceiverInfo] = useState<PublicUserInfo | null>(null);
-	const [messages, setMessages] = useState<any[]>([]);
 	const [chatInput, setChatInput] = useState('');
 	const flatListRef = useRef<FlatList>(null);
 
-	const route = useRoute<ChatRoomRouteProp>();
-	const { chatId } = route.params;
+	const { messages, isLoading: isMessagesFetching } =
+		useGetChatMessages(chatId);
+	const { data: receiverInfo, isLoading: isReceiverInfoFetching } =
+		useReceiverInfo(chatId);
 
-	// 채팅방에 참여한 유저 정보 가져오기
-	useEffect(() => {
-		const getReceiverInfo = async () => {
-			const receiverId = chatId.split('_').find((id) => id !== userInfo?.uid);
-			if (!receiverId) return;
+	const { mutate: leaveChatRoom } = useLeaveChatRoom({ chatId });
+	const { mutate: markMessagesAsRead } = useMarkMessagesAsRead();
+	const { mutate: sendMessage } = useSendMessage();
 
-			const receiver = await getPublicUserInfo(receiverId);
-			setReceiverInfo(receiver);
-		};
-
-		getReceiverInfo();
-	}, [chatId, userInfo]);
-
-	// 유저가 채팅방에 들어올 때 markMessagesAsRead 실행
+	// 유저가 채팅방에 들어올 때, 입장한 이후에도 새 메시지가 올 때 markMessagesAsRead 실행
 	useEffect(() => {
 		const readMessages = async () => {
 			if (chatId && userInfo) {
@@ -61,86 +50,30 @@ const ChatRoom = () => {
 		};
 
 		readMessages();
-	}, [chatId, userInfo]);
-
-	const groupMessagesByDate = (messages: any[]) => {
-		const groupedMessages: any[] = [];
-		let lastDate = '';
-
-		messages.forEach((message) => {
-			const formattedDate = new Date(
-				message.createdAt?.toDate(),
-			).toLocaleDateString('ko-KR', {
-				year: 'numeric',
-				month: 'long',
-				day: 'numeric',
-			});
-
-			if (formattedDate !== lastDate) {
-				groupedMessages.push({
-					id: `date-${formattedDate}`,
-					isDateSeparator: true,
-					date: formattedDate,
-				});
-
-				lastDate = formattedDate;
-			}
-
-			groupedMessages.push(message);
-		});
-
-		return groupedMessages.reverse();
-	};
-
-	// 메시지 목록(서브컬렉션) 실시간 구독
-	useEffect(() => {
-		if (!chatId) return;
-
-		const q = query(
-			collection(db, 'Chats', chatId, 'Messages'),
-			orderBy('createdAt', 'asc'),
-		);
-
-		const unsubscribe = onSnapshot(q, (snapshot) => {
-			const newMessages = snapshot.docs.map((doc) => ({
-				id: doc.id,
-				...doc.data(),
-			}));
-
-			const groupedMessages = groupMessagesByDate(newMessages);
-
-			setMessages(groupedMessages);
-		});
-
-		return () => unsubscribe();
-	}, [chatId]);
+	}, [chatId, userInfo, messages]);
 
 	const onSubmit = async () => {
 		if (!userInfo || !receiverInfo || chatInput === '') return;
 
-		try {
-			await sendMessage({
-				chatId,
-				senderId: userInfo.uid,
-				receiverId: receiverInfo.uid,
-				message: chatInput.trim(),
-			});
-		} catch (e) {
-			console.log(e);
-		} finally {
-			setChatInput('');
-			scrollToBottom();
-		}
+		sendMessage({
+			chatId,
+			senderId: userInfo.uid,
+			receiverId: receiverInfo.uid,
+			message: chatInput.trim(),
+		});
+
+		setChatInput('');
+		scrollToBottom();
 	};
 
 	const scrollToBottom = () => {
 		flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
 	};
 
-	const leaveChat = async ({ chatId }: { chatId: string }) => {
+	const leaveChat = async () => {
 		if (!userInfo) return;
 
-		await leaveChatRoom({ chatId, userId: userInfo.uid });
+		leaveChatRoom({ userId: userInfo.uid });
 		stackNavigation.goBack();
 	};
 
@@ -156,7 +89,37 @@ const ChatRoom = () => {
 		return <Message message={item} receiverId={receiverInfo!.uid} />;
 	};
 
-	if (!chatId || !receiverInfo) return <LoadingIndicator />;
+	if (isMessagesFetching || isReceiverInfoFetching) {
+		console.log(isMessagesFetching, isReceiverInfoFetching);
+		return <LoadingIndicator />;
+	}
+
+	if (!chatId || !receiverInfo) {
+		return (
+			<View style={styles.screen}>
+				<View style={styles.header}>
+					<TouchableOpacity
+						style={styles.iconContainer}
+						onPress={() =>
+							stackNavigation.reset({
+								index: 0,
+								routes: [{ name: 'Chat' }],
+							})
+						}
+					>
+						<Ionicons
+							name='chevron-back-outline'
+							size={24}
+							color={Colors.font_black}
+						/>
+					</TouchableOpacity>
+				</View>
+				<View style={styles.invalidPostContainer}>
+					<Text style={styles.invalidPostText}>채팅방을 찾을 수 없습니다.</Text>
+				</View>
+			</View>
+		);
+	}
 
 	return (
 		<KeyboardAvoidingView style={styles.screen} behavior='padding'>
@@ -194,7 +157,7 @@ const ChatRoom = () => {
 					color={Colors.font_gray}
 					size={24}
 					options={[
-						{ label: '나가기', onPress: () => leaveChat({ chatId }) },
+						{ label: '나가기', onPress: leaveChat },
 						{ label: '취소', onPress: () => {} },
 					]}
 				/>
@@ -261,6 +224,16 @@ const styles = StyleSheet.create({
 	dateSeparatorText: {
 		color: Colors.font_gray,
 		fontSize: 12,
+	},
+	invalidPostContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'white',
+	},
+	invalidPostText: {
+		color: Colors.font_gray,
+		alignSelf: 'center',
 	},
 });
 

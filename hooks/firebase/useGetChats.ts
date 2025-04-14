@@ -1,6 +1,7 @@
 import { db } from '@/fbase';
-import { fetchMyChats } from '@/firebase/services/chatService';
+import { fetchAndPopulateReceiverInfo } from '@/firebase/services/chatService';
 import { useAuthStore } from '@/stores/AuthStore';
+import { useChatCountStore } from '@/stores/ChatCountStore';
 import { Chat, ChatWithReceiverInfo } from '@/types/chat';
 import {
 	collection,
@@ -14,15 +15,15 @@ import { useEffect, useState } from 'react';
 const useGetChats = () => {
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const [chats, setChats] = useState<ChatWithReceiverInfo[]>([]);
-	const [unreadCount, setUnreadCount] = useState<number>(0);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const setUnreadCount = useChatCountStore((state) => state.setCount);
 
 	// 채팅방 목록 실시간 구독
 	useEffect(() => {
 		if (!userInfo) {
 			setChats([]);
-			setUnreadCount(0);
 			setIsLoading(false);
+			setUnreadCount(0);
 			return;
 		}
 
@@ -32,15 +33,24 @@ const useGetChats = () => {
 			orderBy('updatedAt', 'desc'), // 최신 메시지가 있는 채팅방부터 정렬
 		);
 
-		const unsubscribe = onSnapshot(q, async (snapshot) => {
+		const unsubscribe = onSnapshot(q, async () => {
 			setIsLoading(true);
 
-			const { data } = await fetchMyChats<Chat, ChatWithReceiverInfo>(
-				q,
-				userInfo.uid,
-			);
+			const { data } = await fetchAndPopulateReceiverInfo<
+				Chat,
+				ChatWithReceiverInfo
+			>(q, userInfo.uid);
 			setChats(data);
-			getSumOfUnreadMessage(data);
+
+			// 안읽은 알림 수 계산 & 전역 상태에 저장
+			const totalUnread = data.reduce(
+				(acc: number, chat: ChatWithReceiverInfo) => {
+					const count = chat.unreadCount?.[userInfo.uid] || 0;
+					return acc + Number(count);
+				},
+				0,
+			);
+			setUnreadCount(totalUnread);
 
 			setIsLoading(false);
 		});
@@ -48,18 +58,7 @@ const useGetChats = () => {
 		return () => unsubscribe();
 	}, [userInfo]);
 
-	const getSumOfUnreadMessage = async (chats: ChatWithReceiverInfo[]) => {
-		if (!userInfo) return;
-
-		const sum = chats.reduce(
-			(acc: number, { unreadCount }) =>
-				acc + Number(unreadCount[userInfo.uid] || 0),
-			0,
-		);
-		setUnreadCount(sum);
-	};
-
-	return { chats, unreadCount, isLoading };
+	return { chats, isLoading };
 };
 
 export default useGetChats;

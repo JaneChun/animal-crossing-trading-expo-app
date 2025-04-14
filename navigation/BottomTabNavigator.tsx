@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Color';
-import useGetChats from '@/hooks/useGetChats';
 import { useAuthStore } from '@/stores/AuthStore';
+import { useChatCountStore } from '@/stores/ChatCountStore';
 import { useNotificationCountStore } from '@/stores/NotificationCountStore';
 import {
 	Entypo,
@@ -30,7 +30,7 @@ const getTabBarIcon =
 
 const BottomTabNavigator = () => {
 	const userInfo = useAuthStore((state) => state.userInfo);
-	const { unreadCount: unreadChatCount } = useGetChats();
+	const unreadChatCount = useChatCountStore((state) => state.count);
 	const unreadNotificationCount = useNotificationCountStore(
 		(state) => state.count,
 	);

@@ -1,7 +1,7 @@
 import ChatUnit from '@/components/Chat/ChatUnit';
 import Layout from '@/components/ui/Layout';
 import { Colors } from '@/constants/Color';
-import useGetChats from '@/hooks/useGetChats';
+import useGetChats from '@/hooks/firebase/useGetChats';
 import useLoading from '@/hooks/useLoading';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ChatWithReceiverInfo } from '@/types/chat';

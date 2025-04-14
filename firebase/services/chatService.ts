@@ -1,6 +1,11 @@
 import { db } from '@/fbase';
-import { Chat } from '@/types/chat';
-import { Collection } from '@/types/components';
+import {
+	Chat,
+	CreateChatRoomParams,
+	LeaveChatRoomParams,
+	MarkMessageAsReadParams,
+	SendChatMessageParams,
+} from '@/types/chat';
 import { PublicUserInfo } from '@/types/user';
 import {
 	addDoc,
@@ -26,7 +31,7 @@ const generateChatId = (user1: string, user2: string): string => {
 	return [user1, user2].sort().join('_');
 };
 
-export const fetchMyChats = async <T extends Chat, U>(
+export const fetchAndPopulateReceiverInfo = async <T extends Chat, U>(
 	q: Query,
 	userId: string,
 ) => {
@@ -37,8 +42,10 @@ export const fetchMyChats = async <T extends Chat, U>(
 
 		const data: T[] = querySnapshot.docs.map((doc) => {
 			const docData = doc.data();
+			const id = doc.id;
+
 			return {
-				id: doc.id,
+				id,
 				...docData,
 			} as unknown as T;
 		});
@@ -87,12 +94,7 @@ export const createChatRoom = async ({
 	postId,
 	user1,
 	user2,
-}: {
-	collectionName: Collection;
-	postId: string;
-	user1: string;
-	user2: string;
-}): Promise<string | undefined> => {
+}: CreateChatRoomParams): Promise<string | undefined> => {
 	return firestoreRequest('채팅방 생성', async () => {
 		const chatId = generateChatId(user1, user2);
 
@@ -122,7 +124,7 @@ export const createChatRoom = async ({
 		}
 
 		// 채팅이 시작한 게시글 정보 추가
-		// 하지만 푸시 알림은 발생시키지 않아야 함
+		// receiverId에 해당하는 pushToken이 없으므로 푸시 알림 발생 X
 		await sendMessage({
 			chatId,
 			senderId: 'system',
@@ -157,12 +159,7 @@ export const sendMessage = async ({
 	senderId,
 	receiverId,
 	message,
-}: {
-	chatId: string;
-	senderId: string;
-	receiverId: string;
-	message: string;
-}): Promise<void> => {
+}: SendChatMessageParams): Promise<void> => {
 	return firestoreRequest('메세지 전송', async () => {
 		if (!chatId || !senderId || !receiverId || !message.trim()) return;
 
@@ -193,10 +190,7 @@ export const sendMessage = async ({
 export const leaveChatRoom = async ({
 	chatId,
 	userId,
-}: {
-	chatId: string;
-	userId: string;
-}): Promise<void> => {
+}: LeaveChatRoomParams): Promise<void> => {
 	return firestoreRequest('채팅방 나가기', async () => {
 		const chatRef = doc(db, 'Chats', chatId);
 
@@ -209,10 +203,7 @@ export const leaveChatRoom = async ({
 export const markMessagesAsRead = async ({
 	chatId,
 	userId,
-}: {
-	chatId: string;
-	userId: string;
-}): Promise<void> => {
+}: MarkMessageAsReadParams): Promise<void> => {
 	return firestoreRequest('메세지 읽음 처리', async () => {
 		const messagesRef = collection(db, `Chats/${chatId}/Messages`);
 
