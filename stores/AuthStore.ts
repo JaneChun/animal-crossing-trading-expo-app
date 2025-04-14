@@ -24,7 +24,7 @@ import { Alert } from 'react-native';
 import { create } from 'zustand';
 import { auth } from '../fbase';
 import firebaseRequest from '../firebase/core/firebaseInterceptor';
-import { useNotificationStore } from './NotificationStore';
+import { usePushNotificationStore } from './PushNotificationStore';
 
 type AuthState = {
 	userInfo: UserInfo | null;
@@ -224,7 +224,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 export const useAuthInitializer = () => {
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const setUserInfo = useAuthStore((state) => state.setUserInfo);
-	const expoPushToken = useNotificationStore((state) => state.expoPushToken);
+	const expoPushToken = usePushNotificationStore(
+		(state) => state.expoPushToken,
+	);
 
 	// 앱이 실행될 때 Kakao, Naver SDK 초기화
 	useEffect(() => {

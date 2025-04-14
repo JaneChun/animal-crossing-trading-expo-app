@@ -13,7 +13,7 @@ type NotificationState = {
 	setError: (error: Error | null) => void;
 };
 
-export const useNotificationStore = create<NotificationState>((set) => ({
+export const usePushNotificationStore = create<NotificationState>((set) => ({
 	expoPushToken: null,
 	notification: null,
 	error: null,
@@ -22,14 +22,14 @@ export const useNotificationStore = create<NotificationState>((set) => ({
 	setError: (error) => set({ error }),
 }));
 
-export const useNotificationInitializer = () => {
-	const setExpoPushToken = useNotificationStore(
+export const usePushNotificationInitializer = () => {
+	const setExpoPushToken = usePushNotificationStore(
 		(state) => state.setExpoPushToken,
 	);
-	const setNotification = useNotificationStore(
+	const setNotification = usePushNotificationStore(
 		(state) => state.setNotification,
 	);
-	const setError = useNotificationStore((state) => state.setError);
+	const setError = usePushNotificationStore((state) => state.setError);
 
 	useEffect(() => {
 		Notifications.setNotificationHandler({

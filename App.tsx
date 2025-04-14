@@ -12,7 +12,7 @@ import { useOnlineManager } from './hooks/shared/useOnlineManager';
 import BottomTabNavigator from './navigation/BottomTabNavigator';
 import ErrorBoundary from './screens/ErrorBoundary';
 import { useAuthInitializer } from './stores/AuthStore';
-import { useNotificationInitializer } from './stores/NotificationStore';
+import { usePushNotificationInitializer } from './stores/PushNotificationStore';
 
 const prefix = Linking.createURL('/');
 
@@ -44,7 +44,7 @@ const linking = {
 
 export default function App() {
 	useAuthInitializer();
-	useNotificationInitializer();
+	usePushNotificationInitializer();
 
 	const queryClient = new QueryClient({
 		defaultOptions: { queries: { retry: 2 } },
