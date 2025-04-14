@@ -10,15 +10,9 @@ import { elapsedTime } from '@/utilities/elapsedTime';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import {
-	Alert,
-	Image,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ActionSheetButton from '../ui/ActionSheetButton';
+import ImageWithFallback from '../ui/ImageWithFallback';
 import { showToast } from '../ui/Toast';
 
 const CommentUnit = ({
@@ -107,14 +101,11 @@ const CommentUnit = ({
 
 	return (
 		<View style={styles.container}>
-			{creatorPhotoURL ? (
-				<Image source={{ uri: creatorPhotoURL }} style={styles.profileImage} />
-			) : (
-				<Image
-					source={require('../../assets/images/empty_profile_image.png')}
-					style={styles.profileImage}
-				/>
-			)}
+			<ImageWithFallback
+				uri={creatorPhotoURL}
+				fallbackSource={require('../../assets/images/empty_profile_image.png')}
+				style={styles.profileImage}
+			/>
 
 			<View style={styles.commentContent}>
 				{/* 헤더 */}

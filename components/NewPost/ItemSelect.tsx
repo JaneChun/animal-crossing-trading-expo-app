@@ -6,7 +6,6 @@ import axios from 'axios';
 import { debounce } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import {
-	Image,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -15,6 +14,7 @@ import {
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Categories from '../ui/Categories';
+import ImageWithFallback from '../ui/ImageWithFallback';
 import InlineLoadingIndicator from '../ui/InlineLoadingIndicator';
 import { showToast } from '../ui/Toast';
 
@@ -118,9 +118,10 @@ const ItemSelect = ({
 									style={styles.item}
 									onPress={() => addItemToCart(item)}
 								>
-									<Image
-										source={{ uri: item.imageUrl }}
+									<ImageWithFallback
+										uri={item?.imageUrl}
 										style={styles.itemImage}
+										priority='high'
 									/>
 									<Text style={styles.itemTextContainer}>
 										<Text>{item.name}</Text>

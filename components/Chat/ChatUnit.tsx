@@ -7,19 +7,13 @@ import { elapsedTime } from '@/utilities/elapsedTime';
 import { FontAwesome } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import {
-	Alert,
-	Image,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
 	SharedValue,
 	useAnimatedStyle,
 } from 'react-native-reanimated';
+import ImageWithFallback from '../ui/ImageWithFallback';
 
 const ChatUnit = (props: ChatWithReceiverInfo) => {
 	const {
@@ -86,17 +80,11 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 				style={styles.container}
 			>
 				<View style={styles.header}>
-					{receiverInfo?.photoURL ? (
-						<Image
-							source={{ uri: receiverInfo.photoURL }}
-							style={styles.profileImage}
-						/>
-					) : (
-						<Image
-							source={require('../../assets/images/empty_profile_image.png')}
-							style={styles.profileImage}
-						/>
-					)}
+					<ImageWithFallback
+						uri={receiverInfo?.photoURL}
+						fallbackSource={require('../../assets/images/empty_profile_image.png')}
+						style={styles.profileImage}
+					/>
 				</View>
 				<View style={styles.body}>
 					<View style={styles.title}>

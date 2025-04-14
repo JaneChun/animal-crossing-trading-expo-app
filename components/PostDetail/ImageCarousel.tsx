@@ -1,8 +1,9 @@
 import { Colors } from '@/constants/Color';
 import { ImageCarouselProps } from '@/types/components';
 import React, { useState } from 'react';
-import { Dimensions, Image, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
+import ImageWithFallback from '../ui/ImageWithFallback';
 
 const { width } = Dimensions.get('window');
 
@@ -16,7 +17,11 @@ const ImageCarousel = ({ images, containerStyle }: ImageCarouselProps) => {
 					<Carousel
 						data={images}
 						renderItem={({ item }) => (
-							<Image source={{ uri: item as string }} style={styles.image} />
+							<ImageWithFallback
+								uri={item as string}
+								fallbackSource={require('../../assets/images/image-not-found.png')}
+								style={styles.image}
+							/>
 						)}
 						sliderWidth={width}
 						itemWidth={width * 0.8}

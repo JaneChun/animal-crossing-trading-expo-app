@@ -2,8 +2,10 @@ import { Colors } from '@/constants/Color';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ProfileProps } from '@/types/components';
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
+import ImageWithFallback from '../ui/ImageWithFallback';
+import Island from '../ui/Island';
 import EditProfileModal from './EditProfileModal';
 
 const Profile = ({
@@ -25,21 +27,15 @@ const Profile = ({
 	return (
 		<View style={[styles.container, containerStyle]}>
 			<View style={styles.imageContainer}>
-				{userInfo?.photoURL ? (
-					<Image source={{ uri: userInfo?.photoURL }} style={styles.image} />
-				) : (
-					<Image
-						source={require('../../assets/images/empty_profile_image.png')}
-						style={styles.image}
-					/>
-				)}
+				<ImageWithFallback
+					uri={userInfo?.photoURL}
+					fallbackSource={require('../../assets/images/empty_profile_image.png')}
+					style={styles.image}
+				/>
 			</View>
 			<Text style={styles.displayName}>{userInfo?.displayName}</Text>
 			<View style={styles.islandInfoContainer}>
-				<Image
-					source={require('../../assets/images/island_icon.png')}
-					style={styles.islandIcon}
-				/>
+				<Island style={styles.islandIcon} />
 				<Text style={styles.islandText}>
 					{userInfo?.islandName || '어떤 섬에 사시나요?'}
 				</Text>

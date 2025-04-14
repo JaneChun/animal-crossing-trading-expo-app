@@ -1,6 +1,8 @@
 import Message from '@/components/Chat/Message';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import Input from '@/components/ui/Input';
+import LoadingIndicator from '@/components/ui/LoadingIndicator';
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { useGetChatMessages } from '@/hooks/firebase/useGetChatMessages';
@@ -8,14 +10,12 @@ import { useLeaveChatRoom } from '@/hooks/mutation/chat/useLeaveChatRoom';
 import { useMarkMessagesAsRead } from '@/hooks/mutation/chat/useMarkMessagesAsRead';
 import { useSendMessage } from '@/hooks/mutation/chat/useSendMessage';
 import { useReceiverInfo } from '@/hooks/query/chat/useReceiverInfo';
-import useLoading from '@/hooks/shared/useLoading';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ChatRoomRouteProp, ChatStackNavigation } from '@/types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-	Image,
 	KeyboardAvoidingView,
 	StyleSheet,
 	Text,
@@ -28,7 +28,6 @@ const ChatRoom = () => {
 	const route = useRoute<ChatRoomRouteProp>();
 	const { chatId } = route.params;
 	const stackNavigation = useNavigation<ChatStackNavigation>();
-	const { LoadingIndicator } = useLoading();
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const [chatInput, setChatInput] = useState('');
 	const flatListRef = useRef<FlatList>(null);
@@ -91,7 +90,6 @@ const ChatRoom = () => {
 	};
 
 	if (isMessagesFetching || isReceiverInfoFetching) {
-		console.log(isMessagesFetching, isReceiverInfoFetching);
 		return <LoadingIndicator />;
 	}
 
@@ -141,17 +139,12 @@ const ChatRoom = () => {
 						color={Colors.font_black}
 					/>
 				</TouchableOpacity>
-				{receiverInfo?.photoURL ? (
-					<Image
-						source={{ uri: receiverInfo.photoURL }}
-						style={styles.profileImage}
-					/>
-				) : (
-					<Image
-						source={require('../assets/images/empty_profile_image.png')}
-						style={styles.profileImage}
-					/>
-				)}
+
+				<ImageWithFallback
+					uri={receiverInfo?.photoURL}
+					fallbackSource={require('../assets/images/empty_profile_image.png')}
+					style={styles.profileImage}
+				/>
 
 				<Text style={styles.displayName}>{receiverInfo.displayName}</Text>
 				<ActionSheetButton

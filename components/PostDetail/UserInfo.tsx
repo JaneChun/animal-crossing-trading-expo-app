@@ -1,6 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { UserInfoProps } from '@/types/components';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import Island from '../ui/Island';
 
 const UserInfo = ({
 	displayName,
@@ -11,11 +12,8 @@ const UserInfo = ({
 		<View style={[styles.container, containerStyle]}>
 			<Text style={styles.displayName}>{displayName}</Text>
 			<View style={styles.IslandContainer}>
-				<Image
-					source={require('../../assets/images/island_icon.png')}
-					style={styles.islandImage}
-				/>
-				{islandName && <Text style={styles.islandName}>{islandName}</Text>}
+				<Island style={styles.islandImage} />
+				<Text style={styles.islandName}>{islandName}</Text>
 			</View>
 		</View>
 	);

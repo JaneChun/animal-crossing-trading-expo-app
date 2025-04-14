@@ -1,6 +1,7 @@
 import { TotalProps } from '@/types/components';
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import MileTicket from '../ui/MileTicket';
 
 const Total = ({ cart = [], containerStyle }: TotalProps) => {
 	const totalPrice =
@@ -14,12 +15,7 @@ const Total = ({ cart = [], containerStyle }: TotalProps) => {
 		<View style={[styles.container, containerStyle]}>
 			<Text style={styles.totalLabel}>일괄</Text>
 			<View style={styles.totalPriceContainer}>
-				<Image
-					source={{
-						uri: 'https://firebasestorage.googleapis.com/v0/b/animal-crossing-trade-app.appspot.com/o/Src%2FMilesTicket.png?alt=media&token=f8e4f60a-1546-4084-9498-0f6f9e765859',
-					}}
-					style={styles.ticketIcon}
-				/>
+				<MileTicket style={styles.ticketIcon} />
 				<Text style={styles.totalPrice}>{totalPrice}</Text>
 			</View>
 		</View>

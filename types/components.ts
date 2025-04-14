@@ -4,6 +4,7 @@ import { Timestamp } from 'firebase/firestore';
 import { Dispatch, ReactNode, SetStateAction } from 'react';
 import {
 	GestureResponderEvent,
+	ImageProps,
 	StyleProp,
 	TextStyle,
 	ViewStyle,
@@ -271,3 +272,12 @@ export type ActionSheetButtonProps = {
 	options: { label: string; onPress: () => void }[];
 	cancelIndex?: number;
 };
+
+export type ImagePriority = 'low' | 'normal' | 'high';
+
+export interface ImageWithFallbackProps extends Omit<ImageProps, 'source'> {
+	uri?: string;
+	fallbackSource?: number; // require() 등 로컬 이미지
+	style?: any;
+	priority?: ImagePriority;
+}

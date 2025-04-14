@@ -1,11 +1,12 @@
 import type { TabNavigation } from '@/types/navigation';
 import { useNavigation } from '@react-navigation/native';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import Layout from '@/components/ui/Layout';
 import { showToast } from '@/components/ui/Toast';
 import { useAuthStore } from '@/stores/AuthStore';
 import { OauthType } from '@/types/user';
+import FastImage from 'react-native-fast-image';
 
 const Login = () => {
 	const kakaoLogin = useAuthStore((state) => state.kakaoLogin);
@@ -33,9 +34,10 @@ const Login = () => {
 				<View style={styles.header}>
 					<View style={styles.titleContainer}>
 						<Text style={styles.title}>모동숲 마켓</Text>
-						<Image
+						<FastImage
 							source={require('../assets/images/logo.png')}
 							style={styles.logoImage}
+							resizeMode={FastImage.resizeMode.contain}
 						/>
 					</View>
 				</View>
@@ -45,9 +47,10 @@ const Login = () => {
 						onPress={() => handleLogin('naver')}
 						style={styles.buttonContainer}
 					>
-						<Image
+						<FastImage
 							source={require('../assets/images/naver_login.png')}
 							style={styles.kakaoLoginImage}
+							resizeMode={FastImage.resizeMode.contain}
 						/>
 					</TouchableOpacity>
 					<TouchableOpacity
@@ -55,9 +58,10 @@ const Login = () => {
 						onPress={() => handleLogin('kakao')}
 						style={styles.buttonContainer}
 					>
-						<Image
+						<FastImage
 							source={require('../assets/images/kakao_login.png')}
 							style={styles.kakaoLoginImage}
+							resizeMode={FastImage.resizeMode.contain}
 						/>
 					</TouchableOpacity>
 				</View>

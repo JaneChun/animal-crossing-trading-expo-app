@@ -6,13 +6,8 @@ import {
 	launchImageLibraryAsync,
 	useMediaLibraryPermissions,
 } from 'expo-image-picker';
-import {
-	Image,
-	Keyboard,
-	StyleSheet,
-	TouchableOpacity,
-	View,
-} from 'react-native';
+import { Keyboard, StyleSheet, TouchableOpacity, View } from 'react-native';
+import ImageWithFallback from '../ui/ImageWithFallback';
 import { showToast } from '../ui/Toast';
 
 const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
@@ -75,20 +70,20 @@ const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 		setImage(null);
 	};
 
+	console.log(image?.uri);
+
 	return (
 		<TouchableOpacity
 			style={styles.imageContainer}
 			activeOpacity={0.8}
 			onPress={showImageEditOptions}
 		>
-			{image?.uri ? (
-				<Image source={{ uri: image?.uri }} style={styles.image} />
-			) : (
-				<Image
-					source={require('../../assets/images/empty_profile_image.png')}
-					style={styles.image}
-				/>
-			)}
+			<ImageWithFallback
+				uri={image?.uri}
+				fallbackSource={require('../../assets/images/empty_profile_image.png')}
+				style={styles.image}
+			/>
+
 			<View style={[styles.image, styles.imageEditIconContainer]}>
 				<View style={styles.imageEditIcon}>
 					<Entypo name='camera' size={16} color={Colors.font_gray} />

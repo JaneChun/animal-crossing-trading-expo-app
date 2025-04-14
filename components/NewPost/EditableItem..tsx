@@ -3,13 +3,14 @@ import { EditableItemProps } from '@/types/components';
 import { FontAwesome6, Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import {
-	Image,
 	StyleSheet,
 	Text,
 	TouchableOpacity,
 	View,
 	ViewStyle,
 } from 'react-native';
+import ImageWithFallback from '../ui/ImageWithFallback';
+import MileTicket from '../ui/MileTicket';
 
 const EditableItem = ({
 	item,
@@ -24,7 +25,7 @@ const EditableItem = ({
 	return (
 		<View style={[styles.container, readonly && readOnlyContainer]}>
 			{/* 이미지 */}
-			<Image source={{ uri: item.imageUrl }} style={styles.image} />
+			<ImageWithFallback uri={item.imageUrl} style={styles.image} />
 
 			{/* 본문 */}
 			<View style={styles.body}>
@@ -42,12 +43,7 @@ const EditableItem = ({
 
 			{/* 테일 */}
 			<View style={styles.priceContainer}>
-				<Image
-					source={{
-						uri: 'https://firebasestorage.googleapis.com/v0/b/animal-crossing-trade-app.appspot.com/o/Src%2FMilesTicket.png?alt=media&token=f8e4f60a-1546-4084-9498-0f6f9e765859',
-					}}
-					style={styles.ticketIcon}
-				/>
+				<MileTicket style={styles.ticketIcon} />
 				<Text style={styles.price}>{item.quantity * item.price}</Text>
 			</View>
 
@@ -88,7 +84,7 @@ const styles = StyleSheet.create({
 	image: {
 		width: 30,
 		height: 30,
-		borderRadius: 6,
+		borderRadius: 15,
 		marginRight: 12,
 	},
 	name: {

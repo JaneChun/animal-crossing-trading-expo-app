@@ -1,26 +1,11 @@
 import { Colors } from '@/constants/Color';
 import { ThumabnailProps } from '@/types/components';
 import React from 'react';
-import { Image, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import ImageWithFallback from './ImageWithFallback';
 
 const Thumbnail = ({ previewImage }: ThumabnailProps) => {
-	return (
-		<>
-			{previewImage ? (
-				<Image
-					style={styles.thumbnail}
-					source={{
-						uri: previewImage,
-					}}
-				/>
-			) : (
-				<Image
-					style={styles.thumbnail}
-					source={require('../../assets/images/empty_image.png')}
-				/>
-			)}
-		</>
-	);
+	return <ImageWithFallback uri={previewImage} style={styles.thumbnail} />;
 };
 
 export default Thumbnail;

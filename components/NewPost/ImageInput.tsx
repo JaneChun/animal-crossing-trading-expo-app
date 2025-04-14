@@ -7,7 +7,6 @@ import {
 } from 'expo-image-picker';
 import React from 'react';
 import {
-	Image,
 	Keyboard,
 	StyleSheet,
 	Text,
@@ -15,6 +14,7 @@ import {
 	View,
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+import ImageWithFallback from '../ui/ImageWithFallback';
 import { showToast } from '../ui/Toast';
 
 const ImageInput = ({
@@ -101,8 +101,9 @@ const ImageInput = ({
 							>
 								<Text style={styles.deleteButtonIcon}>✕</Text>
 							</TouchableOpacity>
-							<Image
-								source={{ uri: image.uri }}
+							<ImageWithFallback
+								uri={image?.uri}
+								fallbackSource={require('../../assets/images/image-not-found.png')}
 								style={styles.imageContainer}
 							/>
 						</View>

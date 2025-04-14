@@ -1,8 +1,9 @@
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 const InlineLoadingIndicator = () => (
 	<View style={styles.inlineLoadingContainer}>
-		<Image
+		<FastImage
 			source={require('../../assets/images/spinner.gif')}
 			style={{ height: 100, width: 100 }}
 		/>

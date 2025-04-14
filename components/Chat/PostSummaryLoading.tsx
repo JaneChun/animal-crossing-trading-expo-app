@@ -1,14 +1,12 @@
 import { Colors } from '@/constants/Color';
 import React from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import ThreeDotsLoadingIndicator from '../ui/ThreeDotsLoadingIndicator';
 
 const PostSummaryLoading = () => {
 	return (
 		<View style={styles.container}>
-			<Image
-				source={require('../../assets/images/three_dots.gif')}
-				style={styles.image}
-			/>
+			<ThreeDotsLoadingIndicator />
 		</View>
 	);
 };
@@ -26,9 +24,5 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		backgroundColor: 'white',
 		borderRadius: 8,
-	},
-	image: {
-		aspectRatio: 3,
-		width: '40%',
 	},
 });

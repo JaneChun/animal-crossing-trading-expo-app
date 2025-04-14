@@ -1,29 +1,18 @@
 import { Colors } from '@/constants/Color';
 import { ItemThumabnailProps } from '@/types/components';
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import ImageWithFallback from './ImageWithFallback';
 
 const ItemThumbnail = ({ previewImage, itemLength }: ItemThumabnailProps) => {
 	return (
 		<>
 			<View style={styles.container}>
-				{previewImage ? (
-					<>
-						<Image
-							style={[styles.thumbnail, { padding: 2 }]}
-							source={{
-								uri: previewImage,
-							}}
-						/>
-						<View style={styles.badgeContainer}>
-							{itemLength && <Text style={styles.badgeText}>{itemLength}</Text>}
-						</View>
-					</>
-				) : (
-					<Image
-						style={styles.thumbnail}
-						source={require('../../assets/images/empty_image.png')}
-					/>
+				<ImageWithFallback uri={previewImage} style={styles.thumbnail} />
+				{previewImage && (
+					<View style={styles.badgeContainer}>
+						{itemLength && <Text style={styles.badgeText}>{itemLength}</Text>}
+					</View>
 				)}
 			</View>
 		</>
