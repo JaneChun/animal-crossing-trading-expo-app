@@ -3,6 +3,7 @@ import Community from '@/screens/Community';
 import EditComment from '@/screens/EditComment';
 import NewPost from '@/screens/NewPost';
 import PostDetail from '@/screens/PostDetail';
+import Profile from '@/screens/Profile';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const CommunityStack = createNativeStackNavigator();
@@ -32,6 +33,13 @@ const CommunityStackNavigator = () => {
 				name='NewPost'
 				component={NewPost}
 				options={{ title: '게시글' }}
+			/>
+			<CommunityStack.Screen
+				name='Profile'
+				component={Profile}
+				options={{
+					title: '',
+				}}
 			/>
 			<CommunityStack.Screen
 				name='EditComment'

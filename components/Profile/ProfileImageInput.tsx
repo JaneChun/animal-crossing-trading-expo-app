@@ -70,8 +70,6 @@ const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 		setImage(null);
 	};
 
-	console.log(image?.uri);
-
 	return (
 		<TouchableOpacity
 			style={styles.imageContainer}

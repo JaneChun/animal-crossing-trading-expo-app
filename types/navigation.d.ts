@@ -18,6 +18,7 @@ export type HomeStackParamList = {
 	PostDetail: { id: string };
 	NewPost: { id?: string; updatedCart?: CartItem[] };
 	EditComment: { postId: string; commentId: string; body: string };
+	Profile: { userId: string };
 };
 
 // Community 스택 네비게이션
@@ -26,6 +27,7 @@ export type CommunityStackParamList = {
 	PostDetail: { id: string };
 	NewPost: { id?: string; updatedCart?: CartItem[] };
 	EditComment: { postId: string; commentId: string; body: string };
+	Profile: { userId: string };
 };
 
 // Notice 스택 네비게이션
@@ -65,4 +67,5 @@ export type ProfileStackNavigation =
 export type PostDetailRouteProp = RouteProp<HomeStackParamList, 'PostDetail'>;
 export type EditCommentRouteProp = RouteProp<HomeStackParamList, 'EditComment'>;
 export type NewPostRouteProp = RouteProp<HomeStackParamList, 'NewPost'>;
+export type ProfileRouteProp = RouteProp<HomeStackParamList, 'Profile'>;
 export type ChatRoomRouteProp = RouteProp<ChatStackParamList, 'ChatRoom'>;

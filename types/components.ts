@@ -12,6 +12,7 @@ import {
 import { CommentWithCreatorInfo } from './comment';
 import { NotificationWithReceiverInfo } from './notification';
 import { CartItem, Type } from './post';
+import { PublicUserInfo } from './user';
 
 // Home/
 export type Collection = 'Boards' | 'Communities';
@@ -189,14 +190,18 @@ export type Message = {
 
 // Profile/
 export type ProfileProps = {
+	profileInfo: PublicUserInfo;
+	isMyProfile: boolean;
 	isUploading: boolean;
 	setIsUploading: Dispatch<SetStateAction<boolean>>;
 	containerStyle?: StyleProp<ViewStyle>;
 };
 
-export type EditProfileModalProps = ProfileProps & {
+export type EditProfileModalProps = {
 	isVisible: boolean;
 	onClose: () => void;
+	isUploading: boolean;
+	setIsUploading: Dispatch<SetStateAction<boolean>>;
 };
 
 export type NameInputProp = ValidationInputProp & { label: string };

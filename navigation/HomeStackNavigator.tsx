@@ -3,6 +3,7 @@ import EditComment from '@/screens/EditComment';
 import Home from '@/screens/Home';
 import NewPost from '@/screens/NewPost';
 import PostDetail from '@/screens/PostDetail';
+import Profile from '@/screens/Profile';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const HomeStack = createNativeStackNavigator();
@@ -26,6 +27,13 @@ const HomeStackNavigator = () => {
 			<HomeStack.Screen
 				name='PostDetail'
 				component={PostDetail}
+				options={{
+					title: '',
+				}}
+			/>
+			<HomeStack.Screen
+				name='Profile'
+				component={Profile}
 				options={{
 					title: '',
 				}}

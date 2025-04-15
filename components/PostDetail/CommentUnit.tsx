@@ -99,21 +99,31 @@ const CommentUnit = ({
 		});
 	};
 
+	const navigateToProfile = ({ creatorId }: { creatorId: string }) => {
+		if (creatorId === userInfo?.uid) return;
+
+		stackNavigation.navigate('Profile', { userId: creatorId });
+	};
+
 	return (
 		<View style={styles.container}>
-			<ImageWithFallback
-				uri={creatorPhotoURL}
-				fallbackSource={require('../../assets/images/empty_profile_image.png')}
-				style={styles.profileImage}
-			/>
+			<TouchableOpacity onPress={() => navigateToProfile({ creatorId })}>
+				<ImageWithFallback
+					uri={creatorPhotoURL}
+					fallbackSource={require('../../assets/images/empty_profile_image.png')}
+					style={styles.profileImage}
+				/>
+			</TouchableOpacity>
 
 			<View style={styles.commentContent}>
 				{/* 헤더 */}
 				<View style={styles.commentHeader}>
 					<View style={styles.creatorInfo}>
-						<Text style={styles.creatorDisplayNameText}>
-							{creatorDisplayName}
-						</Text>
+						<TouchableOpacity onPress={() => navigateToProfile({ creatorId })}>
+							<Text style={styles.creatorDisplayNameText}>
+								{creatorDisplayName}
+							</Text>
+						</TouchableOpacity>
 						{postCreatorId === creatorId && (
 							<Text style={styles.authorTag}>작성자</Text>
 						)}
