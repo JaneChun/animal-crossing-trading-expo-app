@@ -156,6 +156,7 @@ export type TotalProps = {
 };
 
 export type UserInfoProps = {
+	userId: string;
 	displayName: string;
 	islandName: string;
 	containerStyle?: ViewStyle;

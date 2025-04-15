@@ -142,6 +142,7 @@ const PostDetail = () => {
 									containerStyle={{ marginBottom: 8 }}
 								/>
 								<UserInfo
+									userId={post.creatorId}
 									displayName={post.creatorDisplayName}
 									islandName={post.creatorIslandName}
 									containerStyle={{ marginBottom: 8 }}

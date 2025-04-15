@@ -100,8 +100,6 @@ const CommentUnit = ({
 	};
 
 	const navigateToProfile = ({ creatorId }: { creatorId: string }) => {
-		if (creatorId === userInfo?.uid) return;
-
 		stackNavigation.navigate('Profile', { userId: creatorId });
 	};
 
