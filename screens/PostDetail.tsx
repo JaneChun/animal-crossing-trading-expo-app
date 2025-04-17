@@ -1,5 +1,5 @@
-import CommunityTypeBadge from '@/components/Community/TypeBadge';
-import MarketTypeBadge from '@/components/Home/TypeBadge';
+import CommunityTypeBadge from '@/components/Community/CommunityTypeBadge';
+import MarketTypeBadge from '@/components/Home/MarketTypeBadge';
 import Body from '@/components/PostDetail/Body';
 import CommentInput from '@/components/PostDetail/CommentInput';
 import CommentsList from '@/components/PostDetail/CommentsList';
@@ -17,9 +17,10 @@ import { useDeletePost } from '@/hooks/mutation/post/useDeletePost';
 import useComments from '@/hooks/query/comment/useComments';
 import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import useLoading from '@/hooks/shared/useLoading';
-import { useActiveTabStore } from '@/stores/ActiveTabstore';
+import { usePostContext } from '@/hooks/shared/usePostContext';
 import { useAuthStore } from '@/stores/AuthStore';
 import { PostDetailRouteProp } from '@/types/navigation';
+import { CommunityType, MarketType } from '@/types/post';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React from 'react';
 import {
@@ -32,14 +33,18 @@ import {
 import { FlatList } from 'react-native-gesture-handler';
 
 const PostDetail = () => {
-	const route = useRoute<PostDetailRouteProp>();
-	const { id = '' } = route.params;
-	const userInfo = useAuthStore((state) => state.userInfo);
-	const activeTab = useActiveTabStore((state) => state.activeTab);
-	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
-	const isCommunity = activeTab === 'Community';
-	const collectionName = isMarket ? 'Boards' : 'Communities';
+	const {
+		collectionName: tabCollectionName,
+		isBoardPost,
+		isCommunityPost,
+	} = usePostContext();
+
 	const stackNavigation = useNavigation<any>();
+	const userInfo = useAuthStore((state) => state.userInfo);
+	const route = useRoute<PostDetailRouteProp>();
+	const { id = '', collection: routeCollectionName = '' } = route.params; // 변수명 중복
+	const collectionName = routeCollectionName || tabCollectionName;
+
 	const { data: post, isLoading: isPostFetching } = usePostDetail(
 		collectionName,
 		id,
@@ -48,12 +53,13 @@ const PostDetail = () => {
 		collectionName,
 		id,
 	);
-	const { isLoading: isCommentUploading, setIsLoading: setIsCommentUploading } =
-		useLoading();
 	const { mutate: deletePost, isPending: isDeleting } = useDeletePost(
 		collectionName,
 		id,
 	);
+
+	const { isLoading: isCommentUploading, setIsLoading: setIsCommentUploading } =
+		useLoading();
 
 	const handleEditPost = (id: string) => {
 		stackNavigation.navigate('NewPost', { id });
@@ -109,19 +115,21 @@ const PostDetail = () => {
 						<View style={styles.content}>
 							{/* 헤더 */}
 							<View style={styles.header}>
-								<View style={styles.row}>
-									{isMarket && (
+								<View style={styles.typeAndMenuRow}>
+									{isBoardPost(post, collectionName) && (
 										<MarketTypeBadge
-											type={post.type}
+											type={post.type as MarketType}
 											containerStyle={styles.typeBadgeContainer}
 										/>
 									)}
-									{isCommunity && (
+
+									{isCommunityPost(post, collectionName) && (
 										<CommunityTypeBadge
-											type={post.type}
+											type={post.type as CommunityType}
 											containerStyle={styles.typeBadgeContainer}
 										/>
 									)}
+
 									{post.creatorId === userInfo?.uid && (
 										<ActionSheetButton
 											color={Colors.font_gray}
@@ -137,6 +145,7 @@ const PostDetail = () => {
 										/>
 									)}
 								</View>
+
 								<Title
 									title={post.title}
 									containerStyle={{ marginBottom: 8 }}
@@ -155,7 +164,7 @@ const PostDetail = () => {
 
 							{/* 본문 */}
 							<View style={styles.body}>
-								{isCommunity && (
+								{isCommunityPost(post, collectionName) && (
 									<ImageCarousel
 										images={post.images}
 										containerStyle={{ marginBottom: 16 }}
@@ -163,7 +172,7 @@ const PostDetail = () => {
 								)}
 								<Body body={post.body} containerStyle={{ marginBottom: 36 }} />
 
-								{isMarket && (
+								{isBoardPost(post, collectionName) && (
 									<>
 										<ItemSummaryList
 											cart={post.cart}
@@ -210,15 +219,15 @@ const styles = StyleSheet.create({
 		flex: 1,
 		padding: 24,
 	},
+	typeAndMenuRow: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+	},
 	header: {
 		borderBottomWidth: 1,
 		borderColor: Colors.border_gray,
 		marginBottom: 16,
-	},
-	row: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
 	},
 	body: {
 		borderBottomWidth: 1,

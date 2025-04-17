@@ -46,7 +46,9 @@ const PostList = ({
 			<FlatList
 				data={flatListData}
 				keyExtractor={({ id }) => id}
-				renderItem={({ item }) => <PostUnit {...item} />}
+				renderItem={({ item }) => (
+					<PostUnit post={item} collectionName={collectionName} />
+				)}
 				style={[containerStyle]}
 				onEndReached={
 					hasNextPage ? ({ distanceFromEnd }) => fetchNextPage() : undefined

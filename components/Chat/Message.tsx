@@ -45,7 +45,7 @@ const Message = ({
 				{isPostLoading ? (
 					<PostSummaryLoading />
 				) : post ? (
-					<PostSummary {...post} />
+					<PostSummary post={post} collectionName={collectionName} />
 				) : (
 					<PostNotExist />
 				)}

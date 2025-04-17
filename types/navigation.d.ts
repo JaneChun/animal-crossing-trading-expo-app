@@ -33,14 +33,14 @@ export type CommunityStackParamList = {
 // Notice 스택 네비게이션
 export type NoticeStackParamList = {
 	Notice: undefined;
-	PostDetail: { id: string };
+	PostDetail: { id: string; collection: Collection };
 };
 
 // Chat 스택 네비게이션
 export type ChatStackParamList = {
 	Chat: undefined;
 	ChatRoom: { chatId: string };
-	PostDetail: { id: string };
+	PostDetail: { id: string; collection: Collection };
 };
 
 // Profile 스택 네비게이션

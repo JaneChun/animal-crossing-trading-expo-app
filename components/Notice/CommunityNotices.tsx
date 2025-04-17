@@ -17,7 +17,7 @@ const CommunityNotices = ({ notifications }: NoticeTabProps) => {
 	}: {
 		item: NotificationWithReceiverInfo;
 	}) => {
-		return <NotificationUnit item={item} tab='Community' />;
+		return <NotificationUnit item={item} collectionName='Communities' />;
 	};
 
 	const readAllNotifications = async () => {

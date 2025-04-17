@@ -3,8 +3,10 @@ import { getPublicUserInfo } from '@/firebase/services/userService';
 import { useDeleteNotification } from '@/hooks/mutation/notification/useDeleteNotification';
 import { useMarkAsRead } from '@/hooks/mutation/notification/useMarkAsRead';
 import { usePostDetail } from '@/hooks/query/post/usePostDetail';
-import { NotificationTab, NotificationUnitProp } from '@/types/components';
+import { usePostContext } from '@/hooks/shared/usePostContext';
+import { NotificationUnitProp } from '@/types/components';
 import { NoticeStackNavigation } from '@/types/navigation';
+import { Collection } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { FontAwesome } from '@expo/vector-icons';
@@ -19,7 +21,9 @@ import Reanimated, {
 import ItemThumbnail from '../ui/ItemThumbnail';
 import Thumbnail from '../ui/Thumbnail';
 
-const NotificationUnit = ({ tab, item }: NotificationUnitProp) => {
+const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
+	const { isBoardPost, isCommunityPost } = usePostContext();
+
 	const stackNavigation = useNavigation<NoticeStackNavigation>();
 	const { id, type, body, postId, receiverId, senderId, createdAt, isRead } =
 		item;
@@ -45,15 +49,18 @@ const NotificationUnit = ({ tab, item }: NotificationUnitProp) => {
 	}
 
 	const onPressNotification = async ({
-		tab,
+		collectionName,
 		postId,
 	}: {
-		tab: NotificationTab;
+		collectionName: Collection;
 		postId: string;
 	}) => {
 		markAsRead(undefined, {
 			onSuccess: () => {
-				stackNavigation.navigate('PostDetail', { id: postId });
+				stackNavigation.navigate('PostDetail', {
+					id: postId,
+					collection: collectionName,
+				});
 			},
 		});
 	};
@@ -93,18 +100,18 @@ const NotificationUnit = ({ tab, item }: NotificationUnitProp) => {
 					styles.container,
 					isRead ? styles.readBackground : styles.unreadBackground,
 				]}
-				onPress={() => onPressNotification({ tab, postId })}
+				onPress={() => onPressNotification({ postId, collectionName })}
 				activeOpacity={0.8}
 			>
 				{/* 썸네일 */}
 				<View style={styles.thumbnailContainer}>
-					{tab === 'Market' && (
+					{isBoardPost(post, collectionName) && (
 						<ItemThumbnail
 							previewImage={post?.cart?.[0]?.imageUrl}
 							itemLength={post?.cart?.length}
 						/>
 					)}
-					{tab === 'Community' && (
+					{isCommunityPost(post, collectionName) && (
 						<Thumbnail previewImage={post?.images?.[0]} />
 					)}
 				</View>

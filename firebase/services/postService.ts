@@ -1,5 +1,5 @@
-import { Collection } from '@/types/components';
 import {
+	Collection,
 	CreatePostRequest,
 	Post,
 	PostDoc,
@@ -70,29 +70,35 @@ export const fetchAndPopulateUsers = async <T extends { creatorId: string }, U>(
 	});
 };
 
-export const getPost = async (
-	collectionName: Collection,
+export const getPost = async <C extends Collection>(
+	collectionName: C,
 	postId: string,
-): Promise<Post | null> => {
+): Promise<Post<C> | null> => {
 	return firestoreRequest('게시글 조회', async () => {
 		const docData = (await getDocFromFirestore({
 			collection: collectionName,
 			id: postId,
-		})) as PostDoc;
+		})) as PostDoc<C>;
 
 		return docData ? toPost(docData) : null;
 	});
 };
 
-export const createPost = async (
-	collectionName: Collection,
-	requestData: CreatePostRequest,
-): Promise<string> => {
+export const createPost = async <C extends Collection>({
+	collectionName,
+	requestData,
+	userId,
+}: {
+	collectionName: C;
+	requestData: CreatePostRequest<C>;
+	userId: string;
+}): Promise<string> => {
 	return firestoreRequest('게시글 생성', async () => {
 		const createdId = await addDocToFirestore({
 			directory: collectionName,
 			requestData: {
 				...requestData,
+				creatorId: userId,
 				createdAt: Timestamp.now(),
 				isDeleted: false,
 				commentCount: 0,
@@ -103,24 +109,28 @@ export const createPost = async (
 	});
 };
 
-export const updatePost = async (
-	collectionName: Collection,
-	id: string,
-	requestData: UpdatePostRequest,
-): Promise<void> => {
+export const updatePost = async <C extends Collection>({
+	collectionName,
+	postId,
+	requestData,
+}: {
+	collectionName: C;
+	postId: string;
+	requestData: UpdatePostRequest<C>;
+}): Promise<void> => {
 	return firestoreRequest('게시글 수정', async () => {
 		await updateDocToFirestore({
 			collection: collectionName,
-			id,
+			id: postId,
 			requestData: { ...requestData, updatedAt: Timestamp.now() },
 		});
 	});
 };
 
-export const deletePost = async (
-	collectionName: Collection,
+export const deletePost = async <C extends Collection>(
+	collectionName: C,
 	postId: string,
-) => {
+): Promise<void> => {
 	return firestoreRequest('게시글 삭제', async () => {
 		await deleteDocFromFirestore({ id: postId, collection: collectionName });
 	});

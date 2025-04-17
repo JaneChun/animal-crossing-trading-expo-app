@@ -1,67 +1,66 @@
 import { Colors } from '@/constants/Color';
-import { useActiveTabStore } from '@/stores/ActiveTabstore';
-import { PostWithCreatorInfo } from '@/types/post';
+import { usePostContext } from '@/hooks/shared/usePostContext';
+import { PostUnitProps } from '@/types/components';
+import { Collection } from '@/types/post';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { elapsedTime } from '../../utilities/elapsedTime';
-import CommunityTypeBadge from '../Community/TypeBadge';
+import CommunityTypeBadge from '../Community/CommunityTypeBadge';
 import ItemThumbnail from '../ui/ItemThumbnail';
 import Thumbnail from '../ui/Thumbnail';
-import MarketTypeBadge from './TypeBadge';
+import MarketTypeBadge from './MarketTypeBadge';
 
-const PostUnit = ({
-	id,
-	type,
-	title,
-	images,
-	cart,
-	createdAt,
-	creatorDisplayName,
-	commentCount,
-}: PostWithCreatorInfo) => {
-	const activeTab = useActiveTabStore((state) => state.activeTab);
-	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
-	const isCommunity = activeTab === 'Community';
+const PostUnit = <C extends Collection>({
+	post,
+	collectionName,
+}: PostUnitProps<C>) => {
+	const { isBoardPost, isCommunityPost } = usePostContext();
 
 	const stackNavigation = useNavigation<any>();
 
 	const navigateToPost = () => {
-		stackNavigation.navigate('PostDetail', { id });
+		stackNavigation.navigate('PostDetail', { id: post.id });
 	};
 
 	return (
 		<TouchableOpacity style={styles.container} onPress={navigateToPost}>
 			{/* 썸네일 */}
 			<View style={styles.thumbnailContainer}>
-				{isMarket && (
+				{isBoardPost(post, collectionName) && (
 					<ItemThumbnail
-						previewImage={cart?.[0]?.imageUrl}
-						itemLength={cart?.length}
+						previewImage={post.cart?.[0]?.imageUrl}
+						itemLength={post.cart?.length}
 					/>
 				)}
-				{isCommunity && <Thumbnail previewImage={images?.[0]} />}
+				{isCommunityPost(post, collectionName) && (
+					<Thumbnail previewImage={post.images?.[0]} />
+				)}
 			</View>
 
 			{/* 콘텐츠 */}
 			<View style={styles.contentContainer}>
 				<View style={styles.titleContainer}>
-					{isMarket && <MarketTypeBadge type={type} />}
-					{isCommunity && <CommunityTypeBadge type={type} />}
+					{isBoardPost(post, collectionName) && (
+						<MarketTypeBadge type={post.type} />
+					)}
+					{isCommunityPost(post, collectionName) && (
+						<CommunityTypeBadge type={post.type} />
+					)}
 					<Text style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
-						{title}
+						{post.title}
 					</Text>
 				</View>
 				<Text style={styles.infoText}>
-					<Text style={styles.creator}>{creatorDisplayName} </Text>
-					<Text style={styles.date}> {elapsedTime(createdAt)}</Text>
+					<Text style={styles.creator}>{post.creatorDisplayName} </Text>
+					<Text style={styles.date}> {elapsedTime(post.createdAt)}</Text>
 				</Text>
 			</View>
 
 			{/* 댓글 */}
 			<View style={styles.commentContainer}>
 				<Text style={styles.commentLabel}>댓글</Text>
-				<Text style={styles.commentCount}>{commentCount}</Text>
+				<Text style={styles.commentCount}>{post.commentCount}</Text>
 			</View>
 		</TouchableOpacity>
 	);

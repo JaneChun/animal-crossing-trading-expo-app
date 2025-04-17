@@ -1,4 +1,4 @@
-import { Tab } from '@/types/components';
+import { Tab } from '@/types/post';
 import { create } from 'zustand';
 
 type ActiveTabState = {

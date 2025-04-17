@@ -1,46 +1,56 @@
 import { Colors } from '@/constants/Color';
-import { useActiveTabStore } from '@/stores/ActiveTabstore';
-import { Post } from '@/types/post';
+import { usePostContext } from '@/hooks/shared/usePostContext';
+import { PostSummaryProps } from '@/types/components';
+import { Collection } from '@/types/post';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import CommunityTypeBadge from '../Community/TypeBadge';
-import MarketTypeBadge from '../Home/TypeBadge';
+import CommunityTypeBadge from '../Community/CommunityTypeBadge';
+import MarketTypeBadge from '../Home/MarketTypeBadge';
 import ItemThumbnail from '../ui/ItemThumbnail';
 import Thumbnail from '../ui/Thumbnail';
 
-const PostSummary = ({ id, type, title, images, cart, createdAt }: Post) => {
-	const activeTab = useActiveTabStore((state) => state.activeTab);
-	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
-	const isCommunity = activeTab === 'Community';
-
+const PostSummary = <C extends Collection>({
+	post,
+	collectionName,
+}: PostSummaryProps<C>) => {
+	const { isBoardPost, isCommunityPost } = usePostContext();
 	const stackNavigation = useNavigation<any>();
 
 	const navigateToPost = () => {
-		stackNavigation.navigate('PostDetail', { id });
+		stackNavigation.navigate('PostDetail', {
+			id: post.id,
+			collection: collectionName,
+		});
 	};
 
 	return (
 		<TouchableOpacity style={styles.container} onPress={navigateToPost}>
 			{/* 썸네일 */}
 			<View style={styles.thumbnailContainer}>
-				{isMarket && (
+				{isBoardPost(post, collectionName) && (
 					<ItemThumbnail
-						previewImage={cart?.[0]?.imageUrl}
-						itemLength={cart?.length}
+						previewImage={post.cart?.[0]?.imageUrl}
+						itemLength={post.cart?.length}
 					/>
 				)}
-				{isCommunity && <Thumbnail previewImage={images?.[0]} />}
+				{isCommunityPost(post, collectionName) && (
+					<Thumbnail previewImage={post.images?.[0]} />
+				)}
 			</View>
 
 			{/* 콘텐츠 */}
 			<View style={styles.infoContainer}>
 				<View style={styles.titleContainer}>
-					{isMarket && <MarketTypeBadge type={type} />}
-					{isCommunity && <CommunityTypeBadge type={type} />}
+					{isBoardPost(post, collectionName) && (
+						<MarketTypeBadge type={post.type} />
+					)}
+					{isCommunityPost(post, collectionName) && (
+						<CommunityTypeBadge type={post.type} />
+					)}
 					<Text style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
-						{title}
+						{post.title}
 					</Text>
 				</View>
 			</View>

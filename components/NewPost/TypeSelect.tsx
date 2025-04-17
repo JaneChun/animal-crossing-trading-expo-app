@@ -1,41 +1,53 @@
 import { Colors } from '@/constants/Color';
 import { TypeSelectProps } from '@/types/components';
+import { MarketType } from '@/types/post';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const TypeSelect = ({ type, setType }: TypeSelectProps) => {
+	const typeOptions: MarketType[] = ['buy', 'sell'];
+
+	const typeButtonMap: Record<
+		MarketType,
+		{ label: string; sideStyle: object }
+	> = {
+		buy: {
+			label: '구해요',
+			sideStyle: {
+				borderRightWidth: 0,
+				borderTopRightRadius: 0,
+				borderBottomRightRadius: 0,
+			},
+		},
+		sell: {
+			label: '팔아요',
+			sideStyle: {
+				borderTopLeftRadius: 0,
+				borderBottomLeftRadius: 0,
+			},
+		},
+		done: {
+			label: '거래완료',
+			sideStyle: {},
+		},
+	};
+
 	return (
 		<View style={styles.container}>
-			<TouchableOpacity
-				style={[
-					styles.button,
-					type === 'buy' && styles.buttonActive,
-					{
-						borderRightWidth: 0,
-						borderTopRightRadius: 0,
-						borderBottomRightRadius: 0,
-					},
-				]}
-				onPress={() => setType('buy')}
-			>
-				<Text style={[styles.text, type === 'buy' && styles.textActive]}>
-					구해요
-				</Text>
-			</TouchableOpacity>
-			<TouchableOpacity
-				style={[
-					styles.button,
-					type === 'sell' && styles.buttonActive,
-					{
-						borderTopLeftRadius: 0,
-						borderBottomLeftRadius: 0,
-					},
-				]}
-				onPress={() => setType('sell')}
-			>
-				<Text style={[styles.text, type === 'sell' && styles.textActive]}>
-					팔아요
-				</Text>
-			</TouchableOpacity>
+			{typeOptions.map((option) => (
+				<TouchableOpacity
+					key={option}
+					style={[
+						styles.button,
+						type === option && styles.buttonActive,
+						typeButtonMap[option].sideStyle,
+					]}
+					onPress={() => setType(option)}
+				>
+					<Text style={[styles.text, type === option && styles.textActive]}>
+						{typeButtonMap[option].label}
+					</Text>
+				</TouchableOpacity>
+			))}
 		</View>
 	);
 };

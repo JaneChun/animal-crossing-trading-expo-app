@@ -1,7 +1,7 @@
 import { db } from '@/fbase';
 import { fetchAndPopulateUsers } from '@/firebase/services/postService';
-import { Collection } from '@/types/components';
 import {
+	Collection,
 	Doc,
 	Filter,
 	FirestoreQueryParams,
@@ -63,27 +63,27 @@ const getFirestoreQuery = ({
 };
 
 // Firestore에서 데이터 페칭
-export const fetchPostsByCursor = async ({
+export const fetchPostsByCursor = async <C extends Collection>({
 	collectionName,
 	filter,
 	lastDoc = null,
-}: FirestoreQueryParams): Promise<PaginatedPosts> => {
+}: FirestoreQueryParams): Promise<PaginatedPosts<C>> => {
 	const q = getFirestoreQuery({ collectionName, filter, lastDoc });
 	const { data, lastDoc: _lastDoc } = await fetchAndPopulateUsers<
-		Post,
-		PostWithCreatorInfo
-	>(q, (doc: DocumentData, id: string) => ({ id, ...doc } as PostDoc));
+		Post<C>,
+		PostWithCreatorInfo<C>
+	>(q, (doc: DocumentData, id: string) => ({ id, ...doc } as PostDoc<C>));
 	return { data, lastDoc: _lastDoc };
 };
 
-export const useInfinitePosts = (
-	collectionName: Collection,
+export const useInfinitePosts = <C extends Collection>(
+	collectionName: C,
 	filter?: Filter,
 ) => {
 	return useInfiniteQuery<
-		PaginatedPosts, // fetch 함수 반환 타입
+		PaginatedPosts<C>, // fetch 함수 반환 타입
 		Error, // 에러 타입
-		InfiniteData<PaginatedPosts>, // 리턴될 data 타입
+		InfiniteData<PaginatedPosts<C>>, // 리턴될 data 타입
 		[string, Collection, Filter?], // queryKey 타입
 		Doc // pageParam의 타입
 	>({
@@ -91,6 +91,6 @@ export const useInfinitePosts = (
 		queryFn: ({ pageParam }) =>
 			fetchPostsByCursor({ collectionName, filter, lastDoc: pageParam }),
 		initialPageParam: null,
-		getNextPageParam: (lastPage: PaginatedPosts) => lastPage.lastDoc,
+		getNextPageParam: (lastPage: PaginatedPosts<C>) => lastPage.lastDoc,
 	});
 };

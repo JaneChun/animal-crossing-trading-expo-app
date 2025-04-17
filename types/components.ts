@@ -11,13 +11,19 @@ import {
 } from 'react-native';
 import { CommentWithCreatorInfo } from './comment';
 import { NotificationWithReceiverInfo } from './notification';
-import { CartItem, Type } from './post';
+import {
+	CartItem,
+	Category,
+	CategoryItem,
+	Collection,
+	CommunityType,
+	MarketType,
+	Post,
+	PostWithCreatorInfo,
+} from './post';
 import { PublicUserInfo } from './user';
 
 // Home/
-export type Collection = 'Boards' | 'Communities';
-export type Tab = 'Home' | 'Community' | 'Chat' | 'Profile';
-
 export type PostListProps = {
 	collectionName: Collection;
 	filter?: { category?: string; creatorId?: string };
@@ -25,8 +31,13 @@ export type PostListProps = {
 	containerStyle?: StyleProp<ViewStyle>;
 };
 
-export type TypeBadgeProps = {
-	type: Type;
+export type PostUnitProps<C extends Collection> = {
+	post: PostWithCreatorInfo<C>;
+	collectionName: C;
+};
+
+export type TypeBadgeProps<T extends MarketType | CommunityType> = {
+	type: T;
 	containerStyle?: ViewStyle;
 };
 
@@ -44,9 +55,33 @@ export type ThumabnailProps = {
 export type ItemThumabnailProps = ThumabnailProps & { itemLength?: number };
 
 // NewPost/
+export interface PostFormState {
+	type: MarketType | CommunityType;
+	title: string;
+	body: string;
+	images: ImagePickerAsset[];
+	cart: CartItem[];
+	originalImageUrls: string[];
+}
+export interface PostFormHandlers {
+	setType: Dispatch<SetStateAction<MarketType | CommunityType>>;
+	setTitle: Dispatch<SetStateAction<string>>;
+	setBody: Dispatch<SetStateAction<string>>;
+	setImages: Dispatch<SetStateAction<ImagePickerAsset[]>>;
+	setCart: Dispatch<SetStateAction<CartItem[]>>;
+	setOriginalImageUrls: Dispatch<SetStateAction<string[]>>;
+}
+export interface PostForm extends PostFormState, PostFormHandlers {}
+
+export interface PostFormFieldsProps {
+	form: PostForm;
+	isSubmitted: boolean;
+	dropdownOptions: DropdownOption[];
+}
+
 export type TypeSelectProps = {
-	type: Type;
-	setType: Dispatch<SetStateAction<Type>>;
+	type: MarketType;
+	setType: Dispatch<SetStateAction<MarketType>>;
 };
 
 export type TitleInputProps = {
@@ -163,11 +198,9 @@ export type UserInfoProps = {
 };
 
 // Notification/
-export type NotificationTab = 'Market' | 'Community';
-
 export type NotificationUnitProp = {
-	tab: NotificationTab;
 	item: NotificationWithReceiverInfo;
+	collectionName: Collection;
 };
 
 export type NoticeTabProps = {
@@ -196,6 +229,11 @@ export type ProfileProps = {
 	isUploading: boolean;
 	setIsUploading: Dispatch<SetStateAction<boolean>>;
 	containerStyle?: StyleProp<ViewStyle>;
+};
+
+export type PostSummaryProps<C extends Collection> = {
+	post: Post<C>;
+	collectionName: C;
 };
 
 export type EditProfileModalProps = {
@@ -249,12 +287,10 @@ export type LayoutProps = {
 	titleRightComponent?: React.ReactNode;
 };
 
-export type Category = { EN: string; KR: string };
-
 export type CategoriesProps = {
-	categories: Category[];
-	category: string;
-	setCategory: Dispatch<SetStateAction<string>>;
+	categories: CategoryItem[];
+	category: Category;
+	setCategory: Dispatch<SetStateAction<Category>>;
 	containerStyle?: StyleProp<ViewStyle>;
 };
 
@@ -268,8 +304,8 @@ export type DropdownOption = {
 export type DropdownOptionProps = {
 	options: DropdownOption[];
 	disabled?: boolean;
-	value: string;
-	setValue: Dispatch<SetStateAction<string>>;
+	value: CommunityType;
+	setValue: Dispatch<SetStateAction<CommunityType>>;
 };
 
 export type ActionSheetButtonProps = {

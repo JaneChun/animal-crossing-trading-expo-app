@@ -17,7 +17,7 @@ const MarketNotices = ({ notifications }: NoticeTabProps) => {
 	}: {
 		item: NotificationWithReceiverInfo;
 	}) => {
-		return <NotificationUnit item={item} tab='Market' />;
+		return <NotificationUnit item={item} collectionName='Boards' />;
 	};
 
 	const readAllNotifications = async () => {

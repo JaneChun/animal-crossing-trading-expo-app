@@ -1,40 +1,73 @@
 import {
+	COMMUNITY_TYPES,
+	MARKET_TYPES,
+	TAB_COLLECTION_CONFIG,
+} from '@/constants/post';
+import {
 	DocumentData,
 	QueryDocumentSnapshot,
 	Timestamp,
 } from 'firebase/firestore';
-import { Collection } from './components';
 
-export type MarketType = 'buy' | 'sell' | 'done';
-export type CommunityType =
-	| 'all'
-	| 'general'
-	| 'giveaway'
-	| 'adopt'
-	| 'guide'
-	| 'trade'
-	| 'turnip'
-	| 'dream'
-	| 'design';
+export type Collection = 'Boards' | 'Communities';
 
-export type Type = MarketType | CommunityType;
+// 탭 이름을 나타내는 유니언 타입 ('Home' | 'Community' | ...)
+export type Tab = keyof typeof TAB_COLLECTION_CONFIG;
 
-export interface Post {
+// 특정 탭(Tab)에서 사용할 컬렉션 이름 타입을 유추하는 조건부 타입 (CollectionFromTab<'Home'> → 'Boards')
+export type CollectionFromTab<T extends Tab> =
+	(typeof TAB_COLLECTION_CONFIG)[T]['collection'];
+
+// 마켓글 타입
+export type MarketTypeItem = (typeof MARKET_TYPES)[number];
+export type MarketType = (typeof MARKET_TYPES)[number]['EN'];
+
+// 커뮤니티 게시글 타입
+export type CommunityTypeItem = (typeof COMMUNITY_TYPES)[number];
+export type CommunityType = (typeof COMMUNITY_TYPES)[number]['EN'];
+
+// 커뮤니티탭 카테고리
+export type CategoryItem = CommunityTypeItem | { KR: '전체'; EN: 'all' };
+export type Category = CommunityType | 'all';
+
+// 공통 필드
+export interface CommonPostFields {
 	id: string;
-	type: Type;
 	title: string;
 	body: string;
-	images?: string[];
-	cart?: CartItem[];
 	creatorId: string;
 	createdAt: Timestamp;
 	commentCount: number;
 }
 
-export interface PostDoc extends Post {
+// 단독 필드
+type MarketOnlyFields = {
+	type: MarketType;
+	cart: CartItem[];
+};
+type CommunityOnlyFields = {
+	type: CommunityType;
+	images: string[];
+};
+
+// 게시글 타입
+type MarketPost = CommonPostFields & MarketOnlyFields;
+type CommunityPost = CommonPostFields & CommunityOnlyFields;
+
+// 컬렉션 기반으로 게시글 타입 분기
+export type Post<C extends Collection> = C extends 'Boards'
+	? MarketPost
+	: C extends 'Communities'
+	? CommunityPost
+	: never;
+
+export type PostWithCreatorInfo<C extends Collection> = Post<C> & CreatorInfo;
+
+// Firestore용 PostDoc
+export type PostDoc<C extends Collection> = Post<C> & {
 	isDeleted: boolean;
 	updatedAt?: Timestamp;
-}
+};
 
 export interface CreatorInfo {
 	creatorDisplayName: string;
@@ -54,25 +87,29 @@ export interface CartItem extends Item {
 	price: number;
 }
 
-export interface PostWithCreatorInfo extends Post, CreatorInfo {}
-
 // firebase/services/postService.ts
-export interface CreatePostRequest {
-	type: Type;
-	title: string;
-	body: string;
-	images?: string[];
-	cart?: CartItem[];
-	creatorId: string;
-}
+type CommonRequestFields<C extends Collection> = C extends 'Boards'
+	? {
+			type: MarketType;
+			title: string;
+			body: string;
+			cart: CartItem[];
+			images?: never; // 금지
+	  }
+	: {
+			type: CommunityType;
+			title: string;
+			body: string;
+			images: string[];
+			cart?: never; // 금지
+	  };
 
-export interface UpdatePostRequest {
-	type?: Type;
-	title?: string;
-	body?: string;
-	images?: string[];
-	cart?: CartItem[];
-}
+export type CreatePostRequest<C extends Collection> = CommonRequestFields<C>;
+
+// 모든 필드를 선택적으로 받음
+export type UpdatePostRequest<C extends Collection> = Partial<
+	Omit<CommonRequestFields<C>, 'creatorId'>
+>;
 
 // hooks/query/useInfinitePosts.ts
 export type Doc = QueryDocumentSnapshot<DocumentData> | null;
@@ -88,7 +125,44 @@ export interface FirestoreQueryParams {
 	lastDoc?: Doc;
 }
 
-export interface PaginatedPosts {
-	data: PostWithCreatorInfo[];
+export interface PaginatedPosts<C extends Collection> {
+	data: PostWithCreatorInfo<C>[];
 	lastDoc: Doc;
 }
+
+// hooks/shared/usePostSubmit.ts
+export type usePostSubmitParams<C extends Collection> = {
+	collectionName: C;
+	resetAll: () => void;
+	createPost: (
+		data: { requestData: CreatePostRequest<C>; userId: string },
+		options: { onSuccess: (id: string) => void; onError: () => void },
+	) => void;
+	updatePost: (
+		data: UpdatePostRequest<C>,
+		options: { onSuccess: () => void; onError: () => void },
+	) => void;
+};
+
+export type buildCreatePostRequestParams<C extends Collection> = {
+	collectionName: C;
+	imageUrls: string[];
+	form: CreatePostRequest<C>;
+};
+
+export type buildUpdatePostRequestParams<C extends Collection> = {
+	collectionName: C;
+	imageUrls: string[];
+	form: UpdatePostRequest<C>;
+};
+
+export type createPostFlowParams<C extends Collection> = {
+	imageUrls: string[];
+	form: CreatePostRequest<C>;
+	userId: string;
+};
+
+export type updatePostFlowParams<C extends Collection> = {
+	imageUrls: string[];
+	form: UpdatePostRequest<C>;
+};

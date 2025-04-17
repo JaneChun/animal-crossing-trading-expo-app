@@ -1,5 +1,6 @@
 import { Colors } from '@/constants/Color';
-import { CategoriesProps, Category } from '@/types/components';
+import { CategoriesProps } from '@/types/components';
+import { CategoryItem } from '@/types/post';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -11,7 +12,7 @@ const Categories = ({
 }: CategoriesProps) => {
 	return (
 		<View style={[styles.categoriesContainer, containerStyle]}>
-			{categories.map((item: Category) => (
+			{categories.map((item: CategoryItem) => (
 				<TouchableOpacity
 					key={item.EN}
 					style={[

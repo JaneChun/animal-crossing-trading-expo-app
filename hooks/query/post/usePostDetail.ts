@@ -1,13 +1,12 @@
 import { getPost } from '@/firebase/services/postService';
 import { getPublicUserInfo } from '@/firebase/services/userService';
-import { Collection } from '@/types/components';
-import { PostWithCreatorInfo } from '@/types/post';
+import { Collection, PostWithCreatorInfo } from '@/types/post';
 import { useQuery } from '@tanstack/react-query';
 
-const fetchPostDetail = async (
-	collectionName: Collection,
+const fetchPostDetail = async <C extends Collection>(
+	collectionName: C,
 	id: string,
-): Promise<PostWithCreatorInfo | null> => {
+): Promise<PostWithCreatorInfo<C> | null> => {
 	const post = await getPost(collectionName, id);
 	if (!post) return null;
 
@@ -21,8 +20,11 @@ const fetchPostDetail = async (
 	};
 };
 
-export const usePostDetail = (collectionName: Collection, id: string) => {
-	return useQuery({
+export const usePostDetail = <C extends Collection>(
+	collectionName: C,
+	id: string,
+) => {
+	return useQuery<PostWithCreatorInfo<C> | null>({
 		queryKey: ['postDetail', collectionName, id],
 		queryFn: () => fetchPostDetail(collectionName, id),
 		enabled: !!collectionName && !!id,
