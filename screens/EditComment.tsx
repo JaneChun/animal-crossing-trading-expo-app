@@ -10,7 +10,6 @@ import { UpdateCommentRequest } from '@/types/comment';
 import { EditCommentRouteProp, RootStackNavigation } from '@/types/navigation';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { Timestamp } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, TextInput } from 'react-native';
 import Button from '../components/ui/Button';
@@ -77,7 +76,6 @@ const EditComment = () => {
 
 		const requestData: UpdateCommentRequest = {
 			body: newCommentInput,
-			updatedAt: Timestamp.now(),
 		};
 
 		updateComment(requestData, {

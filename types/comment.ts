@@ -15,12 +15,10 @@ export interface CommentDoc extends Comment {
 export interface CommentWithCreatorInfo extends Comment, CreatorInfo {}
 
 // firebase/services/commentService.ts
-export type AddCommentRequest = {
+export type CreateCommentRequest = {
 	body: string;
-	creatorId: string;
 };
 
 export type UpdateCommentRequest = {
 	body: string;
-	creatorId: string;
 };

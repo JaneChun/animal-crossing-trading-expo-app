@@ -1,5 +1,5 @@
 import { deleteComment } from '@/firebase/services/commentService';
-import { Collection } from '@/types/components';
+import { Collection } from '@/types/post';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeleteComment = (
@@ -12,6 +12,9 @@ export const useDeleteComment = (
 	return useMutation({
 		mutationFn: () => deleteComment(collectionName, postId, commentId),
 		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ['posts', collectionName],
+			});
 			queryClient.invalidateQueries({
 				queryKey: ['postDetail', collectionName, postId],
 			});

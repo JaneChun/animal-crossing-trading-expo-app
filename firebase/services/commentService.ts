@@ -1,6 +1,6 @@
 import { db } from '@/fbase';
-import { AddCommentRequest, UpdateCommentRequest } from '@/types/comment';
-import { Collection } from '@/types/components';
+import { CreateCommentRequest, UpdateCommentRequest } from '@/types/comment';
+import { Collection } from '@/types/post';
 import {
 	collection,
 	doc,
@@ -13,11 +13,17 @@ import { Alert } from 'react-native';
 import firestoreRequest from '../core/firebaseInterceptor';
 import { getDocFromFirestore } from '../core/firestoreService';
 
-export const addComment = async (
-	collectionName: Collection,
-	postId: string,
-	requestData: AddCommentRequest,
-): Promise<void> => {
+export const createComment = async ({
+	collectionName,
+	postId,
+	requestData,
+	userId,
+}: {
+	collectionName: Collection;
+	postId: string;
+	requestData: CreateCommentRequest;
+	userId: string;
+}): Promise<void> => {
 	return firestoreRequest('댓글 작성', async () => {
 		const batch = writeBatch(db);
 
@@ -25,6 +31,7 @@ export const addComment = async (
 		const commentRef = doc(collection(db, collectionName, postId, 'Comments'));
 		batch.set(commentRef, {
 			...requestData,
+			creatorId: userId,
 			createdAt: Timestamp.now(),
 		});
 
@@ -44,7 +51,7 @@ export const addComment = async (
 		}
 
 		const receiverId = post.creatorId;
-		const senderId = requestData.creatorId;
+		const senderId = userId;
 
 		if (receiverId !== senderId) {
 			const notificationRef = doc(collection(db, 'Notifications'));
@@ -63,14 +70,18 @@ export const addComment = async (
 	});
 };
 
-export const updateComment = async (
-	collectionName: Collection,
-	postId: string,
-	commentId: string,
-	requestData: UpdateCommentRequest,
-): Promise<void> => {
+export const updateComment = async ({
+	collectionName,
+	postId,
+	commentId,
+	requestData,
+}: {
+	collectionName: Collection;
+	postId: string;
+	commentId: string;
+	requestData: UpdateCommentRequest;
+}): Promise<void> => {
 	return firestoreRequest('댓글 수정', async () => {
-		// 1. 댓글 문서 수정
 		const commentRef = doc(db, collectionName, postId, 'Comments', commentId);
 		await updateDoc(commentRef, {
 			...requestData,

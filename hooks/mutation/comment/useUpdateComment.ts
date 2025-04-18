@@ -1,6 +1,6 @@
 import { updateComment } from '@/firebase/services/commentService';
 import { UpdateCommentRequest } from '@/types/comment';
-import { Collection } from '@/types/components';
+import { Collection } from '@/types/post';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useUpdateComment = (
@@ -12,7 +12,7 @@ export const useUpdateComment = (
 
 	return useMutation({
 		mutationFn: (requestData: UpdateCommentRequest) =>
-			updateComment(collectionName, postId, commentId, requestData),
+			updateComment({ collectionName, postId, commentId, requestData }),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: ['postDetail', collectionName, postId],

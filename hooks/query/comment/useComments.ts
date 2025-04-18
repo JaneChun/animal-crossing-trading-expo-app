@@ -28,8 +28,6 @@ const useComments = (collectionName: Collection, postId: string) => {
 		queryKey: ['comments', collectionName, postId],
 		queryFn: () => fetchComments(collectionName, postId),
 		enabled: !!collectionName && !!postId,
-		staleTime: 1000 * 60,
-		retry: 1,
 	});
 };
 

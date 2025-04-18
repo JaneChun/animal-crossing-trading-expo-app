@@ -2,10 +2,9 @@ import { auth } from '@/fbase';
 import { useCreateComment } from '@/hooks/mutation/comment/useCreateComment';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
-import { AddCommentRequest } from '@/types/comment';
+import { CreateCommentRequest } from '@/types/comment';
 import { CommentInputProps } from '@/types/components';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
-import { Timestamp } from 'firebase/firestore';
 import { useState } from 'react';
 import Input from '../ui/Input';
 import { showToast } from '../ui/Toast';
@@ -16,10 +15,10 @@ const CommentInput = ({ postId, setIsCommentUploading }: CommentInputProps) => {
 	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const [commentInput, setCommentInput] = useState<string>('');
 	const userInfo = useAuthStore((state) => state.userInfo);
-	const { mutate: createComment, isPending: isCreating } = useCreateComment(
+	const { mutate: createComment, isPending: isCreating } = useCreateComment({
 		collectionName,
 		postId,
-	);
+	});
 
 	const resetForm = () => {
 		setCommentInput('');
@@ -40,24 +39,25 @@ const CommentInput = ({ postId, setIsCommentUploading }: CommentInputProps) => {
 
 		if (commentInput.trim() === '') return;
 
-		const requestData: AddCommentRequest = {
-			creatorId: userInfo.uid,
+		const requestData: CreateCommentRequest = {
 			body: commentInput,
-			createdAt: Timestamp.now(),
 		};
 
 		try {
 			setIsCommentUploading(true);
 
-			createComment(requestData, {
-				onSuccess: (id) => {
-					resetForm();
-					showToast('success', '댓글이 등록되었습니다.');
+			createComment(
+				{ requestData, userId: userInfo.uid },
+				{
+					onSuccess: (id) => {
+						resetForm();
+						showToast('success', '댓글이 등록되었습니다.');
+					},
+					onError: (e) => {
+						showToast('error', '댓글 등록 중 오류가 발생했습니다.');
+					},
 				},
-				onError: (e) => {
-					showToast('error', '댓글 등록 중 오류가 발생했습니다.');
-				},
-			});
+			);
 		} finally {
 			setIsCommentUploading(false);
 		}
