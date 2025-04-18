@@ -15,7 +15,7 @@ export type RootTabParamList = {
 // Home 스택 네비게이션
 export type HomeStackParamList = {
 	Home: undefined;
-	PostDetail: { id: string };
+	PostDetail: { id: string; collectionName: Collection };
 	NewPost: { id?: string; updatedCart?: CartItem[] };
 	EditComment: { postId: string; commentId: string; body: string };
 	Profile: { userId: string };
@@ -24,7 +24,7 @@ export type HomeStackParamList = {
 // Community 스택 네비게이션
 export type CommunityStackParamList = {
 	Community: undefined;
-	PostDetail: { id: string };
+	PostDetail: { id: string; collectionName: Collection };
 	NewPost: { id?: string; updatedCart?: CartItem[] };
 	EditComment: { postId: string; commentId: string; body: string };
 	Profile: { userId: string };
@@ -33,21 +33,21 @@ export type CommunityStackParamList = {
 // Notice 스택 네비게이션
 export type NoticeStackParamList = {
 	Notice: undefined;
-	PostDetail: { id: string; collection: Collection };
+	PostDetail: { id: string; collectionName: Collection };
 };
 
 // Chat 스택 네비게이션
 export type ChatStackParamList = {
 	Chat: undefined;
 	ChatRoom: { chatId: string };
-	PostDetail: { id: string; collection: Collection };
+	PostDetail: { id: string; collectionName: Collection };
 };
 
 // Profile 스택 네비게이션
 export type ProfileStackParamList = {
 	Login: undefined;
 	Profile: undefined;
-	PostDetail: { id: string };
+	PostDetail: { id: string; collectionName: Collection };
 	NewPost: { id?: string; updatedCart?: CartItem[] };
 	Setting: undefined;
 };

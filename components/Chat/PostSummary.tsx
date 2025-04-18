@@ -21,7 +21,7 @@ const PostSummary = <C extends Collection>({
 	const navigateToPost = () => {
 		stackNavigation.navigate('PostDetail', {
 			id: post.id,
-			collection: collectionName,
+			collectionName,
 		});
 	};
 

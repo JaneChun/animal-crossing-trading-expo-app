@@ -17,10 +17,10 @@ const PostUnit = <C extends Collection>({
 }: PostUnitProps<C>) => {
 	const { isBoardPost, isCommunityPost } = usePostContext();
 
-	const stackNavigation = useNavigation<any>();
+	const stackNavigation = useNavigation();
 
 	const navigateToPost = () => {
-		stackNavigation.navigate('PostDetail', { id: post.id });
+		stackNavigation.navigate('PostDetail', { id: post.id, collectionName });
 	};
 
 	return (

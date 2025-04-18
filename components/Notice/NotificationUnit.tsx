@@ -59,7 +59,7 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 			onSuccess: () => {
 				stackNavigation.navigate('PostDetail', {
 					id: postId,
-					collection: collectionName,
+					collectionName,
 				});
 			},
 		});

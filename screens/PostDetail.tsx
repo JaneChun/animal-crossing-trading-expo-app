@@ -33,17 +33,12 @@ import {
 import { FlatList } from 'react-native-gesture-handler';
 
 const PostDetail = () => {
-	const {
-		collectionName: tabCollectionName,
-		isBoardPost,
-		isCommunityPost,
-	} = usePostContext();
+	const { isBoardPost, isCommunityPost } = usePostContext();
 
 	const stackNavigation = useNavigation<any>();
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const route = useRoute<PostDetailRouteProp>();
-	const { id = '', collection: routeCollectionName = '' } = route.params; // 변수명 중복
-	const collectionName = routeCollectionName || tabCollectionName;
+	const { id = '', collectionName = '' } = route.params;
 
 	const { data: post, isLoading: isPostFetching } = usePostDetail(
 		collectionName,

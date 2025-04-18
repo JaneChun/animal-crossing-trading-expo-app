@@ -22,11 +22,11 @@ export const CATEGORIES: CategoryItem[] = [
 	...COMMUNITY_TYPES,
 ];
 
-// 각 탭(Tab) 별로 연결된 Firestore 컬렉션과 동적 컬렉션 여부를 정의한 config 객체
+// 각 탭(Tab) 별로 연결된 Firestore 컬렉션을 정의한 config 객체
 export const TAB_COLLECTION_CONFIG = {
-	Home: { collection: 'Boards', isDynamic: false },
-	Community: { collection: 'Communities', isDynamic: false },
-	Notice: { collection: 'Boards', isDynamic: true }, // 게시글 내용에 따라 컬렉션 판단
-	Chat: { collection: 'Boards', isDynamic: true }, // 게시글 내용에 따라 컬렉션 판단
-	Profile: { collection: 'Boards', isDynamic: false },
+	Home: { collection: 'Boards' },
+	Community: { collection: 'Communities' },
+	Notice: { collection: 'Boards' },
+	Chat: { collection: 'Boards' },
+	Profile: { collection: 'Boards' },
 } as const;
