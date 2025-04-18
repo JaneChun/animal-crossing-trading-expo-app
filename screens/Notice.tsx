@@ -5,7 +5,7 @@ import Layout from '@/components/ui/Layout';
 import LoadingIndicator from '@/components/ui/LoadingIndicator';
 import { Colors } from '@/constants/Color';
 import useGetNotifications from '@/hooks/firebase/useGetNotifications';
-import { Collection } from '@/types/components';
+import { Collection } from '@/types/post';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React from 'react';
 import { StyleSheet } from 'react-native';

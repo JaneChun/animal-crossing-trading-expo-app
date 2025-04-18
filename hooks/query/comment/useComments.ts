@@ -1,7 +1,7 @@
 import { db } from '@/fbase';
 import { fetchAndPopulateUsers } from '@/firebase/services/postService';
 import { Comment, CommentDoc, CommentWithCreatorInfo } from '@/types/comment';
-import { Collection } from '@/types/components';
+import { Collection } from '@/types/post';
 import { DocumentData } from '@google-cloud/firestore';
 import { useQuery } from '@tanstack/react-query';
 import { collection, orderBy, query } from 'firebase/firestore';

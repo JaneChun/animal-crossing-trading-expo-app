@@ -2,11 +2,11 @@ import { db } from '@/fbase';
 import { fetchAndPopulateSenderInfo } from '@/firebase/services/notificationService';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useNotificationCountStore } from '@/stores/NotificationCountStore';
-import { Collection } from '@/types/components';
 import {
 	Notification,
 	NotificationWithReceiverInfo,
 } from '@/types/notification';
+import { Collection } from '@/types/post';
 import {
 	collection,
 	onSnapshot,
