@@ -9,7 +9,7 @@ import Toast from 'react-native-toast-message';
 import { toastConfig } from './components/ui/Toast';
 import { useAppState } from './hooks/shared/useAppState';
 import { useOnlineManager } from './hooks/shared/useOnlineManager';
-import BottomTabNavigator from './navigation/BottomTabNavigator';
+import RootStackNavigator from './navigation/RootStackNavigator';
 import ErrorBoundary from './screens/ErrorBoundary';
 import { useAuthInitializer } from './stores/AuthStore';
 import { usePushNotificationInitializer } from './stores/PushNotificationStore';
@@ -71,7 +71,7 @@ export default function App() {
 							// }}
 						>
 							<SafeAreaView style={{ flex: 1 }}>
-								<BottomTabNavigator />
+								<RootStackNavigator />
 								<Toast config={toastConfig} />
 							</SafeAreaView>
 						</NavigationContainer>

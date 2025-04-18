@@ -99,12 +99,7 @@ const ChatRoom = () => {
 				<View style={styles.header}>
 					<TouchableOpacity
 						style={styles.iconContainer}
-						onPress={() =>
-							stackNavigation.reset({
-								index: 0,
-								routes: [{ name: 'Chat' }],
-							})
-						}
+						onPress={() => stackNavigation.navigate.pop()}
 					>
 						<Ionicons
 							name='chevron-back-outline'

@@ -1,71 +1,35 @@
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { CartItem } from './post';
+import { CartItem, Collection } from './post';
 
-// 하단 탭 네비게이션
-export type RootTabParamList = {
-	HomeTab: NavigatorScreenParams<HomeStackParamList>;
-	CommunityTab: NavigatorScreenParams<CommunityStackParamList>;
-	NoticeTab: NavigatorScreenParams<NoticeStackParamList>;
-	ChatTab: NavigatorScreenParams<ChatStackParamList>;
-	ProfileTab: NavigatorScreenParams<ProfileStackParamList>;
-};
-
-// Home 스택 네비게이션
-export type HomeStackParamList = {
-	Home: undefined;
+// RootStack 네비게이션
+export type RootStackParamList = {
+	MainTab: NavigatorScreenParams<MainTabParamList>;
 	PostDetail: { id: string; collectionName: Collection };
-	NewPost: { id?: string; updatedCart?: CartItem[] };
+	NewPost: { id?: string; updatedCart?: CartItem[] }; // 글 수정 시 id 전달, 마켓글은 updatedCart 사용
 	EditComment: { postId: string; commentId: string; body: string };
-	Profile: { userId: string };
-};
-
-// Community 스택 네비게이션
-export type CommunityStackParamList = {
-	Community: undefined;
-	PostDetail: { id: string; collectionName: Collection };
-	NewPost: { id?: string; updatedCart?: CartItem[] };
-	EditComment: { postId: string; commentId: string; body: string };
-	Profile: { userId: string };
-};
-
-// Notice 스택 네비게이션
-export type NoticeStackParamList = {
-	Notice: undefined;
-	PostDetail: { id: string; collectionName: Collection };
-};
-
-// Chat 스택 네비게이션
-export type ChatStackParamList = {
-	Chat: undefined;
 	ChatRoom: { chatId: string };
-	PostDetail: { id: string; collectionName: Collection };
-};
-
-// Profile 스택 네비게이션
-export type ProfileStackParamList = {
-	Login: undefined;
-	Profile: undefined;
-	PostDetail: { id: string; collectionName: Collection };
-	NewPost: { id?: string; updatedCart?: CartItem[] };
+	Profile: { userId?: string }; // 다른 유저 프로필 조회 시 userId 전달
 	Setting: undefined;
 };
 
-// 전체 앱에서 사용할 네비게이션 타입
-export type TabNavigation = BottomTabNavigationProp<RootTabParamList>;
-export type HomeStackNavigation = NativeStackNavigationProp<HomeStackParamList>;
-export type CommunityStackNavigation =
-	NativeStackNavigationProp<CommunityStackParamList>;
-export type NoticeStackNavigation =
-	NativeStackNavigationProp<NoticeStackParamList>;
-export type ChatStackNavigation = NativeStackNavigationProp<ChatStackParamList>;
-export type ProfileStackNavigation =
-	NativeStackNavigationProp<ProfileStackParamList>;
+export type RootStackNavigation = NativeStackNavigationProp<RootStackParamList>;
 
-// 특정 화면에 대한 Route Prop (화면에서 `route.params`를 사용할 때 필요함)
-export type PostDetailRouteProp = RouteProp<HomeStackParamList, 'PostDetail'>;
-export type EditCommentRouteProp = RouteProp<HomeStackParamList, 'EditComment'>;
-export type NewPostRouteProp = RouteProp<HomeStackParamList, 'NewPost'>;
-export type ProfileRouteProp = RouteProp<HomeStackParamList, 'Profile'>;
-export type ChatRoomRouteProp = RouteProp<ChatStackParamList, 'ChatRoom'>;
+// MainTab 네비게이션
+export type MainTabParamList = {
+	HomeTab: undefined;
+	CommunityTab: undefined;
+	NoticeTab: undefined;
+	ChatTab: undefined;
+	ProfileTab: undefined;
+};
+
+export type TabNavigation = BottomTabNavigationProp<MainTabParamList>;
+
+// Route Props (for useRoute)
+export type PostDetailRouteProp = RouteProp<RootStackParamList, 'PostDetail'>;
+export type EditCommentRouteProp = RouteProp<RootStackParamList, 'EditComment'>;
+export type NewPostRouteProp = RouteProp<RootStackParamList, 'NewPost'>;
+export type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
+export type ChatRoomRouteProp = RouteProp<RootStackParamList, 'ChatRoom'>;

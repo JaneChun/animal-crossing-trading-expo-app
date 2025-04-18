@@ -15,7 +15,7 @@ import HomeStackNavigator from './HomeStackNavigator';
 import NoticeStackNavigator from './NoticeNavigator';
 import ProfileStackNavigator from './ProfileStackNavigator';
 
-const BottomTab = createBottomTabNavigator();
+const MainTab = createBottomTabNavigator();
 
 const getTabBarIcon =
 	(name: string, IconComponent: any, size = 24) =>
@@ -28,7 +28,7 @@ const getTabBarIcon =
 			/>
 		);
 
-const BottomTabNavigator = () => {
+const MainTabNavigator = () => {
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const unreadChatCount = useChatCountStore((state) => state.count);
 	const unreadNotificationCount = useNotificationCountStore(
@@ -36,7 +36,7 @@ const BottomTabNavigator = () => {
 	);
 
 	return (
-		<BottomTab.Navigator
+		<MainTab.Navigator
 			screenOptions={{
 				popToTopOnBlur: true,
 				headerShown: false,
@@ -49,7 +49,7 @@ const BottomTabNavigator = () => {
 				tabBarActiveTintColor: Colors.primary,
 			}}
 		>
-			<BottomTab.Screen
+			<MainTab.Screen
 				name='HomeTab'
 				component={HomeStackNavigator}
 				options={{
@@ -57,7 +57,7 @@ const BottomTabNavigator = () => {
 					tabBarIcon: getTabBarIcon('home', Entypo),
 				}}
 			/>
-			<BottomTab.Screen
+			<MainTab.Screen
 				name='CommunityTab'
 				component={CommunityStackNavigator}
 				options={{
@@ -65,7 +65,7 @@ const BottomTabNavigator = () => {
 					tabBarIcon: getTabBarIcon('article', MaterialIcons, 26),
 				}}
 			/>
-			<BottomTab.Screen
+			<MainTab.Screen
 				name='NoticeTab'
 				component={NoticeStackNavigator}
 				options={{
@@ -78,7 +78,7 @@ const BottomTabNavigator = () => {
 					},
 				}}
 			/>
-			<BottomTab.Screen
+			<MainTab.Screen
 				name='ChatTab'
 				component={ChatStackNavigator}
 				options={{
@@ -90,20 +90,7 @@ const BottomTabNavigator = () => {
 					},
 				}}
 			/>
-			{/* <BottomTab.Screen
-				name='SearchTab'
-				component={Search}
-				options={{
-					tabBarIcon: ({ focused }) => (
-						<FontAwesome
-							name='search'
-							size={22}
-							color={focused ? Colors.primary : Colors.dark_gray}
-						/>
-					),
-				}}
-			/> */}
-			<BottomTab.Screen
+			<MainTab.Screen
 				name='ProfileTab'
 				component={ProfileStackNavigator}
 				options={{
@@ -114,8 +101,8 @@ const BottomTabNavigator = () => {
 					),
 				}}
 			/>
-		</BottomTab.Navigator>
+		</MainTab.Navigator>
 	);
 };
 
-export default BottomTabNavigator;
+export default MainTabNavigator;
