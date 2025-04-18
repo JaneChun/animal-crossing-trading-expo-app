@@ -2,7 +2,7 @@ import PostList from '@/components/Home/PostList';
 import Layout, { PADDING } from '@/components/ui/Layout';
 import { useCurrentTab } from '@/hooks/useCurrentTab';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
-import { Tab } from '@/types/components';
+import { Tab } from '@/types/post';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { useCallback } from 'react';
 

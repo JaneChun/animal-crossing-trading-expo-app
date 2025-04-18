@@ -28,7 +28,5 @@ export const usePostDetail = <C extends Collection>(
 		queryKey: ['postDetail', collectionName, id],
 		queryFn: () => fetchPostDetail(collectionName, id),
 		enabled: !!collectionName && !!id,
-		staleTime: 1000 * 60 * 5,
-		retry: 1,
 	});
 };

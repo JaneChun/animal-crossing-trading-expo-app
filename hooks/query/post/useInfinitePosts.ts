@@ -92,5 +92,6 @@ export const useInfinitePosts = <C extends Collection>(
 			fetchPostsByCursor({ collectionName, filter, lastDoc: pageParam }),
 		initialPageParam: null,
 		getNextPageParam: (lastPage: PaginatedPosts<C>) => lastPage.lastDoc,
+		refetchOnMount: true,
 	});
 };
