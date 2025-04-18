@@ -1,13 +1,10 @@
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
+import { goBack } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
-import { ProfileStackNavigation, TabNavigation } from '@/types/navigation';
-import { useNavigation } from '@react-navigation/native';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const Setting = () => {
-	const tabNavigation = useNavigation<TabNavigation>();
-	const stackNavigation = useNavigation<ProfileStackNavigation>();
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const kakaoLogout = useAuthStore((state) => state.kakaoLogout);
 	const naverLogout = useAuthStore((state) => state.naverLogout);
@@ -30,11 +27,8 @@ const Setting = () => {
 		else if (userInfo.oauthType === 'naver') isSuccess = await naverLogout();
 
 		if (Boolean(isSuccess)) {
-			// tabNavigation.reset({
-			// 	index: 0,
-			// 	routes: [{ name: 'HomeTab' }],
-			// });
 			showToast('success', '로그아웃되었습니다.');
+			goBack();
 		} else {
 			showToast('error', '로그아웃 실패. 다시 시도해주세요.');
 		}
@@ -66,7 +60,7 @@ const Setting = () => {
 
 		if (Boolean(isSuccess)) {
 			Alert.alert('탈퇴 완료', '탈퇴 처리가 성공적으로 완료되었습니다.');
-			stackNavigation.goBack();
+			goBack();
 		} else {
 			Alert.alert('탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.');
 		}

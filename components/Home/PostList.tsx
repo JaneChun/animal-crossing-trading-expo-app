@@ -1,8 +1,8 @@
 import { Colors } from '@/constants/Color';
 import { useInfinitePosts } from '@/hooks/query/post/useInfinitePosts';
 import { PostListProps } from '@/types/components';
+import { navigateToNewPost } from '@/utilities/navigationHelpers';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import LoadingIndicator from '../ui/LoadingIndicator';
@@ -14,8 +14,6 @@ const PostList = ({
 	isAddPostButtonVisible = false,
 	containerStyle,
 }: PostListProps) => {
-	const navigation = useNavigation<any>();
-
 	const {
 		data,
 		isLoading,
@@ -29,13 +27,6 @@ const PostList = ({
 	} = useInfinitePosts(collectionName, filter);
 
 	const flatListData = data?.pages.flatMap((page) => page.data) ?? [];
-
-	const onPressAddPostButton = () => {
-		navigation.navigate('NewPost', {
-			id: undefined,
-			updatedCart: undefined,
-		});
-	};
 
 	if (isLoading) {
 		return <LoadingIndicator />;
@@ -66,7 +57,7 @@ const PostList = ({
 			{isAddPostButtonVisible && (
 				<TouchableOpacity
 					style={styles.addPostButton}
-					onPress={onPressAddPostButton}
+					onPress={navigateToNewPost}
 				>
 					<FontAwesome6 name='circle-plus' size={48} color={Colors.primary} />
 				</TouchableOpacity>

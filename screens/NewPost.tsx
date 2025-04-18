@@ -12,15 +12,12 @@ import { usePostContext } from '@/hooks/shared/usePostContext';
 import { usePostForm } from '@/hooks/shared/usePostForm';
 import { usePostSubmit } from '@/hooks/shared/usePostSubmit';
 import { useAuthStore } from '@/stores/AuthStore';
-import { type NewPostRouteProp, type TabNavigation } from '@/types/navigation';
+import { type NewPostRouteProp } from '@/types/navigation';
 import { CommunityType, MarketType } from '@/types/post';
 import { handleImageUpload } from '@/utilities/handleImageUpload';
+import { navigateToLogin } from '@/utilities/navigationHelpers';
 import { validateInput } from '@/utilities/validateInput';
-import {
-	useFocusEffect,
-	useNavigation,
-	useRoute,
-} from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
@@ -31,7 +28,6 @@ import Button from '../components/ui/Button';
 const NewPost = () => {
 	const { collectionName, isBoardPost, isCommunityPost } = usePostContext();
 
-	const tabNavigation = useNavigation<TabNavigation>();
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const route = useRoute<NewPostRouteProp>();
 
@@ -141,7 +137,7 @@ const NewPost = () => {
 		setIsSubmitting(true);
 
 		if (!validateUser()) {
-			redirectToLogin();
+			navigateToLogin();
 			setIsSubmitting(false);
 			return;
 		}
@@ -190,10 +186,6 @@ const NewPost = () => {
 		} finally {
 			setIsSubmitting(false);
 		}
-	};
-
-	const redirectToLogin = () => {
-		tabNavigation.navigate('ProfileTab', { screen: 'Login' });
 	};
 
 	const scrollToTop = () => {

@@ -3,14 +3,12 @@ import LoadingIndicator from '@/components/ui/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { auth } from '@/fbase';
 import { useUpdateComment } from '@/hooks/mutation/comment/useUpdateComment';
+import { goBack } from '@/navigation/RootNavigation';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
 import { UpdateCommentRequest } from '@/types/comment';
-import {
-	EditCommentRouteProp,
-	HomeStackNavigation,
-	TabNavigation,
-} from '@/types/navigation';
+import { EditCommentRouteProp, RootStackNavigation } from '@/types/navigation';
+import { navigateToLogin } from '@/utilities/navigationHelpers';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Timestamp } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
@@ -23,8 +21,7 @@ const EditComment = () => {
 	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const route = useRoute<EditCommentRouteProp>();
 	const { commentId, postId, body } = route.params;
-	const tabNavigation = useNavigation<TabNavigation>();
-	const stackNavigation = useNavigation<HomeStackNavigation>();
+	const stackNavigation = useNavigation<RootStackNavigation>();
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const [newCommentInput, setNewCommentInput] = useState('');
 	const { mutate: updateComment, isPending: isUpdating } = useUpdateComment(
@@ -48,11 +45,7 @@ const EditComment = () => {
 				</Button>
 			),
 			headerLeft: () => (
-				<Button
-					color='gray'
-					size='md2'
-					onPress={() => stackNavigation.goBack()}
-				>
+				<Button color='gray' size='md2' onPress={goBack}>
 					취소
 				</Button>
 			),
@@ -70,13 +63,13 @@ const EditComment = () => {
 	const onSubmit = async () => {
 		if (!userInfo || !auth.currentUser) {
 			showToast('warn', '댓글 쓰기는 로그인 후 가능합니다.');
-			tabNavigation.navigate('ProfileTab', { screen: 'Login' });
+			navigateToLogin();
 			return;
 		}
 
 		if (!postId) {
 			showToast('error', '게시글을 찾을 수 없습니다.');
-			tabNavigation.navigate('ProfileTab', { screen: 'Login' });
+			navigateToLogin();
 			return;
 		}
 
@@ -90,7 +83,7 @@ const EditComment = () => {
 		updateComment(requestData, {
 			onSuccess: () => {
 				resetForm();
-				stackNavigation.goBack();
+				goBack();
 				showToast('success', '댓글이 수정되었습니다.');
 			},
 			onError: (e) => {

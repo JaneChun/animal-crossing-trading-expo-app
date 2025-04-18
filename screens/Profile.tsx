@@ -8,14 +8,14 @@ import useLoading from '@/hooks/shared/useLoading';
 import { useCurrentTab } from '@/hooks/useCurrentTab';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
-import { Tab } from '@/types/components';
-import { ProfileRouteProp, ProfileStackNavigation } from '@/types/navigation';
+import { ProfileRouteProp } from '@/types/navigation';
+import { Tab } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
+import { navigateToSetting } from '@/utilities/navigationHelpers';
 import { Ionicons } from '@expo/vector-icons';
 import {
 	useFocusEffect,
 	useIsFocused,
-	useNavigation,
 	useRoute,
 } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
@@ -26,7 +26,6 @@ const Profile = () => {
 	const route = useRoute<ProfileRouteProp>();
 	const { userId: targetUserId } = route?.params ?? {};
 	const userInfo = useAuthStore((state) => state.userInfo);
-	const stackNavigation = useNavigation<ProfileStackNavigation>();
 	const { isLoading: isUploading, setIsLoading: setIsUploading } = useLoading();
 	const setActiveTab = useActiveTabStore((state) => state.setActiveTab);
 	const currentTab = useCurrentTab();
@@ -60,10 +59,6 @@ const Profile = () => {
 		return <LoadingIndicator />;
 	}
 
-	const onPressSetting = () => {
-		stackNavigation.navigate('Setting');
-	};
-
 	return (
 		<Layout
 			title='프로필'
@@ -71,7 +66,7 @@ const Profile = () => {
 				isMyProfile && (
 					<TouchableOpacity
 						style={styles.iconContainer}
-						onPress={onPressSetting}
+						onPress={navigateToSetting}
 					>
 						<Ionicons
 							name='settings-outline'

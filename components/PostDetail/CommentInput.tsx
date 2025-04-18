@@ -4,8 +4,7 @@ import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
 import { AddCommentRequest } from '@/types/comment';
 import { CommentInputProps } from '@/types/components';
-import { TabNavigation } from '@/types/navigation';
-import { useNavigation } from '@react-navigation/native';
+import { navigateToLogin } from '@/utilities/navigationHelpers';
 import { Timestamp } from 'firebase/firestore';
 import { useState } from 'react';
 import Input from '../ui/Input';
@@ -16,7 +15,6 @@ const CommentInput = ({ postId, setIsCommentUploading }: CommentInputProps) => {
 	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
 	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const [commentInput, setCommentInput] = useState<string>('');
-	const tabNavigation = useNavigation<TabNavigation>();
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const { mutate: createComment, isPending: isCreating } = useCreateComment(
 		collectionName,
@@ -30,13 +28,13 @@ const CommentInput = ({ postId, setIsCommentUploading }: CommentInputProps) => {
 	const onSubmit = async () => {
 		if (!userInfo || !auth.currentUser) {
 			showToast('warn', '댓글 쓰기는 로그인 후 가능합니다.');
-			tabNavigation.navigate('ProfileTab', { screen: 'Login' });
+			navigateToLogin();
 			return;
 		}
 
 		if (!postId) {
 			showToast('error', '게시글을 찾을 수 없습니다.');
-			tabNavigation.navigate('ProfileTab', { screen: 'Login' });
+			navigateToLogin();
 			return;
 		}
 

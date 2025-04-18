@@ -2,7 +2,7 @@ import { Colors } from '@/constants/Color';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { PostUnitProps } from '@/types/components';
 import { Collection } from '@/types/post';
-import { useNavigation } from '@react-navigation/native';
+import { navigateToPost } from '@/utilities/navigationHelpers';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { elapsedTime } from '../../utilities/elapsedTime';
@@ -17,14 +17,11 @@ const PostUnit = <C extends Collection>({
 }: PostUnitProps<C>) => {
 	const { isBoardPost, isCommunityPost } = usePostContext();
 
-	const stackNavigation = useNavigation();
-
-	const navigateToPost = () => {
-		stackNavigation.navigate('PostDetail', { id: post.id, collectionName });
-	};
-
 	return (
-		<TouchableOpacity style={styles.container} onPress={navigateToPost}>
+		<TouchableOpacity
+			style={styles.container}
+			onPress={() => navigateToPost({ postId: post.id, collectionName })}
+		>
 			{/* 썸네일 */}
 			<View style={styles.thumbnailContainer}>
 				{isBoardPost(post, collectionName) && (

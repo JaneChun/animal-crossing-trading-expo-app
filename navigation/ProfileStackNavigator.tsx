@@ -11,20 +11,20 @@ const ProfileStackNavigator = () => {
 
 	return (
 		<ProfileStack.Navigator
+			initialRouteName={userInfo ? 'Profile' : 'Login'}
 			screenOptions={{
 				headerShown: false,
 				headerTintColor: Colors.font_black,
 				headerBackButtonDisplayMode: 'minimal',
 			}}
 		>
-			{userInfo ? (
+			<ProfileStack.Screen name='Login' component={Login} />
+			{userInfo && (
 				<ProfileStack.Screen
 					name='Profile'
 					component={Profile}
 					options={{ title: '프로필' }}
 				/>
-			) : (
-				<ProfileStack.Screen name='Login' component={Login} />
 			)}
 		</ProfileStack.Navigator>
 	);

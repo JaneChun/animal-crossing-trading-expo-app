@@ -1,4 +1,5 @@
 import { showToast } from '@/components/ui/Toast';
+import { goBack } from '@/navigation/RootNavigation';
 import {
 	buildCreatePostRequestParams,
 	buildUpdatePostRequestParams,
@@ -9,7 +10,7 @@ import {
 	UpdatePostRequest,
 	usePostSubmitParams,
 } from '@/types/post';
-import { useNavigation } from '@react-navigation/native';
+import { popToPostDetail } from '@/utilities/navigationHelpers';
 
 export const usePostSubmit = <C extends Collection>({
 	collectionName,
@@ -17,8 +18,6 @@ export const usePostSubmit = <C extends Collection>({
 	createPost,
 	updatePost,
 }: usePostSubmitParams<C>) => {
-	const stackNavigation = useNavigation();
-
 	const buildCreatePostRequest = ({
 		collectionName,
 		imageUrls,
@@ -88,7 +87,8 @@ export const usePostSubmit = <C extends Collection>({
 			{
 				onSuccess: (id: string) => {
 					resetAll();
-					stackNavigation.popTo('PostDetail', { id });
+
+					popToPostDetail({ postId: id, collectionName });
 					showToast('success', '게시글이 작성되었습니다.');
 				},
 				onError: () => {
@@ -110,7 +110,7 @@ export const usePostSubmit = <C extends Collection>({
 		updatePost(data, {
 			onSuccess: () => {
 				resetAll();
-				stackNavigation.goBack();
+				goBack();
 				showToast('success', '게시글이 수정되었습니다.');
 			},
 			onError: () => {

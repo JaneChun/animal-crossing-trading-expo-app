@@ -1,7 +1,6 @@
 import { Colors } from '@/constants/Color';
-import { useAuthStore } from '@/stores/AuthStore';
 import { UserInfoProps } from '@/types/components';
-import { useNavigation } from '@react-navigation/native';
+import { navigateToUserProfile } from '@/utilities/navigationHelpers';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Island from '../ui/Island';
 
@@ -11,16 +10,9 @@ const UserInfo = ({
 	islandName,
 	containerStyle,
 }: UserInfoProps) => {
-	const userInfo = useAuthStore((state) => state.userInfo);
-	const stackNavigation = useNavigation();
-
-	const navigateToProfile = ({ userId }: { userId: string }) => {
-		stackNavigation.navigate('Profile', { userId });
-	};
-
 	return (
 		<View style={[styles.container, containerStyle]}>
-			<TouchableOpacity onPress={() => navigateToProfile({ userId })}>
+			<TouchableOpacity onPress={() => navigateToUserProfile({ userId })}>
 				<Text style={styles.displayName}>{displayName}</Text>
 			</TouchableOpacity>
 			<View style={styles.IslandContainer}>

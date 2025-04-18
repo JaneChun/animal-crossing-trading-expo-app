@@ -2,8 +2,8 @@ import { Colors } from '@/constants/Color';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { PostSummaryProps } from '@/types/components';
 import { Collection } from '@/types/post';
+import { navigateToPost } from '@/utilities/navigationHelpers';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import CommunityTypeBadge from '../Community/CommunityTypeBadge';
@@ -16,17 +16,12 @@ const PostSummary = <C extends Collection>({
 	collectionName,
 }: PostSummaryProps<C>) => {
 	const { isBoardPost, isCommunityPost } = usePostContext();
-	const stackNavigation = useNavigation<any>();
-
-	const navigateToPost = () => {
-		stackNavigation.navigate('PostDetail', {
-			id: post.id,
-			collectionName,
-		});
-	};
 
 	return (
-		<TouchableOpacity style={styles.container} onPress={navigateToPost}>
+		<TouchableOpacity
+			style={styles.container}
+			onPress={() => navigateToPost({ postId: post.id, collectionName })}
+		>
 			{/* 썸네일 */}
 			<View style={styles.thumbnailContainer}>
 				{isBoardPost(post, collectionName) && (

@@ -9,6 +9,7 @@ import Toast from 'react-native-toast-message';
 import { toastConfig } from './components/ui/Toast';
 import { useAppState } from './hooks/shared/useAppState';
 import { useOnlineManager } from './hooks/shared/useOnlineManager';
+import { navigationRef } from './navigation/RootNavigation';
 import RootStackNavigator from './navigation/RootStackNavigator';
 import ErrorBoundary from './screens/ErrorBoundary';
 import { useAuthInitializer } from './stores/AuthStore';
@@ -59,6 +60,7 @@ export default function App() {
 				<ActionSheetProvider>
 					<GestureHandlerRootView style={{ flex: 1 }}>
 						<NavigationContainer
+							ref={navigationRef}
 							linking={linking}
 							// onReady={() => {
 							// 	console.log('🔵 Navigation Ready');

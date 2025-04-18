@@ -5,12 +5,11 @@ import { useMarkAsRead } from '@/hooks/mutation/notification/useMarkAsRead';
 import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { NotificationUnitProp } from '@/types/components';
-import { NoticeStackNavigation } from '@/types/navigation';
 import { Collection } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
 import { elapsedTime } from '@/utilities/elapsedTime';
+import { navigateToPostDetail } from '@/utilities/navigationHelpers';
 import { FontAwesome } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
@@ -24,7 +23,6 @@ import Thumbnail from '../ui/Thumbnail';
 const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 	const { isBoardPost, isCommunityPost } = usePostContext();
 
-	const stackNavigation = useNavigation<NoticeStackNavigation>();
 	const { id, type, body, postId, receiverId, senderId, createdAt, isRead } =
 		item;
 	const { data: post } = usePostDetail(type, postId);
@@ -56,12 +54,7 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 		postId: string;
 	}) => {
 		markAsRead(undefined, {
-			onSuccess: () => {
-				stackNavigation.navigate('PostDetail', {
-					id: postId,
-					collectionName,
-				});
-			},
+			onSuccess: () => navigateToPostDetail({ postId, collectionName }),
 		});
 	};
 

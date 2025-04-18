@@ -1,9 +1,8 @@
-import type { TabNavigation } from '@/types/navigation';
-import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import Layout from '@/components/ui/Layout';
+import { PADDING } from '@/components/ui/Layout';
 import { showToast } from '@/components/ui/Toast';
+import { replace } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
 import { OauthType } from '@/types/user';
 import FastImage from 'react-native-fast-image';
@@ -11,7 +10,6 @@ import FastImage from 'react-native-fast-image';
 const Login = () => {
 	const kakaoLogin = useAuthStore((state) => state.kakaoLogin);
 	const naverLogin = useAuthStore((state) => state.naverLogin);
-	const tabNavigation = useNavigation<TabNavigation>();
 
 	const handleLogin = async (oauthType: OauthType) => {
 		let isSuccess: boolean | void = false;
@@ -21,52 +19,47 @@ const Login = () => {
 
 		if (Boolean(isSuccess)) {
 			showToast('success', '로그인 성공');
-			tabNavigation.reset({
-				index: 0,
-				routes: [{ name: 'HomeTab' }],
-			});
+			replace('Profile', {});
 		}
 	};
 
 	return (
-		<Layout>
-			<View style={styles.container}>
-				<View style={styles.header}>
-					<View style={styles.titleContainer}>
-						<Text style={styles.title}>모동숲 마켓</Text>
-						<FastImage
-							source={require('../assets/images/logo.png')}
-							style={styles.logoImage}
-							resizeMode={FastImage.resizeMode.contain}
-						/>
-					</View>
-				</View>
-				<View style={styles.body}>
-					<TouchableOpacity
-						activeOpacity={0.7}
-						onPress={() => handleLogin('naver')}
-						style={styles.buttonContainer}
-					>
-						<FastImage
-							source={require('../assets/images/naver_login.png')}
-							style={styles.kakaoLoginImage}
-							resizeMode={FastImage.resizeMode.contain}
-						/>
-					</TouchableOpacity>
-					<TouchableOpacity
-						activeOpacity={0.7}
-						onPress={() => handleLogin('kakao')}
-						style={styles.buttonContainer}
-					>
-						<FastImage
-							source={require('../assets/images/kakao_login.png')}
-							style={styles.kakaoLoginImage}
-							resizeMode={FastImage.resizeMode.contain}
-						/>
-					</TouchableOpacity>
+		<View style={styles.container}>
+			<View style={styles.header}>
+				<View style={styles.titleContainer}>
+					<Text style={styles.title}>모동숲 마켓</Text>
+					<FastImage
+						source={require('../assets/images/logo.png')}
+						style={styles.logoImage}
+						resizeMode={FastImage.resizeMode.contain}
+					/>
 				</View>
 			</View>
-		</Layout>
+			<View style={styles.body}>
+				<TouchableOpacity
+					activeOpacity={0.7}
+					onPress={() => handleLogin('naver')}
+					style={styles.buttonContainer}
+				>
+					<FastImage
+						source={require('../assets/images/naver_login.png')}
+						style={styles.kakaoLoginImage}
+						resizeMode={FastImage.resizeMode.contain}
+					/>
+				</TouchableOpacity>
+				<TouchableOpacity
+					activeOpacity={0.7}
+					onPress={() => handleLogin('kakao')}
+					style={styles.buttonContainer}
+				>
+					<FastImage
+						source={require('../assets/images/kakao_login.png')}
+						style={styles.kakaoLoginImage}
+						resizeMode={FastImage.resizeMode.contain}
+					/>
+				</TouchableOpacity>
+			</View>
+		</View>
 	);
 };
 
@@ -75,6 +68,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
+		padding: PADDING,
+		backgroundColor: 'white',
 	},
 	header: {
 		flex: 1,
@@ -92,7 +87,7 @@ const styles = StyleSheet.create({
 	},
 	logoImage: {
 		width: 40,
-		resizeMode: 'contain',
+		height: 40,
 	},
 	body: {
 		width: '100%',

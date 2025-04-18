@@ -4,11 +4,15 @@ import { useCreateChatRoom } from '@/hooks/mutation/chat/useCreateChatRoom';
 import { useDeleteComment } from '@/hooks/mutation/comment/useDeleteComment';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
-import { Collection, CommentUnitProps } from '@/types/components';
-import { HomeStackNavigation, TabNavigation } from '@/types/navigation';
+import { CommentUnitProps } from '@/types/components';
+import { Collection } from '@/types/post';
 import { elapsedTime } from '@/utilities/elapsedTime';
+import {
+	navigateToChatRoom,
+	navigateToEditComment,
+	navigateToUserProfile,
+} from '@/utilities/navigationHelpers';
 import { AntDesign } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import ActionSheetButton from '../ui/ActionSheetButton';
@@ -30,24 +34,10 @@ const CommentUnit = ({
 	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
 	const collectionName = isMarket ? 'Boards' : 'Communities';
 	const userInfo = useAuthStore((state) => state.userInfo);
-	const tabNavigation = useNavigation<TabNavigation>();
-	const stackNavigation = useNavigation<HomeStackNavigation>();
 	const { mutate: deleteComment, isPending: isDeletingComment } =
 		useDeleteComment(collectionName, postId, id);
 	const { mutateAsync: createChatRoom, isPending: isCreatingChatRoom } =
 		useCreateChatRoom();
-
-	const handleEditComment = ({
-		postId,
-		commentId,
-		body,
-	}: {
-		postId: string;
-		commentId: string;
-		body: string;
-	}) => {
-		stackNavigation.navigate('EditComment', { postId, commentId, body });
-	};
 
 	const handleDeleteComment = async () => {
 		Alert.alert('댓글 삭제', '정말로 삭제하겠습니까?', [
@@ -91,21 +81,14 @@ const CommentUnit = ({
 
 		if (!chatId) return;
 
-		tabNavigation.navigate('ChatTab', {
-			screen: 'ChatRoom',
-			params: {
-				chatId,
-			},
-		});
-	};
-
-	const navigateToProfile = ({ creatorId }: { creatorId: string }) => {
-		stackNavigation.navigate('Profile', { userId: creatorId });
+		navigateToChatRoom({ chatId });
 	};
 
 	return (
 		<View style={styles.container}>
-			<TouchableOpacity onPress={() => navigateToProfile({ creatorId })}>
+			<TouchableOpacity
+				onPress={() => navigateToUserProfile({ userId: creatorId })}
+			>
 				<ImageWithFallback
 					uri={creatorPhotoURL}
 					fallbackSource={require('../../assets/images/empty_profile_image.png')}
@@ -117,7 +100,9 @@ const CommentUnit = ({
 				{/* 헤더 */}
 				<View style={styles.commentHeader}>
 					<View style={styles.creatorInfo}>
-						<TouchableOpacity onPress={() => navigateToProfile({ creatorId })}>
+						<TouchableOpacity
+							onPress={() => navigateToUserProfile({ userId: creatorId })}
+						>
 							<Text style={styles.creatorDisplayNameText}>
 								{creatorDisplayName}
 							</Text>
@@ -134,7 +119,7 @@ const CommentUnit = ({
 								{
 									label: '수정',
 									onPress: () =>
-										handleEditComment({ postId, commentId: id, body }),
+										navigateToEditComment({ postId, commentId: id, body }),
 								},
 								{
 									label: '삭제',

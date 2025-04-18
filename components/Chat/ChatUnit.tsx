@@ -2,10 +2,9 @@ import { Colors } from '@/constants/Color';
 import { leaveChatRoom } from '@/firebase/services/chatService';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ChatWithReceiverInfo } from '@/types/chat';
-import { ChatStackNavigation } from '@/types/navigation';
 import { elapsedTime } from '@/utilities/elapsedTime';
+import { navigateToChatRoom } from '@/utilities/navigationHelpers';
 import { FontAwesome } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
@@ -25,12 +24,7 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 		updatedAt,
 		receiverInfo,
 	} = props;
-	const stackNavigation = useNavigation<ChatStackNavigation>();
 	const userInfo = useAuthStore((state) => state.userInfo);
-
-	const enterChatRoom = ({ chatId }: { chatId: string }) => {
-		stackNavigation.navigate('ChatRoom', { chatId });
-	};
 
 	const deleteChat = async (id: string) => {
 		const title = receiverInfo.displayName || '채팅방 나가기';
@@ -76,7 +70,7 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 	return (
 		<Swipeable friction={2} renderRightActions={RightAction}>
 			<TouchableOpacity
-				onPress={() => enterChatRoom({ chatId: id })}
+				onPress={() => navigateToChatRoom({ chatId: id })}
 				style={styles.container}
 			>
 				<View style={styles.header}>

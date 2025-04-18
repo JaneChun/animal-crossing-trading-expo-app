@@ -10,10 +10,11 @@ import { useLeaveChatRoom } from '@/hooks/mutation/chat/useLeaveChatRoom';
 import { useMarkMessagesAsRead } from '@/hooks/mutation/chat/useMarkMessagesAsRead';
 import { useSendMessage } from '@/hooks/mutation/chat/useSendMessage';
 import { useReceiverInfo } from '@/hooks/query/chat/useReceiverInfo';
+import { goBack } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
-import { ChatRoomRouteProp, ChatStackNavigation } from '@/types/navigation';
+import { ChatRoomRouteProp } from '@/types/navigation';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
 	KeyboardAvoidingView,
@@ -27,7 +28,6 @@ import { FlatList } from 'react-native-gesture-handler';
 const ChatRoom = () => {
 	const route = useRoute<ChatRoomRouteProp>();
 	const { chatId } = route.params;
-	const stackNavigation = useNavigation<ChatStackNavigation>();
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const [chatInput, setChatInput] = useState('');
 	const flatListRef = useRef<FlatList>(null);
@@ -74,7 +74,7 @@ const ChatRoom = () => {
 		if (!userInfo) return;
 
 		leaveChatRoom({ userId: userInfo.uid });
-		stackNavigation.goBack();
+		goBack();
 	};
 
 	const renderMessage = ({ item }: { item: any }) => {
@@ -97,10 +97,7 @@ const ChatRoom = () => {
 		return (
 			<View style={styles.screen}>
 				<View style={styles.header}>
-					<TouchableOpacity
-						style={styles.iconContainer}
-						onPress={() => stackNavigation.navigate.pop()}
-					>
+					<TouchableOpacity style={styles.iconContainer} onPress={goBack}>
 						<Ionicons
 							name='chevron-back-outline'
 							size={24}
@@ -119,15 +116,7 @@ const ChatRoom = () => {
 		<KeyboardAvoidingView style={styles.screen} behavior='padding'>
 			{/* 헤더 */}
 			<View style={styles.header}>
-				<TouchableOpacity
-					style={styles.iconContainer}
-					onPress={() =>
-						stackNavigation.reset({
-							index: 0,
-							routes: [{ name: 'Chat' }],
-						})
-					}
-				>
+				<TouchableOpacity style={styles.iconContainer} onPress={goBack}>
 					<Ionicons
 						name='chevron-back-outline'
 						size={24}
