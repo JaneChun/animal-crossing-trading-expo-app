@@ -1,8 +1,8 @@
 import MyPosts from '@/components/Profile/MyPosts';
 import ProfileBox from '@/components/Profile/Profile';
+import SettingIcon from '@/components/Profile/SettingIcon';
 import Layout, { PADDING } from '@/components/ui/Layout';
 import LoadingIndicator from '@/components/ui/LoadingIndicator';
-import { Colors } from '@/constants/Color';
 import { getPublicUserInfo } from '@/firebase/services/userService';
 import useLoading from '@/hooks/shared/useLoading';
 import { useCurrentTab } from '@/hooks/useCurrentTab';
@@ -11,15 +11,13 @@ import { useAuthStore } from '@/stores/AuthStore';
 import { ProfileRouteProp } from '@/types/navigation';
 import { Tab } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
-import { navigateToSetting } from '@/utilities/navigationHelpers';
-import { Ionicons } from '@expo/vector-icons';
 import {
 	useFocusEffect,
 	useIsFocused,
 	useRoute,
 } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 const Profile = () => {
@@ -60,23 +58,7 @@ const Profile = () => {
 	}
 
 	return (
-		<Layout
-			title='프로필'
-			titleRightComponent={
-				isMyProfile && (
-					<TouchableOpacity
-						style={styles.iconContainer}
-						onPress={navigateToSetting}
-					>
-						<Ionicons
-							name='settings-outline'
-							color={Colors.font_gray}
-							size={24}
-						/>
-					</TouchableOpacity>
-				)
-			}
-		>
+		<Layout title='프로필' titleRightComponent={isMyProfile && SettingIcon}>
 			<FlatList
 				data={[]}
 				renderItem={null}
@@ -95,9 +77,5 @@ const Profile = () => {
 		</Layout>
 	);
 };
-
-const styles = StyleSheet.create({
-	iconContainer: { paddingRight: 5 },
-});
 
 export default Profile;
