@@ -1,8 +1,8 @@
+import { Colors } from '@/constants/Color';
 import { navigateToSetting } from '@/utilities/navigationHelpers';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const SettingIcon = (
 	<TouchableOpacity style={{ paddingRight: 5 }} onPress={navigateToSetting}>

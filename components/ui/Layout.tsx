@@ -8,7 +8,7 @@ export const PADDING = isIphoneMini ? 18 : 24;
 
 const Layout = ({
 	title,
-	titleRightComponent,
+	headerRightComponent,
 	containerStyle,
 	children,
 }: LayoutProps) => {
@@ -18,7 +18,7 @@ const Layout = ({
 			{title && (
 				<View style={styles.header}>
 					<Text style={styles.title}>{title}</Text>
-					{titleRightComponent && titleRightComponent}
+					{headerRightComponent}
 				</View>
 			)}
 

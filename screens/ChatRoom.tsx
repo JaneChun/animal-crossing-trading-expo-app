@@ -1,7 +1,7 @@
 import Message from '@/components/Chat/Message';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
-import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import Input from '@/components/ui/Input';
+import LayoutWithHeader from '@/components/ui/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/LoadingIndicator';
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
@@ -13,16 +13,9 @@ import { useReceiverInfo } from '@/hooks/query/chat/useReceiverInfo';
 import { goBack } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ChatRoomRouteProp } from '@/types/navigation';
-import { Ionicons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-	KeyboardAvoidingView,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 const ChatRoom = () => {
@@ -93,74 +86,58 @@ const ChatRoom = () => {
 		return <LoadingIndicator />;
 	}
 
-	if (!chatId || !receiverInfo) {
-		return (
-			<View style={styles.screen}>
-				<View style={styles.header}>
-					<TouchableOpacity style={styles.iconContainer} onPress={goBack}>
-						<Ionicons
-							name='chevron-back-outline'
-							size={24}
-							color={Colors.font_black}
-						/>
-					</TouchableOpacity>
-				</View>
-				<View style={styles.invalidPostContainer}>
-					<Text style={styles.invalidPostText}>채팅방을 찾을 수 없습니다.</Text>
-				</View>
-			</View>
-		);
-	}
-
 	return (
-		<KeyboardAvoidingView style={styles.screen} behavior='padding'>
-			{/* 헤더 */}
-			<View style={styles.header}>
-				<TouchableOpacity style={styles.iconContainer} onPress={goBack}>
-					<Ionicons
-						name='chevron-back-outline'
-						size={24}
-						color={Colors.font_black}
-					/>
-				</TouchableOpacity>
+		<LayoutWithHeader
+			headerCenterComponent={
+				<View style={styles.header}>
+					{/* <ImageWithFallback
+						uri={receiverInfo?.photoURL}
+						fallbackSource={require('../assets/images/empty_profile_image.png')}
+						style={styles.profileImage}
+					/> */}
 
-				<ImageWithFallback
-					uri={receiverInfo?.photoURL}
-					fallbackSource={require('../assets/images/empty_profile_image.png')}
-					style={styles.profileImage}
-				/>
-
-				<Text style={styles.displayName}>{receiverInfo.displayName}</Text>
+					<Text style={styles.displayName}>{receiverInfo?.displayName}</Text>
+				</View>
+			}
+			headerRightComponent={
 				<ActionSheetButton
 					color={Colors.font_gray}
-					size={24}
+					size={20}
 					options={[
 						{ label: '나가기', onPress: leaveChat },
 						{ label: '취소', onPress: () => {} },
 					]}
 				/>
-			</View>
-
-			{/* 본문 */}
-			<FlatList
-				ref={flatListRef}
-				data={messages}
-				keyExtractor={({ id }) => id}
-				renderItem={renderMessage}
-				contentContainerStyle={styles.content}
-				inverted={true}
-			/>
-
-			{/* 인풋 */}
-			{receiverInfo.displayName !== DEFAULT_USER_DISPLAY_NAME && (
-				<Input
-					input={chatInput}
-					setInput={setChatInput}
-					placeholder='메세지 보내기'
-					onPress={onSubmit}
+			}
+			isInvalid={!chatId || !receiverInfo}
+			invalidPage={
+				<View style={styles.invalidPostContainer}>
+					<Text style={styles.invalidPostText}>채팅방을 찾을 수 없습니다.</Text>
+				</View>
+			}
+		>
+			<KeyboardAvoidingView style={styles.screen} behavior='padding'>
+				{/* 메세지 목록 */}
+				<FlatList
+					ref={flatListRef}
+					data={messages}
+					keyExtractor={({ id }) => id}
+					renderItem={renderMessage}
+					contentContainerStyle={styles.flatListContainer}
+					inverted={true}
 				/>
-			)}
-		</KeyboardAvoidingView>
+
+				{/* 인풋 */}
+				{receiverInfo?.displayName !== DEFAULT_USER_DISPLAY_NAME && (
+					<Input
+						input={chatInput}
+						setInput={setChatInput}
+						placeholder='메세지 보내기'
+						onPress={onSubmit}
+					/>
+				)}
+			</KeyboardAvoidingView>
+		</LayoutWithHeader>
 	);
 };
 
@@ -169,31 +146,24 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: 'white',
 	},
-	content: {
-		padding: 24,
-	},
 	header: {
 		flexDirection: 'row',
+		justifyContent: 'center',
 		alignItems: 'center',
-		paddingHorizontal: 12,
-		paddingVertical: 8,
-		borderBottomWidth: 1,
-		borderBottomColor: Colors.border_gray,
 	},
 	profileImage: {
-		width: 40,
-		height: 40,
+		width: 28,
+		height: 28,
 		borderRadius: 20,
 		marginLeft: 4,
 		marginRight: 8,
 	},
 	displayName: {
-		flex: 1,
 		fontSize: 16,
 		fontWeight: 'bold',
 	},
-	iconContainer: {
-		padding: 5,
+	flatListContainer: {
+		padding: 24,
 	},
 	dateSeparator: {
 		alignItems: 'center',

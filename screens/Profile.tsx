@@ -58,7 +58,7 @@ const Profile = () => {
 	}
 
 	return (
-		<Layout title='프로필' titleRightComponent={isMyProfile && SettingIcon}>
+		<Layout title='프로필' headerRightComponent={isMyProfile && SettingIcon}>
 			<FlatList
 				data={[]}
 				renderItem={null}

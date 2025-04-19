@@ -284,7 +284,16 @@ export type LayoutProps = {
 	children: ReactNode;
 	containerStyle?: StyleProp<ViewStyle>;
 	title?: string;
-	titleRightComponent?: React.ReactNode;
+	headerRightComponent?: React.ReactNode;
+};
+
+export type LayoutWithHeaderProps = {
+	headerCenterComponent?: ReactNode;
+	headerRightComponent?: ReactNode;
+	children: ReactNode;
+	containerStyle?: StyleProp<ViewStyle>;
+	isInvalid?: boolean;
+	invalidPage?: ReactNode;
 };
 
 export type CategoriesProps = {
