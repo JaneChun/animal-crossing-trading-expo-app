@@ -26,7 +26,10 @@ export const usePostDetail = <C extends Collection>(
 ) => {
 	return useQuery<PostWithCreatorInfo<C> | null>({
 		queryKey: ['postDetail', collectionName, id],
-		queryFn: () => fetchPostDetail(collectionName, id),
+		queryFn: () => {
+			if (!collectionName || !id) return null;
+			return fetchPostDetail(collectionName, id);
+		},
 		enabled: !!collectionName && !!id,
 	});
 };

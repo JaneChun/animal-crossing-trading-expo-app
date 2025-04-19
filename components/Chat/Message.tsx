@@ -17,7 +17,7 @@ const Message = ({
 }) => {
 	const userInfo = useAuthStore((state) => state.userInfo);
 
-	// system 메시지가 아닐 경우에는 post 쿼리를 실행하지 않음
+	// system 메시지가 아닐 경우에는 usePostDetail 호출하지 않음
 	const { postId, collectionName } = useMemo(() => {
 		if (message.senderId !== 'system')
 			return { postId: null, collectionName: null };
@@ -39,6 +39,7 @@ const Message = ({
 		.toDate()
 		.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
 
+	// system 메시지일 경우 → post summary 출력
 	if (message.senderId === 'system') {
 		return (
 			<View style={styles.postSummaryContainer}>
@@ -53,6 +54,7 @@ const Message = ({
 		);
 	}
 
+	// 일반 메시지 (내가 보낸 거 vs 받은 거)
 	return message.senderId === userInfo?.uid ? (
 		<View style={[styles.messageContainer, { alignSelf: 'flex-end' }]}>
 			{message.isReadBy.includes(receiverId) && (

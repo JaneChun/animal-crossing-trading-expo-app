@@ -52,7 +52,7 @@ const RootStackNavigator = () => {
 			<RootStack.Screen
 				name='ChatRoom'
 				component={ChatRoom}
-				options={commonOptions}
+				options={{ ...commonOptions, headerShown: false }}
 			/>
 			<RootStack.Screen
 				name='Setting'
