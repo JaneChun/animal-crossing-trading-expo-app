@@ -1,33 +1,47 @@
 import { db } from '@/fbase';
 import { fetchAndPopulateReceiverInfo } from '@/firebase/services/chatService';
 import { useAuthStore } from '@/stores/AuthStore';
-import { useChatCountStore } from '@/stores/ChatCountStore';
 import { Chat, ChatWithReceiverInfo } from '@/types/chat';
 import {
 	collection,
 	onSnapshot,
 	orderBy,
+	Query,
 	query,
 	where,
 } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { create } from 'zustand';
 
-const useGetChats = () => {
+interface ChatStoreState {
+	chats: ChatWithReceiverInfo[];
+	setChats: (c: ChatWithReceiverInfo[]) => void;
+	unreadCount: number;
+	setUnreadCount: (n: number) => void;
+	isLoading: boolean;
+	setIsLoading: (b: boolean) => void;
+}
+
+export const useChatStore = create<ChatStoreState>((set) => ({
+	chats: [],
+	setChats: (c) => set({ chats: c }),
+	unreadCount: 0,
+	setUnreadCount: (n) => set({ unreadCount: n }),
+	isLoading: false,
+	setIsLoading: (b) => set({ isLoading: b }),
+}));
+
+export const useChatSubscriptionInitializer = () => {
 	const userInfo = useAuthStore((state) => state.userInfo);
-	const [chats, setChats] = useState<ChatWithReceiverInfo[]>([]);
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const setUnreadCount = useChatCountStore((state) => state.setCount);
+	const setChats = useChatStore((state) => state.setChats);
+	const setUnreadCount = useChatStore((state) => state.setUnreadCount);
+	const setIsLoading = useChatStore((state) => state.setIsLoading);
 
 	// 채팅방 목록 실시간 구독
 	useEffect(() => {
-		if (!userInfo) {
-			setChats([]);
-			setIsLoading(false);
-			setUnreadCount(0);
-			return;
-		}
+		if (!userInfo) return;
 
-		const q = query(
+		const q: Query = query(
 			collection(db, 'Chats'),
 			where('participants', 'array-contains', userInfo.uid), // 내가 포함된 채팅방
 			orderBy('updatedAt', 'desc'), // 최신 메시지가 있는 채팅방부터 정렬
@@ -57,8 +71,4 @@ const useGetChats = () => {
 
 		return () => unsubscribe();
 	}, [userInfo]);
-
-	return { chats, isLoading };
 };
-
-export default useGetChats;
