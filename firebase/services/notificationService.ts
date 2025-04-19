@@ -14,7 +14,7 @@ export const fetchAndPopulateSenderInfo = async <
 	U,
 >(
 	q: Query,
-) => {
+): Promise<{ data: U[] }> => {
 	return firestoreRequest('알림 조회', async () => {
 		const querySnapshot = await getDocs(q);
 

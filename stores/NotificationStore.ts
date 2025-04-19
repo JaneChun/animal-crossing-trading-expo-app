@@ -1,12 +1,9 @@
 import { db } from '@/fbase';
 import { fetchAndPopulateSenderInfo } from '@/firebase/services/notificationService';
-import { useAuthStore } from '@/stores/AuthStore';
-import { useNotificationCountStore } from '@/stores/NotificationCountStore';
 import {
 	Notification,
 	NotificationWithReceiverInfo,
 } from '@/types/notification';
-import { Collection } from '@/types/post';
 import {
 	collection,
 	onSnapshot,
@@ -15,34 +12,45 @@ import {
 	query,
 	where,
 } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { create } from 'zustand';
+import { useAuthStore } from './AuthStore';
 
-const useGetNotifications = (collectionName?: Collection) => {
+interface NotificationStoreState {
+	notifications: NotificationWithReceiverInfo[];
+	setNotifications: (n: NotificationWithReceiverInfo[]) => void;
+	unreadCount: number;
+	setUnreadCount: (n: number) => void;
+	isLoading: boolean;
+	setIsLoading: (b: boolean) => void;
+}
+
+export const useNotificationStore = create<NotificationStoreState>((set) => ({
+	notifications: [],
+	setNotifications: (n) => set({ notifications: n }),
+	unreadCount: 0,
+	setUnreadCount: (n) => set({ unreadCount: n }),
+	isLoading: false,
+	setIsLoading: (b) => set({ isLoading: b }),
+}));
+
+export const useNotificationSubscriptionInitializer = () => {
 	const userInfo = useAuthStore((state) => state.userInfo);
-	const [notifications, setNotifications] = useState<
-		NotificationWithReceiverInfo[]
-	>([]);
-	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const setUnreadCount = useNotificationCountStore((state) => state.setCount);
+	const setNotifications = useNotificationStore(
+		(state) => state.setNotifications,
+	);
+	const setUnreadCount = useNotificationStore((state) => state.setUnreadCount);
+	const setIsLoading = useNotificationStore((state) => state.setIsLoading);
 
 	// 알림 목록 실시간 구독
 	useEffect(() => {
-		if (!userInfo) {
-			setNotifications([]);
-			setIsLoading(false);
-			setUnreadCount(0);
-			return;
-		}
+		if (!userInfo) return;
 
-		let q: Query = query(
+		const q: Query = query(
 			collection(db, 'Notifications'),
 			where('receiverId', '==', userInfo.uid), // 내가 수신한 알림
 			orderBy('createdAt', 'desc'), // 최신순 정렬
 		);
-
-		if (collectionName) {
-			q = query(q, where('type', '==', collectionName));
-		}
 
 		const unsubscribe = onSnapshot(q, async () => {
 			setIsLoading(true);
@@ -51,6 +59,7 @@ const useGetNotifications = (collectionName?: Collection) => {
 				Notification,
 				NotificationWithReceiverInfo
 			>(q);
+
 			setNotifications(data);
 
 			// 안읽은 알림 수 계산 & 전역 상태에 저장
@@ -65,9 +74,5 @@ const useGetNotifications = (collectionName?: Collection) => {
 		});
 
 		return () => unsubscribe();
-	}, [userInfo, collectionName]);
-
-	return { notifications, isLoading };
+	}, [userInfo]);
 };
-
-export default useGetNotifications;

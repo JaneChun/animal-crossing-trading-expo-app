@@ -13,6 +13,7 @@ import { navigationRef } from './navigation/RootNavigation';
 import RootStackNavigator from './navigation/RootStackNavigator';
 import ErrorBoundary from './screens/ErrorBoundary';
 import { useAuthInitializer } from './stores/AuthStore';
+import { useNotificationSubscriptionInitializer } from './stores/NotificationStore';
 import { usePushNotificationInitializer } from './stores/PushNotificationStore';
 
 const prefix = Linking.createURL('/');
@@ -46,6 +47,7 @@ const linking = {
 export default function App() {
 	useAuthInitializer();
 	usePushNotificationInitializer();
+	useNotificationSubscriptionInitializer();
 
 	const queryClient = new QueryClient({
 		defaultOptions: { queries: { retry: 2 } },

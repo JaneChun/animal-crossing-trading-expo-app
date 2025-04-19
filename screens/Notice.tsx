@@ -4,7 +4,7 @@ import TabBarLabel from '@/components/Notice/TabBarLabel';
 import Layout from '@/components/ui/Layout';
 import LoadingIndicator from '@/components/ui/LoadingIndicator';
 import { Colors } from '@/constants/Color';
-import useGetNotifications from '@/hooks/firebase/useGetNotifications';
+import { useNotificationStore } from '@/stores/NotificationStore';
 import { Collection } from '@/types/post';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React from 'react';
@@ -12,7 +12,8 @@ import { StyleSheet } from 'react-native';
 
 const Notice = () => {
 	const Tab = createMaterialTopTabNavigator();
-	const { notifications, isLoading } = useGetNotifications();
+	const notifications = useNotificationStore((state) => state.notifications);
+	const isLoading = useNotificationStore((state) => state.isLoading);
 
 	const marketNotifications = notifications.filter(
 		({ type }: { type: Collection }) => type === 'Boards',
