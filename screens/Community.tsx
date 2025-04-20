@@ -1,4 +1,5 @@
 import PostList from '@/components/Home/PostList';
+import SearchIcon from '@/components/Search/SearchIcon';
 import Categories from '@/components/ui/Categories';
 import Layout, { PADDING } from '@/components/ui/Layout';
 import { CATEGORIES } from '@/constants/post';
@@ -21,7 +22,7 @@ const Community = () => {
 	);
 
 	return (
-		<Layout title='커뮤니티'>
+		<Layout title='커뮤니티' headerRightComponent={SearchIcon}>
 			<Categories
 				categories={CATEGORIES}
 				category={category}

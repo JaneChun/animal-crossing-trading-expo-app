@@ -67,6 +67,7 @@ export type PostWithCreatorInfo<C extends Collection> = Post<C> & CreatorInfo;
 export type PostDoc<C extends Collection> = Post<C> & {
 	isDeleted: boolean;
 	updatedAt?: Timestamp;
+	searchKeywords: string[];
 };
 
 export interface CreatorInfo {

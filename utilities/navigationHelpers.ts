@@ -6,6 +6,11 @@ import {
 } from '@/navigation/RootNavigation';
 import { Collection } from '@/types/post';
 
+// Search/
+export const navigateToSearch = () => {
+	navigateWithoutParams('Search');
+};
+
 // NewPost/
 export const navigateToPost = ({
 	postId,

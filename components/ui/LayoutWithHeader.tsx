@@ -19,12 +19,15 @@ const LayoutWithHeader = ({
 	headerCenterComponent,
 	headerRightComponent,
 	children,
+	hasBorderBottom = true,
 	isInvalid = false,
 	invalidPage,
 }: LayoutWithHeaderProps) => {
 	return (
 		<View style={[styles.screen, containerStyle]}>
-			<View style={styles.header}>
+			<View
+				style={[styles.header, hasBorderBottom && { borderBottomWidth: 1 }]}
+			>
 				<TouchableOpacity style={styles.iconContainer} onPress={goBack}>
 					<Ionicons
 						name='chevron-back-outline'
@@ -63,7 +66,6 @@ const styles = StyleSheet.create({
 	header: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		borderBottomWidth: 1,
 		borderBottomColor: Colors.border_gray,
 	},
 	iconContainer: {

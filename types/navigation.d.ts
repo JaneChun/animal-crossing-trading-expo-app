@@ -12,6 +12,7 @@ export type RootStackParamList = {
 	ChatRoom: { chatId: string };
 	Profile: { userId?: string }; // 다른 유저 프로필 조회 시 userId 전달
 	Setting: undefined;
+	Search: undefined;
 };
 
 export type RootStackNavigation = NativeStackNavigationProp<RootStackParamList>;

@@ -6,6 +6,10 @@ import {
 	UpdatePostRequest,
 } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
+import {
+	generateSearchKeywords,
+	pickPostFieldsForSearchKeywords,
+} from '@/utilities/generateSearchKeywords';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { toPost } from '@/utilities/toPost';
 import { DocumentData, getDocs, Query, Timestamp } from 'firebase/firestore';
@@ -80,7 +84,7 @@ export const getPost = async <C extends Collection>(
 			id: postId,
 		})) as PostDoc<C>;
 
-		return docData ? toPost(docData) : null;
+		return docData ? toPost(collectionName, docData) : null;
 	});
 };
 
@@ -102,6 +106,7 @@ export const createPost = async <C extends Collection>({
 				createdAt: Timestamp.now(),
 				isDeleted: false,
 				commentCount: 0,
+				searchKeywords: generateSearchKeywords({ collectionName, requestData }),
 			},
 		});
 
@@ -119,10 +124,33 @@ export const updatePost = async <C extends Collection>({
 	requestData: UpdatePostRequest<C>;
 }): Promise<void> => {
 	return firestoreRequest('게시글 수정', async () => {
+		// ① 기존 게시글 불러오기
+		const existingPost = await getPost(collectionName, postId);
+
+		if (!existingPost) {
+			throw new Error('게시글을 찾을 수 없습니다.');
+		}
+
+		// ② 기존 데이터와 수정 데이터 병합
+		const fullData: CreatePostRequest<C> = {
+			...pickPostFieldsForSearchKeywords(existingPost, collectionName),
+			...requestData,
+		};
+
+		// ③ 키워드 재생성
+		const updatedKeywords = generateSearchKeywords({
+			collectionName,
+			requestData: fullData,
+		});
+
 		await updateDocToFirestore({
 			collection: collectionName,
 			id: postId,
-			requestData: { ...requestData, updatedAt: Timestamp.now() },
+			requestData: {
+				...requestData,
+				updatedAt: Timestamp.now(),
+				searchKeywords: updatedKeywords,
+			},
 		});
 	});
 };

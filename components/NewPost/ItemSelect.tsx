@@ -1,7 +1,8 @@
 import { Colors } from '@/constants/Color';
+import { CATEGORIES } from '@/constants/post';
 import useLoading from '@/hooks/shared/useLoading';
 import { ItemSelectProps } from '@/types/components';
-import { Item } from '@/types/post';
+import { Category, Item } from '@/types/post';
 import axios from 'axios';
 import { debounce } from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -25,7 +26,7 @@ const ItemSelect = ({
 	labelStyle,
 }: ItemSelectProps) => {
 	const { isLoading: isFetching, setIsLoading: setIsFetching } = useLoading();
-	const [category, setCategory] = useState<string>('All');
+	const [category, setCategory] = useState<Category>('all');
 	const [itemData, setItemData] = useState<Item[]>([]);
 	const [searchInput, setSearchInput] = useState<string>('');
 	const [searchedItemData, setSearchedItemData] = useState<Item[]>([]);
@@ -39,12 +40,12 @@ const ItemSelect = ({
 			try {
 				const response = await axios.get(
 					`${process.env.EXPO_PUBLIC_DATABASE_URL}/items${
-						category === 'All' ? '' : `/${category}`
+						category === 'all' ? '' : `/${category}`
 					}.json`,
 				);
 
 				if (response.status === 200) {
-					if (category === 'All') {
+					if (category === 'all') {
 						const flattened = Object.values(response.data).flat() as Item[];
 						setItemData(flattened);
 					} else {
@@ -96,7 +97,7 @@ const ItemSelect = ({
 
 			{/* 카테고리 칩 */}
 			<Categories
-				categories={categories}
+				categories={CATEGORIES}
 				category={category}
 				setCategory={setCategory}
 			/>
@@ -148,7 +149,6 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
-
 	emptyText: {
 		fontSize: 14,
 		color: Colors.font_gray,
@@ -196,27 +196,3 @@ const styles = StyleSheet.create({
 });
 
 export default ItemSelect;
-
-const categories = [
-	{ KR: '전체', EN: 'All' },
-	{ KR: '가구', EN: 'Houswares' },
-	{ KR: '잡화', EN: 'Miscellaneous' },
-	{ KR: '벽걸이', EN: 'Wallmounted' },
-	{ KR: '레시피', EN: 'Recipes' },
-	{ KR: '요리', EN: 'Food' },
-	{ KR: '모자', EN: 'Headwear' },
-	{ KR: '상의', EN: 'Tops' },
-	{ KR: '하의', EN: 'Bottoms' },
-	{ KR: '원피스', EN: 'DressUp' },
-	{ KR: '양말', EN: 'Socks' },
-	{ KR: '가방', EN: 'Bags' },
-	{ KR: '신발', EN: 'Shoes' },
-	{ KR: '악세사리', EN: 'Accessories' },
-	{ KR: '우산', EN: 'Umbrellas' },
-	{ KR: '천장', EN: 'CeilingDecor' },
-	{ KR: '벽지', EN: 'Wallpaper' },
-	{ KR: '바닥', EN: 'Floors' },
-	{ KR: '러그', EN: 'Rugs' },
-	{ KR: '음악', EN: 'Music' },
-	{ KR: '토용', EN: 'Gyroids' },
-];

@@ -5,6 +5,7 @@ import EditComment from '@/screens/EditComment';
 import NewPost from '@/screens/NewPost';
 import PostDetail from '@/screens/PostDetail';
 import Profile from '@/screens/Profile';
+import Search from '@/screens/Search';
 import Setting from '@/screens/Setting';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainTabNavigator from './MainTabNavigator';
@@ -58,6 +59,11 @@ const RootStackNavigator = () => {
 				name='Setting'
 				component={Setting}
 				options={commonOptions}
+			/>
+			<RootStack.Screen
+				name='Search'
+				component={Search}
+				options={{ ...commonOptions, headerShown: false }}
 			/>
 		</RootStack.Navigator>
 	);
