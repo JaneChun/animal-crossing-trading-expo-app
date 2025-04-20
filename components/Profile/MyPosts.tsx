@@ -5,7 +5,11 @@ import Layout, { PADDING } from '../ui/Layout';
 
 const MyPosts = ({ profileInfo }: { profileInfo: PublicUserInfo }) => {
 	return (
-		<Layout title='작성한 글'>
+		<Layout
+			title='작성한 글'
+			containerStyle={{ paddingTop: PADDING }}
+			headerStyle={{ paddingBottom: 0 }}
+		>
 			<PostList
 				collectionName='Boards'
 				filter={{ creatorId: profileInfo?.uid }}

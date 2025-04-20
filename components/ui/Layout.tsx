@@ -10,13 +10,14 @@ const Layout = ({
 	title,
 	headerRightComponent,
 	containerStyle,
+	headerStyle,
 	children,
 }: LayoutProps) => {
 	return (
 		<View style={[styles.screen, containerStyle]}>
 			{/* 헤더나 제목 등 패딩이 필요한 부분 */}
 			{title && (
-				<View style={styles.header}>
+				<View style={[styles.header, headerStyle]}>
 					<Text style={styles.title}>{title}</Text>
 					{headerRightComponent}
 				</View>
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
 	},
 	header: {
 		paddingHorizontal: PADDING,
-		paddingTop: PADDING,
+		// paddingTop: PADDING,
 		paddingBottom: PADDING / 2,
 		flexDirection: 'row',
 		alignItems: 'center',

@@ -283,6 +283,7 @@ export type InputProps = {
 export type LayoutProps = {
 	children: ReactNode;
 	containerStyle?: StyleProp<ViewStyle>;
+	headerStyle?: StyleProp<ViewStyle>;
 	title?: string;
 	headerRightComponent?: React.ReactNode;
 };
@@ -291,6 +292,7 @@ export type LayoutWithHeaderProps = {
 	headerCenterComponent?: ReactNode;
 	headerRightComponent?: ReactNode;
 	children: ReactNode;
+	hasBorderBottom?: boolean;
 	containerStyle?: StyleProp<ViewStyle>;
 	isInvalid?: boolean;
 	invalidPage?: ReactNode;
