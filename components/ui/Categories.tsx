@@ -1,25 +1,33 @@
 import { Colors } from '@/constants/Color';
 import { CategoriesProps } from '@/types/components';
-import { CategoryItem } from '@/types/post';
+import {
+	Category,
+	CategoryItem,
+	ItemCategory,
+	ItemCategoryItem,
+} from '@/types/post';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const Categories = ({
+const Categories = <
+	T extends Category | ItemCategory,
+	U extends CategoryItem | ItemCategoryItem,
+>({
 	categories,
 	category,
 	setCategory,
 	containerStyle,
-}: CategoriesProps) => {
+}: CategoriesProps<T, U>) => {
 	return (
 		<View style={[styles.categoriesContainer, containerStyle]}>
-			{categories.map((item: CategoryItem) => (
+			{categories.map((item: U) => (
 				<TouchableOpacity
 					key={item.EN}
 					style={[
 						styles.category,
 						category === item.EN && styles.categorySelected,
 					]}
-					onPress={() => setCategory(item.EN)}
+					onPress={() => setCategory(item.EN as T)}
 				>
 					<Text
 						style={[

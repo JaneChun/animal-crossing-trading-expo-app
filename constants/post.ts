@@ -30,3 +30,27 @@ export const TAB_COLLECTION_CONFIG = {
 	Chat: { collection: 'Boards' },
 	Profile: { collection: 'Boards' },
 } as const;
+
+export const ITEM_CATEGORIES = [
+	{ KR: '전체', EN: 'All' },
+	{ KR: '가구', EN: 'Houswares' },
+	{ KR: '잡화', EN: 'Miscellaneous' },
+	{ KR: '벽걸이', EN: 'Wallmounted' },
+	{ KR: '레시피', EN: 'Recipes' },
+	{ KR: '요리', EN: 'Food' },
+	{ KR: '모자', EN: 'Headwear' },
+	{ KR: '상의', EN: 'Tops' },
+	{ KR: '하의', EN: 'Bottoms' },
+	{ KR: '원피스', EN: 'DressUp' },
+	{ KR: '양말', EN: 'Socks' },
+	{ KR: '가방', EN: 'Bags' },
+	{ KR: '신발', EN: 'Shoes' },
+	{ KR: '악세사리', EN: 'Accessories' },
+	{ KR: '우산', EN: 'Umbrellas' },
+	{ KR: '천장', EN: 'CeilingDecor' },
+	{ KR: '벽지', EN: 'Wallpaper' },
+	{ KR: '바닥', EN: 'Floors' },
+	{ KR: '러그', EN: 'Rugs' },
+	{ KR: '음악', EN: 'Music' },
+	{ KR: '토용', EN: 'Gyroids' },
+] as const;

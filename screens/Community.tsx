@@ -5,7 +5,7 @@ import Layout, { PADDING } from '@/components/ui/Layout';
 import { CATEGORIES } from '@/constants/post';
 import { useCurrentTab } from '@/hooks/useCurrentTab';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
-import { Category, Tab } from '@/types/post';
+import { Category, CategoryItem, Tab } from '@/types/post';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
 
@@ -23,7 +23,7 @@ const Community = () => {
 
 	return (
 		<Layout title='커뮤니티' headerRightComponent={SearchIcon}>
-			<Categories
+			<Categories<Category, CategoryItem>
 				categories={CATEGORIES}
 				category={category}
 				setCategory={setCategory}

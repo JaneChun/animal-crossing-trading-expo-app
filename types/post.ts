@@ -1,5 +1,6 @@
 import {
 	COMMUNITY_TYPES,
+	ITEM_CATEGORIES,
 	MARKET_TYPES,
 	TAB_COLLECTION_CONFIG,
 } from '@/constants/post';
@@ -29,6 +30,10 @@ export type CommunityType = (typeof COMMUNITY_TYPES)[number]['EN'];
 // 커뮤니티탭 카테고리
 export type CategoryItem = CommunityTypeItem | { KR: '전체'; EN: 'all' };
 export type Category = CommunityType | 'all';
+
+// 아이템 카테고리
+export type ItemCategoryItem = (typeof ITEM_CATEGORIES)[number];
+export type ItemCategory = (typeof ITEM_CATEGORIES)[number]['EN'];
 
 // 공통 필드
 export interface CommonPostFields {

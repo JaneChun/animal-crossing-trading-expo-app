@@ -1,8 +1,8 @@
 import { Colors } from '@/constants/Color';
-import { CATEGORIES } from '@/constants/post';
+import { ITEM_CATEGORIES } from '@/constants/post';
 import useLoading from '@/hooks/shared/useLoading';
 import { ItemSelectProps } from '@/types/components';
-import { Category, Item } from '@/types/post';
+import { Item, ItemCategory, ItemCategoryItem } from '@/types/post';
 import axios from 'axios';
 import { debounce } from 'lodash';
 import React, { useEffect, useState } from 'react';
@@ -26,7 +26,7 @@ const ItemSelect = ({
 	labelStyle,
 }: ItemSelectProps) => {
 	const { isLoading: isFetching, setIsLoading: setIsFetching } = useLoading();
-	const [category, setCategory] = useState<Category>('all');
+	const [category, setCategory] = useState<ItemCategory>('All');
 	const [itemData, setItemData] = useState<Item[]>([]);
 	const [searchInput, setSearchInput] = useState<string>('');
 	const [searchedItemData, setSearchedItemData] = useState<Item[]>([]);
@@ -40,12 +40,12 @@ const ItemSelect = ({
 			try {
 				const response = await axios.get(
 					`${process.env.EXPO_PUBLIC_DATABASE_URL}/items${
-						category === 'all' ? '' : `/${category}`
+						category === 'All' ? '' : `/${category}`
 					}.json`,
 				);
 
 				if (response.status === 200) {
-					if (category === 'all') {
+					if (category === 'All') {
 						const flattened = Object.values(response.data).flat() as Item[];
 						setItemData(flattened);
 					} else {
@@ -96,8 +96,8 @@ const ItemSelect = ({
 			/>
 
 			{/* 카테고리 칩 */}
-			<Categories
-				categories={CATEGORIES}
+			<Categories<ItemCategory, ItemCategoryItem>
+				categories={ITEM_CATEGORIES}
 				category={category}
 				setCategory={setCategory}
 			/>

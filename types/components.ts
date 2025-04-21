@@ -13,8 +13,6 @@ import { CommentWithCreatorInfo } from './comment';
 import { NotificationWithReceiverInfo } from './notification';
 import {
 	CartItem,
-	Category,
-	CategoryItem,
 	Collection,
 	CommunityType,
 	MarketType,
@@ -298,10 +296,10 @@ export type LayoutWithHeaderProps = {
 	invalidPage?: ReactNode;
 };
 
-export type CategoriesProps = {
-	categories: CategoryItem[];
-	category: Category;
-	setCategory: Dispatch<SetStateAction<Category>>;
+export type CategoriesProps<T, U> = {
+	categories: readonly U[];
+	category: T;
+	setCategory: Dispatch<SetStateAction<T>>;
 	containerStyle?: StyleProp<ViewStyle>;
 };
 
