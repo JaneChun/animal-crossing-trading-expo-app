@@ -15,6 +15,7 @@ import {
 	CartItem,
 	Collection,
 	CommunityType,
+	Item,
 	MarketType,
 	Post,
 	PostWithCreatorInfo,
@@ -125,6 +126,13 @@ export type ItemSelectProps = {
 	setCart: Dispatch<SetStateAction<CartItem[]>>;
 	containerStyle?: StyleProp<ViewStyle>;
 	labelStyle?: StyleProp<TextStyle>;
+};
+
+export type ItemSelectItemProps = {
+	item: Item;
+	searchInput: string;
+	cart: CartItem[];
+	setCart: Dispatch<SetStateAction<CartItem[]>>;
 };
 
 export type EditableItemProps = {
@@ -332,3 +340,10 @@ export interface ImageWithFallbackProps extends Omit<ImageProps, 'source'> {
 	style?: any;
 	priority?: ImagePriority;
 }
+
+export type HighlightMatchProps = {
+	text: string;
+	keyword: string;
+	textStyle: TextStyle;
+	highlightTextStyle: TextStyle;
+};

@@ -6,7 +6,7 @@ const ItemSummaryList = ({ cart, containerStyle }: ItemSummaryListProps) => {
 	return (
 		<FlatList
 			data={cart}
-			keyExtractor={(item, index) => item.UniqueEntryID ?? index.toString()}
+			keyExtractor={(item) => item.id}
 			style={containerStyle}
 			renderItem={({ item }) => <EditableItem item={item} readonly />}
 		/>

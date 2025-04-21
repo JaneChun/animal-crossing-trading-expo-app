@@ -1,42 +1,62 @@
-// hooks/useItemSearch.ts
 import { db } from '@/fbase';
-import { Collection } from '@/types/post';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { queryDocs } from '@/firebase/core/firestoreService';
+import { Item, ItemCategory } from '@/types/post';
+import { collection, limit, Query, query, where } from 'firebase/firestore';
 import { debounce } from 'lodash';
 import { useEffect, useState } from 'react';
 
-export const useItemSearch = (collectionName: Collection, keyword: string) => {
-	const [results, setResults] = useState<any[]>([]);
-	const [loading, setLoading] = useState(false);
+export const useItemSearch = ({
+	keyword,
+	category,
+	size,
+}: {
+	keyword: string;
+	category?: ItemCategory;
+	size?: number;
+}) => {
+	const [items, setItems] = useState<Item[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	useEffect(() => {
-		// debounce 적용: 300ms 후 실행
-		const debouncedSearch = debounce(async () => {
-			if (!keyword.trim()) return setResults([]);
+		const fetchItems = async () => {
+			const trimmed = keyword?.trim() || '';
 
-			setLoading(true);
+			if (trimmed.length < 2) {
+				setItems([]);
+				setIsLoading(false);
+				return;
+			}
+
+			setIsLoading(true);
 			try {
-				const q = query(
-					collection(db, collectionName),
-					where('searchKeywords', 'array-contains', keyword),
-				);
+				let q: Query = collection(db, 'Items');
 
-				const snapshot = await getDocs(q);
-				const data = snapshot.docs.map((doc) => ({
-					id: doc.id,
-					...doc.data(),
-				}));
+				q = query(q, where('searchKeywords', 'array-contains', trimmed));
 
-				setResults(data);
+				if (category && category !== 'All') {
+					q = query(q, where('category', '==', category));
+				}
+
+				if (size) {
+					q = query(q, limit(size));
+				}
+
+				const data = await queryDocs<Item>(q);
+
+				setItems(data);
 			} catch (err) {
 				console.log('검색 오류:', err);
+				setItems([]);
 			}
-			setLoading(false);
-		}, 300);
 
-		debouncedSearch();
-		return () => debouncedSearch.cancel();
-	}, [keyword]);
+			setIsLoading(false);
+		};
 
-	return { results, loading };
+		const debouncedFetch = debounce(fetchItems, 300);
+		debouncedFetch();
+
+		return () => debouncedFetch.cancel();
+	}, [category, keyword]);
+
+	return { items, isLoading };
 };

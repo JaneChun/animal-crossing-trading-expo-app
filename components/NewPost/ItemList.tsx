@@ -19,17 +19,13 @@ const ItemList = ({
 	const updateItemFromCart = (updatedCartItem: CartItem) => {
 		setCart((prevCart) =>
 			prevCart.map((cartItem) =>
-				cartItem.UniqueEntryID === updatedCartItem.UniqueEntryID
-					? updatedCartItem
-					: cartItem,
+				cartItem.id === updatedCartItem.id ? updatedCartItem : cartItem,
 			),
 		);
 	};
 
 	const deleteItemFromCart = (deleteCartItemId: string) => {
-		setCart(
-			cart.filter((cartItem) => cartItem.UniqueEntryID !== deleteCartItemId),
-		);
+		setCart(cart.filter((cartItem) => cartItem.id !== deleteCartItemId));
 	};
 
 	const openEditModal = (item: CartItem) => {
@@ -48,7 +44,7 @@ const ItemList = ({
 
 			<FlatList
 				data={cart}
-				keyExtractor={(item, index) => item.UniqueEntryID ?? index.toString()}
+				keyExtractor={(item, index) => item.id ?? index.toString()}
 				renderItem={({ item }) => (
 					<TouchableOpacity onPress={() => openEditModal(item)}>
 						<EditableItem item={item} onDeleteItem={deleteItemFromCart} />

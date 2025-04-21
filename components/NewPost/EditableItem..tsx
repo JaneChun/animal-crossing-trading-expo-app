@@ -50,7 +50,7 @@ const EditableItem = ({
 			{!readonly && onDeleteItem && (
 				<TouchableOpacity
 					style={styles.deleteButton}
-					onPress={() => onDeleteItem(item.UniqueEntryID)}
+					onPress={() => onDeleteItem(item.id)}
 				>
 					<FontAwesome6 name='circle-minus' size={18} color={Colors.primary} />
 				</TouchableOpacity>

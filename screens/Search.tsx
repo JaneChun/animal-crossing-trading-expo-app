@@ -1,33 +1,29 @@
-import SearchIcon from '@/components/Search/SearchIcon';
+import SearchResultItem from '@/components/Search/SearchResultItem';
 import LayoutWithHeader from '@/components/ui/LayoutWithHeader';
 import { Colors } from '@/constants/Color';
 import { useItemSearch } from '@/hooks/firebase/useItemSearch';
-import { usePostContext } from '@/hooks/shared/usePostContext';
+import { goBack } from '@/navigation/RootNavigation';
+import { Item } from '@/types/post';
 import { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import {
+	StyleSheet,
+	Text,
+	TextInput,
+	TouchableOpacity,
+	View,
+} from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 const Search = () => {
-	const { collectionName } = usePostContext();
 	const [searchInput, setSearchInput] = useState<string>('');
-	const { results, loading } = useItemSearch(collectionName, searchInput);
+	const { items, isLoading } = useItemSearch({
+		keyword: searchInput,
+		size: 5,
+	});
 
-	const highlightMatch = (text: string, keyword: string) => {
-		if (!keyword) return <Text>{text}</Text>;
-
-		const regex = new RegExp(`(${keyword})`, 'gi');
-		const parts = text.split(regex);
-
-		return parts.map((part, index) =>
-			part.toLowerCase() === keyword.toLowerCase() ? (
-				<Text key={index} style={styles.highlight}>
-					{part}
-				</Text>
-			) : (
-				<Text key={index}>{part}</Text>
-			),
-		);
-	};
+	const renderSearchResultItem = ({ item }: { item: Item }) => (
+		<SearchResultItem item={item} searchInput={searchInput} />
+	);
 
 	return (
 		<LayoutWithHeader
@@ -39,24 +35,27 @@ const Search = () => {
 					onChangeText={setSearchInput}
 				/>
 			}
-			headerRightComponent={<Text style={styles.closeText}>닫기</Text>}
+			headerRightComponent={
+				<TouchableOpacity onPress={goBack}>
+					<Text style={styles.closeText}>닫기</Text>
+				</TouchableOpacity>
+			}
 			hasBorderBottom={false}
 		>
-			{loading ? (
-				<Text style={styles.loading}>검색 중...</Text>
+			{isLoading ? (
+				<View style={styles.infoContainer}>
+					<Text style={styles.infoMessage}>검색 중...</Text>
+				</View>
 			) : (
 				<FlatList
-					data={results}
+					data={items}
 					keyExtractor={(item) => item.id}
-					renderItem={({ item }) => (
-						<TouchableOpacity style={styles.resultItem}>
-							{SearchIcon}
-							<Text style={{ flexWrap: 'wrap' }}>
-								{highlightMatch(item.title, searchInput)}
-							</Text>
-						</TouchableOpacity>
-					)}
-					ListEmptyComponent={<Text style={styles.empty}>결과 없음</Text>}
+					renderItem={renderSearchResultItem}
+					ListEmptyComponent={
+						<View style={styles.infoContainer}>
+							<Text style={styles.infoMessage}>결과 없음</Text>
+						</View>
+					}
 				/>
 			)}
 		</LayoutWithHeader>
@@ -79,24 +78,14 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 		fontWeight: 600,
 	},
-	loading: {
-		padding: 10,
-		color: '#999',
-	},
-	empty: {
-		padding: 10,
-		color: '#999',
-	},
-	resultItem: {
+	infoContainer: {
 		paddingHorizontal: 12,
 		paddingVertical: 12,
-		borderBottomWidth: 1,
-		borderBottomColor: '#eee',
 		flexDirection: 'row',
+		justifyContent: 'center',
 		alignItems: 'center',
 	},
-	highlight: {
-		fontWeight: 'bold',
-		color: Colors.primary,
+	infoMessage: {
+		color: Colors.font_gray,
 	},
 });

@@ -82,7 +82,8 @@ export interface CreatorInfo {
 }
 
 export interface Item {
-	UniqueEntryID: string;
+	id: string;
+	category: string;
 	color: string;
 	imageUrl: string;
 	name: string;
