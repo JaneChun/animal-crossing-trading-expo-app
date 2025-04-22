@@ -1,6 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { ITEM_CATEGORIES } from '@/constants/post';
 import { useInfiniteItems } from '@/hooks/query/item/useInfiniteItems';
+import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
 import { ItemSelectProps } from '@/types/components';
 import { Item, ItemCategory, ItemCategoryItem } from '@/types/post';
 import React, { useState } from 'react';
@@ -18,6 +19,8 @@ const ItemSelect = ({
 }: ItemSelectProps) => {
 	const [category, setCategory] = useState<ItemCategory>('All');
 	const [searchInput, setSearchInput] = useState<string>('');
+	const debouncedKeyword = useDebouncedValue(searchInput, 300);
+
 	const {
 		data,
 		isLoading,
@@ -28,7 +31,7 @@ const ItemSelect = ({
 		refetch,
 		isFetching,
 		status,
-	} = useInfiniteItems(category, searchInput);
+	} = useInfiniteItems(category, debouncedKeyword);
 
 	const items = data?.pages.flatMap((page) => page.data) ?? [];
 

@@ -2,7 +2,6 @@ import { db } from '@/fbase';
 import { queryDocs } from '@/firebase/core/firestoreService';
 import { Item, ItemCategory } from '@/types/post';
 import { collection, limit, Query, query, where } from 'firebase/firestore';
-import { debounce } from 'lodash';
 import { useEffect, useState } from 'react';
 
 export const useItemSearch = ({
@@ -52,10 +51,7 @@ export const useItemSearch = ({
 			setIsLoading(false);
 		};
 
-		const debouncedFetch = debounce(fetchItems, 300);
-		debouncedFetch();
-
-		return () => debouncedFetch.cancel();
+		fetchItems();
 	}, [category, keyword]);
 
 	return { items, isLoading };

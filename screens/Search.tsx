@@ -2,6 +2,7 @@ import SearchResultItem from '@/components/Search/SearchResultItem';
 import LayoutWithHeader from '@/components/ui/LayoutWithHeader';
 import { Colors } from '@/constants/Color';
 import { useItemSearch } from '@/hooks/firebase/useItemSearch';
+import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
 import { goBack } from '@/navigation/RootNavigation';
 import { Item } from '@/types/post';
 import { useState } from 'react';
@@ -16,8 +17,10 @@ import { FlatList } from 'react-native-gesture-handler';
 
 const Search = () => {
 	const [searchInput, setSearchInput] = useState<string>('');
+	const debouncedKeyword = useDebouncedValue(searchInput, 300);
+
 	const { items, isLoading } = useItemSearch({
-		keyword: searchInput,
+		keyword: debouncedKeyword,
 		size: 5,
 	});
 
