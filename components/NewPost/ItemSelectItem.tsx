@@ -1,29 +1,17 @@
 import { Colors } from '@/constants/Color';
 import { ItemSelectItemProps } from '@/types/components';
-import { Item } from '@/types/post';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import HighlightMatchText from '../ui/HighlightMatchText';
 import ImageWithFallback from '../ui/ImageWithFallback';
-import { showToast } from '../ui/Toast';
+
+export const ITEM_HEIGHT = 53;
 
 const ItemSelectItem = ({
 	item,
 	searchInput,
-	cart,
-	setCart,
+	addItemToCart,
 }: ItemSelectItemProps) => {
-	const addItemToCart = (item: Item) => {
-		const isAlreadyAdded = cart.find((cartItem) => cartItem.id === item.id);
-
-		if (isAlreadyAdded) {
-			showToast('warn', '이미 추가된 아이템이에요.', 5);
-		} else {
-			setCart([...cart, { ...item, quantity: 1, price: 1 }]);
-			showToast('success', `${item.name}이(가) 추가되었어요.`, 5);
-		}
-	};
-
 	return (
 		<TouchableOpacity style={styles.item} onPress={() => addItemToCart(item)}>
 			<ImageWithFallback
@@ -50,13 +38,14 @@ const ItemSelectItem = ({
 	);
 };
 
-export default ItemSelectItem;
+export default React.memo(ItemSelectItem);
 
 const styles = StyleSheet.create({
 	item: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		padding: 6,
+		paddingHorizontal: 6,
+		height: ITEM_HEIGHT,
 		borderBottomWidth: 1,
 		borderBottomColor: Colors.border_gray,
 	},

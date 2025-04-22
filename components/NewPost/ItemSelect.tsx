@@ -4,12 +4,13 @@ import { useInfiniteItems } from '@/hooks/query/item/useInfiniteItems';
 import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
 import { ItemSelectProps } from '@/types/components';
 import { Item, ItemCategory, ItemCategoryItem } from '@/types/post';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Categories from '../ui/Categories';
 import InlineLoadingIndicator from '../ui/InlineLoadingIndicator';
-import ItemSelectItem from './ItemSelectItem';
+import { showToast } from '../ui/Toast';
+import ItemSelectItem, { ITEM_HEIGHT } from './ItemSelectItem';
 
 const ItemSelect = ({
 	cart,
@@ -35,13 +36,29 @@ const ItemSelect = ({
 
 	const items = data?.pages.flatMap((page) => page.data) ?? [];
 
-	const renderItemSelectItem = ({ item }: { item: Item }) => (
-		<ItemSelectItem
-			item={item}
-			searchInput={searchInput}
-			cart={cart}
-			setCart={setCart}
-		/>
+	const addItemToCart = useCallback(
+		(item: Item) => {
+			const isAlreadyAdded = cart.some((c) => c.id === item.id);
+
+			if (isAlreadyAdded) {
+				showToast('warn', '이미 추가된 아이템이에요.', 5);
+			} else {
+				setCart([...cart, { ...item, quantity: 1, price: 1 }]);
+				showToast('success', `${item.name}이(가) 추가되었어요.`, 5);
+			}
+		},
+		[cart],
+	);
+
+	const renderItemSelectItem = useCallback(
+		({ item }: { item: Item }) => (
+			<ItemSelectItem
+				item={item}
+				searchInput={searchInput}
+				addItemToCart={addItemToCart}
+			/>
+		),
+		[searchInput, cart],
 	);
 
 	return (
@@ -85,6 +102,13 @@ const ItemSelect = ({
 									<Text style={styles.emptyText}>검색 결과가 없습니다.</Text>
 								</View>
 							)}
+							initialNumToRender={10}
+							maxToRenderPerBatch={10}
+							getItemLayout={(data, index) => ({
+								length: ITEM_HEIGHT,
+								offset: ITEM_HEIGHT * index,
+								index,
+							})}
 						/>
 					)}
 				</View>

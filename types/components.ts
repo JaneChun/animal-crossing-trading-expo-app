@@ -131,8 +131,7 @@ export type ItemSelectProps = {
 export type ItemSelectItemProps = {
 	item: Item;
 	searchInput: string;
-	cart: CartItem[];
-	setCart: Dispatch<SetStateAction<CartItem[]>>;
+	addItemToCart: (item: Item) => void;
 };
 
 export type EditableItemProps = {

@@ -14,7 +14,7 @@ import {
 	where,
 } from 'firebase/firestore';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 50;
 
 type Doc = DocumentSnapshot<DocumentData> | null;
 
