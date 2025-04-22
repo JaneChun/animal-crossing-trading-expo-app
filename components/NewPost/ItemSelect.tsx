@@ -76,6 +76,7 @@ const ItemSelect = ({
 				categories={ITEM_CATEGORIES}
 				category={category}
 				setCategory={setCategory}
+				containerStyle={{ marginVertical: 8 }}
 			/>
 
 			{/* 아이템 목록 */}
@@ -129,9 +130,9 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	searchInput: {
-		fontSize: 16,
 		marginBottom: 8,
-		padding: 12,
+		paddingHorizontal: 12,
+		paddingVertical: 10,
 		borderWidth: 1,
 		borderColor: Colors.border_gray,
 		borderRadius: 20,

@@ -27,7 +27,7 @@ const Community = () => {
 				categories={CATEGORIES}
 				category={category}
 				setCategory={setCategory}
-				containerStyle={{ paddingHorizontal: PADDING }}
+				containerStyle={{ paddingHorizontal: PADDING, marginBottom: 8 }}
 			/>
 
 			<PostList

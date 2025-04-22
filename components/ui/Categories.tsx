@@ -6,8 +6,15 @@ import {
 	ItemCategory,
 	ItemCategoryItem,
 } from '@/types/post';
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Entypo } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import {
+	FlatList,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from 'react-native';
 
 const Categories = <
 	T extends Category | ItemCategory,
@@ -18,27 +25,58 @@ const Categories = <
 	setCategory,
 	containerStyle,
 }: CategoriesProps<T, U>) => {
+	const [showAll, setShowAll] = useState(false);
+
+	const renderCategoryButton = (item: U) => (
+		<TouchableOpacity
+			key={item.EN}
+			style={[styles.category, category === item.EN && styles.categorySelected]}
+			onPress={() => setCategory(item.EN as T)}
+		>
+			<Text
+				style={[
+					styles.categoryText,
+					category === item.EN && styles.categoryTextSelected,
+				]}
+			>
+				{item.KR}
+			</Text>
+		</TouchableOpacity>
+	);
+
+	const toggleButton = (
+		<TouchableOpacity
+			style={[styles.toggleButton, !showAll && { marginRight: 6 }]}
+			onPress={() => setShowAll((prev) => !prev)}
+		>
+			<Entypo
+				name={showAll ? 'chevron-up' : 'chevron-down'}
+				size={20}
+				color={Colors.primary}
+			/>
+		</TouchableOpacity>
+	);
+
 	return (
-		<View style={[styles.categoriesContainer, containerStyle]}>
-			{categories.map((item: U) => (
-				<TouchableOpacity
-					key={item.EN}
-					style={[
-						styles.category,
-						category === item.EN && styles.categorySelected,
-					]}
-					onPress={() => setCategory(item.EN as T)}
-				>
-					<Text
-						style={[
-							styles.categoryText,
-							category === item.EN && styles.categoryTextSelected,
-						]}
-					>
-						{item.KR}
-					</Text>
-				</TouchableOpacity>
-			))}
+		<View style={containerStyle}>
+			{showAll ? (
+				<View style={styles.flexWrapContainer}>
+					{toggleButton}
+					{categories.map(renderCategoryButton)}
+				</View>
+			) : (
+				<View style={styles.flatListContainer}>
+					{toggleButton}
+					<FlatList
+						data={categories}
+						keyExtractor={(item) => item.EN}
+						renderItem={({ item }) => renderCategoryButton(item)}
+						horizontal
+						showsHorizontalScrollIndicator={false}
+						contentContainerStyle={styles.flatListContentContainer}
+					/>
+				</View>
+			)}
 		</View>
 	);
 };
@@ -46,12 +84,19 @@ const Categories = <
 export default Categories;
 
 const styles = StyleSheet.create({
-	categoriesContainer: {
+	flexWrapContainer: {
 		flexDirection: 'row',
 		flexWrap: 'wrap',
-		gap: 4,
 		alignItems: 'center',
-		marginVertical: 8,
+		gap: 6,
+	},
+	flatListContainer: {
+		flexDirection: 'row',
+	},
+	flatListContentContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 6,
 	},
 	category: {
 		paddingVertical: 8,
@@ -68,5 +113,10 @@ const styles = StyleSheet.create({
 	},
 	categoryTextSelected: {
 		color: 'white',
+	},
+	toggleButton: {
+		padding: 6,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 });
