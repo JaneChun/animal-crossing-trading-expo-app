@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { ITEM_CATEGORIES } from '@/constants/post';
-import { useItemSearch } from '@/hooks/firebase/useItemSearch';
+import { useInfiniteItems } from '@/hooks/query/item/useInfiniteItems';
 import { ItemSelectProps } from '@/types/components';
 import { Item, ItemCategory, ItemCategoryItem } from '@/types/post';
 import React, { useState } from 'react';
@@ -18,10 +18,19 @@ const ItemSelect = ({
 }: ItemSelectProps) => {
 	const [category, setCategory] = useState<ItemCategory>('All');
 	const [searchInput, setSearchInput] = useState<string>('');
-	const { items, isLoading } = useItemSearch({
-		keyword: searchInput,
-		category,
-	});
+	const {
+		data,
+		isLoading,
+		error,
+		hasNextPage,
+		fetchNextPage,
+		isFetchingNextPage,
+		refetch,
+		isFetching,
+		status,
+	} = useInfiniteItems(category, searchInput);
+
+	const items = data?.pages.flatMap((page) => page.data) ?? [];
 
 	const renderItemSelectItem = ({ item }: { item: Item }) => (
 		<ItemSelectItem
@@ -60,6 +69,14 @@ const ItemSelect = ({
 							keyExtractor={(item) => item.id}
 							style={styles.itemList}
 							renderItem={renderItemSelectItem}
+							onEndReached={
+								hasNextPage
+									? ({ distanceFromEnd }) => fetchNextPage()
+									: undefined
+							}
+							onEndReachedThreshold={0.9}
+							onRefresh={refetch}
+							refreshing={isFetching || isFetchingNextPage}
 							ListEmptyComponent={() => (
 								<View style={styles.spinnerContainer}>
 									<Text style={styles.emptyText}>검색 결과가 없습니다.</Text>
