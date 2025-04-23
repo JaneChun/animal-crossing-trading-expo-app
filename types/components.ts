@@ -347,3 +347,14 @@ export type HighlightMatchProps = {
 	textStyle: TextStyle;
 	highlightTextStyle: TextStyle;
 };
+
+export type ImagePreviewProps = {
+	uri: string;
+	onDelete: (uri: string) => void;
+};
+
+export type AddImageButtonProps = {
+	count: number;
+	totalCount: number;
+	onPress: () => void;
+};
