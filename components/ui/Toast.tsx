@@ -67,6 +67,20 @@ export const showToast = (
 	});
 };
 
+export const showLongToast = (
+	type: 'success' | 'error' | 'warn' | 'info',
+	text: string,
+	topOffset?: number,
+) => {
+	Toast.show({
+		type: type,
+		text1: text,
+		topOffset: topOffset ? topOffset : 50,
+		position: 'top',
+		visibilityTime: 5000,
+	});
+};
+
 const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'row',

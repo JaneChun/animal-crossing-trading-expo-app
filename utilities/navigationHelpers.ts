@@ -86,6 +86,7 @@ export const navigateToChatRoom = ({ chatId }: { chatId: string }) => {
 };
 
 // Profile/
+// stack to stack
 export const navigateToUserProfile = ({ userId }: { userId: string }) => {
 	navigate('Profile', { userId });
 };
@@ -94,8 +95,14 @@ export const replaceToMyProfile = () => {
 	replace('Profile', {});
 };
 
+// stack to tab
 export const navigateToLogin = () => {
 	navigateToTabAndResetStack('ProfileTab', 'Login');
+};
+
+// tab to tab
+export const navigateToMyProfile = () => {
+	navigateToTabAndResetStack('ProfileTab', 'Profile');
 };
 
 export const navigateToSetting = () => {

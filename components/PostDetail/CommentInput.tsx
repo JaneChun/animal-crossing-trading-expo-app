@@ -4,10 +4,13 @@ import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
 import { CreateCommentRequest } from '@/types/comment';
 import { CommentInputProps } from '@/types/components';
-import { navigateToLogin } from '@/utilities/navigationHelpers';
+import {
+	navigateToLogin,
+	navigateToMyProfile,
+} from '@/utilities/navigationHelpers';
 import { useState } from 'react';
 import Input from '../ui/Input';
-import { showToast } from '../ui/Toast';
+import { showLongToast, showToast } from '../ui/Toast';
 
 const CommentInput = ({ postId, setIsCommentUploading }: CommentInputProps) => {
 	const activeTab = useActiveTabStore((state) => state.activeTab);
@@ -28,6 +31,12 @@ const CommentInput = ({ postId, setIsCommentUploading }: CommentInputProps) => {
 		if (!userInfo || !auth.currentUser) {
 			showToast('warn', '댓글 쓰기는 로그인 후 가능합니다.');
 			navigateToLogin();
+			return;
+		}
+
+		if (!userInfo.islandName) {
+			showLongToast('warn', '섬 이름이 있어야 다른 유저와 거래할 수 있어요!');
+			navigateToMyProfile();
 			return;
 		}
 
