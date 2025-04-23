@@ -12,13 +12,13 @@ import { usePostContext } from '@/hooks/shared/usePostContext';
 import { usePostForm } from '@/hooks/shared/usePostForm';
 import { usePostSubmit } from '@/hooks/shared/usePostSubmit';
 import { useAuthStore } from '@/stores/AuthStore';
+import { ImageType } from '@/types/image';
 import { type NewPostRouteProp } from '@/types/navigation';
 import { CommunityType, MarketType } from '@/types/post';
 import { handleImageUpload } from '@/utilities/handleImageUpload';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
 import { validateInput } from '@/utilities/validateInput';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
-import { ImagePickerAsset } from 'expo-image-picker';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -108,7 +108,7 @@ const NewPost = () => {
 
 		if (isCommunityPost(post, collectionName)) {
 			setOriginalImageUrls(post.images);
-			setImages(post.images.map((url) => ({ uri: url } as ImagePickerAsset)));
+			setImages(post.images.map((url) => ({ uri: url } as ImageType)));
 		}
 	}, [post, collectionName]);
 

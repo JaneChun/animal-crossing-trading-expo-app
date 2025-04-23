@@ -1,17 +1,14 @@
 import { Colors } from '@/constants/Color';
+import { useImagePicker } from '@/hooks/shared/useImagePicker';
 import { ProfileImageInputProps } from '@/types/components';
+import { isLocalImage } from '@/utilities/typeGuards/imageGuards';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo } from '@expo/vector-icons';
-import {
-	launchImageLibraryAsync,
-	useMediaLibraryPermissions,
-} from 'expo-image-picker';
-import { Keyboard, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import ImageWithFallback from '../ui/ImageWithFallback';
-import { showToast } from '../ui/Toast';
 
 const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
-	const [, requestPermission, getPermission] = useMediaLibraryPermissions();
+	const { pickImage } = useImagePicker({ multiple: false });
 	const { showActionSheetWithOptions } = useActionSheet();
 
 	const showImageEditOptions = () => {
@@ -25,7 +22,7 @@ const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 			},
 			async (selectedIndex) => {
 				if (selectedIndex === 0) {
-					pickImage();
+					addImage();
 				} else if (selectedIndex === 1) {
 					deleteImage();
 				}
@@ -33,36 +30,11 @@ const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 		);
 	};
 
-	const verifyPermissions = async () => {
-		let currentPermission = await getPermission();
+	const addImage = async () => {
+		const newImages = await pickImage();
 
-		if (currentPermission.status === 'undetermined') {
-			currentPermission = await requestPermission();
-		}
-
-		if (currentPermission.status === 'denied') {
-			showToast('warn', '이미지를 업로드하려면 사진 접근 권한이 필요합니다.');
-			return false;
-		}
-		return currentPermission.status === 'granted';
-	};
-
-	const pickImage = async () => {
-		Keyboard.dismiss(); // 키보드 닫기
-
-		const hasPermission = await verifyPermissions(); // 사진 권한 확인
-		if (!hasPermission) {
-			return;
-		}
-
-		const result = await launchImageLibraryAsync({
-			mediaTypes: 'images',
-			aspect: [1, 1],
-			quality: 0,
-		});
-
-		if (!result.canceled) {
-			setImage(result.assets[0]);
+		if (newImages && isLocalImage(newImages[0])) {
+			setImage(newImages[0]);
 		}
 	};
 

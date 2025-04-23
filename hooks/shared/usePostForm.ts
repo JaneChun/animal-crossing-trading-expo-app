@@ -1,6 +1,6 @@
 import { PostForm } from '@/types/components';
+import { ImageType } from '@/types/image';
 import { CartItem, Collection, CommunityType, MarketType } from '@/types/post';
-import { ImagePickerAsset } from 'expo-image-picker';
 import { useState } from 'react';
 
 export const usePostForm = (
@@ -14,7 +14,7 @@ export const usePostForm = (
 	const [type, setType] = useState<MarketType | CommunityType>(defaultType);
 	const [title, setTitle] = useState('');
 	const [body, setBody] = useState('');
-	const [images, setImages] = useState<ImagePickerAsset[]>([]);
+	const [images, setImages] = useState<ImageType[]>([]);
 	const [cart, setCart] = useState<CartItem[]>([]);
 	const [originalImageUrls, setOriginalImageUrls] = useState<string[]>([]); // Firestore에서 가져온 기존 이미지
 

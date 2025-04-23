@@ -10,6 +10,7 @@ import {
 	ViewStyle,
 } from 'react-native';
 import { CommentWithCreatorInfo } from './comment';
+import { ImageType } from './image';
 import { NotificationWithReceiverInfo } from './notification';
 import {
 	CartItem,
@@ -58,7 +59,7 @@ export interface PostFormState {
 	type: MarketType | CommunityType;
 	title: string;
 	body: string;
-	images: ImagePickerAsset[];
+	images: ImageType[];
 	cart: CartItem[];
 	originalImageUrls: string[];
 }
@@ -66,7 +67,7 @@ export interface PostFormHandlers {
 	setType: Dispatch<SetStateAction<MarketType | CommunityType>>;
 	setTitle: Dispatch<SetStateAction<string>>;
 	setBody: Dispatch<SetStateAction<string>>;
-	setImages: Dispatch<SetStateAction<ImagePickerAsset[]>>;
+	setImages: Dispatch<SetStateAction<ImageType[]>>;
 	setCart: Dispatch<SetStateAction<CartItem[]>>;
 	setOriginalImageUrls: Dispatch<SetStateAction<string[]>>;
 }
@@ -102,8 +103,8 @@ export type BodyInputProps = {
 };
 
 export type ImageInputProps = {
-	images: ImagePickerAsset[];
-	setImages: Dispatch<SetStateAction<ImagePickerAsset[]>>;
+	images: ImageType[];
+	setImages: Dispatch<SetStateAction<ImageType[]>>;
 	containerStyle?: StyleProp<ViewStyle>;
 	labelStyle?: StyleProp<TextStyle>;
 };

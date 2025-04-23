@@ -1,4 +1,5 @@
 import { storage } from '@/fbase';
+import { StorageCollection } from '@/types/image';
 import { ImagePickerAsset } from 'expo-image-picker';
 import {
 	deleteObject,
@@ -14,7 +15,7 @@ export const uploadObjectToStorage = async ({
 	directory,
 }: {
 	images: ImagePickerAsset[];
-	directory: string;
+	directory: StorageCollection;
 }): Promise<string[]> => {
 	return firestoreRequest('Storage 이미지 업로드', async () => {
 		const uploadPromises = images.map(async (image) => {

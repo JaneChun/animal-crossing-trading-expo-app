@@ -1,21 +1,11 @@
 import { Colors } from '@/constants/Color';
+import { useImagePicker } from '@/hooks/shared/useImagePicker';
 import { ImageInputProps } from '@/types/components';
 import { MaterialIcons } from '@expo/vector-icons';
-import {
-	launchImageLibraryAsync,
-	useMediaLibraryPermissions,
-} from 'expo-image-picker';
 import React from 'react';
-import {
-	Keyboard,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import ImageWithFallback from '../ui/ImageWithFallback';
-import { showToast } from '../ui/Toast';
 
 const ImageInput = ({
 	images,
@@ -23,46 +13,19 @@ const ImageInput = ({
 	containerStyle,
 	labelStyle,
 }: ImageInputProps) => {
-	const [, requestPermission, getPermission] = useMediaLibraryPermissions();
+	const { pickImage } = useImagePicker({ multiple: true });
 
-	const verifyPermissions = async () => {
-		let currentPermission = await getPermission();
+	const addImage = async () => {
+		const newImages = await pickImage();
 
-		if (currentPermission.status === 'undetermined') {
-			currentPermission = await requestPermission();
-		}
-
-		if (currentPermission.status === 'denied') {
-			showToast('warn', '이미지를 업로드하려면 사진 접근 권한이 필요합니다.');
-			return false;
-		}
-		return currentPermission.status === 'granted';
-	};
-
-	const pickImages = async () => {
-		Keyboard.dismiss(); // 키보드 닫기
-
-		const hasPermission = await verifyPermissions(); // 사진 권한 확인
-		if (!hasPermission) {
-			return;
-		}
-
-		let result = await launchImageLibraryAsync({
-			mediaTypes: 'images',
-			allowsMultipleSelection: true,
-			selectionLimit: 10,
-			aspect: [1, 1],
-			quality: 0,
-		});
-
-		if (!result.canceled) {
-			setImages(result.assets);
+		if (newImages) {
+			setImages((currentImages) => [...currentImages, ...newImages]);
 		}
 	};
 
-	const deleteImage = (assetId: string) => {
+	const deleteImage = (uri: string) => {
 		setImages((currentImages) =>
-			currentImages.filter((image) => image.assetId !== assetId),
+			currentImages.filter((image) => image.uri !== uri),
 		);
 	};
 
@@ -78,7 +41,7 @@ const ImageInput = ({
 					<TouchableOpacity
 						style={[styles.addImageButtonContainer, styles.imageContainer]}
 						activeOpacity={0.5}
-						onPress={pickImages}
+						onPress={addImage}
 					>
 						<MaterialIcons
 							name='photo-library'
@@ -93,10 +56,10 @@ const ImageInput = ({
 				}
 				renderItem={({ item: image }) => (
 					<>
-						<View key={image.assetId}>
+						<View key={image.uri}>
 							<TouchableOpacity
 								style={styles.deleteButton}
-								onPress={() => deleteImage(image.assetId!)}
+								onPress={() => deleteImage(image.uri)}
 								activeOpacity={0.7}
 							>
 								<Text style={styles.deleteButtonIcon}>✕</Text>
