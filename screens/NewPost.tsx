@@ -13,12 +13,16 @@ import { usePostForm } from '@/hooks/shared/usePostForm';
 import { usePostSubmit } from '@/hooks/shared/usePostSubmit';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ImageType } from '@/types/image';
-import { type NewPostRouteProp } from '@/types/navigation';
+import { RootStackNavigation, type NewPostRouteProp } from '@/types/navigation';
 import { CommunityType, MarketType } from '@/types/post';
 import { handleImageUpload } from '@/utilities/handleImageUpload';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
 import { validateInput } from '@/utilities/validateInput';
-import { useFocusEffect, useRoute } from '@react-navigation/native';
+import {
+	useFocusEffect,
+	useNavigation,
+	useRoute,
+} from '@react-navigation/native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -30,6 +34,7 @@ const NewPost = () => {
 
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const route = useRoute<NewPostRouteProp>();
+	const stackNavigation = useNavigation<RootStackNavigation>();
 
 	const [editingId, setEditingId] = useState<string>(route.params?.id || '');
 	const [isModalVisible, setModalVisible] = useState<boolean>(false);
@@ -111,6 +116,12 @@ const NewPost = () => {
 			setImages(post.images.map((url) => ({ uri: url } as ImageType)));
 		}
 	}, [post, collectionName]);
+
+	useEffect(() => {
+		if (isSubmitting || isCreating || isUpdating) {
+			stackNavigation.setOptions({ headerShown: false });
+		}
+	}, [isSubmitting, isCreating, isUpdating]);
 
 	const validateUser = () => {
 		if (!userInfo || !auth.currentUser) {

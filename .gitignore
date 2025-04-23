@@ -40,3 +40,5 @@ yarn-error.*
 
 # config.gypi
 config.gypi
+
+functions/src/upload.js
