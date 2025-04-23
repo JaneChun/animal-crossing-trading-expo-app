@@ -30,6 +30,8 @@ type AuthState = {
 	userInfo: UserInfo | null;
 	setUserInfo: (user: UserInfo | null) => void;
 	oauthType: OauthType | null;
+	isAuthLoading: boolean;
+	setIsAuthLoading: (loading: boolean) => void;
 	kakaoLogin: () => Promise<boolean>;
 	kakaoLogout: () => Promise<boolean>;
 	kakaoDeleteAccount: (uid: string) => Promise<boolean>;
@@ -40,15 +42,19 @@ type AuthState = {
 
 export const useAuthStore = create<AuthState>((set) => ({
 	userInfo: null,
-	oauthType: null,
 	setUserInfo: (user) => set({ userInfo: user }),
+	oauthType: null,
+	isAuthLoading: false,
+	setIsAuthLoading: (loading) => set({ isAuthLoading: loading }),
 	kakaoLogin: async () => {
-		return firebaseRequest('로그인', async () => {
+		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+		setIsAuthLoading(true);
+
+		const isSuccess = await firebaseRequest('로그인', async () => {
 			set({ oauthType: 'kakao' });
 
 			const kakaoTokenInfo = await login();
 			const provider = new OAuthProvider('oidc.kakao');
-
 			const credential = provider.credential({
 				idToken: kakaoTokenInfo.idToken,
 			});
@@ -82,10 +88,16 @@ export const useAuthStore = create<AuthState>((set) => ({
 			await AsyncStorage.setItem('@user', JSON.stringify(fetchedUserInfo));
 
 			return true;
-		});
+		}).catch(() => false);
+
+		setIsAuthLoading(false);
+		return isSuccess;
 	},
 	kakaoLogout: async () => {
-		return firebaseRequest('로그아웃', async () => {
+		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+		setIsAuthLoading(true);
+
+		const isSuccess = await firebaseRequest('로그아웃', async () => {
 			await logout(); // 카카오 로그아웃
 			await auth.signOut(); // Firebase auth 로그아웃
 
@@ -94,25 +106,31 @@ export const useAuthStore = create<AuthState>((set) => ({
 			await AsyncStorage.removeItem('@user');
 
 			return true;
-		});
+		}).catch(() => false);
+
+		setIsAuthLoading(false);
+		return isSuccess;
 	},
 	kakaoDeleteAccount: async (uid) => {
-		return firebaseRequest('회원 탈퇴', async () => {
+		const userInfo = useAuthStore.getState().userInfo;
+
+		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+		setIsAuthLoading(true);
+
+		const isSuccess = await firebaseRequest('회원 탈퇴', async () => {
 			const user = auth.currentUser;
-			if (!user || !useAuthStore.getState().userInfo) return false;
+			if (!user || !userInfo) return false;
 
 			// 재인증 후 탈퇴 가능
 			const kakaoTokenInfo = await login();
 			const provider = new OAuthProvider('oidc.kakao');
-
 			const credential = provider.credential({
 				idToken: kakaoTokenInfo.idToken,
 			});
 
 			await reauthenticateWithCredential(user, credential);
 
-			const userInfo = useAuthStore.getState().userInfo;
-			if (!userInfo) return false;
+			// 탈퇴한 유저 정보 아카이브
 			await archiveUserData(userInfo);
 
 			// Firebase Authentication에서 유저 삭제
@@ -123,16 +141,20 @@ export const useAuthStore = create<AuthState>((set) => ({
 			await AsyncStorage.removeItem('@user');
 
 			return true;
-		});
+		}).catch(() => false);
+
+		setIsAuthLoading(false);
+		return isSuccess;
 	},
 	naverLogin: async () => {
-		return firebaseRequest('로그인', async () => {
+		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+		setIsAuthLoading(true);
+
+		const isSuccess = await firebaseRequest('로그인', async () => {
 			set({ oauthType: 'naver' });
 
 			const { failureResponse, successResponse } = await NaverLogin.login();
-
 			if (failureResponse) return false;
-
 			const firebaseCustomToken = await getFirebaseCustomToken(
 				successResponse!.accessToken,
 			);
@@ -170,10 +192,16 @@ export const useAuthStore = create<AuthState>((set) => ({
 			await AsyncStorage.setItem('@user', JSON.stringify(fetchedUserInfo));
 
 			return true;
-		});
+		}).catch(() => false);
+
+		setIsAuthLoading(false);
+		return isSuccess;
 	},
 	naverLogout: async () => {
-		return firebaseRequest('로그아웃', async () => {
+		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+		setIsAuthLoading(true);
+
+		const isSuccess = await firebaseRequest('로그아웃', async () => {
 			await NaverLogin.logout(); // 네이버 로그아웃
 			await auth.signOut(); // Firebase auth 로그아웃
 
@@ -182,21 +210,24 @@ export const useAuthStore = create<AuthState>((set) => ({
 			await AsyncStorage.removeItem('@user');
 
 			return true;
-		});
+		}).catch(() => false);
+
+		setIsAuthLoading(false);
+		return isSuccess;
 	},
 	naverDeleteAccount: async (uid) => {
 		const userInfo = useAuthStore.getState().userInfo;
-		if (!userInfo) return false;
 
-		return firebaseRequest('회원 탈퇴', async () => {
+		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+		setIsAuthLoading(true);
+
+		const isSuccess = await firebaseRequest('회원 탈퇴', async () => {
 			const user = auth.currentUser;
-			if (!user || !useAuthStore.getState().userInfo) return false;
+			if (!user || !userInfo) return false;
 
 			// 재인증 후 탈퇴 가능
 			const { failureResponse, successResponse } = await NaverLogin.login();
-
 			if (failureResponse) return false;
-
 			const firebaseCustomToken = await getFirebaseCustomToken(
 				successResponse!.accessToken,
 			);
@@ -217,7 +248,10 @@ export const useAuthStore = create<AuthState>((set) => ({
 			await AsyncStorage.removeItem('@user');
 
 			return true;
-		});
+		}).catch(() => false);
+
+		setIsAuthLoading(false);
+		return isSuccess;
 	},
 }));
 

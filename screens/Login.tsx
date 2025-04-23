@@ -1,15 +1,17 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { PADDING } from '@/components/ui/Layout';
+import LoadingIndicator from '@/components/ui/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
-import { replace } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
 import { OauthType } from '@/types/user';
+import { replaceToMyProfile } from '@/utilities/navigationHelpers';
 import FastImage from 'react-native-fast-image';
 
 const Login = () => {
 	const kakaoLogin = useAuthStore((state) => state.kakaoLogin);
 	const naverLogin = useAuthStore((state) => state.naverLogin);
+	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 
 	const handleLogin = async (oauthType: OauthType) => {
 		let isSuccess: boolean | void = false;
@@ -19,9 +21,11 @@ const Login = () => {
 
 		if (Boolean(isSuccess)) {
 			showToast('success', '로그인 성공');
-			replace('Profile', {});
+			replaceToMyProfile();
 		}
 	};
+
+	if (isAuthLoading) return <LoadingIndicator />;
 
 	return (
 		<View style={styles.container}>

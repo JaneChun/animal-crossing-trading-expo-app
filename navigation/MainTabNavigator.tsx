@@ -30,6 +30,7 @@ const getTabBarIcon =
 
 const MainTabNavigator = () => {
 	const userInfo = useAuthStore((state) => state.userInfo);
+	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 	const unreadChatCount = useChatStore((state) => state.unreadCount);
 	const unreadNotificationCount = useNotificationStore(
 		(state) => state.unreadCount,
@@ -42,6 +43,7 @@ const MainTabNavigator = () => {
 				headerShown: false,
 				tabBarStyle: {
 					height: 60,
+					display: isAuthLoading ? 'none' : 'flex',
 				},
 				tabBarActiveBackgroundColor: Colors.base,
 				tabBarIconStyle: { flex: 1 },

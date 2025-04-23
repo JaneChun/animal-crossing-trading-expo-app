@@ -7,14 +7,17 @@ import PostDetail from '@/screens/PostDetail';
 import Profile from '@/screens/Profile';
 import Search from '@/screens/Search';
 import Setting from '@/screens/Setting';
+import { useAuthStore } from '@/stores/AuthStore';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainTabNavigator from './MainTabNavigator';
 
 const RootStack = createNativeStackNavigator();
 
 const RootStackNavigator = () => {
+	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
+
 	const commonOptions = {
-		headerShown: true,
+		headerShown: isAuthLoading ? false : true,
 		title: '',
 		headerTintColor: Colors.font_black,
 		headerBackButtonDisplayMode: 'minimal',

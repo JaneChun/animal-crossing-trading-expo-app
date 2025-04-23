@@ -1,3 +1,4 @@
+import LoadingIndicator from '@/components/ui/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { goBack } from '@/navigation/RootNavigation';
@@ -10,6 +11,7 @@ const Setting = () => {
 	const naverLogout = useAuthStore((state) => state.naverLogout);
 	const kakaoDeleteAccount = useAuthStore((state) => state.kakaoDeleteAccount);
 	const naverDeleteAccount = useAuthStore((state) => state.naverDeleteAccount);
+	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 
 	const handleLogout = () => {
 		Alert.alert('로그아웃', '정말로 로그아웃할까요?', [
@@ -65,6 +67,8 @@ const Setting = () => {
 			Alert.alert('탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.');
 		}
 	};
+
+	if (isAuthLoading) return <LoadingIndicator />;
 
 	return (
 		<View style={styles.container}>

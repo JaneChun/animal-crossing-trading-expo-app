@@ -3,6 +3,7 @@ import {
 	navigateToTabAndResetStack,
 	navigateWithoutParams,
 	popTo,
+	replace,
 } from '@/navigation/RootNavigation';
 import { Collection } from '@/types/post';
 
@@ -87,6 +88,10 @@ export const navigateToChatRoom = ({ chatId }: { chatId: string }) => {
 // Profile/
 export const navigateToUserProfile = ({ userId }: { userId: string }) => {
 	navigate('Profile', { userId });
+};
+
+export const replaceToMyProfile = () => {
+	replace('Profile', {});
 };
 
 export const navigateToLogin = () => {
