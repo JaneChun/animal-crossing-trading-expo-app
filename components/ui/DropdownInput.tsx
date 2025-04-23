@@ -13,9 +13,9 @@ import {
 
 const DropdownInput = ({
 	options,
-	disabled,
 	value,
 	setValue,
+	disabled,
 }: DropdownOptionProps) => {
 	const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
 	const [dropdownPosition, setDropdownPosition] =
@@ -77,7 +77,7 @@ const DropdownInput = ({
 							},
 						]}
 					>
-						{options.map((item, index) => (
+						{options.map((item: DropdownOption, index: number) => (
 							<TouchableOpacity
 								key={item.value}
 								style={[

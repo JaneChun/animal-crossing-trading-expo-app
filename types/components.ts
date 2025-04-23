@@ -311,8 +311,6 @@ export type CategoriesProps<T, U> = {
 	containerStyle?: StyleProp<ViewStyle>;
 };
 
-export type Currency = 'mileticket' | 'bell';
-
 export type DropdownOption = {
 	text: string;
 	value: string;
@@ -320,9 +318,9 @@ export type DropdownOption = {
 
 export type DropdownOptionProps = {
 	options: DropdownOption[];
+	value: string;
+	setValue: Dispatch<SetStateAction<string>>;
 	disabled?: boolean;
-	value: CommunityType;
-	setValue: Dispatch<SetStateAction<CommunityType>>;
 };
 
 export type NumberInputProps = {

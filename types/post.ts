@@ -1,5 +1,6 @@
 import {
 	COMMUNITY_TYPES,
+	CURRENCY_OPTIONS,
 	ITEM_CATEGORIES,
 	MARKET_TYPES,
 	TAB_COLLECTION_CONFIG,
@@ -34,6 +35,10 @@ export type Category = CommunityType | 'all';
 // 아이템 카테고리
 export type ItemCategoryItem = (typeof ITEM_CATEGORIES)[number];
 export type ItemCategory = (typeof ITEM_CATEGORIES)[number]['EN'];
+
+// 거래 화폐 단위
+export type CurrencyOptionItem = (typeof CURRENCY_OPTIONS)[number];
+export type CurrencyOption = (typeof CURRENCY_OPTIONS)[number]['EN'];
 
 // 공통 필드
 export interface CommonPostFields {

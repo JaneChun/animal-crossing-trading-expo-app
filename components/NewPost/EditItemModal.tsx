@@ -1,6 +1,7 @@
 import Button from '@/components/ui/Button';
 import { Colors } from '@/constants/Color';
-import { Currency, EditItemModalProps } from '@/types/components';
+import { CURRENCY_OPTIONS } from '@/constants/post';
+import { EditItemModalProps } from '@/types/components';
 import { CartItem } from '@/types/post';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -17,11 +18,11 @@ const EditItemModal = ({
 }: EditItemModalProps) => {
 	const [quantityInput, setQuantityInput] = useState<number>(1);
 	const [milesTicketInput, setMilesTicketInput] = useState<number>(1);
-	const [selectedUnit, setSelectedUnit] = useState<Currency>('mileticket');
-	const options = [
-		{ text: '마일 티켓', value: 'mileticket' },
-		{ text: '벨', value: 'bell' },
-	];
+	const [selectedUnit, setSelectedUnit] = useState<string>('mileticket');
+	const dropdownOptions = CURRENCY_OPTIONS.map(({ KR, EN }) => ({
+		text: KR,
+		value: EN,
+	}));
 
 	useEffect(() => {
 		if (item) {
@@ -61,10 +62,10 @@ const EditItemModal = ({
 						setValue={setMilesTicketInput}
 					/>
 					<DropdownInput
-						options={options}
+						options={dropdownOptions}
 						disabled
 						value={selectedUnit}
-						setValue={setSelectedUnit as any}
+						setValue={setSelectedUnit}
 					/>
 				</View>
 

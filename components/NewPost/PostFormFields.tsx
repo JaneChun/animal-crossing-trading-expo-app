@@ -7,7 +7,7 @@ import DropdownInput from '@/components/ui/DropdownInput';
 import { Colors } from '@/constants/Color';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { PostFormFieldsProps } from '@/types/components';
-import { CommunityType, MarketType } from '@/types/post';
+import { MarketType } from '@/types/post';
 import React, { Dispatch, SetStateAction } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -46,8 +46,8 @@ const PostFormFields = ({
 				<View style={{ width: '30%', flexDirection: 'row', marginBottom: 16 }}>
 					<DropdownInput
 						options={dropdownOptions}
-						value={type as CommunityType}
-						setValue={setType as Dispatch<SetStateAction<CommunityType>>}
+						value={type}
+						setValue={setType as Dispatch<SetStateAction<string>>}
 					/>
 				</View>
 			)}
