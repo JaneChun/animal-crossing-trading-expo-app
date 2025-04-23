@@ -1,21 +1,48 @@
 import { Colors } from '@/constants/Color';
+import { NumberInputProps } from '@/types/components';
 import { Feather } from '@expo/vector-icons';
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
-const NumberInput = ({
-	value,
-	setValue,
-}: {
-	value: number;
-	setValue: Dispatch<SetStateAction<number>>;
-}) => {
-	const onDecrement = () => setValue((prev) => Math.max(prev - 1, 0));
-	const onIncrement = () => setValue((prev) => prev + 1);
+const NumberInput = ({ value, setValue }: NumberInputProps) => {
+	const [tempValue, setTempValue] = useState<string>(String(value));
+
+	// 외부 value가 바뀌었을 때도 tempValue를 반영
+	useEffect(() => {
+		setTempValue(String(value));
+	}, [value]);
+
+	const onDecrement = () =>
+		setValue((prev) => {
+			const newValue = Math.max(prev - 1, 1);
+			setTempValue(String(newValue));
+			return newValue;
+		});
+
+	const onIncrement = () =>
+		setValue((prev) => {
+			const newValue = prev + 1;
+			setTempValue(String(newValue));
+			return newValue;
+		});
 
 	const handleChangeText = (text: string) => {
-		const newValue = parseInt(text, 10);
-		if (!isNaN(newValue)) setValue(newValue);
+		// 숫자 이외 제거
+		const sanitized = text.replace(/[^0-9]/g, '');
+		setTempValue(sanitized);
+	};
+
+	const handleEndEditing = () => {
+		const numeric = parseInt(tempValue, 10);
+
+		// 빈 입력 또는 0 이하 → 1로 보정
+		if (isNaN(numeric) || numeric < 1) {
+			setValue(1);
+			setTempValue('1');
+		} else {
+			setValue(numeric);
+			setTempValue(String(numeric));
+		}
 	};
 
 	return (
@@ -28,9 +55,10 @@ const NumberInput = ({
 			<TextInput
 				style={styles.text}
 				keyboardType='numeric'
-				value={String(value)}
+				value={tempValue}
 				editable={true}
 				onChangeText={handleChangeText}
+				onEndEditing={handleEndEditing}
 				maxLength={6}
 			/>
 

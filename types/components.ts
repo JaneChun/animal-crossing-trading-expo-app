@@ -325,6 +325,11 @@ export type DropdownOptionProps = {
 	setValue: Dispatch<SetStateAction<CommunityType>>;
 };
 
+export type NumberInputProps = {
+	value: number;
+	setValue: Dispatch<SetStateAction<number>>;
+};
+
 export type ActionSheetButtonProps = {
 	color: string;
 	size: number;
