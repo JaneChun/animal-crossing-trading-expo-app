@@ -1,10 +1,12 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { LayoutProps } from '@/types/components';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
-const { width } = Dimensions.get('window');
-const isIphoneMini = width <= 375;
-export const PADDING = isIphoneMini ? 18 : 24;
+// const { width } = Dimensions.get('window');
+// const isIphoneMini = width <= 375;
+// export const PADDING = isIphoneMini ? 18 : 24;
+export const PADDING = 24;
 
 const Layout = ({
 	title,
@@ -38,15 +40,15 @@ const styles = StyleSheet.create({
 	},
 	header: {
 		paddingHorizontal: PADDING,
-		// paddingTop: PADDING,
+		paddingTop: PADDING,
 		paddingBottom: PADDING / 2,
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
 	},
 	title: {
-		fontSize: 20,
-		fontWeight: 'bold',
+		fontSize: FontSizes.xl,
+		fontWeight: FontWeights.bold,
 		marginBottom: 8,
 		color: Colors.font_black,
 	},

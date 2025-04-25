@@ -1,7 +1,7 @@
 import { BodyInputProps } from '@/types/components';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import ValidationInput from '../ui/ValidationInput';
+import ValidationInput from '../ui/inputs/ValidationInput';
 
 const BodyInput = ({
 	body,
@@ -33,5 +33,6 @@ const styles = StyleSheet.create({
 	textarea: {
 		height: 200,
 		textAlignVertical: 'top',
+		lineHeight: 26,
 	},
 });

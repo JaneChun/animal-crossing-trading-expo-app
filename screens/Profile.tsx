@@ -1,8 +1,8 @@
 import MyPosts from '@/components/Profile/MyPosts';
 import ProfileBox from '@/components/Profile/Profile';
 import SettingIcon from '@/components/Profile/SettingIcon';
-import Layout, { PADDING } from '@/components/ui/Layout';
-import LoadingIndicator from '@/components/ui/LoadingIndicator';
+import Layout, { PADDING } from '@/components/ui/layout/Layout';
+import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { getPublicUserInfo } from '@/firebase/services/userService';
 import useLoading from '@/hooks/shared/useLoading';
 import { useCurrentTab } from '@/hooks/useCurrentTab';

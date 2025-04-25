@@ -1,3 +1,4 @@
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { FontAwesome, FontAwesome6 } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 import Toast, { BaseToastProps } from 'react-native-toast-message';
@@ -90,5 +91,9 @@ const styles = StyleSheet.create({
 		padding: 14,
 		borderRadius: 16,
 	},
-	text: { color: 'white', fontWeight: 400, fontSize: 14 },
+	text: {
+		color: 'white',
+		fontSize: FontSizes.sm,
+		fontWeight: FontWeights.regular,
+	},
 });

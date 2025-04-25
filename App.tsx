@@ -76,7 +76,7 @@ export default function App() {
 							// 	);
 							// }}
 						>
-							<SafeAreaView style={{ flex: 1 }}>
+							<SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
 								<RootStackNavigator />
 								<Toast config={toastConfig} />
 							</SafeAreaView>

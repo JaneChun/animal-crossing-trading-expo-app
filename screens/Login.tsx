@@ -1,7 +1,8 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { PADDING } from '@/components/ui/Layout';
-import LoadingIndicator from '@/components/ui/LoadingIndicator';
+import Leaf from '@/components/ui/Icons/Leaf';
+import { PADDING } from '@/components/ui/layout/Layout';
+import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { useAuthStore } from '@/stores/AuthStore';
 import { OauthType } from '@/types/user';
@@ -32,11 +33,7 @@ const Login = () => {
 			<View style={styles.header}>
 				<View style={styles.titleContainer}>
 					<Text style={styles.title}>모동숲 마켓</Text>
-					<FastImage
-						source={require('../assets/images/logo.png')}
-						style={styles.logoImage}
-						resizeMode={FastImage.resizeMode.contain}
-					/>
+					<Leaf style={styles.logoImage} />
 				</View>
 			</View>
 			<View style={styles.body}>

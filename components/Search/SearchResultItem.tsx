@@ -1,20 +1,17 @@
 import { Colors } from '@/constants/Color';
-import { Item } from '@/types/post';
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { SearchResultItemProps } from '@/types/components';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import HighlightMatchText from '../ui/HighlightMatchText';
-import SearchIcon from './SearchIcon';
+import Thumbnail from '../ui/Thumbnail';
 
-const SearchResultItem = ({
-	item,
-	searchInput,
-}: {
-	item: Item;
-	searchInput: string;
-}) => {
+const SearchResultItem = ({ item, searchInput }: SearchResultItemProps) => {
 	return (
 		<View style={styles.container}>
-			{SearchIcon}
+			<View style={{ marginRight: 8 }}>
+				<Thumbnail previewImage={item.imageUrl} />
+			</View>
 			<Text numberOfLines={1} ellipsizeMode='tail' style={styles.row}>
 				{HighlightMatchText({
 					text: item.name,
@@ -32,7 +29,7 @@ export default SearchResultItem;
 const styles = StyleSheet.create({
 	container: {
 		paddingHorizontal: 12,
-		paddingVertical: 12,
+		paddingVertical: 6,
 		borderBottomWidth: 1,
 		borderBottomColor: Colors.border_gray,
 		flexDirection: 'row',
@@ -40,9 +37,10 @@ const styles = StyleSheet.create({
 	},
 	row: {
 		flex: 1,
+		fontSize: FontSizes.md,
 	},
 	highlight: {
-		fontWeight: 800,
+		fontWeight: FontWeights.semibold,
 		color: Colors.primary,
 	},
 });

@@ -11,7 +11,7 @@ import {
 import { FontAwesome6 } from '@expo/vector-icons';
 import React from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import LoadingIndicator from '../ui/LoadingIndicator';
+import LoadingIndicator from '../ui/loading/LoadingIndicator';
 import { showLongToast, showToast } from '../ui/Toast';
 import PostUnit from './PostUnit';
 

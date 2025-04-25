@@ -1,14 +1,9 @@
 import { Colors } from '@/constants/Color';
+import { FontWeights } from '@/constants/Typography';
 import { goBack } from '@/navigation/RootNavigation';
 import { LayoutWithHeaderProps } from '@/types/components';
-import { Ionicons } from '@expo/vector-icons';
-import {
-	Dimensions,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native';
+import { Entypo } from '@expo/vector-icons';
+import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const { width } = Dimensions.get('window');
 const isIphoneMini = width <= 375;
@@ -20,8 +15,6 @@ const LayoutWithHeader = ({
 	headerRightComponent,
 	children,
 	hasBorderBottom = true,
-	isInvalid = false,
-	invalidPage,
 }: LayoutWithHeaderProps) => {
 	return (
 		<View style={[styles.screen, containerStyle]}>
@@ -29,29 +22,13 @@ const LayoutWithHeader = ({
 				style={[styles.header, hasBorderBottom && { borderBottomWidth: 1 }]}
 			>
 				<TouchableOpacity style={styles.iconContainer} onPress={goBack}>
-					<Ionicons
-						name='chevron-back-outline'
-						size={28}
-						color={Colors.font_black}
-					/>
+					<Entypo name='chevron-left' size={34} color={Colors.font_black} />
 				</TouchableOpacity>
 				<View style={{ flex: 1 }}>{headerCenterComponent}</View>
-				<View style={{ paddingRight: 8 }}>{headerRightComponent}</View>
+				<View style={{ paddingRight: 16 }}>{headerRightComponent}</View>
 			</View>
 
-			{isInvalid ? (
-				invalidPage ? (
-					invalidPage
-				) : (
-					<View style={styles.invalidPostContainer}>
-						<Text style={styles.invalidPostText}>
-							페이지를 찾을 수 없습니다.
-						</Text>
-					</View>
-				)
-			) : (
-				<View style={{ flex: 1 }}>{children}</View>
-			)}
+			<View style={{ flex: 1 }}>{children}</View>
 		</View>
 	);
 };
@@ -80,5 +57,6 @@ const styles = StyleSheet.create({
 	invalidPostText: {
 		color: Colors.font_gray,
 		alignSelf: 'center',
+		fontWeight: FontWeights.light,
 	},
 });

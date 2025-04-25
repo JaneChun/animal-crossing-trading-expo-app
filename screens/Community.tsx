@@ -1,7 +1,7 @@
 import PostList from '@/components/Home/PostList';
 import SearchIcon from '@/components/Search/SearchIcon';
 import Categories from '@/components/ui/Categories';
-import Layout, { PADDING } from '@/components/ui/Layout';
+import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import { CATEGORIES } from '@/constants/post';
 import { useCurrentTab } from '@/hooks/useCurrentTab';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
@@ -22,7 +22,7 @@ const Community = () => {
 	);
 
 	return (
-		<Layout title='커뮤니티' headerRightComponent={SearchIcon}>
+		<Layout title='커뮤니티' headerRightComponent={<SearchIcon />}>
 			<Categories<Category, CategoryItem>
 				categories={CATEGORIES}
 				category={category}

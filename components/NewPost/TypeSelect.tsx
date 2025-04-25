@@ -1,9 +1,15 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { TypeSelectProps } from '@/types/components';
 import { MarketType } from '@/types/post';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const TypeSelect = ({ type, setType }: TypeSelectProps) => {
+const TypeSelect = ({
+	type,
+	setType,
+	containerStyle,
+	labelStyle,
+}: TypeSelectProps) => {
 	const typeOptions: MarketType[] = ['buy', 'sell'];
 
 	const typeButtonMap: Record<
@@ -32,22 +38,20 @@ const TypeSelect = ({ type, setType }: TypeSelectProps) => {
 	};
 
 	return (
-		<View style={styles.container}>
-			{typeOptions.map((option) => (
-				<TouchableOpacity
-					key={option}
-					style={[
-						styles.button,
-						type === option && styles.buttonActive,
-						typeButtonMap[option].sideStyle,
-					]}
-					onPress={() => setType(option)}
-				>
-					<Text style={[styles.text, type === option && styles.textActive]}>
-						{typeButtonMap[option].label}
-					</Text>
-				</TouchableOpacity>
-			))}
+		<View style={containerStyle}>
+			<View style={styles.container}>
+				{typeOptions.map((option) => (
+					<TouchableOpacity
+						key={option}
+						style={[styles.button, type === option && styles.buttonActive]}
+						onPress={() => setType(option)}
+					>
+						<Text style={[styles.text, type === option && styles.textActive]}>
+							{typeButtonMap[option].label}
+						</Text>
+					</TouchableOpacity>
+				))}
+			</View>
 		</View>
 	);
 };
@@ -56,28 +60,30 @@ export default TypeSelect;
 
 const styles = StyleSheet.create({
 	container: {
-		width: '45%',
 		flexDirection: 'row',
+		justifyContent: 'flex-start',
 		marginBottom: 16,
+		gap: 6,
 	},
 	button: {
-		flex: 1,
-		padding: 12,
+		paddingVertical: 10,
+		paddingHorizontal: 16,
 		alignItems: 'center',
-		borderRadius: 8,
+		borderRadius: 10,
 		borderWidth: 1,
 		borderColor: Colors.border_gray,
 	},
 	buttonActive: {
-		backgroundColor: Colors.button_pressed,
+		backgroundColor: 'white',
+		borderColor: Colors.primary,
 	},
 	text: {
-		fontSize: 16,
-		color: Colors.font_black,
-		fontWeight: 400,
+		fontSize: FontSizes.md,
+		fontWeight: FontWeights.regular,
+		color: Colors.font_gray,
 	},
 	textActive: {
 		color: Colors.primary,
-		fontWeight: 600,
+		fontWeight: FontWeights.semibold,
 	},
 });

@@ -1,14 +1,14 @@
 import CommunityNotices from '@/components/Notice/CommunityNotices';
 import MarketNotices from '@/components/Notice/MarketNotices';
 import TabBarLabel from '@/components/Notice/TabBarLabel';
-import Layout from '@/components/ui/Layout';
-import LoadingIndicator from '@/components/ui/LoadingIndicator';
+import Layout from '@/components/ui/layout/Layout';
+import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useNotificationStore } from '@/stores/NotificationStore';
 import { Collection } from '@/types/post';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React from 'react';
-import { StyleSheet } from 'react-native';
 
 const Notice = () => {
 	const Tab = createMaterialTopTabNavigator();
@@ -37,7 +37,10 @@ const Notice = () => {
 		<Layout title='알림'>
 			<Tab.Navigator
 				screenOptions={{
-					tabBarLabelStyle: { fontSize: 14, fontWeight: 600 },
+					tabBarLabelStyle: {
+						fontSize: FontSizes.sm,
+						fontWeight: FontWeights.semibold,
+					},
 					tabBarStyle: {
 						backgroundColor: 'white',
 					},
@@ -70,7 +73,5 @@ const Notice = () => {
 		</Layout>
 	);
 };
-
-const styles = StyleSheet.create({});
 
 export default Notice;

@@ -1,9 +1,10 @@
 import { db } from '@/fbase';
+import { Message, MessageType, SystemMessage } from '@/types/chat';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 
 export const useGetChatMessages = (chatId: string) => {
-	const [messages, setMessages] = useState<any[]>([]);
+	const [messages, setMessages] = useState<MessageType[]>([]);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 
 	useEffect(() => {
@@ -21,12 +22,14 @@ export const useGetChatMessages = (chatId: string) => {
 		const unsubscribe = onSnapshot(q, (snapshot) => {
 			setIsLoading(true);
 
-			const newMessages = snapshot.docs.map((doc) => ({
-				id: doc.id,
-				...doc.data(),
-			}));
+			const newMessages = snapshot.docs.map((doc) => {
+				return {
+					id: doc.id,
+					...doc.data(),
+				} as Message;
+			});
 
-			const grouped = groupMessagesByDate(newMessages);
+			const grouped: MessageType[] = groupMessagesByDate(newMessages);
 			setMessages(grouped);
 
 			setIsLoading(false);
@@ -38,8 +41,8 @@ export const useGetChatMessages = (chatId: string) => {
 	return { messages, isLoading };
 };
 
-const groupMessagesByDate = (messages: any[]) => {
-	const groupedMessages: any[] = [];
+const groupMessagesByDate = (messages: Message[]): MessageType[] => {
+	const groupedMessages: MessageType[] = [];
 	let lastDate = '';
 
 	messages.forEach((message) => {
@@ -52,11 +55,13 @@ const groupMessagesByDate = (messages: any[]) => {
 		});
 
 		if (formattedDate !== lastDate) {
-			groupedMessages.push({
+			const dateSeparator: SystemMessage = {
 				id: `date-${formattedDate}`,
 				isDateSeparator: true,
 				date: formattedDate,
-			});
+			};
+
+			groupedMessages.push(dateSeparator);
 
 			lastDate = formattedDate;
 		}

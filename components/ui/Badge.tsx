@@ -1,3 +1,4 @@
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { BadgeProps } from '@/types/components';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -19,9 +20,9 @@ const styles = StyleSheet.create({
 	badge: {
 		marginRight: 6,
 		paddingVertical: 4,
-		paddingHorizontal: 6,
-		fontSize: 14,
-		fontWeight: 600,
+		paddingHorizontal: 5,
 		borderRadius: 4,
+		fontSize: FontSizes.xs,
+		fontWeight: FontWeights.semibold,
 	},
 });

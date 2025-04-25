@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { leaveChatRoom } from '@/firebase/services/chatService';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ChatWithReceiverInfo } from '@/types/chat';
@@ -126,18 +127,19 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	chatUserName: {
-		fontSize: 16,
-		fontWeight: '600',
+		fontSize: FontSizes.md,
+		fontWeight: FontWeights.semibold,
 		color: Colors.font_black,
 	},
 	chatTime: {
-		fontSize: 12,
-		color: Colors.primary,
+		fontSize: FontSizes.xs,
+		color: Colors.font_gray,
+		fontWeight: FontWeights.regular,
 	},
 	content: {
 		flexDirection: 'row',
-		marginTop: 4,
 		alignItems: 'center',
+		marginTop: 4,
 	},
 	count: {
 		borderRadius: 25,
@@ -148,8 +150,9 @@ const styles = StyleSheet.create({
 	},
 	lastMessage: {
 		flex: 1,
-		fontSize: 14,
+		fontSize: FontSizes.sm,
 		color: Colors.font_gray,
+		fontWeight: FontWeights.light,
 	},
 	rightActionContainer: {
 		backgroundColor: Colors.badge_red,

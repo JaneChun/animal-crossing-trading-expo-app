@@ -1,3 +1,4 @@
+import { ICON_MAP } from '@/components/ui/EmptyIndicator';
 import { VALIDATION_RULES } from '@/utilities/validateInput';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
@@ -11,7 +12,7 @@ import {
 } from 'react-native';
 import { CommentWithCreatorInfo } from './comment';
 import { ImageType } from './image';
-import { NotificationWithReceiverInfo } from './notification';
+import { NotificationWithSenderInfo } from './notification';
 import {
 	CartItem,
 	Collection,
@@ -82,6 +83,8 @@ export interface PostFormFieldsProps {
 export type TypeSelectProps = {
 	type: MarketType;
 	setType: Dispatch<SetStateAction<MarketType>>;
+	containerStyle?: StyleProp<ViewStyle>;
+	labelStyle?: StyleProp<TextStyle>;
 };
 
 export type TitleInputProps = {
@@ -205,27 +208,17 @@ export type UserInfoProps = {
 
 // Notification/
 export type NotificationUnitProp = {
-	item: NotificationWithReceiverInfo;
+	item: NotificationWithSenderInfo;
 	collectionName: Collection;
 };
 
 export type NoticeTabProps = {
-	notifications: NotificationWithReceiverInfo[];
+	notifications: NotificationWithSenderInfo[];
 };
 
 export type TabBarLabelProps = {
 	label: string;
 	hasUnread: boolean;
-};
-
-// Chat/
-export type Message = {
-	id: string;
-	body: string;
-	senderId: string;
-	receiverId: string;
-	createdAt: Timestamp;
-	isReadBy: string[];
 };
 
 // Profile/
@@ -256,9 +249,15 @@ export type ProfileImageInputProps = {
 	setImage: Dispatch<SetStateAction<ImagePickerAsset | null>>;
 };
 
+// Search/
+export type SearchResultItemProps = {
+	item: Item;
+	searchInput: string;
+};
+
 // ui/
 export type ButtonColor = 'mint' | 'white' | 'gray';
-export type ButtonSize = 'sm' | 'md' | 'md2' | 'lg';
+export type ButtonSize = 'sm' | 'md' | 'md2' | 'lg' | 'lg2';
 export type ButtonProps = {
 	children: React.ReactNode;
 	onPress: (event: GestureResponderEvent) => void;
@@ -300,8 +299,6 @@ export type LayoutWithHeaderProps = {
 	children: ReactNode;
 	hasBorderBottom?: boolean;
 	containerStyle?: StyleProp<ViewStyle>;
-	isInvalid?: boolean;
-	invalidPage?: ReactNode;
 };
 
 export type CategoriesProps<T, U> = {
@@ -360,4 +357,18 @@ export type AddImageButtonProps = {
 	count: number;
 	totalCount: number;
 	onPress: () => void;
+};
+
+type IconType = keyof typeof ICON_MAP;
+
+export type EmptyIndicatorProps = {
+	iconType?: IconType;
+	iconName?: any;
+	message: string;
+};
+
+export type SearchIconProps = {
+	color?: string;
+	size?: number;
+	containerStyle?: ViewStyle;
 };

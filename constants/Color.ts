@@ -1,16 +1,17 @@
 export const Colors = {
-	base: '#f9fafc',
-	dark_gray: '#4B5563',
-	primary: '#07c6b8',
-	button_pressed: '#F3F4F6',
+	base: '#F5F5F8',
+	primary: '#0f66f2',
 
 	//border
-	border_gray: '#e8eaee',
+	border_gray: '#eff0f4',
 
 	// font
-	font_black: '#000000',
-	font_gray: '#808693',
-	font_light_gray: '#a2a9b5',
+	font_black: '#050512',
+	font_dark_gray: '#262634',
+	font_gray: '#9797a0',
+
+	// icon
+	icon_gray: '#bebed2',
 
 	// button
 	red_text: '#CD5067',

@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import React, { ReactNode } from 'react';
 import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 import Modal from 'react-native-modal';
@@ -95,8 +96,8 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 	},
 	title: {
-		fontSize: 18,
-		fontWeight: 600,
+		fontSize: FontSizes.lg,
+		fontWeight: FontWeights.bold,
 		flex: 1,
 		textAlign: 'center',
 	},

@@ -1,3 +1,4 @@
+import { FontWeights } from '@/constants/Typography';
 import { TitleProps } from '@/types/components';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -14,6 +15,6 @@ export default Title;
 const styles = StyleSheet.create({
 	title: {
 		fontSize: 20,
-		fontWeight: 'bold',
+		fontWeight: FontWeights.semibold,
 	},
 });

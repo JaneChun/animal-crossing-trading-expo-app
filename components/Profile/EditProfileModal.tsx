@@ -1,6 +1,7 @@
 import ProfileImageInput from '@/components/Profile/ProfileImageInput';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
+import { FontSizes } from '@/constants/Typography';
 import { updateDocToFirestore } from '@/firebase/core/firestoreService';
 import {
 	checkIfObjectExistsInStorage,
@@ -17,6 +18,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
 import CustomModal from '../ui/CustomModal';
+import LoadingIndicator from '../ui/loading/LoadingIndicator';
 import NameInput from './NameInput';
 
 const EditProfileModal = ({
@@ -213,7 +215,7 @@ const styles = StyleSheet.create({
 	},
 	infoText: {
 		color: Colors.primary,
-		fontSize: 14,
+		fontSize: FontSizes.sm,
 		marginBottom: 16,
 	},
 });

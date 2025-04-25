@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { DropdownOption, DropdownOptionProps } from '@/types/components';
 import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
@@ -47,7 +48,6 @@ const DropdownInput = ({
 				style={[
 					styles.inputContainer,
 					disabled && { backgroundColor: Colors.base },
-					{ paddingLeft: 18 },
 				]}
 				onPress={openModal}
 				disabled={disabled}
@@ -82,7 +82,7 @@ const DropdownInput = ({
 								key={item.value}
 								style={[
 									styles.option,
-									index === 0 && styles.optionBorderBottom,
+									index !== options.length - 1 && styles.optionBorderBottom,
 								]}
 								onPress={() => handleSelect(item)}
 							>
@@ -112,8 +112,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 	},
 	text: {
-		fontSize: 16,
-		fontWeight: 600,
+		fontSize: FontSizes.md,
+		fontWeight: FontWeights.semibold,
 		color: Colors.font_black,
 	},
 	modalOverlay: {
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
 	},
 	modalContent: {
 		position: 'absolute',
-		backgroundColor: Colors.base,
+		backgroundColor: 'white',
 		borderColor: Colors.border_gray,
 		borderRadius: 8,
 		marginTop: 8,
@@ -135,12 +135,12 @@ const styles = StyleSheet.create({
 		shadowRadius: 2,
 	},
 	option: {
-		paddingVertical: 12,
+		paddingVertical: 14,
 		paddingHorizontal: 16,
 	},
 	optionText: {
-		fontSize: 14,
-		color: Colors.font_black,
+		fontSize: FontSizes.md,
+		color: Colors.font_dark_gray,
 	},
 	optionBorderBottom: {
 		borderBottomWidth: 1,

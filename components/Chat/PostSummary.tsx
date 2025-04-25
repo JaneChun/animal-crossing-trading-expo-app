@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { PostSummaryProps } from '@/types/components';
 import { Collection } from '@/types/post';
@@ -69,8 +70,6 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingHorizontal: 16,
 		height: 70,
-		borderColor: Colors.border_gray,
-		borderWidth: 1,
 		backgroundColor: 'white',
 		borderRadius: 8,
 	},
@@ -89,8 +88,8 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		flexShrink: 1,
-		fontSize: 16,
-		fontWeight: 600,
+		fontSize: FontSizes.md,
+		fontWeight: FontWeights.semibold,
 		color: Colors.font_black,
 	},
 });

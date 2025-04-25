@@ -1,6 +1,6 @@
 import PostList from '@/components/Home/PostList';
 import SearchIcon from '@/components/Search/SearchIcon';
-import Layout, { PADDING } from '@/components/ui/Layout';
+import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import { useCurrentTab } from '@/hooks/useCurrentTab';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { Tab } from '@/types/post';
@@ -20,7 +20,7 @@ const Home = () => {
 	);
 
 	return (
-		<Layout title='거래글' headerRightComponent={SearchIcon}>
+		<Layout title='거래글' headerRightComponent={<SearchIcon />}>
 			<PostList
 				collectionName='Boards'
 				isAddPostButtonVisible

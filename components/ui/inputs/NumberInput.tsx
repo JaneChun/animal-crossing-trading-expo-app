@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { NumberInputProps } from '@/types/components';
 import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
@@ -85,8 +86,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 	},
 	text: {
-		fontSize: 16,
-		fontWeight: 600,
+		fontSize: FontSizes.md,
+		fontWeight: FontWeights.semibold,
 		color: Colors.font_black,
 	},
 });

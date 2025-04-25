@@ -1,7 +1,7 @@
 import { TitleInputProps } from '@/types/components';
 import React from 'react';
 import { Text, View } from 'react-native';
-import ValidationInput from '../ui/ValidationInput';
+import ValidationInput from '../ui/inputs/ValidationInput';
 
 const TitleInput = ({
 	title,

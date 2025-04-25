@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { TabBarLabelProps } from '@/types/components';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -20,8 +21,8 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	label: {
-		fontSize: 14,
-		fontWeight: 600,
+		fontSize: FontSizes.sm,
+		fontWeight: FontWeights.semibold,
 		color: Colors.primary,
 	},
 	badge: {

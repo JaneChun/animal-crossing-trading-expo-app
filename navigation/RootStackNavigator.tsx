@@ -61,7 +61,7 @@ const RootStackNavigator = () => {
 			<RootStack.Screen
 				name='Setting'
 				component={Setting}
-				options={commonOptions}
+				options={{ ...commonOptions, title: '설정' }}
 			/>
 			<RootStack.Screen
 				name='Search'

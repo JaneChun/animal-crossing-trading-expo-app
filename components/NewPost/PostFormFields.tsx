@@ -3,8 +3,9 @@ import ImageInput from '@/components/NewPost/ImageInput';
 import ItemList from '@/components/NewPost/ItemList';
 import TitleInput from '@/components/NewPost/TitleInput';
 import TypeSelect from '@/components/NewPost/TypeSelect';
-import DropdownInput from '@/components/ui/DropdownInput';
+import DropdownInput from '@/components/ui/inputs/DropdownInput';
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { PostFormFieldsProps } from '@/types/components';
 import { MarketType } from '@/types/post';
@@ -40,10 +41,11 @@ const PostFormFields = ({
 				<TypeSelect
 					type={type as MarketType}
 					setType={setType as Dispatch<SetStateAction<MarketType>>}
+					labelStyle={styles.label}
 				/>
 			)}
 			{isCommunity && (
-				<View style={{ width: '30%', flexDirection: 'row', marginBottom: 16 }}>
+				<View style={{ width: '32%', flexDirection: 'row', marginBottom: 16 }}>
 					<DropdownInput
 						options={dropdownOptions}
 						value={type}
@@ -96,17 +98,17 @@ const styles = StyleSheet.create({
 		marginVertical: 16,
 	},
 	label: {
-		fontSize: 16,
-		fontWeight: 600,
+		fontSize: FontSizes.sm,
+		fontWeight: FontWeights.semibold,
 		marginBottom: 12,
 		color: Colors.font_black,
 	},
 	input: {
-		fontSize: 16,
-		padding: 12,
+		fontSize: FontSizes.md,
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		padding: 12,
 		borderRadius: 8,
+		borderColor: Colors.base,
 		backgroundColor: Colors.base,
 	},
 });

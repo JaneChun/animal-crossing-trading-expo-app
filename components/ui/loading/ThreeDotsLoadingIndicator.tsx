@@ -5,7 +5,7 @@ import FastImage from 'react-native-fast-image';
 const ThreeDotsLoadingIndicator = () => {
 	return (
 		<FastImage
-			source={require('../../assets/images/three_dots.gif')}
+			source={require('../../../assets/images/three_dots.gif')}
 			style={styles.image}
 		/>
 	);

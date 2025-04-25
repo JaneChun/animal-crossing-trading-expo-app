@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { EditableItemProps } from '@/types/components';
 import { FontAwesome6, Ionicons } from '@expo/vector-icons';
 import React from 'react';
@@ -9,8 +10,8 @@ import {
 	View,
 	ViewStyle,
 } from 'react-native';
+import MileTicket from '../ui/Icons/MileTicket';
 import ImageWithFallback from '../ui/ImageWithFallback';
-import MileTicket from '../ui/MileTicket';
 
 const EditableItem = ({
 	item,
@@ -52,7 +53,7 @@ const EditableItem = ({
 					style={styles.deleteButton}
 					onPress={() => onDeleteItem(item.id)}
 				>
-					<FontAwesome6 name='circle-minus' size={18} color={Colors.primary} />
+					<FontAwesome6 name='circle-minus' size={22} color={Colors.primary} />
 				</TouchableOpacity>
 			)}
 		</View>
@@ -71,15 +72,15 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 		borderWidth: 1,
 		borderColor: Colors.border_gray,
-		borderRadius: 10,
-		marginBottom: 8,
+		borderRadius: 16,
+		marginBottom: 12,
 	},
 	body: {
 		flex: 1,
 		flexDirection: 'column',
 		justifyContent: 'center',
 		alignItems: 'flex-start',
-		gap: 4,
+		gap: 5,
 	},
 	image: {
 		width: 30,
@@ -88,15 +89,15 @@ const styles = StyleSheet.create({
 		marginRight: 12,
 	},
 	name: {
-		fontSize: 16,
-		fontWeight: 600,
+		fontSize: FontSizes.md,
+		fontWeight: FontWeights.semibold,
 	},
 	color: {
-		fontSize: 14,
+		fontSize: FontSizes.sm,
 		color: Colors.font_gray,
 	},
 	quantity: {
-		fontSize: 14,
+		fontSize: FontSizes.sm,
 		color: Colors.font_gray,
 	},
 	quantityContainer: {
@@ -115,7 +116,6 @@ const styles = StyleSheet.create({
 	},
 	price: {
 		color: Colors.font_black,
-		fontSize: 14,
 	},
 	deleteButton: {
 		padding: 6,

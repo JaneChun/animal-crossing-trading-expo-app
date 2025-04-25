@@ -1,8 +1,9 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes } from '@/constants/Typography';
 import { ValidationInputProp } from '@/types/components';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
-import { validateInput } from '../../utilities/validateInput';
+import { validateInput } from '../../../utilities/validateInput';
 
 const ValidationInput = ({
 	type,
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
 		marginTop: 6,
 	},
 	errorMessage: {
-		color: 'red',
-		fontSize: 12,
+		color: Colors.badge_red,
+		fontSize: FontSizes.xs,
 	},
 });

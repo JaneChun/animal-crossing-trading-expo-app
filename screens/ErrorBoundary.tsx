@@ -1,5 +1,6 @@
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { reportError } from '@/firebase/services/errorService';
 import React, { ReactNode } from 'react';
 import {
@@ -109,8 +110,8 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	title: {
-		fontSize: 18,
-		fontWeight: 600,
+		fontSize: FontSizes.lg,
+		fontWeight: FontWeights.semibold,
 	},
 	toggleButton: {
 		marginVertical: 10,
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
 	},
 	toggleButtonText: {
 		color: Colors.font_gray,
-		fontSize: 14,
+		fontSize: FontSizes.sm,
 	},
 	logContainer: {
 		width: '100%',
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
 		gap: 8,
 	},
 	logText: {
-		fontSize: 12,
+		fontSize: FontSizes.xs,
 		color: Colors.font_gray,
 	},
 });

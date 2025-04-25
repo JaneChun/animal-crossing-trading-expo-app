@@ -1,7 +1,8 @@
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { TotalProps } from '@/types/components';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import MileTicket from '../ui/MileTicket';
+import MileTicket from '../ui/Icons/MileTicket';
 
 const Total = ({ cart = [], containerStyle }: TotalProps) => {
 	const totalPrice =
@@ -13,7 +14,7 @@ const Total = ({ cart = [], containerStyle }: TotalProps) => {
 
 	return (
 		<View style={[styles.container, containerStyle]}>
-			<Text style={styles.totalLabel}>일괄</Text>
+			<Text style={styles.totalLabel}>총계</Text>
 			<View style={styles.totalPriceContainer}>
 				<MileTicket style={styles.ticketIcon} />
 				<Text style={styles.totalPrice}>{totalPrice}</Text>
@@ -32,17 +33,16 @@ const styles = StyleSheet.create({
 		paddingRight: 16,
 	},
 	totalLabel: {
-		fontSize: 14,
-		fontWeight: 600,
-		marginRight: 8,
+		fontSize: FontSizes.md,
+		fontWeight: FontWeights.semibold,
 	},
 	totalPriceContainer: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	totalPrice: {
-		fontSize: 16,
-		fontWeight: 'bold',
+		fontSize: FontSizes.md,
+		fontWeight: FontWeights.semibold,
 	},
 	ticketIcon: {
 		width: 20,

@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { ButtonColor, ButtonProps, ButtonSize } from '@/types/components';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
@@ -47,6 +48,8 @@ const Button = ({
 				return styles.md2;
 			case 'lg':
 				return styles.lg;
+			case 'lg2':
+				return styles.lg2;
 			default:
 				return {};
 		}
@@ -102,8 +105,8 @@ const styles = StyleSheet.create({
 		borderColor: Colors.border_gray,
 	},
 	text: {
-		fontWeight: 'bold',
-		fontSize: 16,
+		fontWeight: FontWeights.bold,
+		fontSize: FontSizes.md,
 	},
 	sm: {
 		paddingVertical: 6,
@@ -118,7 +121,11 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 	},
 	lg: {
-		paddingVertical: 12,
+		paddingVertical: 14,
+		paddingHorizontal: 16,
+	},
+	lg2: {
+		paddingVertical: 16,
 		paddingHorizontal: 16,
 	},
 });

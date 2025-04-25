@@ -1,18 +1,12 @@
 import SearchResultItem from '@/components/Search/SearchResultItem';
-import LayoutWithHeader from '@/components/ui/LayoutWithHeader';
+import SearchInput from '@/components/ui/inputs/SearchInput';
+import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import { Colors } from '@/constants/Color';
 import { useItemSearch } from '@/hooks/firebase/useItemSearch';
 import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
-import { goBack } from '@/navigation/RootNavigation';
 import { Item } from '@/types/post';
 import { useState } from 'react';
-import {
-	StyleSheet,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	View,
-} from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 const Search = () => {
@@ -31,17 +25,12 @@ const Search = () => {
 	return (
 		<LayoutWithHeader
 			headerCenterComponent={
-				<TextInput
-					style={styles.searchInput}
+				<SearchInput
+					searchInput={searchInput}
+					setSearchInput={setSearchInput}
+					containerStyle={{ marginLeft: 8, marginRight: 12 }}
 					placeholder='아이템 검색'
-					value={searchInput}
-					onChangeText={setSearchInput}
 				/>
-			}
-			headerRightComponent={
-				<TouchableOpacity onPress={goBack}>
-					<Text style={styles.closeText}>닫기</Text>
-				</TouchableOpacity>
 			}
 			hasBorderBottom={false}
 		>
@@ -54,9 +43,10 @@ const Search = () => {
 					data={items}
 					keyExtractor={(item) => item.id}
 					renderItem={renderSearchResultItem}
+					contentContainerStyle={styles.listContainer}
 					ListEmptyComponent={
 						<View style={styles.infoContainer}>
-							<Text style={styles.infoMessage}>결과 없음</Text>
+							{searchInput && <Text style={styles.infoMessage}>결과 없음</Text>}
 						</View>
 					}
 				/>
@@ -68,18 +58,8 @@ const Search = () => {
 export default Search;
 
 const styles = StyleSheet.create({
-	searchInput: {
-		flex: 1,
-		fontSize: 14,
-		padding: 8,
-		borderWidth: 1,
-		borderColor: Colors.border_gray,
-		borderRadius: 6,
-		backgroundColor: Colors.base,
-	},
-	closeText: {
-		paddingHorizontal: 16,
-		fontWeight: 600,
+	listContainer: {
+		paddingHorizontal: 12,
 	},
 	infoContainer: {
 		paddingHorizontal: 12,

@@ -27,7 +27,7 @@ const AddItemModal = ({
 			<ItemSelect cart={localCart} setCart={setLocalCart} />
 			<Button
 				color='mint'
-				size='lg'
+				size='lg2'
 				onPress={onSubmit}
 				style={{ marginTop: 16 }}
 			>

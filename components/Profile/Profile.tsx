@@ -1,10 +1,11 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { ProfileProps } from '@/types/components';
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
+import Leaf from '../ui/Icons/Leaf';
 import ImageWithFallback from '../ui/ImageWithFallback';
-import Island from '../ui/Island';
 import EditProfileModal from './EditProfileModal';
 
 const Profile = ({
@@ -35,7 +36,7 @@ const Profile = ({
 			</View>
 			<Text style={styles.displayName}>{profileInfo?.displayName}</Text>
 			<View style={styles.islandInfoContainer}>
-				<Island style={styles.islandIcon} />
+				<Leaf style={styles.islandIcon} />
 				<Text style={styles.islandText}>
 					{profileInfo?.islandName || '어떤 섬에 사시나요?'}
 				</Text>
@@ -44,7 +45,12 @@ const Profile = ({
 			{/* 버튼 */}
 			{isMyProfile && (
 				<View style={styles.buttonsContainer}>
-					<Button color='gray' size='md' onPress={openEditProfileModal}>
+					<Button
+						color='white'
+						size='lg'
+						onPress={openEditProfileModal}
+						style={styles.button}
+					>
 						프로필 수정
 					</Button>
 				</View>
@@ -67,7 +73,8 @@ export default Profile;
 const styles = StyleSheet.create({
 	container: {
 		width: '100%',
-		paddingVertical: 40,
+		paddingTop: 40,
+		paddingBottom: 20,
 		alignItems: 'center',
 		backgroundColor: 'white',
 		borderRadius: 10,
@@ -95,8 +102,8 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	displayName: {
-		fontSize: 20,
-		fontWeight: 'bold',
+		fontSize: FontSizes.lg,
+		fontWeight: FontWeights.bold,
 		marginBottom: 8,
 	},
 	islandInfoContainer: {
@@ -118,8 +125,11 @@ const styles = StyleSheet.create({
 		color: Colors.font_gray,
 	},
 	buttonsContainer: {
-		flexDirection: 'row',
-		gap: 8,
-		marginTop: 10,
+		width: '100%',
+		marginTop: 24,
+	},
+	button: {
+		borderRadius: 12,
+		marginHorizontal: 16,
 	},
 });

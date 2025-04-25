@@ -1,16 +1,16 @@
 import { Colors } from '@/constants/Color';
-import { getPublicUserInfo } from '@/firebase/services/userService';
+import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useDeleteNotification } from '@/hooks/mutation/notification/useDeleteNotification';
 import { useMarkAsRead } from '@/hooks/mutation/notification/useMarkAsRead';
 import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { NotificationUnitProp } from '@/types/components';
 import { Collection } from '@/types/post';
-import { PublicUserInfo } from '@/types/user';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToPostDetail } from '@/utilities/navigationHelpers';
 import { FontAwesome } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
@@ -23,22 +23,12 @@ import Thumbnail from '../ui/Thumbnail';
 const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 	const { isBoardPost, isCommunityPost } = usePostContext();
 
-	const { id, type, body, postId, receiverId, senderId, createdAt, isRead } =
+	const { id, type, body, postId, receiverId, senderInfo, createdAt, isRead } =
 		item;
 	const { data: post } = usePostDetail(type, postId);
-	const [senderInfo, setSenderInfo] = useState<PublicUserInfo | null>(null);
 
 	const { mutate: markAsRead } = useMarkAsRead(id);
 	const { mutate: deleteNotification } = useDeleteNotification(id);
-
-	useEffect(() => {
-		const fetchSenderInfo = async () => {
-			const sender = await getPublicUserInfo(senderId);
-			setSenderInfo(sender);
-		};
-
-		fetchSenderInfo();
-	}, []);
 
 	let title = '게시글';
 	if (post?.title) {
@@ -84,7 +74,7 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 		);
 	};
 
-	if (!post || !senderInfo) return null;
+	if (!post) return null;
 
 	return (
 		<Swipeable friction={2} renderRightActions={RightAction}>
@@ -112,8 +102,11 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 				{/* 콘텐츠 */}
 				<View style={styles.content}>
 					<Text style={styles.title} numberOfLines={2}>
-						<Text style={styles.boldText}>{senderInfo.displayName}</Text>님이{' '}
-						<Text style={styles.boldText}>{title}</Text>에 댓글을 남겼습니다.
+						<Text style={styles.highlight}>
+							{senderInfo?.displayName ?? DEFAULT_USER_DISPLAY_NAME}
+						</Text>
+						님이 <Text style={styles.highlight}>{title}</Text>에 댓글을
+						남겼습니다.
 					</Text>
 					<Text style={styles.body} numberOfLines={2}>
 						"{body}"
@@ -150,21 +143,22 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		color: Colors.font_gray,
+		fontWeight: FontWeights.regular,
 		marginBottom: 4,
 	},
-	boldText: {
-		fontWeight: 600,
+	highlight: {
 		color: Colors.font_black,
+		// fontWeight: FontWeights.semibold,
 	},
 	body: {
 		marginTop: 4,
-		fontSize: 14,
+		fontSize: FontSizes.sm,
 		color: Colors.font_gray,
 	},
 	date: {
 		marginTop: 6,
-		fontSize: 12,
-		color: Colors.font_light_gray,
+		fontSize: FontSizes.xs,
+		color: Colors.font_gray,
 		textAlign: 'right',
 	},
 	rightActionContainer: {

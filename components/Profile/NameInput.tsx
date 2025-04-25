@@ -1,7 +1,8 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { NameInputProp } from '@/types/components';
 import { StyleSheet, Text, View } from 'react-native';
-import ValidationInput from '../ui/ValidationInput';
+import ValidationInput from '../ui/inputs/ValidationInput';
 
 const NameInput = ({
 	label,
@@ -32,16 +33,16 @@ const styles = StyleSheet.create({
 		marginBottom: 24,
 	},
 	label: {
-		fontSize: 16,
-		fontWeight: 600,
+		fontSize: FontSizes.md,
+		fontWeight: FontWeights.semibold,
 		color: Colors.font_black,
 		marginBottom: 16,
 	},
 	input: {
-		fontSize: 16,
+		fontSize: FontSizes.md,
 		padding: 12,
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.base,
 		borderRadius: 8,
 		backgroundColor: Colors.base,
 		marginBottom: 8,

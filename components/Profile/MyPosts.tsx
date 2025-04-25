@@ -1,7 +1,7 @@
 import { PublicUserInfo } from '@/types/user';
 import React from 'react';
 import PostList from '../Home/PostList';
-import Layout, { PADDING } from '../ui/Layout';
+import Layout, { PADDING } from '../ui/layout/Layout';
 
 const MyPosts = ({ profileInfo }: { profileInfo: PublicUserInfo }) => {
 	return (

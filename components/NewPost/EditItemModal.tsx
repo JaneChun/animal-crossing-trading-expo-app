@@ -1,14 +1,15 @@
 import Button from '@/components/ui/Button';
 import { Colors } from '@/constants/Color';
 import { CURRENCY_OPTIONS } from '@/constants/post';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { EditItemModalProps } from '@/types/components';
 import { CartItem } from '@/types/post';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Total from '../PostDetail/Total';
 import CustomModal from '../ui/CustomModal';
-import DropdownInput from '../ui/DropdownInput';
-import NumberInput from '../ui/NumberInput';
+import DropdownInput from '../ui/inputs/DropdownInput';
+import NumberInput from '../ui/inputs/NumberInput';
 
 const EditItemModal = ({
 	item,
@@ -94,7 +95,7 @@ const EditItemModal = ({
 			</View>
 
 			{/* 버튼 */}
-			<Button color='mint' size='lg' onPress={onSubmit}>
+			<Button color='mint' size='lg2' onPress={onSubmit}>
 				수정하기
 			</Button>
 		</CustomModal>
@@ -106,16 +107,16 @@ export default EditItemModal;
 const styles = StyleSheet.create({
 	content: {
 		flex: 1,
-		gap: 12,
+		gap: 8,
 	},
 	title: {
-		fontSize: 18,
-		fontWeight: 'bold',
+		fontSize: FontSizes.lg,
+		fontWeight: FontWeights.bold,
 	},
 	subTitle: {
-		fontSize: 16,
+		fontSize: FontSizes.md,
 		color: Colors.font_gray,
-		marginBottom: 8,
+		marginBottom: 16,
 	},
 	row: {
 		flexDirection: 'row',
@@ -134,8 +135,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 16,
 	},
 	text: {
-		fontSize: 16,
-		fontWeight: 600,
+		fontSize: FontSizes.md,
+		fontWeight: FontWeights.semibold,
 		color: Colors.font_black,
 	},
 	totalContainer: {

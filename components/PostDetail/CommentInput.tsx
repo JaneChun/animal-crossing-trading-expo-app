@@ -9,7 +9,7 @@ import {
 	navigateToMyProfile,
 } from '@/utilities/navigationHelpers';
 import { useState } from 'react';
-import Input from '../ui/Input';
+import Input from '../ui/inputs/Input';
 import { showLongToast, showToast } from '../ui/Toast';
 
 const CommentInput = ({ postId, setIsCommentUploading }: CommentInputProps) => {

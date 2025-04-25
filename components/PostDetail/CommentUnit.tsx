@@ -1,5 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useCreateChatRoom } from '@/hooks/mutation/chat/useCreateChatRoom';
 import { useDeleteComment } from '@/hooks/mutation/comment/useDeleteComment';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
@@ -86,6 +87,7 @@ const CommentUnit = ({
 
 	return (
 		<View style={styles.container}>
+			{/* 프로필 이미지 */}
 			<TouchableOpacity
 				onPress={() => navigateToUserProfile({ userId: creatorId })}
 			>
@@ -96,9 +98,10 @@ const CommentUnit = ({
 				/>
 			</TouchableOpacity>
 
-			<View style={styles.commentContent}>
+			<View style={styles.content}>
 				{/* 헤더 */}
 				<View style={styles.commentHeader}>
+					{/* 작성자 */}
 					<View style={styles.creatorInfo}>
 						<TouchableOpacity
 							onPress={() => navigateToUserProfile({ userId: creatorId })}
@@ -111,32 +114,39 @@ const CommentUnit = ({
 							<Text style={styles.authorTag}>작성자</Text>
 						)}
 					</View>
-					{creatorId === userInfo?.uid && (
-						<ActionSheetButton
-							color={Colors.font_gray}
-							size={14}
-							options={[
-								{
-									label: '수정',
-									onPress: () =>
-										navigateToEditComment({ postId, commentId: id, body }),
-								},
-								{
-									label: '삭제',
-									onPress: handleDeleteComment,
-								},
-								{ label: '취소', onPress: () => {} },
-							]}
-						/>
-					)}
+					{/* 액션 시트 버튼 */}
+					<View style={styles.actionContainer}>
+						{creatorId === userInfo?.uid && (
+							<ActionSheetButton
+								color={Colors.font_gray}
+								size={14}
+								options={[
+									{
+										label: '수정',
+										onPress: () =>
+											navigateToEditComment({ postId, commentId: id, body }),
+									},
+									{
+										label: '삭제',
+										onPress: handleDeleteComment,
+									},
+									{ label: '취소', onPress: () => {} },
+								]}
+							/>
+						)}
+					</View>
 				</View>
+
+				{/* 섬 이름, 작성 시간 */}
+				<Text style={styles.infoText}>{`${creatorIslandName} · ${elapsedTime(
+					createdAt,
+				)}`}</Text>
 
 				{/* 바디 */}
 				<Text style={styles.commentBody}>{body}</Text>
 
 				{/* 푸터 */}
 				<View style={styles.commentFooter}>
-					<Text style={styles.time}>{elapsedTime(createdAt)}</Text>
 					{/* 내 게시글의 다른 사람 댓글만 표시 */}
 					{postCreatorId === userInfo?.uid &&
 						postCreatorId !== creatorId &&
@@ -148,11 +158,7 @@ const CommentUnit = ({
 								}
 							>
 								<Text style={styles.chatText}>채팅하기</Text>
-								<AntDesign
-									name='arrowright'
-									color={Colors.font_black}
-									size={14}
-								/>
+								<AntDesign name='arrowright' color={Colors.primary} size={14} />
 							</TouchableOpacity>
 						)}
 				</View>
@@ -165,8 +171,6 @@ const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'row',
 		paddingVertical: 16,
-		borderBottomWidth: 1,
-		borderBottomColor: Colors.border_gray,
 	},
 	profileImage: {
 		width: 50,
@@ -174,61 +178,66 @@ const styles = StyleSheet.create({
 		borderRadius: 25,
 		marginRight: 12,
 	},
-	commentContent: {
+	content: {
 		flex: 1,
-		gap: 2,
 	},
 	commentHeader: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		marginBottom: 6,
 	},
 	creatorInfo: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	creatorDisplayNameText: {
-		fontSize: 14,
-		fontWeight: 600,
+		fontSize: FontSizes.sm,
+		fontWeight: FontWeights.semibold,
 		color: Colors.font_black,
 	},
 	authorTag: {
 		backgroundColor: Colors.primary_background,
 		color: Colors.primary_text,
-		fontSize: 12,
+		fontSize: FontSizes.xs,
 		padding: 4,
 		borderRadius: 4,
 		marginHorizontal: 6,
 	},
-	menu: {
-		padding: 5,
+	actionContainer: {
+		height: 28,
+		alignItems: 'flex-end',
+	},
+	infoText: {
+		fontSize: FontSizes.xs,
+		color: Colors.font_gray,
+		marginBottom: 6,
 	},
 	commentBody: {
-		fontSize: 16,
-		color: Colors.font_gray,
+		fontSize: FontSizes.md,
+		fontWeight: FontWeights.regular,
+		color: Colors.font_dark_gray,
 	},
 	commentFooter: {
 		flexDirection: 'row',
-		justifyContent: 'space-between',
+		justifyContent: 'flex-end',
 		alignItems: 'center',
-		marginTop: 6,
-	},
-	time: {
-		fontSize: 12,
-		color: Colors.primary,
 	},
 	chatButtonContainer: {
 		flexDirection: 'row',
 		alignItems: 'flex-start',
 		gap: 4,
-		padding: 8,
+		paddingVertical: 10,
+		paddingHorizontal: 14,
 		backgroundColor: 'white',
-		borderRadius: 6,
+		borderRadius: 50,
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.primary,
 	},
-	chatText: { fontSize: 14, color: Colors.font_black, fontWeight: 600 },
+	chatText: {
+		fontSize: FontSizes.sm,
+		color: Colors.primary,
+		fontWeight: FontWeights.semibold,
+	},
 });
 
 export default CommentUnit;

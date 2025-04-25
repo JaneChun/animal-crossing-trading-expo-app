@@ -10,7 +10,8 @@ import Title from '@/components/PostDetail/Title';
 import Total from '@/components/PostDetail/Total';
 import UserInfo from '@/components/PostDetail/UserInfo';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
-import LoadingIndicator from '@/components/ui/LoadingIndicator';
+import EmptyIndicator from '@/components/ui/EmptyIndicator';
+import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { useDeletePost } from '@/hooks/mutation/post/useDeletePost';
@@ -20,23 +21,18 @@ import useLoading from '@/hooks/shared/useLoading';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { goBack } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
-import { PostDetailRouteProp } from '@/types/navigation';
+import { PostDetailRouteProp, RootStackNavigation } from '@/types/navigation';
 import { CommunityType, MarketType } from '@/types/post';
 import { navigateToEditPost } from '@/utilities/navigationHelpers';
-import { useRoute } from '@react-navigation/native';
-import React from 'react';
-import {
-	Alert,
-	KeyboardAvoidingView,
-	StyleSheet,
-	Text,
-	View,
-} from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { Alert, KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 const PostDetail = () => {
 	const { isBoardPost, isCommunityPost } = usePostContext();
 
+	const stackNavigation = useNavigation<RootStackNavigation>();
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const route = useRoute<PostDetailRouteProp>();
 	const { id = '', collectionName = '' } = route.params;
@@ -56,6 +52,30 @@ const PostDetail = () => {
 
 	const { isLoading: isCommentUploading, setIsLoading: setIsCommentUploading } =
 		useLoading();
+
+	useEffect(() => {
+		if (post?.creatorId === userInfo?.uid) {
+			stackNavigation.setOptions({
+				headerRight: () => (
+					<ActionSheetButton
+						color={Colors.font_black}
+						size={18}
+						options={[
+							{
+								label: '수정',
+								onPress: () => navigateToEditPost({ postId: id }),
+							},
+							{
+								label: '삭제',
+								onPress: handleDeletePost,
+							},
+							{ label: '취소', onPress: () => {} },
+						]}
+					/>
+				),
+			});
+		}
+	}, [post?.creatorId, userInfo?.uid, id, stackNavigation]);
 
 	const handleDeletePost = async () => {
 		Alert.alert('게시글 삭제', '정말로 삭제하겠습니까?', [
@@ -89,11 +109,7 @@ const PostDetail = () => {
 	}
 
 	if (!post) {
-		return (
-			<View style={styles.invalidPostContainer}>
-				<Text style={styles.invalidPostText}>게시글을 찾을 수 없습니다.</Text>
-			</View>
-		);
+		return <EmptyIndicator message='게시글을 찾을 수 없습니다.' />;
 	}
 
 	return (
@@ -107,54 +123,29 @@ const PostDetail = () => {
 						<View style={styles.content}>
 							{/* 헤더 */}
 							<View style={styles.header}>
-								<View style={styles.typeAndMenuRow}>
+								<View style={[styles.typeAndMenuRow, { marginBottom: 8 }]}>
 									{isBoardPost(post, collectionName) && (
-										<MarketTypeBadge
-											type={post.type as MarketType}
-											containerStyle={styles.typeBadgeContainer}
-										/>
+										<MarketTypeBadge type={post.type as MarketType} />
 									)}
 
 									{isCommunityPost(post, collectionName) && (
-										<CommunityTypeBadge
-											type={post.type as CommunityType}
-											containerStyle={styles.typeBadgeContainer}
-										/>
-									)}
-
-									{post.creatorId === userInfo?.uid && (
-										<ActionSheetButton
-											color={Colors.font_gray}
-											size={18}
-											options={[
-												{
-													label: '수정',
-													onPress: () => navigateToEditPost({ postId: id }),
-												},
-												{
-													label: '삭제',
-													onPress: handleDeletePost,
-												},
-												{ label: '취소', onPress: () => {} },
-											]}
-										/>
+										<CommunityTypeBadge type={post.type as CommunityType} />
 									)}
 								</View>
 
 								<Title
 									title={post.title}
-									containerStyle={{ marginBottom: 8 }}
+									containerStyle={{ marginBottom: 4 }}
 								/>
-								<UserInfo
-									userId={post.creatorId}
-									displayName={post.creatorDisplayName}
-									islandName={post.creatorIslandName}
-									containerStyle={{ marginBottom: 8 }}
-								/>
-								<CreatedAt
-									createdAt={post.createdAt}
-									containerStyle={{ marginBottom: 16 }}
-								/>
+
+								<View style={styles.infoContainer}>
+									<UserInfo
+										userId={post.creatorId}
+										displayName={post.creatorDisplayName}
+										islandName={post.creatorIslandName}
+									/>
+									<CreatedAt createdAt={post.createdAt} />
+								</View>
 							</View>
 
 							{/* 본문 */}
@@ -165,7 +156,7 @@ const PostDetail = () => {
 										containerStyle={{ marginBottom: 16 }}
 									/>
 								)}
-								<Body body={post.body} containerStyle={{ marginBottom: 36 }} />
+								<Body body={post.body} containerStyle={{ marginBottom: 24 }} />
 
 								{isBoardPost(post, collectionName) && (
 									<>
@@ -222,6 +213,7 @@ const styles = StyleSheet.create({
 	header: {
 		borderBottomWidth: 1,
 		borderColor: Colors.border_gray,
+		paddingBottom: 16,
 		marginBottom: 16,
 	},
 	body: {
@@ -229,19 +221,9 @@ const styles = StyleSheet.create({
 		borderColor: Colors.border_gray,
 		marginBottom: 16,
 	},
-	typeBadgeContainer: {
+	infoContainer: {
 		flexDirection: 'row',
-		marginLeft: -2,
-		marginBottom: 12,
-	},
-	invalidPostContainer: {
-		flex: 1,
-		justifyContent: 'center',
+		justifyContent: 'space-between',
 		alignItems: 'center',
-		backgroundColor: 'white',
-	},
-	invalidPostText: {
-		color: Colors.font_gray,
-		alignSelf: 'center',
 	},
 });

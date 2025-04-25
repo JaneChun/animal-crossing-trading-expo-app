@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -30,5 +31,7 @@ const styles = StyleSheet.create({
 	invalidPostText: {
 		color: Colors.font_gray,
 		alignSelf: 'center',
+		fontWeight: FontWeights.regular,
+		fontSize: FontSizes.sm,
 	},
 });

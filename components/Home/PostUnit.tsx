@@ -1,11 +1,13 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { PostUnitProps } from '@/types/components';
 import { Collection } from '@/types/post';
+import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToPost } from '@/utilities/navigationHelpers';
+import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { elapsedTime } from '../../utilities/elapsedTime';
 import CommunityTypeBadge from '../Community/CommunityTypeBadge';
 import ItemThumbnail from '../ui/ItemThumbnail';
 import Thumbnail from '../ui/Thumbnail';
@@ -22,42 +24,55 @@ const PostUnit = <C extends Collection>({
 			style={styles.container}
 			onPress={() => navigateToPost({ postId: post.id, collectionName })}
 		>
-			{/* 썸네일 */}
-			<View style={styles.thumbnailContainer}>
-				{isBoardPost(post, collectionName) && (
-					<ItemThumbnail
-						previewImage={post.cart?.[0]?.imageUrl}
-						itemLength={post.cart?.length}
-					/>
-				)}
-				{isCommunityPost(post, collectionName) && (
-					<Thumbnail previewImage={post.images?.[0]} />
-				)}
-			</View>
-
 			{/* 콘텐츠 */}
-			<View style={styles.contentContainer}>
-				<View style={styles.titleContainer}>
-					{isBoardPost(post, collectionName) && (
-						<MarketTypeBadge type={post.type} />
-					)}
-					{isCommunityPost(post, collectionName) && (
-						<CommunityTypeBadge type={post.type} />
-					)}
-					<Text style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
+			<View style={styles.topRow}>
+				<View style={styles.typeAndTitle}>
+					{/* 배지 */}
+					<View style={{ flexDirection: 'row' }}>
+						{isBoardPost(post, collectionName) && (
+							<MarketTypeBadge type={post.type} />
+						)}
+						{isCommunityPost(post, collectionName) && (
+							<CommunityTypeBadge type={post.type} />
+						)}
+					</View>
+					{/* 타이틀 */}
+					<Text style={styles.title} numberOfLines={2} ellipsizeMode='tail'>
 						{post.title}
 					</Text>
 				</View>
-				<Text style={styles.infoText}>
-					<Text style={styles.creator}>{post.creatorDisplayName} </Text>
-					<Text style={styles.date}> {elapsedTime(post.createdAt)}</Text>
-				</Text>
+
+				{/* 썸네일 */}
+				<View style={styles.thumbnail}>
+					{isBoardPost(post, collectionName) && (
+						<ItemThumbnail
+							previewImage={post.cart?.[0]?.imageUrl}
+							itemLength={post.cart?.length}
+						/>
+						// <Thumbnail previewImage={post.cart?.[0]?.imageUrl} />
+					)}
+					{isCommunityPost(post, collectionName) && (
+						<Thumbnail previewImage={post.images?.[0]} />
+					)}
+				</View>
 			</View>
 
-			{/* 댓글 */}
-			<View style={styles.commentContainer}>
-				<Text style={styles.commentLabel}>댓글</Text>
-				<Text style={styles.commentCount}>{post.commentCount}</Text>
+			{/* 작성자, 시간, 댓글 */}
+			<View style={styles.bottomRow}>
+				<View style={styles.infoContainer}>
+					<Text style={styles.infoText}>{post.creatorDisplayName} </Text>
+					<Text style={styles.infoText}>{elapsedTime(post.createdAt)}</Text>
+				</View>
+				<View style={styles.commentContainer}>
+					<View style={styles.commentBox}>
+						<MaterialIcons
+							name='mode-comment'
+							color={Colors.icon_gray}
+							size={15}
+						/>
+						<Text style={styles.infoText}>{post.commentCount}</Text>
+					</View>
+				</View>
 			</View>
 		</TouchableOpacity>
 	);
@@ -65,59 +80,50 @@ const PostUnit = <C extends Collection>({
 
 const styles = StyleSheet.create({
 	container: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingVertical: 16,
+		flex: 1,
+		paddingVertical: 18,
 		borderBottomWidth: 1,
 		borderBottomColor: Colors.border_gray,
 	},
-	thumbnailContainer: {
+	thumbnail: {
 		flexShrink: 0,
-		// borderWidth: 1,
 	},
-	contentContainer: {
+	topRow: {
 		flex: 1,
-		marginLeft: 12,
-	},
-	titleContainer: {
-		flex: 1,
-		height: 30,
 		flexDirection: 'row',
-		alignItems: 'center',
+		justifyContent: 'space-between',
+		gap: 8,
+	},
+	typeAndTitle: {
+		gap: 6,
 	},
 	title: {
 		flexShrink: 1,
-		fontSize: 16,
-		fontWeight: 600,
+		fontSize: FontSizes.md,
+		fontWeight: FontWeights.semibold,
 		color: Colors.font_black,
+	},
+	bottomRow: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		marginTop: 8,
+	},
+	infoContainer: {
+		flexDirection: 'row',
+		gap: 2,
+		marginTop: 2,
 	},
 	infoText: {
-		fontSize: 14,
-		marginTop: 4,
-	},
-	creator: {
-		fontWeight: '500',
+		fontSize: FontSizes.xs,
+		fontWeight: FontWeights.regular,
 		color: Colors.font_gray,
 	},
-	date: {
-		fontSize: 14,
-		color: Colors.font_light_gray,
-	},
 	commentContainer: {
-		width: 50,
-		flexDirection: 'column',
-		gap: 6,
-		alignItems: 'center',
+		width: 30,
 	},
-	commentLabel: {
-		fontSize: 12,
-		fontWeight: 600,
-		color: Colors.font_black,
-	},
-	commentCount: {
-		fontSize: 16,
-		fontWeight: 'bold',
-		color: Colors.font_black,
+	commentBox: {
+		flexDirection: 'row',
+		gap: 2,
 	},
 });
 

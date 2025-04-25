@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes } from '@/constants/Typography';
 import { BodyProps } from '@/types/components';
 import { StyleSheet, Text, View } from 'react-native';
 
@@ -14,7 +15,8 @@ export default Body;
 
 const styles = StyleSheet.create({
 	body: {
-		fontSize: 16,
-		color: Colors.font_gray,
+		fontSize: FontSizes.md,
+		color: Colors.font_dark_gray,
+		lineHeight: 26,
 	},
 });

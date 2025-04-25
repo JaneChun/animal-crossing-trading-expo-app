@@ -1,18 +1,19 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import { useAuthStore } from '@/stores/AuthStore';
-import { Message as MessageType } from '@/types/components';
+import { Message } from '@/types/chat';
 import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import PostNotExist from './PostNotExist';
 import PostSummary from './PostSummary';
 import PostSummaryLoading from './PostSummaryLoading';
 
-const Message = ({
+const MessageUnit = ({
 	message,
 	receiverId,
 }: {
-	message: MessageType;
+	message: Message;
 	receiverId: string;
 }) => {
 	const userInfo = useAuthStore((state) => state.userInfo);
@@ -57,60 +58,69 @@ const Message = ({
 	// 일반 메시지 (내가 보낸 거 vs 받은 거)
 	return message.senderId === userInfo?.uid ? (
 		<View style={[styles.messageContainer, { alignSelf: 'flex-end' }]}>
-			{message.isReadBy.includes(receiverId) && (
-				<Text style={styles.readText}>읽음</Text>
-			)}
-			<Text style={styles.messageTime}>{formattedDate}</Text>
+			<View style={styles.infoContainer}>
+				{message.isReadBy.includes(receiverId) && (
+					<Text style={styles.infoText}>읽음</Text>
+				)}
+				<Text style={[styles.infoText]}>{formattedDate}</Text>
+			</View>
+
 			<View style={[styles.messageBubble, styles.sentBackground]}>
-				<Text style={styles.sentText}>{message.body}</Text>
+				<Text style={[styles.messageText, styles.sentTextColor]}>
+					{message.body}
+				</Text>
 			</View>
 		</View>
 	) : (
 		<View style={[styles.messageContainer, { alignSelf: 'flex-start' }]}>
 			<View style={[styles.messageBubble, styles.receivedBackground]}>
-				<Text style={styles.receivedText}>{message.body}</Text>
+				<Text style={[styles.messageText, styles.receivedTextColor]}>
+					{message.body}
+				</Text>
 			</View>
-			<Text style={styles.messageTime}>{formattedDate}</Text>
+			<Text style={styles.infoText}>{formattedDate}</Text>
 		</View>
 	);
 };
 
-export default Message;
+export default MessageUnit;
 
 const styles = StyleSheet.create({
 	messageContainer: {
 		flexDirection: 'row',
 		alignItems: 'flex-end',
 		gap: 6,
-		marginVertical: 8,
+		marginVertical: 4,
 	},
 	messageBubble: {
 		maxWidth: '75%',
-		padding: 10,
+		paddingVertical: 12,
+		paddingHorizontal: 16,
 		borderRadius: 8,
 	},
 	sentBackground: {
 		backgroundColor: Colors.primary,
 	},
 	receivedBackground: {
-		backgroundColor: Colors.border_gray,
+		backgroundColor: 'white',
 	},
-	sentText: {
+	messageText: {
 		fontSize: 14,
+		fontWeight: FontWeights.regular,
+	},
+	sentTextColor: {
 		color: 'white',
 	},
-	receivedText: {
-		fontSize: 14,
+	receivedTextColor: {
 		color: Colors.font_black,
 	},
-	messageTime: {
-		fontSize: 10,
-		color: Colors.font_gray,
+	infoContainer: {
+		alignItems: 'flex-end',
 	},
-	readText: {
-		fontSize: 10,
+	infoText: {
+		fontSize: FontSizes.xxs,
 		color: Colors.font_gray,
-		paddingBottom: 1,
+		fontWeight: FontWeights.light,
 	},
 	postSummaryContainer: {
 		width: '100%',

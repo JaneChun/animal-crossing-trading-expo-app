@@ -1,5 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
-import { Collection } from './components';
+import { Collection } from './post';
 import { PublicUserInfo } from './user';
 
 export interface Chat {
@@ -14,6 +14,23 @@ export interface Chat {
 export interface ChatWithReceiverInfo extends Chat {
 	receiverInfo: PublicUserInfo;
 }
+
+export type Message = {
+	id: string;
+	body: string;
+	senderId: string;
+	receiverId: string;
+	createdAt: Timestamp;
+	isReadBy: string[];
+};
+
+export type SystemMessage = {
+	id: string;
+	isDateSeparator: true;
+	date: string;
+};
+
+export type MessageType = Message | SystemMessage;
 
 // firebase/services/chatService.ts
 export interface CreateChatRoomParams {

@@ -1,6 +1,8 @@
-import Layout, { PADDING } from '@/components/ui/Layout';
-import LoadingIndicator from '@/components/ui/LoadingIndicator';
+import Layout, { PADDING } from '@/components/ui/layout/Layout';
+import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
+import { Colors } from '@/constants/Color';
+import { FontSizes } from '@/constants/Typography';
 import { auth } from '@/fbase';
 import { useUpdateComment } from '@/hooks/mutation/comment/useUpdateComment';
 import { goBack } from '@/navigation/RootNavigation';
@@ -110,6 +112,8 @@ export default EditComment;
 
 const styles = StyleSheet.create({
 	textInput: {
-		fontSize: 16,
+		fontSize: FontSizes.md,
+		lineHeight: 26,
+		color: Colors.font_dark_gray,
 	},
 });

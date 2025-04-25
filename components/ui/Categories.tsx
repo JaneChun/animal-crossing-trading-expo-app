@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { CategoriesProps } from '@/types/components';
 import {
 	Category,
@@ -101,18 +102,22 @@ const styles = StyleSheet.create({
 	category: {
 		paddingVertical: 8,
 		paddingHorizontal: 14,
-		borderRadius: 16,
+		borderRadius: 50,
 		backgroundColor: Colors.base,
+		borderWidth: 1,
+		borderColor: Colors.base,
 	},
 	categorySelected: {
-		backgroundColor: Colors.primary,
+		backgroundColor: 'white',
+		borderColor: Colors.primary,
 	},
 	categoryText: {
 		color: Colors.font_gray,
-		fontSize: 14,
+		fontSize: FontSizes.sm,
+		fontWeight: FontWeights.semibold,
 	},
 	categoryTextSelected: {
-		color: 'white',
+		color: Colors.primary,
 	},
 	toggleButton: {
 		padding: 6,

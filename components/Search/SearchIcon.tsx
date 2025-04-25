@@ -1,12 +1,17 @@
+import { Colors } from '@/constants/Color';
+import { SearchIconProps } from '@/types/components';
 import { navigateToSearch } from '@/utilities/navigationHelpers';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-const SearchIcon = (
-	<TouchableOpacity style={{ paddingRight: 5 }} onPress={navigateToSearch}>
-		<Ionicons name='search' color={Colors.font_black} size={24} />
+const SearchIcon = ({
+	color = Colors.font_black,
+	size = 24,
+	containerStyle,
+}: SearchIconProps) => (
+	<TouchableOpacity style={containerStyle} onPress={navigateToSearch}>
+		<Ionicons name='search-sharp' color={color} size={size} />
 	</TouchableOpacity>
 );
 

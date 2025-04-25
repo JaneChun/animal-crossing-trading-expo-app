@@ -1,6 +1,6 @@
 import PostFormFields from '@/components/NewPost/PostFormFields';
-import Layout, { PADDING } from '@/components/ui/Layout';
-import LoadingIndicator from '@/components/ui/LoadingIndicator';
+import Layout, { PADDING } from '@/components/ui/layout/Layout';
+import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { COMMUNITY_TYPES } from '@/constants/post';
 import { auth } from '@/fbase';
@@ -242,7 +242,7 @@ const NewPost = () => {
 						아이템 추가
 					</Button>
 				)}
-				<Button color='mint' size='lg' style={{ flex: 1 }} onPress={onSubmit}>
+				<Button color='mint' size='lg2' style={{ flex: 1 }} onPress={onSubmit}>
 					등록
 				</Button>
 			</View>

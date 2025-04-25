@@ -1,8 +1,11 @@
-import Message from '@/components/Chat/Message';
+import DateSeparator from '@/components/Chat/DateSeparator';
+import UserInfoLabel from '@/components/Chat/Message/UserInfoLabel';
+import MessageUnit from '@/components/Chat/MessageUnit';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
-import Input from '@/components/ui/Input';
-import LayoutWithHeader from '@/components/ui/LayoutWithHeader';
-import LoadingIndicator from '@/components/ui/LoadingIndicator';
+import EmptyIndicator from '@/components/ui/EmptyIndicator';
+import Input from '@/components/ui/inputs/Input';
+import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
+import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { useGetChatMessages } from '@/hooks/firebase/useGetChatMessages';
@@ -12,10 +15,12 @@ import { useSendMessage } from '@/hooks/mutation/chat/useSendMessage';
 import { useReceiverInfo } from '@/hooks/query/chat/useReceiverInfo';
 import { goBack } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
+import { MessageType } from '@/types/chat';
 import { ChatRoomRouteProp } from '@/types/navigation';
+import { isSystemMessage } from '@/utilities/typeGuards/messageGuards';
 import { useRoute } from '@react-navigation/native';
-import React, { useEffect, useRef, useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { KeyboardAvoidingView, StyleSheet } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 const ChatRoom = () => {
@@ -63,6 +68,17 @@ const ChatRoom = () => {
 		flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
 	};
 
+	const renderMessage = useCallback(
+		({ item }: { item: MessageType }) => {
+			if (isSystemMessage(item)) {
+				return <DateSeparator date={item.date} />;
+			}
+
+			return <MessageUnit message={item} receiverId={receiverInfo!.uid} />;
+		},
+		[receiverInfo?.uid],
+	);
+
 	const leaveChat = async () => {
 		if (!userInfo) return;
 
@@ -70,73 +86,49 @@ const ChatRoom = () => {
 		goBack();
 	};
 
-	const renderMessage = ({ item }: { item: any }) => {
-		if (item.isDateSeparator) {
-			return (
-				<View style={styles.dateSeparator}>
-					<Text style={styles.dateSeparatorText}>{item.date}</Text>
-				</View>
-			);
-		}
-
-		return <Message message={item} receiverId={receiverInfo!.uid} />;
-	};
-
-	if (isMessagesFetching || isReceiverInfoFetching) {
-		return <LoadingIndicator />;
-	}
-
 	return (
 		<LayoutWithHeader
 			headerCenterComponent={
-				<View style={styles.header}>
-					{/* <ImageWithFallback
-						uri={receiverInfo?.photoURL}
-						fallbackSource={require('../assets/images/empty_profile_image.png')}
-						style={styles.profileImage}
-					/> */}
-
-					<Text style={styles.displayName}>{receiverInfo?.displayName}</Text>
-				</View>
+				receiverInfo && <UserInfoLabel userInfo={receiverInfo} />
 			}
 			headerRightComponent={
 				<ActionSheetButton
-					color={Colors.font_gray}
-					size={20}
+					color={Colors.font_black}
+					size={18}
 					options={[
 						{ label: '나가기', onPress: leaveChat },
 						{ label: '취소', onPress: () => {} },
 					]}
 				/>
 			}
-			isInvalid={!chatId || !receiverInfo}
-			invalidPage={
-				<View style={styles.invalidPostContainer}>
-					<Text style={styles.invalidPostText}>채팅방을 찾을 수 없습니다.</Text>
-				</View>
-			}
 		>
-			<KeyboardAvoidingView style={styles.screen} behavior='padding'>
-				{/* 메세지 목록 */}
-				<FlatList
-					ref={flatListRef}
-					data={messages}
-					keyExtractor={({ id }) => id}
-					renderItem={renderMessage}
-					contentContainerStyle={styles.flatListContainer}
-					inverted={true}
-				/>
-
-				{/* 인풋 */}
-				{receiverInfo?.displayName !== DEFAULT_USER_DISPLAY_NAME && (
-					<Input
-						input={chatInput}
-						setInput={setChatInput}
-						placeholder='메세지 보내기'
-						onPress={onSubmit}
+			{isMessagesFetching || isReceiverInfoFetching ? (
+				<LoadingIndicator />
+			) : !chatId || !receiverInfo ? (
+				<EmptyIndicator message='채팅방을 찾을 수 없습니다.' />
+			) : (
+				<KeyboardAvoidingView style={styles.screen} behavior='padding'>
+					{/* 메세지 목록 */}
+					<FlatList
+						ref={flatListRef}
+						data={messages}
+						keyExtractor={({ id }) => id}
+						renderItem={renderMessage}
+						contentContainerStyle={styles.flatListContainer}
+						inverted={true}
 					/>
-				)}
-			</KeyboardAvoidingView>
+
+					{/* 인풋 */}
+					{receiverInfo?.displayName !== DEFAULT_USER_DISPLAY_NAME && (
+						<Input
+							input={chatInput}
+							setInput={setChatInput}
+							placeholder='메세지 보내기'
+							onPress={onSubmit}
+						/>
+					)}
+				</KeyboardAvoidingView>
+			)}
 		</LayoutWithHeader>
 	);
 };
@@ -144,34 +136,10 @@ const ChatRoom = () => {
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: 'white',
-	},
-	header: {
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	profileImage: {
-		width: 28,
-		height: 28,
-		borderRadius: 20,
-		marginLeft: 4,
-		marginRight: 8,
-	},
-	displayName: {
-		fontSize: 16,
-		fontWeight: 'bold',
+		backgroundColor: Colors.base,
 	},
 	flatListContainer: {
 		padding: 24,
-	},
-	dateSeparator: {
-		alignItems: 'center',
-		marginVertical: 8,
-	},
-	dateSeparatorText: {
-		color: Colors.font_gray,
-		fontSize: 12,
 	},
 	invalidPostContainer: {
 		flex: 1,

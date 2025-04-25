@@ -1,19 +1,22 @@
 import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { ItemThumabnailProps } from '@/types/components';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import ImageWithFallback from './ImageWithFallback';
 
 const ItemThumbnail = ({ previewImage, itemLength }: ItemThumabnailProps) => {
+	if (!previewImage) return null;
+
 	return (
 		<>
 			<View style={styles.container}>
 				<ImageWithFallback uri={previewImage} style={styles.thumbnail} />
-				{previewImage && (
+				{/* {!!itemLength && (
 					<View style={styles.badgeContainer}>
-						{itemLength && <Text style={styles.badgeText}>{itemLength}</Text>}
+						<Text style={styles.badgeText}>{itemLength}</Text>
 					</View>
-				)}
+				)} */}
 			</View>
 		</>
 	);
@@ -45,8 +48,8 @@ const styles = StyleSheet.create({
 	},
 	badgeText: {
 		color: Colors.font_gray,
-		fontSize: 12,
-		fontWeight: 500,
+		fontSize: FontSizes.sm,
+		fontWeight: FontWeights.regular,
 	},
 	emptyThumbnail: {
 		backgroundColor: Colors.border_gray,
