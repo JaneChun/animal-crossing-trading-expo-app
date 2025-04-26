@@ -1,6 +1,8 @@
 export const Colors = {
 	base: '#F5F5F8',
-	primary: '#0f66f2',
+	// primary: '#0f66f2',
+	primary: '#35d8c9',
+	// primary: '#0ec7b9',
 
 	//border
 	border_gray: '#eff0f4',
@@ -10,7 +12,7 @@ export const Colors = {
 	font_dark_gray: '#262634',
 	font_gray: '#9797a0',
 
-	// icon
+	// icon정
 	icon_gray: '#bebed2',
 
 	// button

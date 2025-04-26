@@ -69,6 +69,7 @@ const ItemSelect = ({
 			<SearchInput
 				searchInput={searchInput}
 				setSearchInput={setSearchInput}
+				placeholder='아이템 검색'
 				containerStyle={{ marginBottom: 8 }}
 			/>
 

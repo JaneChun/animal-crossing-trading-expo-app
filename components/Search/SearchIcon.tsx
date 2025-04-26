@@ -3,16 +3,16 @@ import { SearchIconProps } from '@/types/components';
 import { navigateToSearch } from '@/utilities/navigationHelpers';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { Pressable } from 'react-native';
 
 const SearchIcon = ({
 	color = Colors.font_black,
 	size = 24,
 	containerStyle,
 }: SearchIconProps) => (
-	<TouchableOpacity style={containerStyle} onPress={navigateToSearch}>
+	<Pressable style={containerStyle} onPress={navigateToSearch}>
 		<Ionicons name='search-sharp' color={color} size={size} />
-	</TouchableOpacity>
+	</Pressable>
 );
 
 export default SearchIcon;

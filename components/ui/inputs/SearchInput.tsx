@@ -1,8 +1,9 @@
 import { Colors } from '@/constants/Color';
 import { FontSizes } from '@/constants/Typography';
+import { Ionicons } from '@expo/vector-icons';
 import React, { Dispatch, SetStateAction } from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import { Pressable, TextInput } from 'react-native-gesture-handler';
 import SearchIcon from '../../Search/SearchIcon';
 
 const SearchInput = ({
@@ -24,8 +25,14 @@ const SearchInput = ({
 				value={searchInput}
 				onChangeText={setSearchInput}
 				placeholder={placeholder}
+				placeholderTextColor={Colors.font_gray}
 				enterKeyHint='search'
 			/>
+			{searchInput && (
+				<Pressable onPress={() => setSearchInput('')}>
+					<Ionicons name='close-circle' size={20} color={Colors.icon_gray} />
+				</Pressable>
+			)}
 		</View>
 	);
 };
