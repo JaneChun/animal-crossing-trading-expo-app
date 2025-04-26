@@ -1,3 +1,4 @@
+import EditItemModal from '@/components/NewPost/EditItemModal';
 import PostFormFields from '@/components/NewPost/PostFormFields';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
@@ -14,7 +15,7 @@ import { usePostSubmit } from '@/hooks/shared/usePostSubmit';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ImageType } from '@/types/image';
 import { RootStackNavigation, type NewPostRouteProp } from '@/types/navigation';
-import { CommunityType, MarketType } from '@/types/post';
+import { CartItem, CommunityType, MarketType } from '@/types/post';
 import { handleImageUpload } from '@/utilities/handleImageUpload';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
 import { validateInput } from '@/utilities/validateInput';
@@ -37,7 +38,11 @@ const NewPost = () => {
 	const stackNavigation = useNavigation<RootStackNavigation>();
 
 	const [editingId, setEditingId] = useState<string>(route.params?.id || '');
-	const [isModalVisible, setModalVisible] = useState<boolean>(false);
+	const [isAddItemModalVisible, setIsAddItemModalVisible] =
+		useState<boolean>(false);
+	const [isEditItemModalVisible, setIsEditItemModalVisible] =
+		useState<boolean>(false);
+	const [selectedItem, setSelectedItem] = useState<CartItem | null>(null);
 	const [isSubmitted, setIsSubmitted] = useState(false);
 
 	const { data: post, isLoading } = usePostDetail<typeof collectionName>(
@@ -204,11 +209,36 @@ const NewPost = () => {
 	};
 
 	const openAddItemModal = () => {
-		setModalVisible(true);
+		setIsAddItemModalVisible(true);
 	};
 
 	const closeAddItemModal = () => {
-		setModalVisible(false);
+		setIsAddItemModalVisible(false);
+	};
+
+	const openEditItemModal = () => {
+		setIsEditItemModalVisible(true);
+	};
+
+	const closeEditItemModal = () => {
+		setIsEditItemModalVisible(false);
+	};
+
+	const handleEditItemPress = (item: CartItem) => {
+		setSelectedItem(item);
+		openEditItemModal();
+	};
+
+	const updateItemFromCart = (updatedCartItem: CartItem) => {
+		setCart((prevCart) =>
+			prevCart.map((cartItem) =>
+				cartItem.id === updatedCartItem.id ? updatedCartItem : cartItem,
+			),
+		);
+	};
+
+	const deleteItemFromCart = (deleteCartItemId: string) => {
+		setCart(cart.filter((cartItem) => cartItem.id !== deleteCartItemId));
 	};
 
 	if (isSubmitting || isCreating || isUpdating || (editingId && isLoading)) {
@@ -216,46 +246,64 @@ const NewPost = () => {
 	}
 
 	return (
-		<Layout containerStyle={{ padding: PADDING }}>
-			<KeyboardAvoidingView style={styles.screen}>
-				<FlatList
-					ref={flatListRef}
-					data={[]}
-					renderItem={null}
-					ListEmptyComponent={
-						<PostFormFields
-							form={form}
-							isSubmitted={isSubmitted}
-							dropdownOptions={dropdownOptions}
-						/>
-					}
-				/>
-			</KeyboardAvoidingView>
-			<View style={styles.buttonContainer}>
-				{collectionName === 'Boards' && (
+		<>
+			<Layout containerStyle={{ padding: PADDING }}>
+				<KeyboardAvoidingView style={styles.screen}>
+					<FlatList
+						ref={flatListRef}
+						data={[]}
+						renderItem={null}
+						ListEmptyComponent={
+							<PostFormFields
+								form={form}
+								isSubmitted={isSubmitted}
+								dropdownOptions={dropdownOptions}
+								handleEditItemPress={handleEditItemPress}
+								deleteItemFromCart={deleteItemFromCart}
+							/>
+						}
+					/>
+				</KeyboardAvoidingView>
+				<View style={styles.buttonContainer}>
+					{collectionName === 'Boards' && (
+						<Button
+							color='white'
+							size='lg'
+							style={{ flex: 1 }}
+							onPress={openAddItemModal}
+						>
+							아이템 추가
+						</Button>
+					)}
 					<Button
-						color='white'
-						size='lg'
+						color='mint'
+						size='lg2'
 						style={{ flex: 1 }}
-						onPress={openAddItemModal}
+						onPress={onSubmit}
 					>
-						아이템 추가
+						등록
 					</Button>
-				)}
-				<Button color='mint' size='lg2' style={{ flex: 1 }} onPress={onSubmit}>
-					등록
-				</Button>
-			</View>
+				</View>
+			</Layout>
 
-			{isModalVisible && (
+			{isAddItemModalVisible && (
 				<AddItemModal
 					cart={cart}
 					setCart={setCart}
-					isVisible={isModalVisible}
+					isVisible={isAddItemModalVisible}
 					onClose={closeAddItemModal}
 				/>
 			)}
-		</Layout>
+
+			{isEditItemModalVisible && (
+				<EditItemModal
+					item={selectedItem}
+					isVisible={isEditItemModalVisible}
+					onUpdate={updateItemFromCart}
+					onClose={closeEditItemModal}
+				/>
+			)}
+		</>
 	);
 };
 

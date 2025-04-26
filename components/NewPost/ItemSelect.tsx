@@ -43,10 +43,10 @@ const ItemSelect = ({
 			const isAlreadyAdded = cart.some((c) => c.id === item.id);
 
 			if (isAlreadyAdded) {
-				showToast('warn', '이미 추가된 아이템이에요.', 5);
+				showToast('warn', '이미 추가된 아이템이에요.');
 			} else {
 				setCart([...cart, { ...item, quantity: 1, price: 1 }]);
-				showToast('success', `${item.name}이(가) 추가되었어요.`, 5);
+				showToast('success', `${item.name}이(가) 추가되었어요.`);
 			}
 		},
 		[cart],

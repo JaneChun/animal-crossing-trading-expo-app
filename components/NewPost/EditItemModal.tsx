@@ -7,7 +7,7 @@ import { CartItem } from '@/types/post';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Total from '../PostDetail/Total';
-import CustomModal from '../ui/CustomModal';
+import CustomBottomSheet from '../ui/CustomBottomSheet';
 import DropdownInput from '../ui/inputs/DropdownInput';
 import NumberInput from '../ui/inputs/NumberInput';
 
@@ -45,11 +45,10 @@ const EditItemModal = ({
 	};
 
 	return (
-		<CustomModal
-			modalHeight='53%'
-			avoidKeyboard
+		<CustomBottomSheet
 			isVisible={isVisible}
 			onClose={onClose}
+			modalHeight='53%'
 		>
 			<View style={styles.content}>
 				{/* 타이틀 */}
@@ -98,7 +97,7 @@ const EditItemModal = ({
 			<Button color='mint' size='lg2' onPress={onSubmit}>
 				수정하기
 			</Button>
-		</CustomModal>
+		</CustomBottomSheet>
 	);
 };
 

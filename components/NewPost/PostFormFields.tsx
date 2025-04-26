@@ -16,6 +16,8 @@ const PostFormFields = ({
 	form,
 	isSubmitted,
 	dropdownOptions,
+	handleEditItemPress,
+	deleteItemFromCart,
 }: PostFormFieldsProps) => {
 	const { collectionName } = usePostContext();
 
@@ -84,7 +86,8 @@ const PostFormFields = ({
 			{isMarket && (
 				<ItemList
 					cart={cart}
-					setCart={setCart}
+					handleEditItemPress={handleEditItemPress}
+					deleteItemFromCart={deleteItemFromCart}
 					containerStyle={styles.inputContainer}
 					labelStyle={styles.label}
 				/>

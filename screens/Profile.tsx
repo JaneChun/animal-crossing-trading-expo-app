@@ -1,3 +1,4 @@
+import EditProfileModal from '@/components/Profile/EditProfileModal';
 import MyPosts from '@/components/Profile/MyPosts';
 import ProfileBox from '@/components/Profile/Profile';
 import SettingIcon from '@/components/Profile/SettingIcon';
@@ -27,17 +28,17 @@ const Profile = () => {
 	const { isLoading: isUploading, setIsLoading: setIsUploading } = useLoading();
 	const setActiveTab = useActiveTabStore((state) => state.setActiveTab);
 	const currentTab = useCurrentTab();
-
 	const [profileInfo, setProfileInfo] = useState<PublicUserInfo | null>(null);
+	const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+	const isFocused = useIsFocused();
+
 	const isMyProfile: boolean =
 		(userInfo && userInfo.uid === profileInfo?.uid) ?? false;
-
-	const isFocused = useIsFocused();
 
 	useFocusEffect(
 		useCallback(() => {
 			if (isFocused) setActiveTab(currentTab as Tab);
-		}, [isFocused]),
+		}, [isFocused, setActiveTab, currentTab]),
 	);
 
 	useEffect(() => {
@@ -53,28 +54,40 @@ const Profile = () => {
 		getTargetUserInfo();
 	}, [targetUserId, userInfo]);
 
+	const openEditProfileModal = () => setIsModalVisible(true);
+	const closeEditProfileModal = () => setIsModalVisible(false);
+
 	if (!profileInfo || isUploading) {
 		return <LoadingIndicator />;
 	}
 
 	return (
-		<Layout title='프로필' headerRightComponent={isMyProfile && SettingIcon}>
-			<FlatList
-				data={[]}
-				renderItem={null}
-				ListHeaderComponent={
-					<View style={{ paddingHorizontal: PADDING }}>
-						<ProfileBox
-							profileInfo={profileInfo}
-							isMyProfile={isMyProfile}
-							isUploading={isUploading}
-							setIsUploading={setIsUploading}
-						/>
-					</View>
-				}
-				ListEmptyComponent={<MyPosts profileInfo={profileInfo} />}
-			/>
-		</Layout>
+		<>
+			<Layout title='프로필' headerRightComponent={isMyProfile && SettingIcon}>
+				<FlatList
+					data={[]}
+					renderItem={null}
+					ListHeaderComponent={
+						<View style={{ paddingHorizontal: PADDING }}>
+							<ProfileBox
+								profileInfo={profileInfo}
+								isMyProfile={isMyProfile}
+								openEditProfileModal={openEditProfileModal}
+							/>
+						</View>
+					}
+					ListEmptyComponent={<MyPosts profileInfo={profileInfo} />}
+				/>
+			</Layout>
+			{isMyProfile && (
+				<EditProfileModal
+					isVisible={isModalVisible}
+					onClose={closeEditProfileModal}
+					isUploading={isUploading}
+					setIsUploading={setIsUploading}
+				/>
+			)}
+		</>
 	);
 };
 

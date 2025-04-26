@@ -1,6 +1,6 @@
 import ItemSelect from '@/components/NewPost/ItemSelect';
 import Button from '@/components/ui/Button';
-import CustomModal from '@/components/ui/CustomModal';
+import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 import { CartItem } from '@/types/post';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 
@@ -23,7 +23,11 @@ const AddItemModal = ({
 	};
 
 	return (
-		<CustomModal isVisible={isVisible} onClose={onClose} modalHeight='93%'>
+		<CustomBottomSheet
+			isVisible={isVisible}
+			onClose={onClose}
+			modalHeight='97%'
+		>
 			<ItemSelect cart={localCart} setCart={setLocalCart} />
 			<Button
 				color='mint'
@@ -33,7 +37,7 @@ const AddItemModal = ({
 			>
 				{localCart.length === 0 ? '추가' : `${localCart.length}개 추가하기`}
 			</Button>
-		</CustomModal>
+		</CustomBottomSheet>
 	);
 };
 

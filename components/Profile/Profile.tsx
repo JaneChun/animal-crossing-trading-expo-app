@@ -1,30 +1,18 @@
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { ProfileProps } from '@/types/components';
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
 import Leaf from '../ui/Icons/Leaf';
 import ImageWithFallback from '../ui/ImageWithFallback';
-import EditProfileModal from './EditProfileModal';
 
 const Profile = ({
 	profileInfo,
 	isMyProfile,
-	isUploading,
-	setIsUploading,
 	containerStyle,
+	openEditProfileModal,
 }: ProfileProps) => {
-	const [isModalVisible, setModalVisible] = useState<boolean>(false);
-
-	const openEditProfileModal = () => {
-		setModalVisible(true);
-	};
-
-	const closeEditProfileModal = () => {
-		setModalVisible(false);
-	};
-
 	return (
 		<View style={[styles.container, containerStyle]}>
 			<View style={styles.imageContainer}>
@@ -54,15 +42,6 @@ const Profile = ({
 						프로필 수정
 					</Button>
 				</View>
-			)}
-
-			{isMyProfile && isModalVisible && (
-				<EditProfileModal
-					isVisible={isModalVisible}
-					onClose={closeEditProfileModal}
-					isUploading={isUploading}
-					setIsUploading={setIsUploading}
-				/>
 			)}
 		</View>
 	);

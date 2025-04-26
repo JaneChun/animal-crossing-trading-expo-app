@@ -17,7 +17,7 @@ import { ImagePickerAsset } from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
-import CustomModal from '../ui/CustomModal';
+import CustomBottomSheet from '../ui/CustomBottomSheet';
 import LoadingIndicator from '../ui/loading/LoadingIndicator';
 import NameInput from './NameInput';
 
@@ -154,10 +154,10 @@ const EditProfileModal = ({
 	}
 
 	return (
-		<CustomModal
+		<CustomBottomSheet
 			isVisible={isVisible}
 			onClose={onClose}
-			modalHeight='93%'
+			modalHeight='92%'
 			title='프로필 수정'
 			rightButton={submitButton}
 		>
@@ -192,7 +192,7 @@ const EditProfileModal = ({
 					</View>
 				</View>
 			</View>
-		</CustomModal>
+		</CustomBottomSheet>
 	);
 };
 

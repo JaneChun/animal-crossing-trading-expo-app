@@ -78,6 +78,8 @@ export interface PostFormFieldsProps {
 	form: PostForm;
 	isSubmitted: boolean;
 	dropdownOptions: DropdownOption[];
+	handleEditItemPress: (item: CartItem) => void;
+	deleteItemFromCart: (deleteCartItemId: string) => void;
 }
 
 export type TypeSelectProps = {
@@ -120,7 +122,8 @@ export type CartItemProps = {
 
 export type ItemListProps = {
 	cart: CartItem[];
-	setCart: Dispatch<SetStateAction<CartItem[]>>;
+	handleEditItemPress: (item: CartItem) => void;
+	deleteItemFromCart: (deleteCartItemId: string) => void;
 	containerStyle?: StyleProp<ViewStyle>;
 	labelStyle?: StyleProp<TextStyle>;
 };
@@ -225,9 +228,8 @@ export type TabBarLabelProps = {
 export type ProfileProps = {
 	profileInfo: PublicUserInfo;
 	isMyProfile: boolean;
-	isUploading: boolean;
-	setIsUploading: Dispatch<SetStateAction<boolean>>;
 	containerStyle?: StyleProp<ViewStyle>;
+	openEditProfileModal: () => void;
 };
 
 export type PostSummaryProps<C extends Collection> = {

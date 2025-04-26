@@ -8,7 +8,9 @@ module.exports = {
 		'plugin:import/errors',
 		'plugin:import/warnings',
 		'plugin:import/typescript',
+		'plugin:prettier/recommended',
 	],
+	plugins: ['unused-imports', 'import', 'react-hooks', '@typescript-eslint'],
 	rules: {
 		'unused-imports/no-unused-imports': 'error', // 사용하지 않는 import 삭제
 		'unused-imports/no-unused-vars': [
@@ -35,6 +37,8 @@ module.exports = {
 				alphabetize: { order: 'asc', caseInsensitive: true }, // 알파벳 정렬
 			},
 		],
+		'react-hooks/rules-of-hooks': 'error',
+		'react-hooks/exhaustive-deps': 'warn',
 	},
 	ignorePatterns: ['/dist/*'], // dist 폴더 무시
 };
