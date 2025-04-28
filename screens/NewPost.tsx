@@ -1,9 +1,9 @@
 import EditItemModal from '@/components/NewPost/EditItemModal';
 import PostFormFields from '@/components/NewPost/PostFormFields';
+import Button from '@/components/ui/Button';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
-import { COMMUNITY_TYPES } from '@/constants/post';
 import { auth } from '@/fbase';
 import { useCreatePost } from '@/hooks/mutation/post/useCreatePost';
 import { useUpdatePost } from '@/hooks/mutation/post/useUpdatePost';
@@ -28,7 +28,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import AddItemModal from '../components/NewPost/AddItemModal';
-import Button from '../components/ui/Button';
 
 const NewPost = () => {
 	const { collectionName, isBoardPost, isCommunityPost } = usePostContext();
@@ -62,11 +61,6 @@ const NewPost = () => {
 
 	const flatListRef = useRef<FlatList>(null);
 	const { form, resetForm } = usePostForm(collectionName);
-
-	const dropdownOptions = COMMUNITY_TYPES.map(({ KR, EN }) => ({
-		text: KR,
-		value: EN,
-	}));
 
 	const resetAll = () => {
 		resetForm();
@@ -208,21 +202,21 @@ const NewPost = () => {
 		flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
 	};
 
-	const openAddItemModal = () => {
+	const openAddItemModal = useCallback(() => {
 		setIsAddItemModalVisible(true);
-	};
-
-	const closeAddItemModal = () => {
-		setIsAddItemModalVisible(false);
-	};
-
-	const openEditItemModal = () => {
-		setIsEditItemModalVisible(true);
-	};
-
-	const closeEditItemModal = () => {
-		setIsEditItemModalVisible(false);
-	};
+	}, []);
+	const closeAddItemModal = useCallback(
+		() => setIsAddItemModalVisible(false),
+		[],
+	);
+	const openEditItemModal = useCallback(
+		() => setIsEditItemModalVisible(true),
+		[],
+	);
+	const closeEditItemModal = useCallback(
+		() => setIsEditItemModalVisible(false),
+		[],
+	);
 
 	const handleEditItemPress = (item: CartItem) => {
 		setSelectedItem(item);
@@ -247,23 +241,25 @@ const NewPost = () => {
 
 	return (
 		<>
-			<Layout containerStyle={{ padding: PADDING }}>
-				<KeyboardAvoidingView style={styles.screen}>
+			<KeyboardAvoidingView style={styles.screen} behavior='padding'>
+				<Layout>
 					<FlatList
 						ref={flatListRef}
 						data={[]}
 						renderItem={null}
-						ListEmptyComponent={
+						keyboardShouldPersistTaps='handled'
+						ListHeaderComponent={
 							<PostFormFields
 								form={form}
 								isSubmitted={isSubmitted}
-								dropdownOptions={dropdownOptions}
 								handleEditItemPress={handleEditItemPress}
 								deleteItemFromCart={deleteItemFromCart}
 							/>
 						}
+						contentContainerStyle={{ padding: PADDING }}
 					/>
-				</KeyboardAvoidingView>
+				</Layout>
+
 				<View style={styles.buttonContainer}>
 					{collectionName === 'Boards' && (
 						<Button
@@ -284,7 +280,7 @@ const NewPost = () => {
 						등록
 					</Button>
 				</View>
-			</Layout>
+			</KeyboardAvoidingView>
 
 			{isAddItemModalVisible && (
 				<AddItemModal
@@ -310,8 +306,10 @@ const NewPost = () => {
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
+		backgroundColor: 'white',
 	},
 	buttonContainer: {
+		paddingHorizontal: PADDING,
 		marginTop: 8,
 		flexDirection: 'row',
 		justifyContent: 'space-between',

@@ -1,6 +1,6 @@
 import { TitleInputProps } from '@/types/components';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import ValidationInput from '../ui/inputs/ValidationInput';
 
 const TitleInput = ({
@@ -13,12 +13,12 @@ const TitleInput = ({
 }: TitleInputProps) => {
 	return (
 		<View style={containerStyle}>
-			<Text style={labelStyle}>제목</Text>
+			{/* <Text style={labelStyle}>제목</Text> */}
 			<ValidationInput
 				type='postTitle'
 				input={title}
 				setInput={setTitle}
-				placeholder='제목을 입력해주세요.'
+				placeholder='제목'
 				inputStyle={inputStyle}
 				isSubmitted={isSubmitted}
 			/>

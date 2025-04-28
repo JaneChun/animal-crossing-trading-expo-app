@@ -5,6 +5,7 @@ import TitleInput from '@/components/NewPost/TitleInput';
 import TypeSelect from '@/components/NewPost/TypeSelect';
 import DropdownInput from '@/components/ui/inputs/DropdownInput';
 import { Colors } from '@/constants/Color';
+import { COMMUNITY_TYPES } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { PostFormFieldsProps } from '@/types/components';
@@ -15,7 +16,6 @@ import { StyleSheet, View } from 'react-native';
 const PostFormFields = ({
 	form,
 	isSubmitted,
-	dropdownOptions,
 	handleEditItemPress,
 	deleteItemFromCart,
 }: PostFormFieldsProps) => {
@@ -23,6 +23,11 @@ const PostFormFields = ({
 
 	const isMarket = collectionName === 'Boards';
 	const isCommunity = collectionName === 'Communities';
+
+	const dropdownOptions = COMMUNITY_TYPES.map(({ KR, EN }) => ({
+		text: KR,
+		value: EN,
+	}));
 
 	const {
 		type,
@@ -47,7 +52,7 @@ const PostFormFields = ({
 				/>
 			)}
 			{isCommunity && (
-				<View style={{ width: '32%', flexDirection: 'row', marginBottom: 16 }}>
+				<View style={{ width: '40%', flexDirection: 'row', marginBottom: 16 }}>
 					<DropdownInput
 						options={dropdownOptions}
 						value={type}
@@ -59,9 +64,14 @@ const PostFormFields = ({
 			<TitleInput
 				title={title}
 				setTitle={setTitle}
-				containerStyle={styles.inputContainer}
-				labelStyle={styles.label}
-				inputStyle={styles.input}
+				containerStyle={{
+					...styles.inputContainer,
+					marginBottom: 0,
+				}}
+				inputStyle={{
+					...styles.input,
+					...styles.titleInput,
+				}}
 				isSubmitted={isSubmitted}
 			/>
 
@@ -69,7 +79,6 @@ const PostFormFields = ({
 				body={body}
 				setBody={setBody}
 				containerStyle={styles.inputContainer}
-				labelStyle={styles.label}
 				inputStyle={styles.input}
 				isSubmitted={isSubmitted}
 			/>
@@ -78,7 +87,7 @@ const PostFormFields = ({
 				<ImageInput
 					images={images}
 					setImages={setImages}
-					containerStyle={styles.inputContainer}
+					containerStyle={{ ...styles.inputContainer, borderBottomWidth: 0 }}
 					labelStyle={styles.label}
 				/>
 			)}
@@ -88,7 +97,7 @@ const PostFormFields = ({
 					cart={cart}
 					handleEditItemPress={handleEditItemPress}
 					deleteItemFromCart={deleteItemFromCart}
-					containerStyle={styles.inputContainer}
+					containerStyle={{ ...styles.inputContainer, borderBottomWidth: 0 }}
 					labelStyle={styles.label}
 				/>
 			)}
@@ -98,21 +107,24 @@ const PostFormFields = ({
 
 const styles = StyleSheet.create({
 	inputContainer: {
-		marginVertical: 16,
+		borderColor: Colors.border_gray,
+		borderBottomWidth: 1,
+		marginBottom: 16,
 	},
 	label: {
-		fontSize: FontSizes.sm,
+		fontSize: FontSizes.md,
 		fontWeight: FontWeights.semibold,
-		marginBottom: 12,
 		color: Colors.font_black,
+		marginBottom: 12,
 	},
 	input: {
 		fontSize: FontSizes.md,
-		borderWidth: 1,
-		padding: 12,
-		borderRadius: 8,
-		borderColor: Colors.base,
-		backgroundColor: Colors.base,
+		fontWeight: FontWeights.regular,
+	},
+	titleInput: {
+		fontSize: FontSizes.lg,
+		fontWeight: FontWeights.semibold,
+		paddingVertical: 12,
 	},
 });
 

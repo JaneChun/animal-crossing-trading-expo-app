@@ -77,7 +77,6 @@ export interface PostForm extends PostFormState, PostFormHandlers {}
 export interface PostFormFieldsProps {
 	form: PostForm;
 	isSubmitted: boolean;
-	dropdownOptions: DropdownOption[];
 	handleEditItemPress: (item: CartItem) => void;
 	deleteItemFromCart: (deleteCartItemId: string) => void;
 }

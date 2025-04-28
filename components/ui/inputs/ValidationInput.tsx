@@ -32,7 +32,15 @@ const ValidationInput = ({
 				multiline={multiline}
 			/>
 			{errorMessage ? (
-				<View style={styles.errorMessageContainer}>
+				<View
+					style={[
+						styles.errorMessageContainer,
+						(type === 'postTitle' || type === 'postBody') && {
+							marginTop: 0,
+							marginBottom: 8,
+						},
+					]}
+				>
 					<FontAwesome6 name='circle-exclamation' color='red' size={12} />
 					<Text style={styles.errorMessage}>{errorMessage}</Text>
 				</View>

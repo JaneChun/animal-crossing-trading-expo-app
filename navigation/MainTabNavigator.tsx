@@ -24,7 +24,7 @@ const getTabBarIcon =
 			<IconComponent
 				name={name}
 				size={size}
-				color={focused ? Colors.primary : Colors.dark_gray}
+				color={focused ? Colors.primary : Colors.font_dark_gray}
 			/>
 		);
 
