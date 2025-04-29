@@ -10,6 +10,10 @@ const BodyInput = ({
 	containerStyle,
 	labelStyle,
 	inputStyle,
+	onLayout,
+	onContentSizeChange,
+	onFocus,
+	onBlur,
 }: BodyInputProps) => {
 	const {
 		formState: { errors },
@@ -30,6 +34,10 @@ const BodyInput = ({
 					marginBottom: 8,
 				}}
 				errorMessage={errorMessage}
+				onLayout={onLayout}
+				onContentSizeChange={onContentSizeChange}
+				onFocus={onFocus}
+				onBlur={onBlur}
 			/>
 		</View>
 	);

@@ -27,7 +27,6 @@ import {
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
 import AddItemModal from '../components/NewPost/AddItemModal';
 
 const NewPost = () => {
@@ -60,7 +59,7 @@ const NewPost = () => {
 	const { isLoading: isSubmitting, setIsLoading: setIsSubmitting } =
 		useLoading();
 
-	const flatListRef = useRef<FlatList>(null);
+	const flatListRef = useRef<any>(null);
 
 	const methods = useNewPostForm(collectionName);
 	const {
@@ -262,25 +261,25 @@ const NewPost = () => {
 						등록
 					</Button>
 				</View>
-
-				{isAddItemModalVisible && (
-					<AddItemModal
-						cart={getValues('cart') ?? []}
-						setCart={(cart) => setValue('cart', cart)}
-						isVisible={isAddItemModalVisible}
-						onClose={closeAddItemModal}
-					/>
-				)}
-
-				{isEditItemModalVisible && (
-					<EditItemModal
-						item={selectedItem}
-						isVisible={isEditItemModalVisible}
-						onUpdate={updateItemFromCart}
-						onClose={closeEditItemModal}
-					/>
-				)}
 			</Layout>
+
+			{isAddItemModalVisible && (
+				<AddItemModal
+					cart={getValues('cart') ?? []}
+					setCart={(cart) => setValue('cart', cart)}
+					isVisible={isAddItemModalVisible}
+					onClose={closeAddItemModal}
+				/>
+			)}
+
+			{isEditItemModalVisible && (
+				<EditItemModal
+					item={selectedItem}
+					isVisible={isEditItemModalVisible}
+					onUpdate={updateItemFromCart}
+					onClose={closeEditItemModal}
+				/>
+			)}
 		</FormProvider>
 	);
 };

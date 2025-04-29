@@ -1,15 +1,18 @@
 import { ICON_MAP } from '@/components/ui/EmptyIndicator';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
-import { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 import {
 	GestureResponderEvent,
 	ImageProps,
+	LayoutChangeEvent,
+	NativeSyntheticEvent,
 	StyleProp,
+	TextInputContentSizeChangeEventData,
+	TextInputFocusEventData,
 	TextStyle,
 	ViewStyle,
 } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
 import { CommentWithCreatorInfo } from './comment';
 import { ImageType } from './image';
 import { NotificationWithSenderInfo } from './notification';
@@ -58,7 +61,7 @@ export type ItemThumabnailProps = ThumabnailProps & { itemLength?: number };
 // NewPost/
 export interface PostFormProps {
 	collectionName: Collection;
-	flatListRef: RefObject<FlatList>;
+	flatListRef: any;
 	handleEditItemPress: (item: CartItem) => void;
 	deleteItemFromCart: (deleteCartItemId: string) => void;
 }
@@ -83,6 +86,12 @@ export type BodyInputProps = {
 	containerStyle?: StyleProp<ViewStyle>;
 	labelStyle?: StyleProp<TextStyle>;
 	inputStyle?: StyleProp<TextStyle>;
+	onLayout?: (event: LayoutChangeEvent) => void;
+	onContentSizeChange?: (
+		event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>,
+	) => void;
+	onFocus?: (event: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+	onBlur?: (event: NativeSyntheticEvent<TextInputFocusEventData>) => void;
 };
 
 export type ImageInputProps = {
@@ -265,6 +274,12 @@ export type ValidationInputProp = {
 	errorMessageContainerStyle?: StyleProp<ViewStyle>;
 	multiline?: boolean;
 	errorMessage?: string;
+	onLayout?: (event: LayoutChangeEvent) => void;
+	onContentSizeChange?: (
+		event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>,
+	) => void;
+	onFocus?: (event: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+	onBlur?: (event: NativeSyntheticEvent<TextInputFocusEventData>) => void;
 };
 
 export type InputProps = {

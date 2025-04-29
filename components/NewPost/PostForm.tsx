@@ -4,10 +4,10 @@ import { FontSizes, FontWeights } from '@/constants/Typography';
 import { PostFormProps } from '@/types/components';
 import { ImageType } from '@/types/image';
 import { MarketType } from '@/types/post';
-import React from 'react';
+import React, { useRef } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { StyleSheet, View } from 'react-native';
+import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import DropdownInput from '../ui/inputs/DropdownInput';
 import { PADDING } from '../ui/layout/Layout';
 import BodyInput from './BodyInput';
@@ -32,131 +32,147 @@ const PostForm = ({
 		value: EN,
 	}));
 
-	return (
-		<KeyboardAvoidingView style={styles.screen} behavior='padding'>
-			<FlatList
-				ref={flatListRef}
-				data={[]}
-				renderItem={null}
-				keyboardShouldPersistTaps='handled'
-				ListHeaderComponent={
-					<>
-						{isMarket && (
-							<Controller
-								control={control}
-								name='type'
-								render={({ field: { value, onChange } }) => (
-									<TypeSelect
-										type={value as MarketType}
-										setType={onChange}
-										labelStyle={styles.label}
-									/>
-								)}
-							/>
-						)}
-						{isCommunity && (
-							<Controller
-								control={control}
-								name='type'
-								render={({ field: { value, onChange } }) => (
-									<View
-										style={{
-											width: '40%',
-											flexDirection: 'row',
-											marginBottom: 16,
-										}}
-									>
-										<DropdownInput
-											options={dropdownOptions}
-											value={value}
-											setValue={onChange}
-										/>
-									</View>
-								)}
-							/>
-						)}
+	const isBodyFocused = useRef<boolean>(false);
+	const bodyInputLayoutY = useRef<number>(0);
 
-						{/* 제목 입력 */}
+	return (
+		<KeyboardAwareFlatList
+			innerRef={(ref) => {
+				flatListRef.current = ref;
+			}}
+			data={[]}
+			renderItem={null}
+			keyboardShouldPersistTaps='handled'
+			ListHeaderComponent={
+				<>
+					{isMarket && (
 						<Controller
 							control={control}
-							name='title'
+							name='type'
 							render={({ field: { value, onChange } }) => (
-								<TitleInput
-									title={value}
-									setTitle={onChange}
+								<TypeSelect
+									type={value as MarketType}
+									setType={onChange}
+									labelStyle={styles.label}
+								/>
+							)}
+						/>
+					)}
+					{isCommunity && (
+						<Controller
+							control={control}
+							name='type'
+							render={({ field: { value, onChange } }) => (
+								<View
+									style={{
+										width: '40%',
+										flexDirection: 'row',
+										marginBottom: 16,
+									}}
+								>
+									<DropdownInput
+										options={dropdownOptions}
+										value={value}
+										setValue={onChange}
+									/>
+								</View>
+							)}
+						/>
+					)}
+
+					{/* 제목 입력 */}
+					<Controller
+						control={control}
+						name='title'
+						render={({ field: { value, onChange } }) => (
+							<TitleInput
+								title={value}
+								setTitle={onChange}
+								containerStyle={{
+									...styles.inputContainer,
+									marginBottom: 0,
+								}}
+								inputStyle={{
+									...styles.input,
+									...styles.titleInput,
+								}}
+							/>
+						)}
+					/>
+
+					{/* 본문 입력 */}
+					<Controller
+						control={control}
+						name='body'
+						render={({ field: { value, onChange } }) => (
+							<BodyInput
+								body={value}
+								setBody={onChange}
+								containerStyle={styles.inputContainer}
+								inputStyle={styles.input}
+								onLayout={(e) => {
+									bodyInputLayoutY.current = e.nativeEvent.layout.height;
+								}}
+								onContentSizeChange={() => {
+									if (isBodyFocused.current) {
+										flatListRef.current?.scrollToOffset({
+											animated: true,
+											offset: Math.max(0, bodyInputLayoutY.current),
+										});
+									}
+								}}
+								onFocus={() => (isBodyFocused.current = true)}
+								onBlur={() => (isBodyFocused.current = false)}
+							/>
+						)}
+					/>
+
+					{/* 커뮤니티용 이미지 업로드 */}
+					{isCommunity && (
+						<Controller
+							control={control}
+							name='images'
+							render={({ field: { value, onChange } }) => (
+								<ImageInput
+									images={value.map((uri: string) => ({ uri }))}
+									setImages={(images) =>
+										onChange((images as ImageType[]).map((img) => img.uri))
+									}
 									containerStyle={{
 										...styles.inputContainer,
-										marginBottom: 0,
+										borderBottomWidth: 0,
 									}}
-									inputStyle={{
-										...styles.input,
-										...styles.titleInput,
-									}}
+									labelStyle={styles.label}
 								/>
 							)}
 						/>
+					)}
 
-						{/* 본문 입력 */}
+					{/* 마켓용 아이템 리스트 */}
+					{isMarket && (
 						<Controller
 							control={control}
-							name='body'
+							name='cart'
 							render={({ field: { value, onChange } }) => (
-								<BodyInput
-									body={value}
-									setBody={onChange}
-									containerStyle={styles.inputContainer}
-									inputStyle={styles.input}
+								<ItemList
+									cart={value}
+									handleEditItemPress={(item) => handleEditItemPress(item)}
+									deleteItemFromCart={(id) => deleteItemFromCart(id)}
+									containerStyle={{
+										...styles.inputContainer,
+										borderBottomWidth: 0,
+									}}
+									labelStyle={styles.label}
 								/>
 							)}
 						/>
-
-						{/* 커뮤니티용 이미지 업로드 */}
-						{isCommunity && (
-							<Controller
-								control={control}
-								name='images'
-								render={({ field: { value, onChange } }) => (
-									<ImageInput
-										images={value.map((uri: string) => ({ uri }))}
-										setImages={(images) =>
-											onChange((images as ImageType[]).map((img) => img.uri))
-										}
-										containerStyle={{
-											...styles.inputContainer,
-											borderBottomWidth: 0,
-										}}
-										labelStyle={styles.label}
-									/>
-								)}
-							/>
-						)}
-
-						{/* 마켓용 아이템 리스트 */}
-						{isMarket && (
-							<Controller
-								control={control}
-								name='cart'
-								render={({ field: { value, onChange } }) => (
-									<ItemList
-										cart={value}
-										handleEditItemPress={(item) => handleEditItemPress(item)}
-										deleteItemFromCart={(id) => deleteItemFromCart(id)}
-										containerStyle={{
-											...styles.inputContainer,
-											borderBottomWidth: 0,
-										}}
-										labelStyle={styles.label}
-									/>
-								)}
-							/>
-						)}
-					</>
-				}
-				contentContainerStyle={{
-					padding: PADDING,
-				}}
-			/>
-		</KeyboardAvoidingView>
+					)}
+				</>
+			}
+			contentContainerStyle={{
+				padding: PADDING,
+			}}
+		/>
 	);
 };
 

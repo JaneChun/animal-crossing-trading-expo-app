@@ -12,6 +12,10 @@ const ValidationInput = ({
 	errorMessageContainerStyle,
 	multiline = false,
 	errorMessage,
+	onContentSizeChange,
+	onLayout,
+	onFocus,
+	onBlur,
 }: ValidationInputProp) => {
 	return (
 		<>
@@ -22,6 +26,10 @@ const ValidationInput = ({
 				placeholderTextColor={Colors.font_gray}
 				style={[inputStyle, errorMessage ? { borderColor: 'red' } : null]}
 				multiline={multiline}
+				onLayout={onLayout}
+				onContentSizeChange={onContentSizeChange}
+				onFocus={onFocus}
+				onBlur={onBlur}
 			/>
 			{errorMessage ? (
 				<View
