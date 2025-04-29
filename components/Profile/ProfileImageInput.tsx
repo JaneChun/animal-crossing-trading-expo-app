@@ -68,8 +68,8 @@ export default ProfileImageInput;
 const styles = StyleSheet.create({
 	imageContainer: {
 		position: 'relative',
-		marginTop: 24,
-		marginBottom: 16,
+		marginTop: 16,
+		marginBottom: 24,
 	},
 	image: {
 		width: 100,

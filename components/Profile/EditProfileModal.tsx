@@ -17,6 +17,7 @@ import { ImagePickerAsset } from 'expo-image-picker';
 import React, { useEffect } from 'react';
 import { Controller, FormProvider } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Button from '../ui/Button';
 import CustomBottomSheet from '../ui/CustomBottomSheet';
 import LoadingIndicator from '../ui/loading/LoadingIndicator';
@@ -161,53 +162,55 @@ const EditProfileModal = ({
 				title='프로필 수정'
 				rightButton={submitButton}
 			>
-				<View style={styles.container}>
-					{/* 이미지 */}
-					<Controller
-						control={control}
-						name='image'
-						render={({ field: { value, onChange } }) => (
-							<ProfileImageInput image={value} setImage={onChange} />
-						)}
-					/>
-
-					{/* 닉네임, 섬 이름 */}
-					<View style={styles.info}>
+				<KeyboardAwareScrollView style={styles.screen}>
+					<View style={styles.container}>
+						{/* 이미지 */}
 						<Controller
 							control={control}
-							name='displayName'
+							name='image'
 							render={({ field: { value, onChange } }) => (
-								<NameInput
-									type='displayName'
-									value={value}
-									onChangeText={onChange}
-									label='닉네임'
-									placeholder='닉네임을 입력해주세요.'
-								/>
-							)}
-						/>
-						<Controller
-							control={control}
-							name='islandName'
-							render={({ field: { value, onChange } }) => (
-								<NameInput
-									type='islandName'
-									value={value}
-									onChangeText={onChange}
-									label='섬 이름'
-									placeholder='섬 이름을 입력해주세요.'
-								/>
+								<ProfileImageInput image={value} setImage={onChange} />
 							)}
 						/>
 
-						<View style={styles.messageContainer}>
-							<FontAwesome name='leaf' color={Colors.primary} size={14} />
-							<Text style={styles.infoText}>
-								닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
-							</Text>
+						{/* 닉네임, 섬 이름 */}
+						<View style={styles.info}>
+							<Controller
+								control={control}
+								name='displayName'
+								render={({ field: { value, onChange } }) => (
+									<NameInput
+										type='displayName'
+										value={value}
+										onChangeText={onChange}
+										label='닉네임'
+										placeholder='닉네임을 입력해주세요.'
+									/>
+								)}
+							/>
+							<Controller
+								control={control}
+								name='islandName'
+								render={({ field: { value, onChange } }) => (
+									<NameInput
+										type='islandName'
+										value={value}
+										onChangeText={onChange}
+										label='섬 이름'
+										placeholder='섬 이름을 입력해주세요.'
+									/>
+								)}
+							/>
+
+							<View style={styles.messageContainer}>
+								<FontAwesome name='leaf' color={Colors.primary} size={14} />
+								<Text style={styles.infoText}>
+									닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
+								</Text>
+							</View>
 						</View>
 					</View>
-				</View>
+				</KeyboardAwareScrollView>
 			</CustomBottomSheet>
 		</FormProvider>
 	);
@@ -216,6 +219,9 @@ const EditProfileModal = ({
 export default EditProfileModal;
 
 const styles = StyleSheet.create({
+	screen: {
+		flex: 1,
+	},
 	container: {
 		flex: 1,
 		backgroundColor: 'white',

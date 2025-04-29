@@ -18,7 +18,7 @@ import {
 	useRoute,
 } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { Keyboard, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 const Profile = () => {
@@ -55,7 +55,10 @@ const Profile = () => {
 	}, [targetUserId, userInfo]);
 
 	const openEditProfileModal = () => setIsModalVisible(true);
-	const closeEditProfileModal = () => setIsModalVisible(false);
+	const closeEditProfileModal = () => {
+		Keyboard.dismiss();
+		setIsModalVisible(false);
+	};
 
 	if (!profileInfo || isUploading) {
 		return <LoadingIndicator />;

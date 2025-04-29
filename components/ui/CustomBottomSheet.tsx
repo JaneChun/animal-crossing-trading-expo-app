@@ -51,6 +51,7 @@ const CustomBottomSheet = ({
 
 	return (
 		<BottomSheet
+			style={styles.screen}
 			ref={bottomSheetRef}
 			index={isVisible ? 0 : -1} // -1 (닫힘)
 			snapPoints={snapPoints}
@@ -64,7 +65,7 @@ const CustomBottomSheet = ({
 			}}
 			handleIndicatorStyle={{ width: 60, backgroundColor: Colors.icon_gray }}
 		>
-			<BottomSheetView style={styles.content}>
+			<BottomSheetView style={styles.screen}>
 				{title && (
 					<View style={styles.header}>
 						{leftButton && (
@@ -80,10 +81,7 @@ const CustomBottomSheet = ({
 						)}
 					</View>
 				)}
-				<View style={styles.body} pointerEvents='box-none'>
-					{children}
-					{/* <Toast config={toastConfig} /> */}
-				</View>
+				<View style={styles.body}>{children}</View>
 			</BottomSheetView>
 		</BottomSheet>
 	);
@@ -92,7 +90,7 @@ const CustomBottomSheet = ({
 export default CustomBottomSheet;
 
 const styles = StyleSheet.create({
-	content: {
+	screen: {
 		flex: 1,
 	},
 	header: {
