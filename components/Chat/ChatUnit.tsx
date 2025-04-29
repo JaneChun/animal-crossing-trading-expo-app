@@ -7,7 +7,14 @@ import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToChatRoom } from '@/utilities/navigationHelpers';
 import { FontAwesome } from '@expo/vector-icons';
 import React from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+	Alert,
+	Pressable,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
 	SharedValue,
@@ -70,7 +77,7 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 
 	return (
 		<Swipeable friction={2} renderRightActions={RightAction}>
-			<TouchableOpacity
+			<Pressable
 				onPress={() => navigateToChatRoom({ chatId: id })}
 				style={styles.container}
 			>
@@ -95,7 +102,7 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 						)}
 					</View>
 				</View>
-			</TouchableOpacity>
+			</Pressable>
 		</Swipeable>
 	);
 };

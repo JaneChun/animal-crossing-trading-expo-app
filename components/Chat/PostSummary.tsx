@@ -6,7 +6,7 @@ import { Collection } from '@/types/post';
 import { navigateToPost } from '@/utilities/navigationHelpers';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import CommunityTypeBadge from '../Community/CommunityTypeBadge';
 import MarketTypeBadge from '../Home/MarketTypeBadge';
 import ItemThumbnail from '../ui/ItemThumbnail';
@@ -19,7 +19,7 @@ const PostSummary = <C extends Collection>({
 	const { isBoardPost, isCommunityPost } = usePostContext();
 
 	return (
-		<TouchableOpacity
+		<Pressable
 			style={styles.container}
 			onPress={() => navigateToPost({ postId: post.id, collectionName })}
 		>
@@ -59,7 +59,7 @@ const PostSummary = <C extends Collection>({
 					color={Colors.primary}
 				/>
 			</View>
-		</TouchableOpacity>
+		</Pressable>
 	);
 };
 

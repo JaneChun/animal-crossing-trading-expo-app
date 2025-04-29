@@ -5,6 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useRef, useState } from 'react';
 import {
 	LayoutRectangle,
+	Pressable,
 	Modal as RNmodal,
 	StyleSheet,
 	Text,
@@ -43,7 +44,7 @@ const DropdownInput = ({
 
 	return (
 		<>
-			<TouchableOpacity
+			<Pressable
 				ref={comboBoxRef}
 				style={[
 					styles.inputContainer,
@@ -57,13 +58,12 @@ const DropdownInput = ({
 				</Text>
 
 				<Feather name='chevron-down' size={24} color={Colors.font_gray} />
-			</TouchableOpacity>
+			</Pressable>
 
 			{/* 모달 드롭다운 */}
 			<RNmodal visible={isDropdownVisible} transparent>
-				<TouchableOpacity
+				<Pressable
 					style={styles.modalOverlay}
-					activeOpacity={1}
 					onPress={() => setDropdownVisible(false)}
 				/>
 				{dropdownPosition && (

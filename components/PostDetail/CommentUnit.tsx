@@ -15,7 +15,14 @@ import {
 } from '@/utilities/navigationHelpers';
 import { AntDesign } from '@expo/vector-icons';
 import React from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+	Alert,
+	Pressable,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	View,
+} from 'react-native';
 import ActionSheetButton from '../ui/ActionSheetButton';
 import ImageWithFallback from '../ui/ImageWithFallback';
 import { showToast } from '../ui/Toast';
@@ -88,28 +95,26 @@ const CommentUnit = ({
 	return (
 		<View style={styles.container}>
 			{/* 프로필 이미지 */}
-			<TouchableOpacity
-				onPress={() => navigateToUserProfile({ userId: creatorId })}
-			>
+			<Pressable onPress={() => navigateToUserProfile({ userId: creatorId })}>
 				<ImageWithFallback
 					uri={creatorPhotoURL}
 					fallbackSource={require('../../assets/images/empty_profile_image.png')}
 					style={styles.profileImage}
 				/>
-			</TouchableOpacity>
+			</Pressable>
 
 			<View style={styles.content}>
 				{/* 헤더 */}
 				<View style={styles.commentHeader}>
 					{/* 작성자 */}
 					<View style={styles.creatorInfo}>
-						<TouchableOpacity
+						<Pressable
 							onPress={() => navigateToUserProfile({ userId: creatorId })}
 						>
 							<Text style={styles.creatorDisplayNameText}>
 								{creatorDisplayName}
 							</Text>
-						</TouchableOpacity>
+						</Pressable>
 						{postCreatorId === creatorId && (
 							<Text style={styles.authorTag}>작성자</Text>
 						)}

@@ -1,20 +1,16 @@
 import ItemSelect from '@/components/NewPost/ItemSelect';
 import Button from '@/components/ui/Button';
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
+import { AddItemModalProps } from '@/types/components';
 import { CartItem } from '@/types/post';
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 
 const AddItemModal = ({
 	cart,
 	setCart,
 	isVisible,
 	onClose,
-}: {
-	cart: CartItem[];
-	setCart: Dispatch<SetStateAction<CartItem[]>>;
-	isVisible: boolean;
-	onClose: () => void;
-}) => {
+}: AddItemModalProps) => {
 	const [localCart, setLocalCart] = useState<CartItem[]>(cart);
 
 	const onSubmit = () => {

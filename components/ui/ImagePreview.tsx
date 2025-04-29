@@ -1,19 +1,15 @@
 import { ImagePreviewProps } from '@/types/components';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import ImageWithFallback from './ImageWithFallback';
 
 const ImagePreview = ({ uri, onDelete }: ImagePreviewProps) => {
 	return (
 		<>
 			<View key={uri}>
-				<TouchableOpacity
-					style={styles.deleteButton}
-					onPress={() => onDelete(uri)}
-					activeOpacity={0.7}
-				>
+				<Pressable style={styles.deleteButton} onPress={() => onDelete(uri)}>
 					<Text style={styles.deleteButtonIcon}>✕</Text>
-				</TouchableOpacity>
+				</Pressable>
 				<ImageWithFallback
 					uri={uri}
 					fallbackSource={require('../../assets/images/image-not-found.png')}

@@ -3,13 +3,7 @@ import { FontSizes } from '@/constants/Typography';
 import { InputProps } from '@/types/components';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import {
-	Keyboard,
-	StyleSheet,
-	TextInput,
-	TouchableOpacity,
-	View,
-} from 'react-native';
+import { Keyboard, Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 const Input = ({
 	input,
@@ -56,9 +50,9 @@ const Input = ({
 				multiline
 				enterKeyHint='send'
 			/>
-			<TouchableOpacity style={styles.iconContainer} onPress={onPress}>
+			<Pressable style={styles.iconContainer} onPress={onPress}>
 				<FontAwesome6 name='circle-arrow-up' size={28} color={Colors.primary} />
-			</TouchableOpacity>
+			</Pressable>
 		</View>
 	);
 };

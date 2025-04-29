@@ -9,13 +9,7 @@ import {
 } from '@/types/post';
 import { Entypo } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import {
-	FlatList,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 const Categories = <
 	T extends Category | ItemCategory,
@@ -29,7 +23,7 @@ const Categories = <
 	const [showAll, setShowAll] = useState(false);
 
 	const renderCategoryButton = (item: U) => (
-		<TouchableOpacity
+		<Pressable
 			key={item.EN}
 			style={[styles.category, category === item.EN && styles.categorySelected]}
 			onPress={() => setCategory(item.EN as T)}
@@ -42,11 +36,11 @@ const Categories = <
 			>
 				{item.KR}
 			</Text>
-		</TouchableOpacity>
+		</Pressable>
 	);
 
 	const toggleButton = (
-		<TouchableOpacity
+		<Pressable
 			style={[styles.toggleButton, !showAll && { marginRight: 6 }]}
 			onPress={() => setShowAll((prev) => !prev)}
 		>
@@ -55,7 +49,7 @@ const Categories = <
 				size={20}
 				color={Colors.primary}
 			/>
-		</TouchableOpacity>
+		</Pressable>
 	);
 
 	return (

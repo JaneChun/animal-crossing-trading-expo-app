@@ -2,7 +2,7 @@ import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { TypeSelectProps } from '@/types/components';
 import { MarketType } from '@/types/post';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 const TypeSelect = ({
 	type,
@@ -41,7 +41,7 @@ const TypeSelect = ({
 		<View style={containerStyle}>
 			<View style={styles.container}>
 				{typeOptions.map((option) => (
-					<TouchableOpacity
+					<Pressable
 						key={option}
 						style={[styles.button, type === option && styles.buttonActive]}
 						onPress={() => setType(option)}
@@ -49,7 +49,7 @@ const TypeSelect = ({
 						<Text style={[styles.text, type === option && styles.textActive]}>
 							{typeButtonMap[option].label}
 						</Text>
-					</TouchableOpacity>
+					</Pressable>
 				))}
 			</View>
 		</View>

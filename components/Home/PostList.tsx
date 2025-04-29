@@ -10,7 +10,7 @@ import {
 } from '@/utilities/navigationHelpers';
 import { FontAwesome6 } from '@expo/vector-icons';
 import React from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text } from 'react-native';
 import LoadingIndicator from '../ui/loading/LoadingIndicator';
 import { showLongToast, showToast } from '../ui/Toast';
 import PostUnit from './PostUnit';
@@ -79,12 +79,9 @@ const PostList = ({
 			/>
 
 			{isAddPostButtonVisible && (
-				<TouchableOpacity
-					style={styles.addPostButton}
-					onPress={onPressAddPostButton}
-				>
+				<Pressable style={styles.addPostButton} onPress={onPressAddPostButton}>
 					<FontAwesome6 name='circle-plus' size={48} color={Colors.primary} />
-				</TouchableOpacity>
+				</Pressable>
 			)}
 		</>
 	);

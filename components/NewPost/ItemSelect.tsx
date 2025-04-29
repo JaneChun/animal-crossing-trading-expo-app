@@ -112,6 +112,7 @@ const ItemSelect = ({
 								offset: ITEM_HEIGHT * index,
 								index,
 							})}
+							keyboardShouldPersistTaps='handled'
 						/>
 					)}
 				</View>

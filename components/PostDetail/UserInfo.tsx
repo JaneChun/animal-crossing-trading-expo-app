@@ -2,7 +2,7 @@ import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { UserInfoProps } from '@/types/components';
 import { navigateToUserProfile } from '@/utilities/navigationHelpers';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Leaf from '../ui/Icons/Leaf';
 
 const UserInfo = ({
@@ -13,9 +13,9 @@ const UserInfo = ({
 }: UserInfoProps) => {
 	return (
 		<View style={[styles.container, containerStyle]}>
-			<TouchableOpacity onPress={() => navigateToUserProfile({ userId })}>
+			<Pressable onPress={() => navigateToUserProfile({ userId })}>
 				<Text style={styles.displayName}>{displayName}</Text>
-			</TouchableOpacity>
+			</Pressable>
 			<View style={styles.IslandContainer}>
 				<Leaf style={styles.logoImage} />
 				<Text style={styles.islandName}>{islandName}</Text>

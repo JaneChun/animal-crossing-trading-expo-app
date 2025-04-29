@@ -7,7 +7,7 @@ import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToPost } from '@/utilities/navigationHelpers';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import CommunityTypeBadge from '../Community/CommunityTypeBadge';
 import ItemThumbnail from '../ui/ItemThumbnail';
 import Thumbnail from '../ui/Thumbnail';
@@ -20,7 +20,7 @@ const PostUnit = <C extends Collection>({
 	const { isBoardPost, isCommunityPost } = usePostContext();
 
 	return (
-		<TouchableOpacity
+		<Pressable
 			style={styles.container}
 			onPress={() => navigateToPost({ postId: post.id, collectionName })}
 		>
@@ -74,7 +74,7 @@ const PostUnit = <C extends Collection>({
 					</View>
 				</View>
 			</View>
-		</TouchableOpacity>
+		</Pressable>
 	);
 };
 

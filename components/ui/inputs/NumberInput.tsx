@@ -3,7 +3,7 @@ import { FontSizes, FontWeights } from '@/constants/Typography';
 import { NumberInputProps } from '@/types/components';
 import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 const NumberInput = ({ value, setValue }: NumberInputProps) => {
 	const [tempValue, setTempValue] = useState<string>(String(value));
@@ -48,9 +48,9 @@ const NumberInput = ({ value, setValue }: NumberInputProps) => {
 
 	return (
 		<View style={styles.inputContainer}>
-			<TouchableOpacity onPress={onDecrement}>
+			<Pressable onPress={onDecrement}>
 				<Feather name='minus' size={24} color={Colors.font_gray} />
-			</TouchableOpacity>
+			</Pressable>
 
 			{/* 숫자 입력 필드 */}
 			<TextInput
@@ -63,9 +63,9 @@ const NumberInput = ({ value, setValue }: NumberInputProps) => {
 				maxLength={6}
 			/>
 
-			<TouchableOpacity onPress={onIncrement}>
+			<Pressable onPress={onIncrement}>
 				<Feather name='plus' size={24} color={Colors.font_gray} />
-			</TouchableOpacity>
+			</Pressable>
 		</View>
 	);
 };
