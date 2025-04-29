@@ -70,6 +70,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 				await saveUserInfo({
 					uid: user.uid,
 					displayName: user.displayName ?? '',
+					islandName: '',
 					photoURL: user.photoURL ?? '',
 					oauthType: 'kakao',
 					lastLogin: Timestamp.now(),
@@ -174,6 +175,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 				await saveUserInfo({
 					uid: user.uid,
 					displayName: profileResult.response.nickname ?? '',
+					islandName: '',
 					photoURL: profileResult.response.profile_image ?? '',
 					oauthType: 'naver',
 					lastLogin: Timestamp.now(),
@@ -292,6 +294,7 @@ export const useAuthInitializer = () => {
 					await saveUserInfo({
 						uid: user.uid,
 						displayName: user.displayName ?? '',
+						islandName: '',
 						photoURL: user.photoURL ?? '',
 						oauthType,
 						lastLogin: Timestamp.now(),

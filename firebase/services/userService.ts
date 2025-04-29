@@ -50,12 +50,14 @@ export const getUserInfo = async (uid: string): Promise<UserInfo | null> => {
 export const saveUserInfo = async ({
 	uid,
 	displayName,
+	islandName,
 	photoURL,
 	oauthType,
 	lastLogin,
 }: {
 	uid: string;
 	displayName: string;
+	islandName: string;
 	photoURL: string;
 	oauthType: OauthType;
 	lastLogin?: Timestamp;
@@ -66,7 +68,7 @@ export const saveUserInfo = async ({
 			{
 				displayName: displayName ?? '',
 				photoURL: photoURL ?? '',
-				islandName: '',
+				islandName: islandName ?? '',
 				createdAt: Timestamp.now(),
 				lastLogin,
 				oauthType,
