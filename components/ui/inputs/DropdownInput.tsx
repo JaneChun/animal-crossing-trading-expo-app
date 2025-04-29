@@ -57,7 +57,11 @@ const DropdownInput = ({
 					{options.find((opt) => opt.value === value)?.text || '선택'}
 				</Text>
 
-				<Feather name='chevron-down' size={24} color={Colors.font_gray} />
+				<Feather
+					name={`chevron-${isDropdownVisible ? 'up' : 'down'}`}
+					size={24}
+					color={Colors.primary}
+				/>
 			</Pressable>
 
 			{/* 모달 드롭다운 */}
@@ -105,7 +109,8 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		// borderColor: Colors.border_gray,
+		borderColor: Colors.primary,
 		borderRadius: 8,
 		backgroundColor: 'transparent',
 		height: 48,
@@ -114,7 +119,8 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.semibold,
-		color: Colors.font_black,
+		// color: Colors.font_black,
+		color: Colors.primary,
 	},
 	modalOverlay: {
 		flex: 1,
@@ -122,8 +128,9 @@ const styles = StyleSheet.create({
 	modalContent: {
 		position: 'absolute',
 		backgroundColor: 'white',
-		borderColor: Colors.border_gray,
 		borderRadius: 8,
+		borderWidth: 1,
+		borderColor: Colors.border_gray,
 		marginTop: 8,
 		elevation: 5,
 		shadowColor: Colors.border_gray,
@@ -143,7 +150,7 @@ const styles = StyleSheet.create({
 		color: Colors.font_dark_gray,
 	},
 	optionBorderBottom: {
-		borderBottomWidth: 1,
-		borderBottomColor: Colors.border_gray,
+		// borderBottomWidth: 1,
+		// borderBottomColor: Colors.border_gray,
 	},
 });

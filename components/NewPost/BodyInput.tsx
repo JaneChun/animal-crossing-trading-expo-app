@@ -51,5 +51,6 @@ const styles = StyleSheet.create({
 		lineHeight: 26,
 		textAlignVertical: 'top',
 		verticalAlign: 'middle',
+		paddingBottom: 12,
 	},
 });
