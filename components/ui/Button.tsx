@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { ButtonColor, ButtonProps, ButtonSize } from '@/types/components';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 const Button = ({
@@ -55,9 +55,9 @@ const Button = ({
 		}
 	};
 
-	const colorStyles = getColorStyles(color);
-	const textStyles = getTextStyles(color);
-	const sizeStyles = getSizeStyles(size);
+	const colorStyles = useMemo(() => getColorStyles(color), [color]);
+	const textStyles = useMemo(() => getTextStyles(color), [color]);
+	const sizeStyles = useMemo(() => getSizeStyles(size), [size]);
 
 	return !disabled ? (
 		<TouchableOpacity
@@ -130,4 +130,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default Button;
+export default React.memo(Button);

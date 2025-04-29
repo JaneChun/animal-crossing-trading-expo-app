@@ -1,16 +1,17 @@
 import EditItemModal from '@/components/NewPost/EditItemModal';
-import PostFormFields from '@/components/NewPost/PostFormFields';
+import PostForm from '@/components/NewPost/PostForm';
 import Button from '@/components/ui/Button';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { auth } from '@/fbase';
+import { NewPostFormValues } from '@/hooks/form/NewPost/newPostFormSchema';
+import { useNewPostForm } from '@/hooks/form/NewPost/useNewPostForm';
 import { useCreatePost } from '@/hooks/mutation/post/useCreatePost';
 import { useUpdatePost } from '@/hooks/mutation/post/useUpdatePost';
 import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import useLoading from '@/hooks/shared/useLoading';
 import { usePostContext } from '@/hooks/shared/usePostContext';
-import { usePostForm } from '@/hooks/shared/usePostForm';
 import { usePostSubmit } from '@/hooks/shared/usePostSubmit';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ImageType } from '@/types/image';
@@ -18,14 +19,14 @@ import { RootStackNavigation, type NewPostRouteProp } from '@/types/navigation';
 import { CartItem, CommunityType, MarketType } from '@/types/post';
 import { handleImageUpload } from '@/utilities/handleImageUpload';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
-import { validateInput } from '@/utilities/validateInput';
 import {
 	useFocusEffect,
 	useNavigation,
 	useRoute,
 } from '@react-navigation/native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { FormProvider } from 'react-hook-form';
+import { StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import AddItemModal from '../components/NewPost/AddItemModal';
 
@@ -37,12 +38,12 @@ const NewPost = () => {
 	const stackNavigation = useNavigation<RootStackNavigation>();
 
 	const [editingId, setEditingId] = useState<string>(route.params?.id || '');
+
 	const [isAddItemModalVisible, setIsAddItemModalVisible] =
 		useState<boolean>(false);
 	const [isEditItemModalVisible, setIsEditItemModalVisible] =
 		useState<boolean>(false);
 	const [selectedItem, setSelectedItem] = useState<CartItem | null>(null);
-	const [isSubmitted, setIsSubmitted] = useState(false);
 
 	const { data: post, isLoading } = usePostDetail<typeof collectionName>(
 		collectionName,
@@ -60,10 +61,19 @@ const NewPost = () => {
 		useLoading();
 
 	const flatListRef = useRef<FlatList>(null);
-	const { form, resetForm } = usePostForm(collectionName);
+
+	const methods = useNewPostForm(collectionName);
+	const {
+		getValues,
+		setValue,
+		watch,
+		reset,
+		handleSubmit,
+		formState: { errors },
+	} = methods;
 
 	const resetAll = () => {
-		resetForm();
+		reset();
 		setEditingId('');
 	};
 
@@ -74,47 +84,37 @@ const NewPost = () => {
 		updatePost,
 	});
 
-	const {
-		type,
-		setType,
-		title,
-		setTitle,
-		body,
-		setBody,
-		images,
-		setImages,
-		cart,
-		setCart,
-		originalImageUrls,
-		setOriginalImageUrls,
-	} = form;
-
+	// 수정글 로딩 시 초기값 채우기
 	useEffect(() => {
 		if (route.params?.id) setEditingId(route.params.id);
 	}, [route.params?.id]);
 
-	useFocusEffect(
-		useCallback(() => {
-			if (route.params?.updatedCart) setCart(route.params.updatedCart);
-		}, [route.params]),
-	);
-
 	useEffect(() => {
 		if (!post) return;
 
-		setType(post.type);
-		setTitle(post.title);
-		setBody(post.body);
+		setValue('type', post.type);
+		setValue('title', post.title);
+		setValue('body', post.body);
 
 		if (isBoardPost(post, collectionName)) {
-			setCart(post.cart);
+			setValue('cart', post.cart);
 		}
 
 		if (isCommunityPost(post, collectionName)) {
-			setOriginalImageUrls(post.images);
-			setImages(post.images.map((url) => ({ uri: url } as ImageType)));
+			setValue('originalImageUrls', post.images);
+			setValue(
+				'images',
+				post.images.map((url) => ({ uri: url } as ImageType)),
+			);
 		}
 	}, [post, collectionName]);
+
+	// 아이템 모달 닫을 때 cart 업데이트
+	useFocusEffect(
+		useCallback(() => {
+			if (route.params?.updatedCart) setValue('cart', route.params.updatedCart);
+		}, [route.params]),
+	);
 
 	useEffect(() => {
 		if (isSubmitting || isCreating || isUpdating) {
@@ -130,20 +130,7 @@ const NewPost = () => {
 		return true;
 	};
 
-	const validateForm = () => {
-		setIsSubmitted(true);
-
-		const titleError = validateInput('postTitle', title);
-		const bodyError = validateInput('postBody', body);
-
-		if (titleError || bodyError) {
-			return false;
-		}
-
-		return true;
-	};
-
-	const onSubmit = async () => {
+	const onSubmit = async (formData: NewPostFormValues) => {
 		setIsSubmitting(true);
 
 		if (!validateUser()) {
@@ -152,50 +139,50 @@ const NewPost = () => {
 			return;
 		}
 
-		if (!validateForm()) {
-			scrollToTop();
-			setIsSubmitting(false);
-			return;
-		}
-
 		try {
 			// 결과적으로 사용할 이미지 URL 배열
 			const imageUrls = await handleImageUpload({
 				collectionName,
-				images,
-				originalImageUrls,
+				images: formData.images ?? [],
+				originalImageUrls: formData.originalImageUrls ?? [],
 			});
 
-			const formData =
+			const typedFormData =
 				collectionName === 'Boards'
 					? {
-							type: type as MarketType,
-							title,
-							body,
-							cart,
+							type: formData.type as MarketType,
+							title: formData.title,
+							body: formData.body,
+							cart: formData.cart ?? [],
 					  }
 					: {
-							type: type as CommunityType,
-							title,
-							body,
-							images: images.map((image) => image.uri),
+							type: formData.type as CommunityType,
+							title: formData.title,
+							body: formData.body,
+							images: (formData?.images ?? []).map(
+								(image: ImageType) => image.uri,
+							),
 					  };
 
 			if (editingId) {
 				await updatePostFlow({
 					imageUrls,
-					form: formData,
+					form: typedFormData,
 				});
 			} else {
 				await createPostFlow({
 					imageUrls,
-					form: formData,
+					form: typedFormData,
 					userId: userInfo!.uid,
 				});
 			}
 		} finally {
 			setIsSubmitting(false);
 		}
+	};
+
+	const onError = (errors: any) => {
+		scrollToTop();
 	};
 
 	const scrollToTop = () => {
@@ -224,15 +211,21 @@ const NewPost = () => {
 	};
 
 	const updateItemFromCart = (updatedCartItem: CartItem) => {
-		setCart((prevCart) =>
-			prevCart.map((cartItem) =>
+		const cart = watch('cart') ?? [];
+		setValue(
+			'cart',
+			cart.map((cartItem) =>
 				cartItem.id === updatedCartItem.id ? updatedCartItem : cartItem,
 			),
 		);
 	};
 
 	const deleteItemFromCart = (deleteCartItemId: string) => {
-		setCart(cart.filter((cartItem) => cartItem.id !== deleteCartItemId));
+		const cart = watch('cart') ?? [];
+		setValue(
+			'cart',
+			cart.filter((cartItem) => cartItem.id !== deleteCartItemId),
+		);
 	};
 
 	if (isSubmitting || isCreating || isUpdating || (editingId && isLoading)) {
@@ -240,25 +233,14 @@ const NewPost = () => {
 	}
 
 	return (
-		<>
-			<KeyboardAvoidingView style={styles.screen} behavior='padding'>
-				<Layout>
-					<FlatList
-						ref={flatListRef}
-						data={[]}
-						renderItem={null}
-						keyboardShouldPersistTaps='handled'
-						ListHeaderComponent={
-							<PostFormFields
-								form={form}
-								isSubmitted={isSubmitted}
-								handleEditItemPress={handleEditItemPress}
-								deleteItemFromCart={deleteItemFromCart}
-							/>
-						}
-						contentContainerStyle={{ padding: PADDING }}
-					/>
-				</Layout>
+		<FormProvider {...methods}>
+			<Layout>
+				<PostForm
+					collectionName={collectionName}
+					flatListRef={flatListRef}
+					handleEditItemPress={handleEditItemPress}
+					deleteItemFromCart={deleteItemFromCart}
+				/>
 
 				<View style={styles.buttonContainer}>
 					{collectionName === 'Boards' && (
@@ -275,39 +257,35 @@ const NewPost = () => {
 						color='mint'
 						size='lg2'
 						style={{ flex: 1 }}
-						onPress={onSubmit}
+						onPress={handleSubmit(onSubmit, onError)}
 					>
 						등록
 					</Button>
 				</View>
-			</KeyboardAvoidingView>
 
-			{isAddItemModalVisible && (
-				<AddItemModal
-					cart={cart}
-					setCart={setCart}
-					isVisible={isAddItemModalVisible}
-					onClose={closeAddItemModal}
-				/>
-			)}
+				{isAddItemModalVisible && (
+					<AddItemModal
+						cart={getValues('cart') ?? []}
+						setCart={(cart) => setValue('cart', cart)}
+						isVisible={isAddItemModalVisible}
+						onClose={closeAddItemModal}
+					/>
+				)}
 
-			{isEditItemModalVisible && (
-				<EditItemModal
-					item={selectedItem}
-					isVisible={isEditItemModalVisible}
-					onUpdate={updateItemFromCart}
-					onClose={closeEditItemModal}
-				/>
-			)}
-		</>
+				{isEditItemModalVisible && (
+					<EditItemModal
+						item={selectedItem}
+						isVisible={isEditItemModalVisible}
+						onUpdate={updateItemFromCart}
+						onClose={closeEditItemModal}
+					/>
+				)}
+			</Layout>
+		</FormProvider>
 	);
 };
 
 const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: 'white',
-	},
 	buttonContainer: {
 		paddingHorizontal: PADDING,
 		marginTop: 8,

@@ -1,5 +1,6 @@
 import { TitleInputProps } from '@/types/components';
 import React from 'react';
+import { useFormContext } from 'react-hook-form';
 import { View } from 'react-native';
 import ValidationInput from '../ui/inputs/ValidationInput';
 
@@ -9,18 +10,25 @@ const TitleInput = ({
 	containerStyle,
 	labelStyle,
 	inputStyle,
-	isSubmitted,
 }: TitleInputProps) => {
+	const {
+		formState: { errors },
+	} = useFormContext();
+
+	const errorMessage = errors.title?.message as string;
+
 	return (
 		<View style={containerStyle}>
-			{/* <Text style={labelStyle}>제목</Text> */}
 			<ValidationInput
-				type='postTitle'
-				input={title}
-				setInput={setTitle}
+				value={title}
+				onChangeText={setTitle}
 				placeholder='제목'
 				inputStyle={inputStyle}
-				isSubmitted={isSubmitted}
+				errorMessageContainerStyle={{
+					marginTop: 0,
+					marginBottom: 8,
+				}}
+				errorMessage={errorMessage}
 			/>
 		</View>
 	);

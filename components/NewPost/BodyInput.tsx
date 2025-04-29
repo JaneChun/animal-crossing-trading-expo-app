@@ -1,5 +1,6 @@
 import { BodyInputProps } from '@/types/components';
 import React from 'react';
+import { useFormContext } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 import ValidationInput from '../ui/inputs/ValidationInput';
 
@@ -9,19 +10,26 @@ const BodyInput = ({
 	containerStyle,
 	labelStyle,
 	inputStyle,
-	isSubmitted,
 }: BodyInputProps) => {
+	const {
+		formState: { errors },
+	} = useFormContext();
+
+	const errorMessage = errors.body?.message as string;
+
 	return (
 		<View style={containerStyle}>
-			{/* <Text style={labelStyle}>내용</Text> */}
 			<ValidationInput
-				type='postBody'
-				input={body}
-				setInput={setBody}
+				value={body}
+				onChangeText={setBody}
 				placeholder='내용을 입력하세요.'
 				inputStyle={[inputStyle, styles.textarea]}
 				multiline
-				isSubmitted={isSubmitted}
+				errorMessageContainerStyle={{
+					marginTop: 0,
+					marginBottom: 8,
+				}}
+				errorMessage={errorMessage}
 			/>
 		</View>
 	);

@@ -1,8 +1,7 @@
 import { ICON_MAP } from '@/components/ui/EmptyIndicator';
-import { VALIDATION_RULES } from '@/utilities/validateInput';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
 import {
 	GestureResponderEvent,
 	ImageProps,
@@ -10,6 +9,7 @@ import {
 	TextStyle,
 	ViewStyle,
 } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import { CommentWithCreatorInfo } from './comment';
 import { ImageType } from './image';
 import { NotificationWithSenderInfo } from './notification';
@@ -56,31 +56,12 @@ export type ThumabnailProps = {
 export type ItemThumabnailProps = ThumabnailProps & { itemLength?: number };
 
 // NewPost/
-export interface PostFormState {
-	type: MarketType | CommunityType;
-	title: string;
-	body: string;
-	images: ImageType[];
-	cart: CartItem[];
-	originalImageUrls: string[];
-}
-export interface PostFormHandlers {
-	setType: Dispatch<SetStateAction<MarketType | CommunityType>>;
-	setTitle: Dispatch<SetStateAction<string>>;
-	setBody: Dispatch<SetStateAction<string>>;
-	setImages: Dispatch<SetStateAction<ImageType[]>>;
-	setCart: Dispatch<SetStateAction<CartItem[]>>;
-	setOriginalImageUrls: Dispatch<SetStateAction<string[]>>;
-}
-export interface PostForm extends PostFormState, PostFormHandlers {}
-
-export interface PostFormFieldsProps {
-	form: PostForm;
-	isSubmitted: boolean;
+export interface PostFormProps {
+	collectionName: Collection;
+	flatListRef: RefObject<FlatList>;
 	handleEditItemPress: (item: CartItem) => void;
 	deleteItemFromCart: (deleteCartItemId: string) => void;
 }
-
 export type TypeSelectProps = {
 	type: MarketType;
 	setType: Dispatch<SetStateAction<MarketType>>;
@@ -94,7 +75,6 @@ export type TitleInputProps = {
 	containerStyle?: StyleProp<ViewStyle>;
 	labelStyle?: StyleProp<TextStyle>;
 	inputStyle?: StyleProp<TextStyle>;
-	isSubmitted: boolean;
 };
 
 export type BodyInputProps = {
@@ -103,7 +83,6 @@ export type BodyInputProps = {
 	containerStyle?: StyleProp<ViewStyle>;
 	labelStyle?: StyleProp<TextStyle>;
 	inputStyle?: StyleProp<TextStyle>;
-	isSubmitted: boolean;
 };
 
 export type ImageInputProps = {
@@ -150,6 +129,13 @@ export type EditItemModalProps = {
 	item: CartItem | null;
 	isVisible: boolean;
 	onUpdate: (updatedCartItem: CartItem) => void;
+	onClose: () => void;
+};
+
+export type AddItemModalProps = {
+	cart: CartItem[];
+	setCart: (cart: CartItem[]) => void;
+	isVisible: boolean;
 	onClose: () => void;
 };
 
@@ -269,13 +255,13 @@ export type ButtonProps = {
 };
 
 export type ValidationInputProp = {
-	type: keyof typeof VALIDATION_RULES;
-	input: string;
-	setInput: Dispatch<SetStateAction<string>>;
+	value: string;
+	onChangeText: Dispatch<SetStateAction<string>>;
 	placeholder?: string;
 	inputStyle?: StyleProp<TextStyle>;
+	errorMessageContainerStyle?: StyleProp<ViewStyle>;
 	multiline?: boolean;
-	isSubmitted: boolean;
+	errorMessage?: string;
 };
 
 export type InputProps = {
