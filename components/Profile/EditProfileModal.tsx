@@ -8,13 +8,14 @@ import {
 	deleteObjectFromStorage,
 	uploadObjectToStorage,
 } from '@/firebase/services/imageService';
+import { useProfileForm } from '@/hooks/form/Profile/useProfileForm';
 import { useAuthStore } from '@/stores/AuthStore';
 import { EditProfileModalProps } from '@/types/components';
 import { UserInfo } from '@/types/user';
-import { validateInput } from '@/utilities/validateInput';
 import { FontAwesome } from '@expo/vector-icons';
 import { ImagePickerAsset } from 'expo-image-picker';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { Controller, FormProvider } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
 import CustomBottomSheet from '../ui/CustomBottomSheet';
@@ -27,48 +28,40 @@ const EditProfileModal = ({
 	isUploading,
 	setIsUploading,
 }: EditProfileModalProps) => {
-	const [isSubmitted, setIsSubmitted] = useState(false);
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const setUserInfo = useAuthStore((state) => state.setUserInfo);
-	const [displayNameInput, setDisplayNameInput] = useState<string>('');
-	const [islandNameInput, setIslandNameInput] = useState<string>('');
-	const [image, setImage] = useState<ImagePickerAsset | null>(null); // ImagePicker로 추가한 이미지
-	const [originalImageUrl, setOriginalImageUrl] = useState<string>(''); // Firestore에서 가져온 기존 이미지
 
-	const isValid = displayNameInput.length > 0 && islandNameInput.length > 0;
+	// form hook 가져오기
+	const methods = useProfileForm();
+	const { control, watch, setValue, handleSubmit, reset } = methods;
 
+	// userInfo 값으로 form 초기 세팅
 	useEffect(() => {
 		if (!userInfo) return;
 
-		setDisplayNameInput(userInfo.displayName);
-		setIslandNameInput(userInfo.islandName);
+		setValue('displayName', userInfo.displayName);
+		setValue('islandName', userInfo.islandName);
 
 		if (userInfo.photoURL) {
-			setOriginalImageUrl(userInfo.photoURL);
-			setImage({ uri: userInfo.photoURL } as ImagePickerAsset); // UI 표시에 필요하므로 image에도 변환하여 추가
+			setValue('originalImageUrl', userInfo.photoURL);
+			setValue('image', { uri: userInfo.photoURL } as ImagePickerAsset); // UI 표시에 필요하므로 image에도 변환하여 추가
 		}
 	}, [userInfo]);
 
-	const validateForm = () => {
-		const displayNameInputError = validateInput(
-			'displayName',
-			displayNameInput,
-		);
-		const islandNameInputError = validateInput('islandName', islandNameInput);
+	const displayName = watch('displayName');
+	const islandName = watch('islandName');
+	const image = watch('image');
+	const originalImageUrl = watch('originalImageUrl');
 
-		if (displayNameInputError || islandNameInputError) {
-			return false;
-		}
+	const isValid = displayName && islandName;
 
-		return true;
+	const handleClose = () => {
+		reset();
+		onClose();
 	};
 
 	const onSubmit = async () => {
-		if (!userInfo) return;
-
-		setIsSubmitted(true);
-
-		if (!validateForm()) return;
+		if (!userInfo || !isValid) return;
 
 		let requestData: Record<string, string> = {};
 		let uploadedImageUrl: string = '';
@@ -76,13 +69,13 @@ const EditProfileModal = ({
 		try {
 			setIsUploading(true);
 			// 닉네임
-			if (displayNameInput !== userInfo.displayName) {
-				requestData.displayName = displayNameInput;
+			if (displayName !== userInfo.displayName) {
+				requestData.displayName = displayName;
 			}
 
 			// 섬 이름
-			if (islandNameInput !== userInfo.islandName) {
-				requestData.islandName = islandNameInput;
+			if (islandName !== userInfo.islandName) {
+				requestData.islandName = islandName;
 			}
 
 			// 기존 이미지가 있었고, 새로운 이미지로 변경한 경우
@@ -102,7 +95,7 @@ const EditProfileModal = ({
 				}
 			}
 
-			// 기존 이미지를 삭제한 경우
+			// 기존 이미지만 삭제한 경우
 			if (originalImageUrl && !image) {
 				requestData.photoURL = ''; // 이미지 필드를 빈 문자열로 업데이트
 
@@ -113,6 +106,7 @@ const EditProfileModal = ({
 				}
 			}
 
+			// 수정사항 있을 때만 firestore 업데이트
 			if (Object.keys(requestData).length > 0) {
 				await updateDocToFirestore({
 					id: userInfo.uid,
@@ -125,6 +119,7 @@ const EditProfileModal = ({
 					...requestData,
 				};
 
+				// 상태 갱신
 				setUserInfo(newUserInfo);
 				showToast('success', '프로필이 성공적으로 변경되었습니다.');
 			} else {
@@ -138,12 +133,16 @@ const EditProfileModal = ({
 		}
 	};
 
+	const onError = (e: any) => {
+		console.log(e);
+	};
+
 	const submitButton = (
 		<Button
-			disabled={isUploading || !isValid}
+			disabled={!isValid || isUploading}
 			color='white'
 			size='md2'
-			onPress={onSubmit}
+			onPress={handleSubmit(onSubmit, onError)}
 		>
 			완료
 		</Button>
@@ -154,45 +153,63 @@ const EditProfileModal = ({
 	}
 
 	return (
-		<CustomBottomSheet
-			isVisible={isVisible}
-			onClose={onClose}
-			modalHeight='92%'
-			title='프로필 수정'
-			rightButton={submitButton}
-		>
-			<View style={styles.container}>
-				{/* 이미지 */}
-				<ProfileImageInput image={image} setImage={setImage} />
+		<FormProvider {...methods}>
+			<CustomBottomSheet
+				isVisible={isVisible}
+				onClose={handleClose}
+				modalHeight='92%'
+				title='프로필 수정'
+				rightButton={submitButton}
+			>
+				<View style={styles.container}>
+					{/* 이미지 */}
+					<Controller
+						control={control}
+						name='image'
+						render={({ field: { value, onChange } }) => (
+							<ProfileImageInput image={value} setImage={onChange} />
+						)}
+					/>
 
-				<View style={styles.info}>
 					{/* 닉네임, 섬 이름 */}
-					<NameInput
-						label='닉네임'
-						type='displayName'
-						input={displayNameInput}
-						setInput={setDisplayNameInput}
-						placeholder='닉네임을 입력해주세요.'
-						isSubmitted={isSubmitted}
-					/>
-					<NameInput
-						label='섬 이름'
-						type='islandName'
-						input={islandNameInput}
-						setInput={setIslandNameInput}
-						placeholder='섬 이름을 입력해주세요.'
-						isSubmitted={isSubmitted}
-					/>
+					<View style={styles.info}>
+						<Controller
+							control={control}
+							name='displayName'
+							render={({ field: { value, onChange } }) => (
+								<NameInput
+									type='displayName'
+									value={value}
+									onChangeText={onChange}
+									label='닉네임'
+									placeholder='닉네임을 입력해주세요.'
+								/>
+							)}
+						/>
+						<Controller
+							control={control}
+							name='islandName'
+							render={({ field: { value, onChange } }) => (
+								<NameInput
+									type='islandName'
+									value={value}
+									onChangeText={onChange}
+									label='섬 이름'
+									placeholder='섬 이름을 입력해주세요.'
+								/>
+							)}
+						/>
 
-					<View style={styles.messageContainer}>
-						<FontAwesome name='leaf' color={Colors.primary} size={14} />
-						<Text style={styles.infoText}>
-							닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
-						</Text>
+						<View style={styles.messageContainer}>
+							<FontAwesome name='leaf' color={Colors.primary} size={14} />
+							<Text style={styles.infoText}>
+								닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
+							</Text>
+						</View>
 					</View>
 				</View>
-			</View>
-		</CustomBottomSheet>
+			</CustomBottomSheet>
+		</FormProvider>
 	);
 };
 

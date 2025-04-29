@@ -229,7 +229,10 @@ export type EditProfileModalProps = {
 	setIsUploading: Dispatch<SetStateAction<boolean>>;
 };
 
-export type NameInputProp = ValidationInputProp & { label: string };
+export type NameInputProp = ValidationInputProp & {
+	type: string;
+	label: string;
+};
 
 export type ProfileImageInputProps = {
 	image: ImagePickerAsset | null;
