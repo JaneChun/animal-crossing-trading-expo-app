@@ -1,7 +1,7 @@
 import { ICON_MAP } from '@/components/ui/EmptyIndicator';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
 import {
 	GestureResponderEvent,
 	ImageProps,
@@ -13,6 +13,7 @@ import {
 	TextStyle,
 	ViewStyle,
 } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import { CommentWithCreatorInfo } from './comment';
 import { ImageType } from './image';
 import { NotificationWithSenderInfo } from './notification';
@@ -61,7 +62,7 @@ export type ItemThumabnailProps = ThumabnailProps & { itemLength?: number };
 // NewPost/
 export interface PostFormProps {
 	collectionName: Collection;
-	flatListRef: any;
+	flatListRef: RefObject<FlatList<any>>;
 	handleEditItemPress: (item: CartItem) => void;
 	deleteItemFromCart: (deleteCartItemId: string) => void;
 }
@@ -157,6 +158,7 @@ export type BodyProps = {
 export type CommentInputProps = {
 	postId: string;
 	setIsCommentUploading: Dispatch<SetStateAction<boolean>>;
+	scrollToBottom: () => void;
 };
 
 export type CommentsListProps = {
@@ -252,6 +254,14 @@ export type ProfileImageInputProps = {
 export type SearchResultItemProps = {
 	item: Item;
 	searchInput: string;
+};
+
+// Chat/
+export type ChatInputProps = {
+	chatId: string;
+	senderUid: string;
+	receiverUid: string;
+	scrollToBottom: () => void;
 };
 
 // ui/

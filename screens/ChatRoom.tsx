@@ -1,9 +1,10 @@
+import ChatInput from '@/components/Chat/ChatInput';
 import DateSeparator from '@/components/Chat/DateSeparator';
 import UserInfoLabel from '@/components/Chat/Message/UserInfoLabel';
 import MessageUnit from '@/components/Chat/MessageUnit';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
-import Input from '@/components/ui/inputs/Input';
+import KeyboardStickyLayout from '@/components/ui/layout/KeyboardStickyLayout';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
@@ -11,7 +12,6 @@ import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { useGetChatMessages } from '@/hooks/firebase/useGetChatMessages';
 import { useLeaveChatRoom } from '@/hooks/mutation/chat/useLeaveChatRoom';
 import { useMarkMessagesAsRead } from '@/hooks/mutation/chat/useMarkMessagesAsRead';
-import { useSendMessage } from '@/hooks/mutation/chat/useSendMessage';
 import { useReceiverInfo } from '@/hooks/query/chat/useReceiverInfo';
 import { goBack } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
@@ -19,16 +19,14 @@ import { MessageType } from '@/types/chat';
 import { ChatRoomRouteProp } from '@/types/navigation';
 import { isSystemMessage } from '@/utilities/typeGuards/messageGuards';
 import { useRoute } from '@react-navigation/native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet } from 'react-native';
+import React, { useCallback, useEffect } from 'react';
+import { StyleSheet } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 const ChatRoom = () => {
 	const route = useRoute<ChatRoomRouteProp>();
 	const { chatId } = route.params;
 	const userInfo = useAuthStore((state) => state.userInfo);
-	const [chatInput, setChatInput] = useState('');
-	const flatListRef = useRef<FlatList>(null);
 
 	const { messages, isLoading: isMessagesFetching } =
 		useGetChatMessages(chatId);
@@ -37,7 +35,6 @@ const ChatRoom = () => {
 
 	const { mutate: leaveChatRoom } = useLeaveChatRoom({ chatId });
 	const { mutate: markMessagesAsRead } = useMarkMessagesAsRead();
-	const { mutate: sendMessage } = useSendMessage();
 
 	// 유저가 채팅방에 들어올 때, 입장한 이후에도 새 메시지가 올 때 markMessagesAsRead 실행
 	useEffect(() => {
@@ -50,22 +47,8 @@ const ChatRoom = () => {
 		readMessages();
 	}, [chatId, userInfo, messages]);
 
-	const onSubmit = async () => {
-		if (!userInfo || !receiverInfo || chatInput === '') return;
-
-		sendMessage({
-			chatId,
-			senderId: userInfo.uid,
-			receiverId: receiverInfo.uid,
-			message: chatInput.trim(),
-		});
-
-		setChatInput('');
-		scrollToBottom();
-	};
-
 	const scrollToBottom = () => {
-		flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+		console.log('ChatRoom scrollToBottom');
 	};
 
 	const renderMessage = useCallback(
@@ -107,27 +90,29 @@ const ChatRoom = () => {
 			) : !chatId || !receiverInfo ? (
 				<EmptyIndicator message='채팅방을 찾을 수 없습니다.' />
 			) : (
-				<KeyboardAvoidingView style={styles.screen} behavior='padding'>
-					{/* 메세지 목록 */}
-					<FlatList
-						ref={flatListRef}
-						data={messages}
-						keyExtractor={({ id }) => id}
-						renderItem={renderMessage}
-						contentContainerStyle={styles.flatListContainer}
-						inverted={true}
-					/>
-
-					{/* 인풋 */}
-					{receiverInfo?.displayName !== DEFAULT_USER_DISPLAY_NAME && (
-						<Input
-							input={chatInput}
-							setInput={setChatInput}
-							placeholder='메세지 보내기'
-							onPress={onSubmit}
+				<KeyboardStickyLayout
+					scrollableContent={
+						<FlatList
+							data={messages}
+							keyExtractor={({ id }) => id}
+							renderItem={renderMessage}
+							style={styles.screen}
+							contentContainerStyle={styles.flatListContainer}
+							inverted={true}
 						/>
-					)}
-				</KeyboardAvoidingView>
+					}
+					bottomContent={
+						userInfo?.uid &&
+						receiverInfo?.displayName !== DEFAULT_USER_DISPLAY_NAME && (
+							<ChatInput
+								chatId={chatId}
+								senderUid={userInfo.uid}
+								receiverUid={receiverInfo.uid}
+								scrollToBottom={scrollToBottom}
+							/>
+						)
+					}
+				/>
 			)}
 		</LayoutWithHeader>
 	);

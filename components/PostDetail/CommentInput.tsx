@@ -13,7 +13,11 @@ import { Keyboard } from 'react-native';
 import Input from '../ui/inputs/Input';
 import { showLongToast, showToast } from '../ui/Toast';
 
-const CommentInput = ({ postId, setIsCommentUploading }: CommentInputProps) => {
+const CommentInput = ({
+	postId,
+	setIsCommentUploading,
+	scrollToBottom,
+}: CommentInputProps) => {
 	const activeTab = useActiveTabStore((state) => state.activeTab);
 	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
 	const collectionName = isMarket ? 'Boards' : 'Communities';
@@ -61,6 +65,9 @@ const CommentInput = ({ postId, setIsCommentUploading }: CommentInputProps) => {
 				{
 					onSuccess: (id) => {
 						resetForm();
+						scrollToBottom();
+						Keyboard.dismiss();
+
 						showToast('success', '댓글이 등록되었습니다.');
 					},
 					onError: (e) => {
@@ -70,7 +77,6 @@ const CommentInput = ({ postId, setIsCommentUploading }: CommentInputProps) => {
 			);
 		} finally {
 			setIsCommentUploading(false);
-			Keyboard.dismiss();
 		}
 	};
 
@@ -80,7 +86,6 @@ const CommentInput = ({ postId, setIsCommentUploading }: CommentInputProps) => {
 			setInput={setCommentInput}
 			onPress={onSubmit}
 			placeholder='댓글을 입력해주세요.'
-			marginBottom={94}
 		/>
 	);
 };

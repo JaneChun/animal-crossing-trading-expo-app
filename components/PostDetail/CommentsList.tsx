@@ -1,5 +1,6 @@
 import { CommentsListProps } from '@/types/components';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import CommentUnit from './CommentUnit';
 
 const CommentsList = ({

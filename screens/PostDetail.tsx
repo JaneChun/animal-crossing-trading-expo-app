@@ -11,6 +11,7 @@ import Total from '@/components/PostDetail/Total';
 import UserInfo from '@/components/PostDetail/UserInfo';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
+import KeyboardStickyLayout from '@/components/ui/layout/KeyboardStickyLayout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
@@ -26,14 +27,9 @@ import { CommunityType, MarketType } from '@/types/post';
 import { navigateToEditPost } from '@/utilities/navigationHelpers';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect } from 'react';
-import { Alert, KeyboardAvoidingView, StyleSheet, View } from 'react-native';
-import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Alert, StyleSheet, View } from 'react-native';
 
 const PostDetail = () => {
-	const insets = useSafeAreaInsets();
-	const keyboardOffset = insets.top + 44;
-
 	const { isBoardPost, isCommunityPost } = usePostContext();
 
 	const stackNavigation = useNavigation<RootStackNavigation>();
@@ -103,6 +99,10 @@ const PostDetail = () => {
 		});
 	};
 
+	const scrollToBottom = () => {
+		console.log('PostDetail scrollToBottom');
+	};
+
 	if (
 		isPostFetching ||
 		isCommentsFetching ||
@@ -117,96 +117,79 @@ const PostDetail = () => {
 	}
 
 	return (
-		<KeyboardAvoidingView
-			style={styles.screen}
-			behavior='padding'
-			keyboardVerticalOffset={keyboardOffset}
-		>
-			<View style={styles.screen}>
-				<KeyboardAwareFlatList
-					data={[]}
-					renderItem={null}
-					keyboardShouldPersistTaps='handled'
-					ListHeaderComponent={
-						<View style={styles.content}>
-							{/* 헤더 */}
-							<View style={styles.header}>
-								<View style={[styles.typeAndMenuRow, { marginBottom: 8 }]}>
-									{isBoardPost(post, collectionName) && (
-										<MarketTypeBadge type={post.type as MarketType} />
-									)}
+		<KeyboardStickyLayout
+			containerStyle={styles.container}
+			scrollableContent={
+				<View style={styles.content}>
+					{/* 헤더 */}
+					<View style={styles.header}>
+						<View style={[styles.typeAndMenuRow, { marginBottom: 8 }]}>
+							{isBoardPost(post, collectionName) && (
+								<MarketTypeBadge type={post.type as MarketType} />
+							)}
 
-									{isCommunityPost(post, collectionName) && (
-										<CommunityTypeBadge type={post.type as CommunityType} />
-									)}
-								</View>
-
-								<Title
-									title={post.title}
-									containerStyle={{ marginBottom: 4 }}
-								/>
-
-								<View style={styles.infoContainer}>
-									<UserInfo
-										userId={post.creatorId}
-										displayName={post.creatorDisplayName}
-										islandName={post.creatorIslandName}
-									/>
-									<CreatedAt createdAt={post.createdAt} />
-								</View>
-							</View>
-
-							{/* 본문 */}
-							<View style={styles.body}>
-								{isCommunityPost(post, collectionName) && (
-									<ImageCarousel
-										images={post.images}
-										containerStyle={{ marginBottom: 16 }}
-									/>
-								)}
-								<Body body={post.body} containerStyle={{ marginBottom: 24 }} />
-
-								{isBoardPost(post, collectionName) && (
-									<>
-										<ItemSummaryList
-											cart={post.cart}
-											containerStyle={{ marginBottom: 16 }}
-										/>
-										<Total
-											cart={post.cart}
-											containerStyle={{ marginBottom: 24 }}
-										/>
-									</>
-								)}
-							</View>
-
-							{/* 댓글 */}
-							<CommentsList
-								postId={post.id}
-								postCreatorId={post.creatorId}
-								comments={comments}
-								containerStyle={{ marginBottom: 60 }}
-							/>
+							{isCommunityPost(post, collectionName) && (
+								<CommunityTypeBadge type={post.type as CommunityType} />
+							)}
 						</View>
-					}
-					contentContainerStyle={{ flexGrow: 1 }}
-					extraScrollHeight={16}
-				/>
-			</View>
 
-			<CommentInput
-				postId={post.id}
-				setIsCommentUploading={setIsCommentUploading}
-			/>
-		</KeyboardAvoidingView>
+						<Title title={post.title} containerStyle={{ marginBottom: 4 }} />
+
+						<View style={styles.infoContainer}>
+							<UserInfo
+								userId={post.creatorId}
+								displayName={post.creatorDisplayName}
+								islandName={post.creatorIslandName}
+							/>
+							<CreatedAt createdAt={post.createdAt} />
+						</View>
+					</View>
+
+					{/* 본문 */}
+					<View style={styles.body}>
+						{isCommunityPost(post, collectionName) && (
+							<ImageCarousel
+								images={post.images}
+								containerStyle={{ marginBottom: 16 }}
+							/>
+						)}
+						<Body body={post.body} containerStyle={{ marginBottom: 24 }} />
+
+						{isBoardPost(post, collectionName) && (
+							<>
+								<ItemSummaryList
+									cart={post.cart}
+									containerStyle={{ marginBottom: 16 }}
+								/>
+								<Total cart={post.cart} containerStyle={{ marginBottom: 24 }} />
+							</>
+						)}
+					</View>
+
+					{/* 댓글 */}
+					<CommentsList
+						postId={post.id}
+						postCreatorId={post.creatorId}
+						comments={comments}
+						containerStyle={{ marginBottom: 60 }}
+					/>
+				</View>
+			}
+			bottomContent={
+				<CommentInput
+					postId={post.id}
+					setIsCommentUploading={setIsCommentUploading}
+					scrollToBottom={scrollToBottom}
+				/>
+			}
+		/>
 	);
 };
 
 export default PostDetail;
 
 const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
+	container: {
 		backgroundColor: 'white',
 	},
 	content: {
