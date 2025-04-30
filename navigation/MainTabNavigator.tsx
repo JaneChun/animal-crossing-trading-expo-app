@@ -42,12 +42,10 @@ const MainTabNavigator = () => {
 				popToTopOnBlur: true,
 				headerShown: false,
 				tabBarStyle: {
-					height: 60,
 					display: isAuthLoading ? 'none' : 'flex',
 				},
 				tabBarActiveBackgroundColor: Colors.base,
 				tabBarIconStyle: { flex: 1 },
-				tabBarLabelStyle: { marginTop: -8 },
 				tabBarActiveTintColor: Colors.primary,
 			}}
 		>

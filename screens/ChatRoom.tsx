@@ -20,7 +20,7 @@ import { ChatRoomRouteProp } from '@/types/navigation';
 import { isSystemMessage } from '@/utilities/typeGuards/messageGuards';
 import { useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { SafeAreaView, StyleSheet } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 const ChatRoom = () => {
@@ -70,60 +70,65 @@ const ChatRoom = () => {
 	};
 
 	return (
-		<LayoutWithHeader
-			headerCenterComponent={
-				receiverInfo && <UserInfoLabel userInfo={receiverInfo} />
-			}
-			headerRightComponent={
-				<ActionSheetButton
-					color={Colors.font_black}
-					size={18}
-					options={[
-						{ label: '나가기', onPress: leaveChat },
-						{ label: '취소', onPress: () => {} },
-					]}
-				/>
-			}
-		>
-			{isMessagesFetching || isReceiverInfoFetching ? (
-				<LoadingIndicator />
-			) : !chatId || !receiverInfo ? (
-				<EmptyIndicator message='채팅방을 찾을 수 없습니다.' />
-			) : (
-				<KeyboardStickyLayout
-					scrollableContent={
-						<FlatList
-							data={messages}
-							keyExtractor={({ id }) => id}
-							renderItem={renderMessage}
-							style={styles.screen}
-							contentContainerStyle={styles.flatListContainer}
-							inverted={true}
-						/>
-					}
-					bottomContent={
-						userInfo?.uid &&
-						receiverInfo?.displayName !== DEFAULT_USER_DISPLAY_NAME && (
-							<ChatInput
-								chatId={chatId}
-								senderUid={userInfo.uid}
-								receiverUid={receiverInfo.uid}
-								scrollToBottom={scrollToBottom}
+		<SafeAreaView style={styles.screen}>
+			<LayoutWithHeader
+				headerCenterComponent={
+					receiverInfo && <UserInfoLabel userInfo={receiverInfo} />
+				}
+				headerRightComponent={
+					<ActionSheetButton
+						color={Colors.font_black}
+						size={18}
+						options={[
+							{ label: '나가기', onPress: leaveChat },
+							{ label: '취소', onPress: () => {} },
+						]}
+					/>
+				}
+			>
+				{isMessagesFetching || isReceiverInfoFetching ? (
+					<LoadingIndicator />
+				) : !chatId || !receiverInfo ? (
+					<EmptyIndicator message='채팅방을 찾을 수 없습니다.' />
+				) : (
+					<KeyboardStickyLayout
+						scrollableContent={
+							<FlatList
+								data={messages}
+								keyExtractor={({ id }) => id}
+								renderItem={renderMessage}
+								style={styles.flatList}
+								contentContainerStyle={styles.flatListContent}
+								inverted={true}
 							/>
-						)
-					}
-				/>
-			)}
-		</LayoutWithHeader>
+						}
+						bottomContent={
+							userInfo?.uid &&
+							receiverInfo?.displayName !== DEFAULT_USER_DISPLAY_NAME && (
+								<ChatInput
+									chatId={chatId}
+									senderUid={userInfo.uid}
+									receiverUid={receiverInfo.uid}
+									scrollToBottom={scrollToBottom}
+								/>
+							)
+						}
+					/>
+				)}
+			</LayoutWithHeader>
+		</SafeAreaView>
 	);
 };
 
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
+		backgroundColor: 'white',
+	},
+	flatList: {
 		backgroundColor: Colors.base,
 	},
-	flatListContainer: {
+	flatListContent: {
 		padding: 24,
 	},
 	invalidPostContainer: {

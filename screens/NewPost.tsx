@@ -26,7 +26,7 @@ import {
 } from '@react-navigation/native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
-import { StyleSheet, View } from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 import AddItemModal from '../components/NewPost/AddItemModal';
 
 const NewPost = () => {
@@ -233,35 +233,37 @@ const NewPost = () => {
 
 	return (
 		<FormProvider {...methods}>
-			<Layout>
-				<PostForm
-					collectionName={collectionName}
-					flatListRef={flatListRef}
-					handleEditItemPress={handleEditItemPress}
-					deleteItemFromCart={deleteItemFromCart}
-				/>
+			<SafeAreaView style={styles.screen}>
+				<Layout>
+					<PostForm
+						collectionName={collectionName}
+						flatListRef={flatListRef}
+						handleEditItemPress={handleEditItemPress}
+						deleteItemFromCart={deleteItemFromCart}
+					/>
 
-				<View style={styles.buttonContainer}>
-					{collectionName === 'Boards' && (
+					<View style={styles.buttonContainer}>
+						{collectionName === 'Boards' && (
+							<Button
+								color='white'
+								size='lg'
+								style={{ flex: 1 }}
+								onPress={openAddItemModal}
+							>
+								아이템 추가
+							</Button>
+						)}
 						<Button
-							color='white'
-							size='lg'
+							color='mint'
+							size='lg2'
 							style={{ flex: 1 }}
-							onPress={openAddItemModal}
+							onPress={handleSubmit(onSubmit, onError)}
 						>
-							아이템 추가
+							등록
 						</Button>
-					)}
-					<Button
-						color='mint'
-						size='lg2'
-						style={{ flex: 1 }}
-						onPress={handleSubmit(onSubmit, onError)}
-					>
-						등록
-					</Button>
-				</View>
-			</Layout>
+					</View>
+				</Layout>
+			</SafeAreaView>
 
 			{isAddItemModalVisible && (
 				<AddItemModal
@@ -285,6 +287,9 @@ const NewPost = () => {
 };
 
 const styles = StyleSheet.create({
+	screen: {
+		flex: 1,
+	},
 	buttonContainer: {
 		paddingHorizontal: PADDING,
 		marginTop: 8,

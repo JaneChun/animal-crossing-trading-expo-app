@@ -18,7 +18,7 @@ import {
 	useRoute,
 } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
-import { Keyboard, View } from 'react-native';
+import { Keyboard, SafeAreaView, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 const Profile = () => {
@@ -65,7 +65,7 @@ const Profile = () => {
 	}
 
 	return (
-		<>
+		<SafeAreaView style={styles.screen}>
 			<Layout title='프로필' headerRightComponent={isMyProfile && SettingIcon}>
 				<FlatList
 					data={[]}
@@ -82,6 +82,7 @@ const Profile = () => {
 					ListEmptyComponent={<MyPosts profileInfo={profileInfo} />}
 				/>
 			</Layout>
+
 			{isMyProfile && (
 				<EditProfileModal
 					isVisible={isModalVisible}
@@ -90,8 +91,15 @@ const Profile = () => {
 					setIsUploading={setIsUploading}
 				/>
 			)}
-		</>
+		</SafeAreaView>
 	);
 };
 
 export default Profile;
+
+const styles = StyleSheet.create({
+	screen: {
+		flex: 1,
+		backgroundColor: 'white',
+	},
+});

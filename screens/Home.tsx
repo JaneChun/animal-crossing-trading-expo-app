@@ -6,6 +6,7 @@ import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { Tab } from '@/types/post';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { useCallback } from 'react';
+import { SafeAreaView, StyleSheet } from 'react-native';
 
 const Home = () => {
 	const setActiveTab = useActiveTabStore((state) => state.setActiveTab);
@@ -20,14 +21,23 @@ const Home = () => {
 	);
 
 	return (
-		<Layout title='거래글' headerRightComponent={<SearchIcon />}>
-			<PostList
-				collectionName='Boards'
-				isAddPostButtonVisible
-				containerStyle={{ paddingHorizontal: PADDING }}
-			/>
-		</Layout>
+		<SafeAreaView style={styles.screen}>
+			<Layout title='거래글' headerRightComponent={<SearchIcon />}>
+				<PostList
+					collectionName='Boards'
+					isAddPostButtonVisible
+					containerStyle={{ paddingHorizontal: PADDING }}
+				/>
+			</Layout>
+		</SafeAreaView>
 	);
 };
 
 export default Home;
+
+const styles = StyleSheet.create({
+	screen: {
+		flex: 1,
+		backgroundColor: 'white',
+	},
+});
