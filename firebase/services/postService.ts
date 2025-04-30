@@ -84,7 +84,9 @@ export const getPost = async <C extends Collection>(
 			id: postId,
 		})) as PostDoc<C>;
 
-		return docData ? toPost(collectionName, docData) : null;
+		if (!docData || docData.isDeleted) return null;
+
+		return toPost(collectionName, docData);
 	});
 };
 
