@@ -287,7 +287,6 @@ export type InputProps = {
 	setInput: Dispatch<SetStateAction<string>>;
 	onPress: () => void;
 	placeholder?: string;
-	marginBottom?: number;
 };
 
 export type LayoutProps = {

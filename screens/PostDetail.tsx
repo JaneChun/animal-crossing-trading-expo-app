@@ -27,9 +27,13 @@ import { navigateToEditPost } from '@/utilities/navigationHelpers';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect } from 'react';
 import { Alert, KeyboardAvoidingView, StyleSheet, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const PostDetail = () => {
+	const insets = useSafeAreaInsets();
+	const keyboardOffset = insets.top + 44;
+
 	const { isBoardPost, isCommunityPost } = usePostContext();
 
 	const stackNavigation = useNavigation<RootStackNavigation>();
@@ -113,13 +117,17 @@ const PostDetail = () => {
 	}
 
 	return (
-		<View style={styles.screen}>
-			<KeyboardAvoidingView style={styles.container} behavior='padding'>
-				<FlatList
+		<KeyboardAvoidingView
+			style={styles.screen}
+			behavior='padding'
+			keyboardVerticalOffset={keyboardOffset}
+		>
+			<View style={styles.screen}>
+				<KeyboardAwareFlatList
 					data={[]}
 					renderItem={null}
 					keyboardShouldPersistTaps='handled'
-					ListEmptyComponent={
+					ListHeaderComponent={
 						<View style={styles.content}>
 							{/* 헤더 */}
 							<View style={styles.header}>
@@ -181,13 +189,16 @@ const PostDetail = () => {
 							/>
 						</View>
 					}
+					contentContainerStyle={{ flexGrow: 1 }}
+					extraScrollHeight={16}
 				/>
-				<CommentInput
-					postId={post.id}
-					setIsCommentUploading={setIsCommentUploading}
-				/>
-			</KeyboardAvoidingView>
-		</View>
+			</View>
+
+			<CommentInput
+				postId={post.id}
+				setIsCommentUploading={setIsCommentUploading}
+			/>
+		</KeyboardAvoidingView>
 	);
 };
 
@@ -198,11 +209,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: 'white',
 	},
-	container: {
-		flex: 1,
-	},
 	content: {
-		flex: 1,
 		padding: 24,
 	},
 	typeAndMenuRow: {

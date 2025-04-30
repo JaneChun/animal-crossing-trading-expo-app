@@ -5,6 +5,7 @@ import * as Linking from 'expo-linking';
 import { SafeAreaView } from 'react-native';
 import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './components/ui/Toast';
 import { useAppState } from './hooks/shared/useAppState';
@@ -63,24 +64,26 @@ export default function App() {
 			<ErrorBoundary>
 				<ActionSheetProvider>
 					<GestureHandlerRootView style={{ flex: 1 }}>
-						<NavigationContainer
-							ref={navigationRef}
-							linking={linking}
-							// onReady={() => {
-							// 	console.log('🔵 Navigation Ready');
-							// }}
-							// onStateChange={(state) => {
-							// 	console.log(
-							// 		'🟡 Navigation State:',
-							// 		JSON.stringify(state, null, 2),
-							// 	);
-							// }}
-						>
-							<SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-								<RootStackNavigator />
-								<Toast config={toastConfig} />
-							</SafeAreaView>
-						</NavigationContainer>
+						<SafeAreaProvider>
+							<NavigationContainer
+								ref={navigationRef}
+								linking={linking}
+								// onReady={() => {
+								// 	console.log('🔵 Navigation Ready');
+								// }}
+								// onStateChange={(state) => {
+								// 	console.log(
+								// 		'🟡 Navigation State:',
+								// 		JSON.stringify(state, null, 2),
+								// 	);
+								// }}
+							>
+								<SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+									<RootStackNavigator />
+									<Toast config={toastConfig} />
+								</SafeAreaView>
+							</NavigationContainer>
+						</SafeAreaProvider>
 					</GestureHandlerRootView>
 				</ActionSheetProvider>
 			</ErrorBoundary>

@@ -9,6 +9,7 @@ import {
 	navigateToMyProfile,
 } from '@/utilities/navigationHelpers';
 import { useState } from 'react';
+import { Keyboard } from 'react-native';
 import Input from '../ui/inputs/Input';
 import { showLongToast, showToast } from '../ui/Toast';
 
@@ -69,6 +70,7 @@ const CommentInput = ({ postId, setIsCommentUploading }: CommentInputProps) => {
 			);
 		} finally {
 			setIsCommentUploading(false);
+			Keyboard.dismiss();
 		}
 	};
 
@@ -78,7 +80,7 @@ const CommentInput = ({ postId, setIsCommentUploading }: CommentInputProps) => {
 			setInput={setCommentInput}
 			onPress={onSubmit}
 			placeholder='댓글을 입력해주세요.'
-			marginBottom={101}
+			marginBottom={94}
 		/>
 	);
 };

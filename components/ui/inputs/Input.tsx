@@ -2,46 +2,11 @@ import { Colors } from '@/constants/Color';
 import { FontSizes } from '@/constants/Typography';
 import { InputProps } from '@/types/components';
 import { FontAwesome6 } from '@expo/vector-icons';
-import { useEffect, useState } from 'react';
-import { Keyboard, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
-const Input = ({
-	input,
-	setInput,
-	onPress,
-	placeholder,
-	marginBottom,
-}: InputProps) => {
-	const [isKeyboardVisible, setIsKeyboardVisible] = useState<boolean>(false);
-
-	// 키보드 이벤트 리스너 추가 (키보드 감지)
-	useEffect(() => {
-		const keyboardDidShowListener = Keyboard.addListener(
-			'keyboardDidShow',
-			() => {
-				setIsKeyboardVisible(true);
-			},
-		);
-		const keyboardDidHideListener = Keyboard.addListener(
-			'keyboardDidHide',
-			() => {
-				setIsKeyboardVisible(false);
-			},
-		);
-
-		return () => {
-			keyboardDidShowListener.remove();
-			keyboardDidHideListener.remove();
-		};
-	}, []);
-
+const Input = ({ input, setInput, onPress, placeholder }: InputProps) => {
 	return (
-		<View
-			style={[
-				styles.inputContainer,
-				isKeyboardVisible && { marginBottom: marginBottom ? marginBottom : 58 },
-			]}
-		>
+		<View style={styles.inputContainer}>
 			<TextInput
 				style={styles.inputText}
 				value={input}
