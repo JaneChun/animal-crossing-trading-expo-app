@@ -104,6 +104,7 @@ export const getPublicUserInfo = async (
 	}
 };
 
+// 문서 ID 기준으로 여러 개의 ID를 한 번에 조회하는 where(..., 'in', [...]) 조건은 최대 10개까지만 지원하므로 청크로 나누어 처리
 export const getPublicUserInfos = async (
 	creatorIds: string[],
 ): Promise<Record<string, PublicUserInfo>> => {
@@ -111,23 +112,37 @@ export const getPublicUserInfos = async (
 		if (creatorIds.length === 0) return {};
 
 		const usersRef = collection(db, 'Users');
-		const q = query(usersRef, where('__name__', 'in', creatorIds));
 
-		const usersData = await queryDocs(q);
+		// 10개로 쪼갬
+		const creatorIdsChunks = chunkArray(creatorIds, 10);
 
 		// 유저 정보를 ID로 매핑하여 반환
 		const publicUserInfoMap: Record<string, PublicUserInfo> = {};
-		usersData.forEach((user) => {
-			publicUserInfoMap[user.id] = {
-				uid: user.id,
-				displayName: user.displayName || DEFAULT_USER_DISPLAY_NAME,
-				islandName: user.islandName || DEFAULT_USER_ISLAND_NAME,
-				photoURL: user.photoURL || DEFAULT_USER_PHOTO_URL,
-			};
-		});
+
+		for (const creatorIds of creatorIdsChunks) {
+			const q = query(usersRef, where('__name__', 'in', creatorIds));
+			const usersData = await queryDocs(q);
+
+			usersData.forEach((user) => {
+				publicUserInfoMap[user.id] = {
+					uid: user.id,
+					displayName: user.displayName || DEFAULT_USER_DISPLAY_NAME,
+					islandName: user.islandName || DEFAULT_USER_ISLAND_NAME,
+					photoURL: user.photoURL || DEFAULT_USER_PHOTO_URL,
+				};
+			});
+		}
 
 		return publicUserInfoMap;
 	});
+};
+
+const chunkArray = <T>(array: T[], size: number): T[][] => {
+	const result: T[][] = [];
+	for (let i = 0; i < array.length; i += size) {
+		result.push(array.slice(i, i + size));
+	}
+	return result;
 };
 
 export const archiveUserData = async (userInfo: UserInfo) => {

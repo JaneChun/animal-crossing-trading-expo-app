@@ -289,6 +289,7 @@ const NewPost = () => {
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
+		backgroundColor: 'white',
 	},
 	buttonContainer: {
 		paddingHorizontal: PADDING,
