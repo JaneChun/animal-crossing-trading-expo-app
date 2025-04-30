@@ -104,12 +104,15 @@ const ChatRoom = () => {
 						}
 						bottomContent={
 							userInfo?.uid &&
-							receiverInfo?.displayName !== DEFAULT_USER_DISPLAY_NAME && (
+							receiverInfo?.uid && (
 								<ChatInput
 									chatId={chatId}
 									senderUid={userInfo.uid}
 									receiverUid={receiverInfo.uid}
 									scrollToBottom={scrollToBottom}
+									disabled={
+										receiverInfo?.displayName === DEFAULT_USER_DISPLAY_NAME
+									}
 								/>
 							)
 						}

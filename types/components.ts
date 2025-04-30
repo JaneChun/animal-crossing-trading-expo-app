@@ -262,6 +262,7 @@ export type ChatInputProps = {
 	senderUid: string;
 	receiverUid: string;
 	scrollToBottom: () => void;
+	disabled: boolean;
 };
 
 // ui/
@@ -297,6 +298,8 @@ export type InputProps = {
 	setInput: Dispatch<SetStateAction<string>>;
 	onPress: () => void;
 	placeholder?: string;
+	disabled?: boolean;
+	disabledPlaceHolder?: string;
 };
 
 export type LayoutProps = {

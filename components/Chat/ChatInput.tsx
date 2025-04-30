@@ -8,6 +8,7 @@ const ChatInput = ({
 	senderUid,
 	receiverUid,
 	scrollToBottom,
+	disabled,
 }: ChatInputProps) => {
 	const [chatInput, setChatInput] = useState('');
 
@@ -33,6 +34,8 @@ const ChatInput = ({
 			setInput={setChatInput}
 			placeholder='메세지 보내기'
 			onPress={onSubmit}
+			disabled={disabled}
+			disabledPlaceHolder='메세지를 보낼 수 없습니다.'
 		/>
 	);
 };

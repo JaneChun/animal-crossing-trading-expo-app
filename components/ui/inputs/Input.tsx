@@ -4,19 +4,37 @@ import { InputProps } from '@/types/components';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
-const Input = ({ input, setInput, onPress, placeholder }: InputProps) => {
+const Input = ({
+	input,
+	setInput,
+	onPress,
+	placeholder,
+	disabled = false,
+	disabledPlaceHolder,
+}: InputProps) => {
 	return (
 		<View style={styles.inputContainer}>
 			<TextInput
 				style={styles.inputText}
 				value={input}
 				onChangeText={setInput}
-				placeholder={placeholder}
+				placeholder={
+					disabled && disabledPlaceHolder ? disabledPlaceHolder : placeholder
+				}
 				multiline
 				enterKeyHint='send'
+				editable={!disabled}
 			/>
-			<Pressable style={styles.iconContainer} onPress={onPress}>
-				<FontAwesome6 name='circle-arrow-up' size={28} color={Colors.primary} />
+			<Pressable
+				style={styles.iconContainer}
+				onPress={onPress}
+				disabled={disabled}
+			>
+				<FontAwesome6
+					name='circle-arrow-up'
+					size={28}
+					color={disabled ? Colors.icon_gray : Colors.primary}
+				/>
 			</Pressable>
 		</View>
 	);
