@@ -1,6 +1,6 @@
 import { useMarkAllAsRead } from '@/hooks/mutation/notification/useMarkAllAsRead';
 import { NoticeTabProps } from '@/types/components';
-import { NotificationWithSenderInfo } from '@/types/notification';
+import { PopulatedNotification } from '@/types/notification';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -14,7 +14,7 @@ const CommunityNotices = ({ notifications }: NoticeTabProps) => {
 	const renderNotificationItem = ({
 		item,
 	}: {
-		item: NotificationWithSenderInfo;
+		item: PopulatedNotification;
 	}) => {
 		return <NotificationUnit item={item} collectionName='Communities' />;
 	};

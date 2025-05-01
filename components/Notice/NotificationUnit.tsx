@@ -3,7 +3,6 @@ import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useDeleteNotification } from '@/hooks/mutation/notification/useDeleteNotification';
 import { useMarkAsRead } from '@/hooks/mutation/notification/useMarkAsRead';
-import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { NotificationUnitProp } from '@/types/components';
 import { Collection } from '@/types/post';
@@ -11,21 +10,27 @@ import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToPostDetail } from '@/utilities/navigationHelpers';
 import { FontAwesome } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import Reanimated, {
 	SharedValue,
 	useAnimatedStyle,
 } from 'react-native-reanimated';
-import ItemThumbnail from '../ui/ItemThumbnail';
-import Thumbnail from '../ui/Thumbnail';
 
 const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 	const { isBoardPost, isCommunityPost } = usePostContext();
 
-	const { id, type, body, postId, receiverId, senderInfo, createdAt, isRead } =
-		item;
-	const { data: post } = usePostDetail(type, postId);
+	const {
+		id,
+		type,
+		body,
+		postId,
+		receiverId,
+		senderInfo,
+		postInfo: post,
+		createdAt,
+		isRead,
+	} = item;
 
 	const { mutate: markAsRead } = useMarkAsRead(id);
 	const { mutate: deleteNotification } = useDeleteNotification(id);
@@ -33,7 +38,7 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 	let title = '게시글';
 	if (post?.title) {
 		title =
-			post.title.length > 5 ? `${post.title.substring(0, 5)}...` : post.title;
+			post.title.length > 8 ? `${post.title.substring(0, 8)}...` : post.title;
 	}
 
 	const onPressNotification = async ({
@@ -44,32 +49,32 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 		postId: string;
 	}) => {
 		markAsRead(undefined, {
-			onSuccess: () => navigateToPostDetail({ postId, collectionName }),
+			onSuccess: () => {
+				navigateToPostDetail({ postId, collectionName });
+			},
 		});
 	};
 
-	const handleDeleteNotification = async (notificationId: string) => {
-		deleteNotification();
-	};
-
-	const RightAction = (
+	// Swipeable이 스와이프될 때 보여줄 삭제 버튼을 생성
+	const renderRightAction = (
 		prog: SharedValue<number>,
 		drag: SharedValue<number>,
 	) => {
+		// 스와이프 시 드래그한 거리(drag.value)에 따라 삭제 버튼 위치 조정
 		const animatedStyle = useAnimatedStyle(() => {
 			return {
 				transform: [{ translateX: drag.value + 80 }],
 			};
-		});
+		}, [drag]);
 
 		return (
-			<Reanimated.View style={animatedStyle}>
-				<TouchableOpacity
-					style={styles.rightActionContainer}
-					onPress={() => handleDeleteNotification(id)}
+			<Reanimated.View style={[styles.rightActionContainer, animatedStyle]}>
+				<Pressable
+					style={styles.rightActionButton}
+					onPress={() => deleteNotification()}
 				>
 					<FontAwesome name='trash' color='white' size={24} />
-				</TouchableOpacity>
+				</Pressable>
 			</Reanimated.View>
 		);
 	};
@@ -77,28 +82,14 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 	if (!post) return null;
 
 	return (
-		<Swipeable friction={2} renderRightActions={RightAction}>
-			<TouchableOpacity
+		<Swipeable friction={2} renderRightActions={renderRightAction}>
+			<Pressable
 				style={[
 					styles.container,
 					isRead ? styles.readBackground : styles.unreadBackground,
 				]}
 				onPress={() => onPressNotification({ postId, collectionName })}
-				activeOpacity={0.8}
 			>
-				{/* 썸네일 */}
-				<View style={styles.thumbnailContainer}>
-					{isBoardPost(post, collectionName) && (
-						<ItemThumbnail
-							previewImage={post?.cart?.[0]?.imageUrl}
-							itemLength={post?.cart?.length}
-						/>
-					)}
-					{isCommunityPost(post, collectionName) && (
-						<Thumbnail previewImage={post?.images?.[0]} />
-					)}
-				</View>
-
 				{/* 콘텐츠 */}
 				<View style={styles.content}>
 					<Text style={styles.title} numberOfLines={2}>
@@ -113,7 +104,20 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 					</Text>
 					<Text style={styles.date}>{elapsedTime(createdAt)}</Text>
 				</View>
-			</TouchableOpacity>
+
+				{/* 썸네일 */}
+				{/* <View style={styles.thumbnailContainer}>
+					{isBoardPost(post, collectionName) && (
+						<ItemThumbnail
+							previewImage={post?.cart?.[0]?.imageUrl}
+							itemLength={post?.cart?.length}
+						/>
+					)}
+					{isCommunityPost(post, collectionName) && (
+						<Thumbnail previewImage={post?.images?.[0]} />
+					)}
+				</View> */}
+			</Pressable>
 		</Swipeable>
 	);
 };
@@ -164,6 +168,8 @@ const styles = StyleSheet.create({
 	rightActionContainer: {
 		backgroundColor: Colors.badge_red,
 		width: 80,
+	},
+	rightActionButton: {
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',

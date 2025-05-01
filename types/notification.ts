@@ -1,5 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
-import { Collection } from './components';
+import { Collection, Post } from './post';
 import { PublicUserInfo } from './user';
 
 export interface Notification {
@@ -13,7 +13,8 @@ export interface Notification {
 	isRead: boolean;
 }
 
-export interface NotificationWithSenderInfo extends Notification {
+export interface PopulatedNotification extends Notification {
+	postInfo: Post<Collection>;
 	senderInfo: PublicUserInfo;
 }
 

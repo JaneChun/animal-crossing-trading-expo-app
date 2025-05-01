@@ -1,6 +1,6 @@
 import { db } from '@/fbase';
-import { fetchAndPopulateSenderInfo } from '@/firebase/services/notificationService';
-import { Notification, NotificationWithSenderInfo } from '@/types/notification';
+import { fetchAndPopulate } from '@/firebase/services/notificationService';
+import { Notification, PopulatedNotification } from '@/types/notification';
 import {
 	collection,
 	onSnapshot,
@@ -14,8 +14,8 @@ import { create } from 'zustand';
 import { useAuthStore } from './AuthStore';
 
 interface NotificationStoreState {
-	notifications: NotificationWithSenderInfo[];
-	setNotifications: (n: NotificationWithSenderInfo[]) => void;
+	notifications: PopulatedNotification[];
+	setNotifications: (n: PopulatedNotification[]) => void;
 	unreadCount: number;
 	setUnreadCount: (n: number) => void;
 	isLoading: boolean;
@@ -52,9 +52,9 @@ export const useNotificationSubscriptionInitializer = () => {
 		const unsubscribe = onSnapshot(q, async () => {
 			setIsLoading(true);
 
-			const { data = [] } = await fetchAndPopulateSenderInfo<
+			const { data = [] } = await fetchAndPopulate<
 				Notification,
-				NotificationWithSenderInfo
+				PopulatedNotification
 			>(q);
 
 			setNotifications(data);

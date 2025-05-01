@@ -16,7 +16,7 @@ import {
 import { FlatList } from 'react-native-gesture-handler';
 import { CommentWithCreatorInfo } from './comment';
 import { ImageType } from './image';
-import { NotificationWithSenderInfo } from './notification';
+import { PopulatedNotification } from './notification';
 import {
 	CartItem,
 	Collection,
@@ -207,12 +207,12 @@ export type UserInfoProps = {
 
 // Notification/
 export type NotificationUnitProp = {
-	item: NotificationWithSenderInfo;
+	item: PopulatedNotification;
 	collectionName: Collection;
 };
 
 export type NoticeTabProps = {
-	notifications: NotificationWithSenderInfo[];
+	notifications: PopulatedNotification[];
 };
 
 export type TabBarLabelProps = {

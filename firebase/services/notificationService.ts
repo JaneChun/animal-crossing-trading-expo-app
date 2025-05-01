@@ -1,4 +1,5 @@
 import { db } from '@/fbase';
+import { Collection, Post } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { doc, getDocs, Query, writeBatch } from 'firebase/firestore';
@@ -7,11 +8,15 @@ import {
 	deleteDocFromFirestore,
 	updateDocToFirestore,
 } from '../core/firestoreService';
+import { getPosts } from './postService';
 import { getPublicUserInfos } from './userService';
 
-export const fetchAndPopulateSenderInfo = async <
-	T extends { senderId: string },
-	U,
+export const fetchAndPopulate = async <
+	T extends { postId: string; senderId: string },
+	U extends T & {
+		postInfo: Post<Collection>;
+		senderInfo: PublicUserInfo;
+	},
 >(
 	q: Query,
 ): Promise<{ data: U[] }> => {
@@ -30,35 +35,30 @@ export const fetchAndPopulateSenderInfo = async <
 			} as unknown as T;
 		});
 
-		const uniqueSenderIds: string[] = [
-			...new Set(data.map((item) => item.senderId)),
-		];
+		const postIds = [...new Set(data.map((i) => i.postId))];
+		const senderIds = [...new Set(data.map((i) => i.senderId))];
 
-		const publicUserInfos: Record<string, PublicUserInfo> =
-			await getPublicUserInfos(uniqueSenderIds);
+		// 게시글 정보, 유저 정보 불러와서 매칭
+		const [postDetails, publicUserInfos] = await Promise.all([
+			getPosts(postIds),
+			getPublicUserInfos(senderIds),
+		]);
 
-		const populatedData: U[] = data.map((item) => {
-			const senderId = item.senderId;
-
-			let senderInfo = getDefaultUserInfo(senderId);
-
-			if (senderId && publicUserInfos[senderId]) {
-				senderInfo = publicUserInfos[senderId];
-			}
+		const populatedData = data.map((item) => {
+			const postInfo = postDetails[item.postId] ?? undefined;
+			const senderInfo =
+				publicUserInfos[item.senderId] ?? getDefaultUserInfo(item.senderId);
 
 			return {
 				...item,
-				senderInfo: {
-					uid: senderId,
-					displayName: senderInfo.displayName,
-					islandName: senderInfo.islandName,
-					photoURL: senderInfo.photoURL,
-				},
-			} as U;
+				postInfo,
+				senderInfo,
+			};
 		});
 
+		// 삭제된 게시글은 필터링
 		return {
-			data: populatedData,
+			data: populatedData.filter((n) => n.postInfo !== undefined) as U[],
 		};
 	});
 };

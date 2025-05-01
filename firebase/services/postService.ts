@@ -1,3 +1,4 @@
+import { db } from '@/fbase';
 import {
 	Collection,
 	CreatePostRequest,
@@ -12,15 +13,24 @@ import {
 } from '@/utilities/generateSearchKeywords';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { toPost } from '@/utilities/toPost';
-import { DocumentData, getDocs, Query, Timestamp } from 'firebase/firestore';
+import {
+	collection,
+	DocumentData,
+	getDocs,
+	query,
+	Query,
+	Timestamp,
+	where,
+} from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
 import {
 	addDocToFirestore,
 	deleteDocFromFirestore,
 	getDocFromFirestore,
+	queryDocs,
 	updateDocToFirestore,
 } from '../core/firestoreService';
-import { getPublicUserInfos } from './userService';
+import { chunkArray, getPublicUserInfos } from './userService';
 
 export const fetchAndPopulateUsers = async <T extends { creatorId: string }, U>(
 	q: Query<DocumentData>,
@@ -87,6 +97,39 @@ export const getPost = async <C extends Collection>(
 		if (!docData || docData.isDeleted) return null;
 
 		return toPost(collectionName, docData);
+	});
+};
+
+export const getPosts = async (
+	postIds: string[],
+): Promise<Record<string, Post<Collection>>> => {
+	return firestoreRequest('게시글 목록 조회', async () => {
+		const collections: Collection[] = ['Boards', 'Communities'];
+		const postsMap: Record<string, Post<Collection>> = {};
+
+		for (const collectionName of collections) {
+			// 10개로 쪼갬
+			const chunks = chunkArray(postIds, 10);
+
+			for (const postIds of chunks) {
+				const collectionRef = collection(db, collectionName);
+				const q = query(collectionRef, where('__name__', 'in', postIds));
+
+				const postsData = await queryDocs(q);
+
+				postsData.forEach((doc) => {
+					const postDoc = doc as PostDoc<Collection>;
+
+					if (!postDoc.isDeleted) {
+						const post = toPost(collectionName, postDoc);
+
+						postsMap[postDoc.id] = post;
+					}
+				});
+			}
+		}
+
+		return postsMap;
 	});
 };
 
