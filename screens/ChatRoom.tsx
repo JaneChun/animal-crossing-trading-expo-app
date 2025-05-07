@@ -13,6 +13,7 @@ import { useGetChatMessages } from '@/hooks/firebase/useGetChatMessages';
 import { useLeaveChatRoom } from '@/hooks/mutation/chat/useLeaveChatRoom';
 import { useMarkMessagesAsRead } from '@/hooks/mutation/chat/useMarkMessagesAsRead';
 import { useReceiverInfo } from '@/hooks/query/chat/useReceiverInfo';
+import { useChatPresence } from '@/hooks/shared/useChatPresence';
 import { goBack } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
 import { MessageType } from '@/types/chat';
@@ -26,6 +27,7 @@ import { FlatList } from 'react-native-gesture-handler';
 const ChatRoom = () => {
 	const route = useRoute<ChatRoomRouteProp>();
 	const { chatId } = route.params;
+	useChatPresence(chatId);
 	const userInfo = useAuthStore((state) => state.userInfo);
 
 	const { messages, isLoading: isMessagesFetching } =

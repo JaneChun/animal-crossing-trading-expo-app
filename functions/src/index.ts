@@ -69,6 +69,9 @@ export const sendChatNotification = onDocumentCreated(
 
 		const chatId = event.params.chatId;
 
+		// 유저가 채팅방에 들어와있는 경우 채팅 알림 발생 X
+		if (receiverInfo?.activeChatRoomId === chatId) return;
+
 		const messagePayload = {
 			to: expoPushToken,
 			title: '💬 새로운 채팅 메세지가 왔어구리!',

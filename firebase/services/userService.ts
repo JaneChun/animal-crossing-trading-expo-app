@@ -224,3 +224,19 @@ export const savePushTokenToFirestore = async ({
 		});
 	});
 };
+
+export const setActiveChatRoom = async ({
+	userId,
+	chatId,
+}: {
+	userId: string;
+	chatId: string;
+}) => {
+	await updateDocToFirestore({
+		id: userId,
+		collection: 'Users',
+		requestData: {
+			activeChatRoomId: chatId,
+		},
+	});
+};
