@@ -83,6 +83,20 @@ const NewPost = () => {
 		updatePost,
 	});
 
+	useEffect(() => {
+		stackNavigation.setOptions({
+			headerRight: () => (
+				<Button
+					color='white'
+					size='md2'
+					onPress={handleSubmit(onSubmit, onError)}
+				>
+					등록
+				</Button>
+			),
+		});
+	}, []);
+
 	// 수정글 로딩 시 초기값 채우기
 	useEffect(() => {
 		if (route.params?.id) setEditingId(route.params.id);
