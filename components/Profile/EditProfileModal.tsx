@@ -13,6 +13,7 @@ import { useAuthStore } from '@/stores/AuthStore';
 import { EditProfileModalProps } from '@/types/components';
 import { UserInfo } from '@/types/user';
 import { FontAwesome } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImagePickerAsset } from 'expo-image-picker';
 import React, { useEffect } from 'react';
 import { Controller, FormProvider } from 'react-hook-form';
@@ -122,6 +123,8 @@ const EditProfileModal = ({
 
 				// 상태 갱신
 				setUserInfo(newUserInfo);
+				await AsyncStorage.setItem('@user', JSON.stringify(newUserInfo));
+
 				showToast('success', '프로필이 성공적으로 변경되었습니다.');
 			} else {
 				console.log('변경된 데이터가 없습니다.');
