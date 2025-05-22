@@ -20,7 +20,7 @@ import { MessageType } from '@/types/chat';
 import { ChatRoomRouteProp } from '@/types/navigation';
 import { isSystemMessage } from '@/utilities/typeGuards/messageGuards';
 import { useRoute } from '@react-navigation/native';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -29,6 +29,7 @@ const ChatRoom = () => {
 	const { chatId } = route.params;
 	useChatPresence(chatId);
 	const userInfo = useAuthStore((state) => state.userInfo);
+	const flatListRef = useRef<FlatList>(null);
 
 	const { messages, isLoading: isMessagesFetching } =
 		useGetChatMessages(chatId);
@@ -50,7 +51,7 @@ const ChatRoom = () => {
 	}, [chatId, userInfo, messages]);
 
 	const scrollToBottom = () => {
-		console.log('ChatRoom scrollToBottom');
+		flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
 	};
 
 	const renderMessage = useCallback(
@@ -96,6 +97,7 @@ const ChatRoom = () => {
 					<KeyboardStickyLayout
 						scrollableContent={
 							<FlatList
+								ref={flatListRef}
 								data={messages}
 								keyExtractor={({ id }) => id}
 								renderItem={renderMessage}
