@@ -1,8 +1,8 @@
 import { db } from '@/fbase';
 import { queryDocs } from '@/firebase/core/firestoreService';
 import { Item, ItemCategory } from '@/types/post';
-import { collection, limit, Query, query, where } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { collection, limit, query, Query, where } from 'firebase/firestore';
 
 export const useItemSearch = ({
 	keyword,
@@ -13,46 +13,28 @@ export const useItemSearch = ({
 	category?: ItemCategory;
 	size?: number;
 }) => {
-	const [items, setItems] = useState<Item[]>([]);
-	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const trimmed = keyword.trim();
 
-	useEffect(() => {
-		const fetchItems = async () => {
-			const trimmed = keyword?.trim() || '';
+	return useQuery({
+		queryKey: ['itemSearch', trimmed, category, size],
+		queryFn: async () => {
+			let q: Query = query(
+				collection(db, 'Items'),
+				where('searchKeywords', 'array-contains', trimmed),
+			);
 
-			if (trimmed.length < 2) {
-				setItems([]);
-				setIsLoading(false);
-				return;
+			if (category && category !== 'All') {
+				q = query(q, where('category', '==', category));
 			}
 
-			setIsLoading(true);
-			try {
-				let q: Query = collection(db, 'Items');
-
-				q = query(q, where('searchKeywords', 'array-contains', trimmed));
-
-				if (category && category !== 'All') {
-					q = query(q, where('category', '==', category));
-				}
-
-				if (size) {
-					q = query(q, limit(size));
-				}
-
-				const data = await queryDocs<Item>(q);
-
-				setItems(data);
-			} catch (err) {
-				console.log('검색 오류:', err);
-				setItems([]);
+			if (size) {
+				q = query(q, limit(size));
 			}
 
-			setIsLoading(false);
-		};
+			const data = await queryDocs<Item>(q);
 
-		fetchItems();
-	}, [category, keyword]);
-
-	return { items, isLoading };
+			return data;
+		},
+		enabled: trimmed.length >= 2,
+	});
 };

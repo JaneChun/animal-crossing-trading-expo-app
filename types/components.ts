@@ -21,6 +21,7 @@ import {
 	CartItem,
 	Collection,
 	CommunityType,
+	Filter,
 	Item,
 	MarketType,
 	Post,
@@ -31,7 +32,7 @@ import { PublicUserInfo } from './user';
 // Home/
 export type PostListProps = {
 	collectionName: Collection;
-	filter?: { category?: string; creatorId?: string };
+	filter?: Filter;
 	isAddPostButtonVisible?: boolean;
 	containerStyle?: StyleProp<ViewStyle>;
 };
@@ -254,6 +255,15 @@ export type ProfileImageInputProps = {
 export type SearchResultItemProps = {
 	item: Item;
 	searchInput: string;
+};
+
+export type SearchInputProps = {
+	searchInput: string;
+	onChangeText: (text: string) => void;
+	resetSearchInput: () => void;
+	onSubmit: (keyword: string) => void;
+	containerStyle?: ViewStyle;
+	placeholder?: string;
 };
 
 // Chat/

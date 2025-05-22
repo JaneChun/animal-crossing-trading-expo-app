@@ -1,35 +1,38 @@
 import { Colors } from '@/constants/Color';
 import { FontSizes } from '@/constants/Typography';
+import { SearchInputProps } from '@/types/components';
 import { Ionicons } from '@expo/vector-icons';
-import React, { Dispatch, SetStateAction } from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 import { Pressable, TextInput } from 'react-native-gesture-handler';
 import SearchIcon from '../../Search/SearchIcon';
 
 const SearchInput = ({
 	searchInput,
-	setSearchInput,
+	onChangeText,
+	resetSearchInput,
+	onSubmit,
 	containerStyle,
 	placeholder,
-}: {
-	searchInput: string;
-	setSearchInput: Dispatch<SetStateAction<string>>;
-	containerStyle?: ViewStyle;
-	placeholder?: string;
-}) => {
+}: SearchInputProps) => {
 	return (
 		<View style={[styles.searchContainer, containerStyle]}>
 			<SearchIcon containerStyle={styles.searchIcon} color={Colors.font_gray} />
 			<TextInput
 				style={styles.searchInput}
 				value={searchInput}
-				onChangeText={setSearchInput}
+				onChangeText={onChangeText}
 				placeholder={placeholder}
 				placeholderTextColor={Colors.font_gray}
 				enterKeyHint='search'
+				onSubmitEditing={() => {
+					if (searchInput.trim()) {
+						onSubmit(searchInput.trim());
+					}
+				}}
 			/>
 			{searchInput && (
-				<Pressable onPress={() => setSearchInput('')}>
+				<Pressable onPress={resetSearchInput}>
 					<Ionicons name='close-circle' size={20} color={Colors.icon_gray} />
 				</Pressable>
 			)}

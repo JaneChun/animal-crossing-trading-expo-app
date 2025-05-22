@@ -129,6 +129,7 @@ export type Doc = QueryDocumentSnapshot<DocumentData> | null;
 export type Filter = {
 	creatorId?: string;
 	category?: string;
+	keyword?: string;
 };
 
 export interface FirestoreQueryParams {
