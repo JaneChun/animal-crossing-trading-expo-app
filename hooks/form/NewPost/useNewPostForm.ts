@@ -9,6 +9,7 @@ export const useNewPostForm = (collectionName: Collection) => {
 		defaultValues:
 			collectionName === 'Boards'
 				? {
+						collectionName: 'Boards',
 						type: 'buy',
 						title: '',
 						body: '',
@@ -17,6 +18,7 @@ export const useNewPostForm = (collectionName: Collection) => {
 						originalImageUrls: undefined,
 				  }
 				: {
+						collectionName: 'Communities',
 						type: 'general',
 						title: '',
 						body: '',

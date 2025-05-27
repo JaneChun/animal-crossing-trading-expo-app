@@ -105,6 +105,8 @@ const NewPost = () => {
 	useEffect(() => {
 		if (!post) return;
 
+		setValue('collectionName', collectionName);
+
 		setValue('type', post.type);
 		setValue('title', post.title);
 		setValue('body', post.body);
@@ -195,6 +197,9 @@ const NewPost = () => {
 	};
 
 	const onError = (errors: any) => {
+		console.log('🧨 Zod Errors', JSON.stringify(errors, null, 2));
+
+		showToast('error', '게시글 작성 중 오류가 발생했습니다.');
 		scrollToTop();
 	};
 

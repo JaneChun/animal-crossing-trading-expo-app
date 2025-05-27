@@ -16,7 +16,7 @@ const CommonFields = {
 const CartItemSchema = z.object({
 	id: z.string(),
 	category: z.string(),
-	color: z.string(),
+	color: z.string().optional(),
 	imageUrl: z.string(),
 	name: z.string(),
 	quantity: z.number(),
@@ -29,17 +29,19 @@ const ImageTypeSchema = z.object({
 
 // 🏠 마켓 폼
 const MarketFormSchema = z.object({
+	collectionName: z.literal('Boards'),
 	type: z.enum(
 		MARKET_TYPES.map((item) => item.EN) as [MarketType, ...MarketType[]],
 	),
 	cart: z.array(CartItemSchema),
-	images: z.undefined(), // 금지
-	originalImageUrls: z.undefined(), // 금지
+	images: z.optional(z.never()), // 금지
+	originalImageUrls: z.optional(z.never()), // 금지
 	...CommonFields,
 });
 
 // 📝 커뮤니티 폼
 const CommunityFormSchema = z.object({
+	collectionName: z.literal('Communities'),
 	type: z.enum(
 		COMMUNITY_TYPES.map((item) => item.EN) as [
 			CommunityType,
@@ -48,11 +50,11 @@ const CommunityFormSchema = z.object({
 	),
 	images: z.array(ImageTypeSchema),
 	originalImageUrls: z.array(z.string()).optional(),
-	cart: z.undefined(), // 금지
+	cart: z.optional(z.never()), // 금지
 	...CommonFields,
 });
 
-export const NewPostFormSchema = z.union([
+export const NewPostFormSchema = z.discriminatedUnion('collectionName', [
 	MarketFormSchema,
 	CommunityFormSchema,
 ]);
