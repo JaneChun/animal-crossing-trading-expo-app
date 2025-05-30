@@ -85,17 +85,17 @@ const styles = StyleSheet.create({
 		borderBottomWidth: 1,
 		borderBottomColor: Colors.border_gray,
 	},
-	thumbnail: {
-		flexShrink: 0,
-	},
 	topRow: {
-		flex: 1,
 		flexDirection: 'row',
-		justifyContent: 'space-between',
+		width: '100%',
 		gap: 8,
 	},
 	typeAndTitle: {
 		gap: 6,
+		flex: 1,
+	},
+	thumbnail: {
+		flexShrink: 0,
 	},
 	title: {
 		flexShrink: 1,
