@@ -1,6 +1,7 @@
 import { showToast } from '@/components/ui/Toast';
-import { ImageType, UseImagePickerOptions } from '@/types/image';
+import { UseImagePickerOptions } from '@/types/image';
 import {
+	ImagePickerAsset,
 	launchImageLibraryAsync,
 	useMediaLibraryPermissions,
 } from 'expo-image-picker';
@@ -37,7 +38,7 @@ export const useImagePicker = (
 
 		if (result.canceled) return null;
 
-		return result.assets as ImageType[];
+		return result.assets as ImagePickerAsset[];
 	};
 
 	return { pickImage };

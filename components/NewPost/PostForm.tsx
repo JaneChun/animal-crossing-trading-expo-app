@@ -2,7 +2,6 @@ import { Colors } from '@/constants/Color';
 import { COMMUNITY_TYPES } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { PostFormProps } from '@/types/components';
-import { ImageType } from '@/types/image';
 import { MarketType } from '@/types/post';
 import React, { useRef } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -134,10 +133,8 @@ const PostForm = ({
 							name='images'
 							render={({ field: { value, onChange } }) => (
 								<ImageInput
-									images={value.map((uri: string) => ({ uri }))}
-									setImages={(images) =>
-										onChange((images as ImageType[]).map((img) => img.uri))
-									}
+									images={value}
+									setImages={onChange}
 									containerStyle={{
 										...styles.inputContainer,
 										borderBottomWidth: 0,

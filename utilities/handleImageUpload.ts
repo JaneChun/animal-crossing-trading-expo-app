@@ -7,8 +7,6 @@ import {
 	GetFilteredImagesParams,
 	HandleImageUploadParams,
 } from '@/types/image';
-import { ImagePickerAsset } from 'expo-image-picker';
-import { isLocalImage } from './typeGuards/imageGuards';
 
 //  새 이미지 업로드 + 기존 이미지 삭제 작업
 // handleImageUpload는 결과적으로 사용할 이미지 URL 배열을 반환
@@ -50,9 +48,9 @@ const getFilteredImages = ({
 	images,
 	originalImageUrls,
 }: GetFilteredImagesParams): FilteredImages => {
-	const newImages: ImagePickerAsset[] = images
-		.filter(({ uri }) => !originalImageUrls.includes(uri))
-		.filter(isLocalImage); // 타입 가드
+	const newImages = images.filter(
+		({ uri }) => !originalImageUrls.includes(uri),
+	);
 
 	const deletedImageUrls: string[] = originalImageUrls.filter(
 		(url) => !images.some(({ uri }) => uri === url),

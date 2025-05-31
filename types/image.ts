@@ -17,12 +17,12 @@ export type FilteredImages = {
 
 export type HandleImageUploadParams = {
 	collectionName: StorageCollection;
-	images: ImageType[];
+	images: ImagePickerAsset[];
 	originalImageUrls: string[];
 };
 
 export type GetFilteredImagesParams = {
-	images: ImageType[];
+	images: ImagePickerAsset[];
 	originalImageUrls: string[];
 };
 

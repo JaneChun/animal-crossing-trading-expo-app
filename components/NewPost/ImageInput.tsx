@@ -1,6 +1,8 @@
 import { useImagePicker } from '@/hooks/shared/useImagePicker';
 import { ImageInputProps } from '@/types/components';
+import { ImagePickerAsset } from 'expo-image-picker';
 import React from 'react';
+import { useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import AddImageButton from '../ui/AddImageButton';
@@ -12,20 +14,23 @@ const ImageInput = ({
 	containerStyle,
 	labelStyle,
 }: ImageInputProps) => {
+	const { watch } = useFormContext();
 	const { pickImage } = useImagePicker({ multiple: true });
 
 	const addImage = async () => {
-		const newImages = await pickImage();
+		const newImages: ImagePickerAsset[] | null = await pickImage();
 
 		if (newImages) {
-			setImages((currentImages) => [...currentImages, ...newImages]);
+			const currentImages = watch('images') ?? [];
+			setImages([...currentImages, ...newImages]);
 		}
 	};
 
 	const deleteImage = (uri: string) => {
-		setImages((currentImages) =>
-			currentImages.filter((image) => image.uri !== uri),
+		const filtered: ImagePickerAsset[] = images.filter(
+			(image) => image.uri !== uri,
 		);
+		setImages(filtered);
 	};
 
 	return (

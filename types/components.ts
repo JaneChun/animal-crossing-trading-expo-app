@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { CommentWithCreatorInfo } from './comment';
-import { ImageType } from './image';
 import { PopulatedNotification } from './notification';
 import {
 	CartItem,
@@ -97,8 +96,8 @@ export type BodyInputProps = {
 };
 
 export type ImageInputProps = {
-	images: ImageType[];
-	setImages: Dispatch<SetStateAction<ImageType[]>>;
+	images: ImagePickerAsset[];
+	setImages: Dispatch<SetStateAction<ImagePickerAsset[]>>;
 	containerStyle?: StyleProp<ViewStyle>;
 	labelStyle?: StyleProp<TextStyle>;
 };

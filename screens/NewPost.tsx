@@ -156,7 +156,7 @@ const NewPost = () => {
 
 		try {
 			// 결과적으로 사용할 이미지 URL 배열
-			const imageUrls = await handleImageUpload({
+			const imageUrls: string[] = await handleImageUpload({
 				collectionName,
 				images: formData.images ?? [],
 				originalImageUrls: formData.originalImageUrls ?? [],
@@ -174,9 +174,7 @@ const NewPost = () => {
 							type: formData.type as CommunityType,
 							title: formData.title,
 							body: formData.body,
-							images: (formData?.images ?? []).map(
-								(image: ImageType) => image.uri,
-							),
+							images: imageUrls,
 					  };
 
 			if (editingId) {
