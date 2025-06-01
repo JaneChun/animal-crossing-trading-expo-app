@@ -221,6 +221,7 @@ const styles = StyleSheet.create({
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.regular,
 		color: Colors.font_dark_gray,
+		lineHeight: 24,
 	},
 	commentFooter: {
 		flexDirection: 'row',
@@ -231,6 +232,7 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'flex-start',
 		gap: 4,
+		marginTop: 4,
 		paddingVertical: 10,
 		paddingHorizontal: 14,
 		backgroundColor: 'white',
