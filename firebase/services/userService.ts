@@ -116,23 +116,26 @@ export const getPublicUserInfos = async (
 		// 10개로 쪼갬
 		const creatorIdsChunks = chunkArray(creatorIds, 10);
 
-		// 유저 정보를 ID로 매핑하여 반환
+		// 병렬 쿼리 처리
+		const chunkResults = await Promise.all(
+			creatorIdsChunks.map(async (chunk) => {
+				const q = query(usersRef, where('__name__', 'in', chunk));
+				return await queryDocs(q); // 각 청크에 대한 결과 배열
+			}),
+		);
+
+		// 결과 병합
 		const publicUserInfoMap: Record<string, PublicUserInfo> = {};
+		chunkResults.flat().forEach((user) => {
+			publicUserInfoMap[user.id] = {
+				uid: user.id,
+				displayName: user.displayName || DEFAULT_USER_DISPLAY_NAME,
+				islandName: user.islandName || DEFAULT_USER_ISLAND_NAME,
+				photoURL: user.photoURL || DEFAULT_USER_PHOTO_URL,
+			};
+		});
 
-		for (const creatorIds of creatorIdsChunks) {
-			const q = query(usersRef, where('__name__', 'in', creatorIds));
-			const usersData = await queryDocs(q);
-
-			usersData.forEach((user) => {
-				publicUserInfoMap[user.id] = {
-					uid: user.id,
-					displayName: user.displayName || DEFAULT_USER_DISPLAY_NAME,
-					islandName: user.islandName || DEFAULT_USER_ISLAND_NAME,
-					photoURL: user.photoURL || DEFAULT_USER_PHOTO_URL,
-				};
-			});
-		}
-
+		// 유저 정보를 ID로 매핑하여 반환
 		return publicUserInfoMap;
 	});
 };

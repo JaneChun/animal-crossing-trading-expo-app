@@ -104,31 +104,36 @@ export const getPosts = async (
 	postIds: string[],
 ): Promise<Record<string, Post<Collection>>> => {
 	return firestoreRequest('게시글 목록 조회', async () => {
+		if (postIds.length === 0) return {};
+
 		const collections: Collection[] = ['Boards', 'Communities'];
 		const postsMap: Record<string, Post<Collection>> = {};
 
 		for (const collectionName of collections) {
 			// 10개로 쪼갬
-			const chunks = chunkArray(postIds, 10);
+			const postIdChunks = chunkArray(postIds, 10);
 
-			for (const postIds of chunks) {
-				const collectionRef = collection(db, collectionName);
-				const q = query(collectionRef, where('__name__', 'in', postIds));
+			// 병렬 쿼리 처리
+			const chunkResults = await Promise.all(
+				postIdChunks.map(async (chunk) => {
+					const collectionRef = collection(db, collectionName);
+					const q = query(collectionRef, where('__name__', 'in', chunk));
+					const postsData = await queryDocs(q);
 
-				const postsData = await queryDocs(q);
+					return postsData.map((doc) => doc as PostDoc<Collection>);
+				}),
+			);
 
-				postsData.forEach((doc) => {
-					const postDoc = doc as PostDoc<Collection>;
-
-					if (!postDoc.isDeleted) {
-						const post = toPost(collectionName, postDoc);
-
-						postsMap[postDoc.id] = post;
-					}
-				});
-			}
+			// 결과 병합
+			chunkResults.flat().forEach((postDoc) => {
+				if (!postDoc.isDeleted) {
+					const post = toPost(collectionName, postDoc);
+					postsMap[postDoc.id] = post;
+				}
+			});
 		}
 
+		// 게시물 정보를 ID로 매핑하여 반환
 		return postsMap;
 	});
 };
