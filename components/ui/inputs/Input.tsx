@@ -8,12 +8,13 @@ const Input = ({
 	input,
 	setInput,
 	onPress,
+	style,
 	placeholder,
 	disabled = false,
 	disabledPlaceHolder,
 }: InputProps) => {
 	return (
-		<View style={styles.inputContainer}>
+		<View style={[styles.inputContainer, style]}>
 			<TextInput
 				style={styles.inputText}
 				value={input}
@@ -47,7 +48,6 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		backgroundColor: 'white',
 		alignItems: 'center',
-		borderTopWidth: 1,
 		borderColor: Colors.border_gray,
 	},
 	inputText: {

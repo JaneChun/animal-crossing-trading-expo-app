@@ -24,14 +24,6 @@ export type Message = {
 	isReadBy: string[];
 };
 
-export type SystemMessage = {
-	id: string;
-	isDateSeparator: true;
-	date: string;
-};
-
-export type MessageType = Message | SystemMessage;
-
 // firebase/services/chatService.ts
 export interface CreateChatRoomParams {
 	collectionName: Collection;

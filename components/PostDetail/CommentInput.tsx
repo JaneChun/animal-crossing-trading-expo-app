@@ -85,6 +85,7 @@ const CommentInput = ({
 			input={commentInput}
 			setInput={setCommentInput}
 			onPress={onSubmit}
+			style={{ borderTopWidth: 1 }}
 			placeholder='댓글을 입력해주세요.'
 		/>
 	);

@@ -1,71 +1,77 @@
-import ChatInput from '@/components/Chat/ChatInput';
-import DateSeparator from '@/components/Chat/DateSeparator';
+import {
+	renderComposer,
+	renderDay,
+	renderMessage,
+} from '@/components/Chat/CustomRenderers';
 import UserInfoLabel from '@/components/Chat/Message/UserInfoLabel';
-import MessageUnit from '@/components/Chat/MessageUnit';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
-import KeyboardStickyLayout from '@/components/ui/layout/KeyboardStickyLayout';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
-import { useGetChatMessages } from '@/hooks/firebase/useGetChatMessages';
-import { useLeaveChatRoom } from '@/hooks/mutation/chat/useLeaveChatRoom';
-import { useMarkMessagesAsRead } from '@/hooks/mutation/chat/useMarkMessagesAsRead';
-import { useReceiverInfo } from '@/hooks/query/chat/useReceiverInfo';
+
 import { useChatPresence } from '@/hooks/shared/useChatPresence';
+import { useChatRoom } from '@/hooks/shared/useChatRoom';
+import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
+
 import { goBack } from '@/navigation/RootNavigation';
-import { useAuthStore } from '@/stores/AuthStore';
-import { MessageType } from '@/types/chat';
 import { ChatRoomRouteProp } from '@/types/navigation';
-import { isSystemMessage } from '@/utilities/typeGuards/messageGuards';
+import { createIMessage } from '@/utilities/createIMessage';
+
 import { useRoute } from '@react-navigation/native';
-import React, { useCallback, useEffect, useRef } from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import React, { useEffect, useRef } from 'react';
+import { KeyboardAvoidingView, StyleSheet } from 'react-native';
+import { GiftedChat, IMessage } from 'react-native-gifted-chat';
+import {
+	SafeAreaView,
+	useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 const ChatRoom = () => {
 	const route = useRoute<ChatRoomRouteProp>();
 	const { chatId } = route.params;
+
+	const {
+		userInfo,
+		receiverInfo,
+		isLoading,
+		messages,
+		sendMessage,
+		leaveChatRoom,
+	} = useChatRoom(chatId);
+
+	const insets = useSafeAreaInsets();
+	const keyboardHeight = useKeyboardHeight();
+	const giftedChatRef = useRef<any>(null);
+
 	useChatPresence(chatId);
-	const userInfo = useAuthStore((state) => state.userInfo);
-	const flatListRef = useRef<FlatList>(null);
 
-	const { messages, isLoading: isMessagesFetching } =
-		useGetChatMessages(chatId);
-	const { data: receiverInfo, isLoading: isReceiverInfoFetching } =
-		useReceiverInfo(chatId);
-
-	const { mutate: leaveChatRoom } = useLeaveChatRoom({ chatId });
-	const { mutate: markMessagesAsRead } = useMarkMessagesAsRead();
-
-	// 유저가 채팅방에 들어올 때, 입장한 이후에도 새 메시지가 올 때 markMessagesAsRead 실행
+	// 새 메세지 올 때 아래로 스크롤
 	useEffect(() => {
-		const readMessages = async () => {
-			if (chatId && userInfo) {
-				markMessagesAsRead({ chatId, userId: userInfo.uid });
-			}
-		};
+		if (giftedChatRef.current) {
+			giftedChatRef.current.scrollToOffset?.({ offset: 0, animated: true });
+		}
+	}, [messages]);
 
-		readMessages();
-	}, [chatId, userInfo, messages]);
+	const handleSend = async (chatInput: string) => {
+		if (!userInfo?.uid || !receiverInfo?.uid) return;
 
-	const scrollToBottom = () => {
-		flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+		const newMessage: IMessage = createIMessage(userInfo.uid, chatInput);
+
+		// 1. UI 업데이트
+		GiftedChat.append(messages, [newMessage]);
+
+		// 2. DB 전송
+		sendMessage({
+			chatId,
+			senderId: userInfo.uid,
+			receiverId: receiverInfo.uid,
+			message: newMessage.text,
+		});
 	};
 
-	const renderMessage = useCallback(
-		({ item }: { item: MessageType }) => {
-			if (isSystemMessage(item)) {
-				return <DateSeparator date={item.date} />;
-			}
-
-			return <MessageUnit message={item} receiverId={receiverInfo!.uid} />;
-		},
-		[receiverInfo?.uid],
-	);
-
-	const leaveChat = async () => {
+	const handleLeave = async () => {
 		if (!userInfo) return;
 
 		leaveChatRoom({ userId: userInfo.uid });
@@ -83,44 +89,40 @@ const ChatRoom = () => {
 						color={Colors.font_black}
 						size={18}
 						options={[
-							{ label: '나가기', onPress: leaveChat },
+							{ label: '나가기', onPress: handleLeave },
 							{ label: '취소', onPress: () => {} },
 						]}
 					/>
 				}
 			>
-				{isMessagesFetching || isReceiverInfoFetching ? (
+				{isLoading ? (
 					<LoadingIndicator />
 				) : !chatId || !receiverInfo ? (
 					<EmptyIndicator message='채팅방을 찾을 수 없습니다.' />
 				) : (
-					<KeyboardStickyLayout
-						scrollableContent={
-							<FlatList
-								ref={flatListRef}
-								data={messages}
-								keyExtractor={({ id }) => id}
-								renderItem={renderMessage}
-								style={styles.flatList}
-								contentContainerStyle={styles.flatListContent}
-								inverted={true}
-							/>
-						}
-						bottomContent={
-							userInfo?.uid &&
-							receiverInfo?.uid && (
-								<ChatInput
-									chatId={chatId}
-									senderUid={userInfo.uid}
-									receiverUid={receiverInfo.uid}
-									scrollToBottom={scrollToBottom}
-									disabled={
-										receiverInfo?.displayName === DEFAULT_USER_DISPLAY_NAME
-									}
-								/>
-							)
-						}
-					/>
+					<KeyboardAvoidingView style={{ flex: 1 }}>
+						<GiftedChat
+							messageContainerRef={giftedChatRef}
+							messages={messages}
+							user={{ _id: userInfo!.uid }}
+							messagesContainerStyle={{
+								backgroundColor: Colors.base,
+								paddingTop: keyboardHeight, // 키보드 올라왔을 때 키보드 높이만큼 잘리는 컨텐츠 방지
+							}}
+							bottomOffset={-insets.bottom} // 키보드 올라왔을 때 아래로 insets.bottom만큼 이동
+							renderMessage={renderMessage}
+							renderDay={renderDay}
+							renderComposer={() =>
+								renderComposer({
+									disabled:
+										receiverInfo?.displayName === DEFAULT_USER_DISPLAY_NAME,
+									onSend: handleSend,
+								})
+							}
+							// isScrollToBottomEnabled
+							// scrollToBottomComponent={renderScrollToBottomComponent}
+						/>
+					</KeyboardAvoidingView>
 				)}
 			</LayoutWithHeader>
 		</SafeAreaView>
@@ -131,12 +133,6 @@ const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
 		backgroundColor: 'white',
-	},
-	flatList: {
-		backgroundColor: Colors.base,
-	},
-	flatListContent: {
-		padding: 24,
 	},
 	invalidPostContainer: {
 		flex: 1,

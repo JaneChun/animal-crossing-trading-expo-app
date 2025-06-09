@@ -267,11 +267,8 @@ export type SearchInputProps = {
 
 // Chat/
 export type ChatInputProps = {
-	chatId: string;
-	senderUid: string;
-	receiverUid: string;
-	scrollToBottom: () => void;
 	disabled: boolean;
+	onSubmit: (input: string) => void;
 };
 
 // ui/
@@ -306,6 +303,7 @@ export type InputProps = {
 	input: string;
 	setInput: Dispatch<SetStateAction<string>>;
 	onPress: () => void;
+	style?: StyleProp<ViewStyle>;
 	placeholder?: string;
 	disabled?: boolean;
 	disabledPlaceHolder?: string;
