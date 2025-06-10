@@ -1,12 +1,6 @@
+import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
 import React, { isValidElement, ReactNode } from 'react';
-import {
-	KeyboardAvoidingView,
-	Platform,
-	SafeAreaView,
-	StyleSheet,
-	View,
-	ViewStyle,
-} from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -23,7 +17,7 @@ const KeyboardStickyLayout = ({
 	containerStyle,
 }: KeyboardStickyLayoutProps) => {
 	const insets = useSafeAreaInsets();
-	const keyboardVerticalOffset = Platform.OS === 'ios' ? insets.top + 44 : 0;
+	const keyboardHeight = useKeyboardHeight();
 
 	// FlatList 인지 일반 View 컴포넌트인지 확인
 	const isFlatList =
@@ -32,29 +26,32 @@ const KeyboardStickyLayout = ({
 			scrollableContent.type === KeyboardAwareFlatList);
 
 	return (
-		<KeyboardAvoidingView
-			style={[styles.screen, containerStyle]}
-			behavior='padding'
-			keyboardVerticalOffset={keyboardVerticalOffset}
+		<View
+			style={[
+				styles.screen,
+				containerStyle,
+				{ paddingBottom: keyboardHeight + insets.bottom },
+			]}
 		>
-			<SafeAreaView style={styles.contentWrapper}>
-				{/* 콘텐츠 */}
-				{isFlatList ? (
-					scrollableContent
-				) : (
-					<KeyboardAwareFlatList
-						data={[]}
-						renderItem={null}
-						keyboardShouldPersistTaps='handled'
-						ListHeaderComponent={() => scrollableContent}
-						extraScrollHeight={16}
-					/>
-				)}
+			{/* 스크롤 콘텐츠 영역 */}
+			{isFlatList ? (
+				scrollableContent
+			) : (
+				<KeyboardAwareFlatList
+					data={[]}
+					renderItem={null}
+					keyboardShouldPersistTaps='handled'
+					contentContainerStyle={{
+						flexGrow: 1,
+					}}
+					ListHeaderComponent={() => scrollableContent}
+					enableAutomaticScroll={false}
+				/>
+			)}
 
-				{/* 인풋 */}
-				<View style={styles.bottomWrapper}>{bottomContent}</View>
-			</SafeAreaView>
-		</KeyboardAvoidingView>
+			{/* 하단 입력 영역 */}
+			{bottomContent}
+		</View>
 	);
 };
 
@@ -63,9 +60,6 @@ export default KeyboardStickyLayout;
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
+		backgroundColor: 'white',
 	},
-	contentWrapper: {
-		flex: 1,
-	},
-	bottomWrapper: {},
 });
