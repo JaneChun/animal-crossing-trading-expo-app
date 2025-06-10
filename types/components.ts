@@ -118,7 +118,7 @@ export type ItemListProps = {
 
 export type ItemSelectProps = {
 	cart: CartItem[];
-	setCart: Dispatch<SetStateAction<CartItem[]>>;
+	addItemToCart: (item: Item) => void;
 	containerStyle?: StyleProp<ViewStyle>;
 	labelStyle?: StyleProp<TextStyle>;
 };
@@ -138,13 +138,13 @@ export type EditableItemProps = {
 export type EditItemModalProps = {
 	item: CartItem | null;
 	isVisible: boolean;
-	onUpdate: (updatedCartItem: CartItem) => void;
+	updateItemFromCart: (updatedCartItem: CartItem) => void;
 	onClose: () => void;
 };
 
 export type AddItemModalProps = {
 	cart: CartItem[];
-	setCart: (cart: CartItem[]) => void;
+	addItemToCart: (item: Item) => void;
 	isVisible: boolean;
 	onClose: () => void;
 };

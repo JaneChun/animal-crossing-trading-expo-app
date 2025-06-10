@@ -16,14 +16,10 @@ import { usePostSubmit } from '@/hooks/shared/usePostSubmit';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ImageType } from '@/types/image';
 import { RootStackNavigation, type NewPostRouteProp } from '@/types/navigation';
-import { CartItem, CommunityType, MarketType } from '@/types/post';
+import { CartItem, CommunityType, Item, MarketType } from '@/types/post';
 import { handleImageUpload } from '@/utilities/handleImageUpload';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
-import {
-	useFocusEffect,
-	useNavigation,
-	useRoute,
-} from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
@@ -83,20 +79,6 @@ const NewPost = () => {
 		updatePost,
 	});
 
-	useEffect(() => {
-		stackNavigation.setOptions({
-			headerRight: () => (
-				<Button
-					color='white'
-					size='md2'
-					onPress={handleSubmit(onSubmit, onError)}
-				>
-					등록
-				</Button>
-			),
-		});
-	}, []);
-
 	// 수정글 로딩 시 초기값 채우기
 	useEffect(() => {
 		if (route.params?.id) setEditingId(route.params.id);
@@ -124,13 +106,7 @@ const NewPost = () => {
 		}
 	}, [post, collectionName]);
 
-	// 아이템 모달 닫을 때 cart 업데이트
-	useFocusEffect(
-		useCallback(() => {
-			if (route.params?.updatedCart) setValue('cart', route.params.updatedCart);
-		}, [route.params]),
-	);
-
+	// 로딩 페이지에서 헤더 숨기기
 	useEffect(() => {
 		if (isSubmitting || isCreating || isUpdating) {
 			stackNavigation.setOptions({ headerShown: false });
@@ -221,13 +197,25 @@ const NewPost = () => {
 		[],
 	);
 
+	const addItemToCart = (item: Item) => {
+		const cart = getValues('cart') ?? [];
+		const isAlreadyAdded = cart.some((c) => c.id === item.id);
+
+		if (isAlreadyAdded) {
+			showToast('warn', '이미 추가된 아이템이에요.');
+		} else {
+			setValue('cart', [...cart, { ...item, quantity: 1, price: 1 }]);
+			showToast('success', `${item.name}이(가) 추가되었어요.`);
+		}
+	};
+
 	const handleEditItemPress = (item: CartItem) => {
 		setSelectedItem(item);
 		openEditItemModal();
 	};
 
 	const updateItemFromCart = (updatedCartItem: CartItem) => {
-		const cart = watch('cart') ?? [];
+		const cart = getValues('cart') ?? [];
 		setValue(
 			'cart',
 			cart.map((cartItem) =>
@@ -237,7 +225,7 @@ const NewPost = () => {
 	};
 
 	const deleteItemFromCart = (deleteCartItemId: string) => {
-		const cart = watch('cart') ?? [];
+		const cart = getValues('cart') ?? [];
 		setValue(
 			'cart',
 			cart.filter((cartItem) => cartItem.id !== deleteCartItemId),
@@ -285,7 +273,7 @@ const NewPost = () => {
 			{isAddItemModalVisible && (
 				<AddItemModal
 					cart={getValues('cart') ?? []}
-					setCart={(cart) => setValue('cart', cart)}
+					addItemToCart={addItemToCart}
 					isVisible={isAddItemModalVisible}
 					onClose={closeAddItemModal}
 				/>
@@ -294,8 +282,8 @@ const NewPost = () => {
 			{isEditItemModalVisible && (
 				<EditItemModal
 					item={selectedItem}
+					updateItemFromCart={updateItemFromCart}
 					isVisible={isEditItemModalVisible}
-					onUpdate={updateItemFromCart}
 					onClose={closeEditItemModal}
 				/>
 			)}

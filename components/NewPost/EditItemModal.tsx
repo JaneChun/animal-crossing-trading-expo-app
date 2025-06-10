@@ -1,4 +1,3 @@
-import Button from '@/components/ui/Button';
 import { Colors } from '@/constants/Color';
 import { CURRENCY_OPTIONS } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
@@ -14,7 +13,7 @@ import NumberInput from '../ui/inputs/NumberInput';
 const EditItemModal = ({
 	item,
 	isVisible,
-	onUpdate,
+	updateItemFromCart,
 	onClose,
 }: EditItemModalProps) => {
 	const [quantityInput, setQuantityInput] = useState<number>(1);
@@ -25,6 +24,7 @@ const EditItemModal = ({
 		value: EN,
 	}));
 
+	// 초기값 입력
 	useEffect(() => {
 		if (item) {
 			setQuantityInput(item.quantity || 1);
@@ -33,16 +33,18 @@ const EditItemModal = ({
 		}
 	}, [item]);
 
-	const onSubmit = () => {
+	// 값 변경 시 바로 업데이트
+	useEffect(() => {
+		if (!item) return;
+
 		const updatedCartItem = {
 			...item,
 			quantity: quantityInput,
 			price: milesTicketInput,
 		} as CartItem;
 
-		onUpdate(updatedCartItem);
-		onClose();
-	};
+		updateItemFromCart(updatedCartItem);
+	}, [quantityInput, milesTicketInput]);
 
 	return (
 		<CustomBottomSheet
@@ -92,11 +94,6 @@ const EditItemModal = ({
 					/>
 				</View>
 			</View>
-
-			{/* 버튼 */}
-			<Button color='mint' size='lg2' onPress={onSubmit}>
-				수정하기
-			</Button>
 		</CustomBottomSheet>
 	);
 };
@@ -140,6 +137,6 @@ const styles = StyleSheet.create({
 	},
 	totalContainer: {
 		justifyContent: 'flex-end',
-		marginTop: 8,
+		marginTop: 24,
 	},
 });

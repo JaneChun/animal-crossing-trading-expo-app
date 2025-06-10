@@ -11,12 +11,11 @@ import { FlatList } from 'react-native-gesture-handler';
 import Categories from '../ui/Categories';
 import SearchInput from '../ui/inputs/SearchInput';
 import InlineLoadingIndicator from '../ui/loading/InlineLoadingIndicator';
-import { showToast } from '../ui/Toast';
 import ItemSelectItem, { ITEM_HEIGHT } from './ItemSelectItem';
 
 const ItemSelect = ({
 	cart,
-	setCart,
+	addItemToCart,
 	containerStyle,
 	labelStyle,
 }: ItemSelectProps) => {
@@ -37,20 +36,6 @@ const ItemSelect = ({
 	} = useInfiniteItems(category, debouncedKeyword);
 
 	const items = data?.pages.flatMap((page) => page.data) ?? [];
-
-	const addItemToCart = useCallback(
-		(item: Item) => {
-			const isAlreadyAdded = cart.some((c) => c.id === item.id);
-
-			if (isAlreadyAdded) {
-				showToast('warn', '이미 추가된 아이템이에요.');
-			} else {
-				setCart([...cart, { ...item, quantity: 1, price: 1 }]);
-				showToast('success', `${item.name}이(가) 추가되었어요.`);
-			}
-		},
-		[cart],
-	);
 
 	const renderItemSelectItem = useCallback(
 		({ item }: { item: Item }) => (

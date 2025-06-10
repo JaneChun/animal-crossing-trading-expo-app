@@ -42,6 +42,9 @@ const PostForm = ({
 			data={[]}
 			renderItem={null}
 			keyboardShouldPersistTaps='handled'
+			contentContainerStyle={{
+				padding: PADDING,
+			}}
 			ListHeaderComponent={
 				<>
 					{isMarket && (
@@ -166,9 +169,6 @@ const PostForm = ({
 					)}
 				</>
 			}
-			contentContainerStyle={{
-				padding: PADDING,
-			}}
 		/>
 	);
 };
@@ -176,10 +176,6 @@ const PostForm = ({
 export default PostForm;
 
 const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: 'white',
-	},
 	inputContainer: {
 		borderColor: Colors.border_gray,
 		borderBottomWidth: 1,

@@ -89,7 +89,7 @@ export interface CreatorInfo {
 export interface Item {
 	id: string;
 	category: string;
-	color: string;
+	color?: string;
 	imageUrl: string;
 	name: string;
 }

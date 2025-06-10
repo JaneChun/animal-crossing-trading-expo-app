@@ -29,14 +29,12 @@ export const navigateToPost = ({
 export const navigateToNewPost = () => {
 	navigate('NewPost', {
 		id: undefined,
-		updatedCart: undefined,
 	});
 };
 
 export const navigateToEditPost = ({ postId }: { postId: string }) => {
 	navigate('NewPost', {
 		id: postId,
-		updatedCart: undefined,
 	});
 };
 

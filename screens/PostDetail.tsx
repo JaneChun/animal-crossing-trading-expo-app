@@ -171,7 +171,6 @@ const PostDetail = () => {
 						postId={post.id}
 						postCreatorId={post.creatorId}
 						comments={comments}
-						containerStyle={{ marginBottom: 60 }}
 					/>
 				</View>
 			}
