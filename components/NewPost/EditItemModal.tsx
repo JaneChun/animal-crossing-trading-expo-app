@@ -50,7 +50,7 @@ const EditItemModal = ({
 		<CustomBottomSheet
 			isVisible={isVisible}
 			onClose={onClose}
-			modalHeight='53%'
+			heightRatio={0.45}
 		>
 			<View style={styles.content}>
 				{/* 타이틀 */}

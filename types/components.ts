@@ -1,4 +1,5 @@
 import { ICON_MAP } from '@/components/ui/EmptyIndicator';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
 import { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
@@ -8,6 +9,7 @@ import {
 	LayoutChangeEvent,
 	NativeSyntheticEvent,
 	StyleProp,
+	TextInput,
 	TextInputContentSizeChangeEventData,
 	TextInputFocusEventData,
 	TextStyle,
@@ -263,6 +265,7 @@ export type SearchInputProps = {
 	onSubmit: (keyword: string) => void;
 	containerStyle?: ViewStyle;
 	placeholder?: string;
+	InputComponent?: typeof TextInput | typeof BottomSheetTextInput;
 };
 
 // Chat/
@@ -297,6 +300,7 @@ export type ValidationInputProp = {
 	) => void;
 	onFocus?: (event: NativeSyntheticEvent<TextInputFocusEventData>) => void;
 	onBlur?: (event: NativeSyntheticEvent<TextInputFocusEventData>) => void;
+	InputComponent?: typeof TextInput | typeof BottomSheetTextInput;
 };
 
 export type InputProps = {

@@ -16,10 +16,11 @@ const ValidationInput = ({
 	onLayout,
 	onFocus,
 	onBlur,
+	InputComponent = TextInput,
 }: ValidationInputProp) => {
 	return (
 		<>
-			<TextInput
+			<InputComponent
 				value={value}
 				onChangeText={onChangeText}
 				placeholder={placeholder}

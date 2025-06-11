@@ -1,7 +1,7 @@
-import ItemSelect from '@/components/NewPost/ItemSelect';
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 import { AddItemModalProps } from '@/types/components';
 import React from 'react';
+import ItemSelect from './ItemSelect';
 
 const AddItemModal = ({
 	cart,
@@ -13,7 +13,7 @@ const AddItemModal = ({
 		<CustomBottomSheet
 			isVisible={isVisible}
 			onClose={onClose}
-			modalHeight='97%'
+			heightRatio={0.95}
 		>
 			<ItemSelect cart={cart} addItemToCart={addItemToCart} />
 		</CustomBottomSheet>

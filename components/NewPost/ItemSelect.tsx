@@ -5,6 +5,7 @@ import { useInfiniteItems } from '@/hooks/query/item/useInfiniteItems';
 import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
 import { ItemSelectProps } from '@/types/components';
 import { Item, ItemCategory, ItemCategoryItem } from '@/types/post';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -58,6 +59,7 @@ const ItemSelect = ({
 				onSubmit={() => {}}
 				placeholder='아이템 검색'
 				containerStyle={{ marginBottom: 8 }}
+				InputComponent={BottomSheetTextInput}
 			/>
 
 			{/* 카테고리 칩 */}
@@ -77,14 +79,14 @@ const ItemSelect = ({
 						<FlatList
 							data={items}
 							keyExtractor={(item) => item.id}
-							style={styles.itemList}
+							contentContainerStyle={styles.itemList}
 							renderItem={renderItemSelectItem}
-							onEndReached={
-								hasNextPage
-									? ({ distanceFromEnd }) => fetchNextPage()
-									: undefined
-							}
-							onEndReachedThreshold={0.9}
+							onEndReached={() => {
+								if (hasNextPage && !isFetchingNextPage) {
+									fetchNextPage();
+								}
+							}}
+							onEndReachedThreshold={0.5}
 							onRefresh={refetch}
 							refreshing={isFetching || isFetchingNextPage}
 							ListEmptyComponent={() => (
@@ -92,8 +94,8 @@ const ItemSelect = ({
 									<Text style={styles.emptyText}>검색 결과가 없습니다.</Text>
 								</View>
 							)}
-							initialNumToRender={10}
-							maxToRenderPerBatch={10}
+							initialNumToRender={20}
+							maxToRenderPerBatch={20}
 							getItemLayout={(data, index) => ({
 								length: ITEM_HEIGHT,
 								offset: ITEM_HEIGHT * index,
@@ -122,6 +124,7 @@ const styles = StyleSheet.create({
 	},
 	itemList: {
 		marginTop: 16,
+		flexGrow: 1,
 	},
 	spinnerContainer: {
 		justifyContent: 'center',

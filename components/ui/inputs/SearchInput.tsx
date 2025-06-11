@@ -3,8 +3,8 @@ import { FontSizes } from '@/constants/Typography';
 import { SearchInputProps } from '@/types/components';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Pressable, TextInput } from 'react-native-gesture-handler';
+import { StyleSheet, TextInput, View } from 'react-native';
+import { Pressable } from 'react-native-gesture-handler';
 import SearchIcon from '../../Search/SearchIcon';
 
 const SearchInput = ({
@@ -14,11 +14,12 @@ const SearchInput = ({
 	onSubmit,
 	containerStyle,
 	placeholder,
+	InputComponent = TextInput,
 }: SearchInputProps) => {
 	return (
 		<View style={[styles.searchContainer, containerStyle]}>
 			<SearchIcon containerStyle={styles.searchIcon} color={Colors.font_gray} />
-			<TextInput
+			<InputComponent
 				style={styles.searchInput}
 				value={searchInput}
 				onChangeText={onChangeText}

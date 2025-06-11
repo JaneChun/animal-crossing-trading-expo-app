@@ -4,13 +4,14 @@ import BottomSheet, {
 	BottomSheetBackdrop,
 	BottomSheetView,
 } from '@gorhom/bottom-sheet';
+import { useHeaderHeight } from '@react-navigation/elements';
 import React, { ReactNode, useCallback, useMemo, useRef } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 const CustomBottomSheet = ({
 	children,
 	isVisible,
-	modalHeight = '50%',
+	heightRatio = 0.5,
 	title,
 	leftButton,
 	rightButton,
@@ -18,15 +19,17 @@ const CustomBottomSheet = ({
 }: {
 	children: ReactNode;
 	isVisible: boolean;
-	modalHeight: string; // "00%"
+	heightRatio?: number;
 	title?: string;
 	leftButton?: ReactNode;
 	rightButton?: ReactNode;
 	onClose: () => void;
 }) => {
 	const bottomSheetRef = useRef<BottomSheet>(null);
+	const { height: screenHeight } = useWindowDimensions();
+	const headerHeight = useHeaderHeight();
 
-	const snapPoints = useMemo(() => [modalHeight], [modalHeight]);
+	const snapPoints = useMemo(() => [`${heightRatio * 100}`], [heightRatio]);
 
 	const handleSheetChanges = useCallback(
 		(index: number) => {
@@ -81,7 +84,16 @@ const CustomBottomSheet = ({
 						)}
 					</View>
 				)}
-				<View style={styles.body}>{children}</View>
+				<View
+					style={[
+						styles.body,
+						{
+							height: (screenHeight - headerHeight) * heightRatio,
+						},
+					]}
+				>
+					{children}
+				</View>
 			</BottomSheetView>
 		</BottomSheet>
 	);

@@ -2,6 +2,7 @@ import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { ProfileFormValues } from '@/hooks/form/Profile/profileFormSchema';
 import { NameInputProp } from '@/types/components';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 import ValidationInput from '../ui/inputs/ValidationInput';
@@ -29,6 +30,7 @@ const NameInput = ({
 				placeholder={placeholder}
 				inputStyle={styles.input}
 				errorMessage={errorMessage}
+				InputComponent={BottomSheetTextInput}
 			/>
 		</View>
 	);
