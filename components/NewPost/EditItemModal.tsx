@@ -3,6 +3,7 @@ import { CURRENCY_OPTIONS } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { EditItemModalProps } from '@/types/components';
 import { CartItem } from '@/types/post';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Total from '../PostDetail/Total';
@@ -62,6 +63,7 @@ const EditItemModal = ({
 					<NumberInput
 						value={milesTicketInput}
 						setValue={setMilesTicketInput}
+						InputComponent={BottomSheetTextInput}
 					/>
 					<DropdownInput
 						options={dropdownOptions}
@@ -73,7 +75,11 @@ const EditItemModal = ({
 
 				{/* 개수 */}
 				<View style={styles.row}>
-					<NumberInput value={quantityInput} setValue={setQuantityInput} />
+					<NumberInput
+						value={quantityInput}
+						setValue={setQuantityInput}
+						InputComponent={BottomSheetTextInput}
+					/>
 					<View
 						style={[styles.inputContainer, { backgroundColor: Colors.base }]}
 					>

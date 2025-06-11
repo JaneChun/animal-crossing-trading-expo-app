@@ -332,6 +332,7 @@ export type DropdownOptionProps = {
 export type NumberInputProps = {
 	value: number;
 	setValue: Dispatch<SetStateAction<number>>;
+	InputComponent?: typeof TextInput | typeof BottomSheetTextInput;
 };
 
 export type ActionSheetButtonProps = {

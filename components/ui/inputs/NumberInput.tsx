@@ -5,7 +5,11 @@ import { Feather } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
-const NumberInput = ({ value, setValue }: NumberInputProps) => {
+const NumberInput = ({
+	value,
+	setValue,
+	InputComponent = TextInput,
+}: NumberInputProps) => {
 	const [tempValue, setTempValue] = useState<string>(String(value));
 
 	// 외부 value가 바뀌었을 때도 tempValue를 반영
@@ -53,7 +57,7 @@ const NumberInput = ({ value, setValue }: NumberInputProps) => {
 			</Pressable>
 
 			{/* 숫자 입력 필드 */}
-			<TextInput
+			<InputComponent
 				style={styles.text}
 				keyboardType='numeric'
 				value={tempValue}
