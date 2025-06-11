@@ -6,12 +6,9 @@ import { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
 import {
 	GestureResponderEvent,
 	ImageProps,
-	LayoutChangeEvent,
-	NativeSyntheticEvent,
 	StyleProp,
 	TextInput,
-	TextInputContentSizeChangeEventData,
-	TextInputFocusEventData,
+	TextInputProps,
 	TextStyle,
 	ViewStyle,
 } from 'react-native';
@@ -89,12 +86,6 @@ export type BodyInputProps = {
 	containerStyle?: StyleProp<ViewStyle>;
 	labelStyle?: StyleProp<TextStyle>;
 	inputStyle?: StyleProp<TextStyle>;
-	onLayout?: (event: LayoutChangeEvent) => void;
-	onContentSizeChange?: (
-		event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>,
-	) => void;
-	onFocus?: (event: NativeSyntheticEvent<TextInputFocusEventData>) => void;
-	onBlur?: (event: NativeSyntheticEvent<TextInputFocusEventData>) => void;
 };
 
 export type ImageInputProps = {
@@ -286,20 +277,10 @@ export type ButtonProps = {
 	disabled?: boolean;
 };
 
-export type ValidationInputProp = {
-	value: string;
-	onChangeText: Dispatch<SetStateAction<string>>;
-	placeholder?: string;
+export type ValidationInputProp = TextInputProps & {
 	inputStyle?: StyleProp<TextStyle>;
 	errorMessageContainerStyle?: StyleProp<ViewStyle>;
-	multiline?: boolean;
 	errorMessage?: string;
-	onLayout?: (event: LayoutChangeEvent) => void;
-	onContentSizeChange?: (
-		event: NativeSyntheticEvent<TextInputContentSizeChangeEventData>,
-	) => void;
-	onFocus?: (event: NativeSyntheticEvent<TextInputFocusEventData>) => void;
-	onBlur?: (event: NativeSyntheticEvent<TextInputFocusEventData>) => void;
 	InputComponent?: typeof TextInput | typeof BottomSheetTextInput;
 };
 

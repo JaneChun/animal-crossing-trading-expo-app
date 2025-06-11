@@ -10,15 +10,10 @@ const BodyInput = ({
 	containerStyle,
 	labelStyle,
 	inputStyle,
-	onLayout,
-	onContentSizeChange,
-	onFocus,
-	onBlur,
 }: BodyInputProps) => {
 	const {
 		formState: { errors },
 	} = useFormContext();
-
 	const errorMessage = errors.body?.message as string;
 
 	return (
@@ -29,15 +24,12 @@ const BodyInput = ({
 				placeholder='내용을 입력하세요.'
 				inputStyle={[inputStyle, styles.textarea]}
 				multiline
+				scrollEnabled={false}
 				errorMessageContainerStyle={{
 					marginTop: 0,
 					marginBottom: 8,
 				}}
 				errorMessage={errorMessage}
-				onLayout={onLayout}
-				onContentSizeChange={onContentSizeChange}
-				onFocus={onFocus}
-				onBlur={onBlur}
 			/>
 		</View>
 	);

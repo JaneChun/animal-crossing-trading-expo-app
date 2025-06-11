@@ -5,32 +5,18 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 const ValidationInput = ({
-	value,
-	onChangeText,
-	placeholder,
 	inputStyle,
 	errorMessageContainerStyle,
-	multiline = false,
 	errorMessage,
-	onContentSizeChange,
-	onLayout,
-	onFocus,
-	onBlur,
 	InputComponent = TextInput,
+	...props
 }: ValidationInputProp) => {
 	return (
 		<>
 			<InputComponent
-				value={value}
-				onChangeText={onChangeText}
-				placeholder={placeholder}
+				{...props}
 				placeholderTextColor={Colors.font_gray}
 				style={[inputStyle, errorMessage ? { borderColor: 'red' } : null]}
-				multiline={multiline}
-				onLayout={onLayout}
-				onContentSizeChange={onContentSizeChange}
-				onFocus={onFocus}
-				onBlur={onBlur}
 			/>
 			{errorMessage ? (
 				<View

@@ -3,7 +3,7 @@ import { COMMUNITY_TYPES } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { PostFormProps } from '@/types/components';
 import { MarketType } from '@/types/post';
-import React, { useRef } from 'react';
+import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
@@ -31,14 +31,9 @@ const PostForm = ({
 		value: EN,
 	}));
 
-	const isBodyFocused = useRef<boolean>(false);
-	const bodyInputLayoutY = useRef<number>(0);
-
 	return (
 		<KeyboardAwareFlatList
-			innerRef={(ref) => {
-				flatListRef.current = ref;
-			}}
+			innerRef={(ref) => (flatListRef.current = ref)}
 			data={[]}
 			renderItem={null}
 			keyboardShouldPersistTaps='handled'
@@ -112,19 +107,6 @@ const PostForm = ({
 								setBody={onChange}
 								containerStyle={styles.inputContainer}
 								inputStyle={styles.input}
-								onLayout={(e) => {
-									bodyInputLayoutY.current = e.nativeEvent.layout.height;
-								}}
-								onContentSizeChange={() => {
-									if (isBodyFocused.current) {
-										flatListRef.current?.scrollToOffset({
-											animated: true,
-											offset: Math.max(0, bodyInputLayoutY.current),
-										});
-									}
-								}}
-								onFocus={() => (isBodyFocused.current = true)}
-								onBlur={() => (isBodyFocused.current = false)}
 							/>
 						)}
 					/>
