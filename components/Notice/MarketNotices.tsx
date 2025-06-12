@@ -1,15 +1,18 @@
 import { useMarkAllAsRead } from '@/hooks/mutation/notification/useMarkAllAsRead';
+import { useNotificationStore } from '@/stores/NotificationStore';
 import { NoticeTabProps } from '@/types/components';
 import { PopulatedNotification } from '@/types/notification';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import EmptyIndicator from '../ui/EmptyIndicator';
+import LoadingIndicator from '../ui/loading/LoadingIndicator';
 import NotificationUnit from './NotificationUnit';
 import ReadAllButton from './ReadAllButton';
 
 const MarketNotices = ({ notifications }: NoticeTabProps) => {
 	const { mutate: markAllAsRead } = useMarkAllAsRead();
+	const isLoading = useNotificationStore((state) => state.isLoading);
 
 	const renderNotificationItem = ({
 		item,
@@ -26,6 +29,10 @@ const MarketNotices = ({ notifications }: NoticeTabProps) => {
 
 		markAllAsRead(unReadNotificationIds);
 	};
+
+	if (isLoading) {
+		return <LoadingIndicator />;
+	}
 
 	return (
 		<View style={styles.container}>

@@ -75,7 +75,7 @@ const DropdownInput = ({
 						style={[
 							styles.modalContent,
 							{
-								top: dropdownPosition.y + 100,
+								top: dropdownPosition.y,
 								left: dropdownPosition.x,
 								width: dropdownPosition.width,
 							},

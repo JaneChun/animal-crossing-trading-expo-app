@@ -15,6 +15,7 @@ import KeyboardStickyLayout from '@/components/ui/layout/KeyboardStickyLayout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
+import { useMarkAsRead } from '@/hooks/mutation/notification/useMarkAsRead';
 import { useDeletePost } from '@/hooks/mutation/post/useDeletePost';
 import useComments from '@/hooks/query/comment/useComments';
 import { usePostDetail } from '@/hooks/query/post/usePostDetail';
@@ -35,7 +36,7 @@ const PostDetail = () => {
 	const stackNavigation = useNavigation<RootStackNavigation>();
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const route = useRoute<PostDetailRouteProp>();
-	const { id = '', collectionName = '' } = route.params;
+	const { id = '', collectionName = '', notificationId = '' } = route.params;
 
 	const scrollableContentRef = useRef<any>(null);
 	const [shouldScroll, setShouldScroll] = useState(false);
@@ -52,10 +53,12 @@ const PostDetail = () => {
 		collectionName as Collection,
 		id,
 	);
+	const { mutate: markAsRead } = useMarkAsRead();
 
 	const { isLoading: isCommentUploading, setIsLoading: setIsCommentUploading } =
 		useLoading();
 
+	// 헤더에 글 수정/삭제 아이콘 설정
 	useEffect(() => {
 		if (post?.creatorId === userInfo?.uid) {
 			stackNavigation.setOptions({
@@ -79,6 +82,13 @@ const PostDetail = () => {
 			});
 		}
 	}, [post?.creatorId, userInfo?.uid, id, stackNavigation]);
+
+	// 알림 읽음 처리
+	useEffect(() => {
+		if (notificationId) {
+			markAsRead(notificationId);
+		}
+	}, [notificationId]);
 
 	const handleDeletePost = async () => {
 		Alert.alert('게시글 삭제', '정말로 삭제하겠습니까?', [

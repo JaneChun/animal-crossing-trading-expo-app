@@ -6,7 +6,11 @@ import { Collection } from './post';
 // RootStack 네비게이션
 export type RootStackParamList = {
 	MainTab: NavigatorScreenParams<MainTabParamList>;
-	PostDetail: { id: string; collectionName: Collection };
+	PostDetail: {
+		id: string;
+		collectionName: Collection;
+		notificationId?: string; // 알림탭에서 이동 시 알림 처리 위해 전달
+	};
 	NewPost: { id?: string }; // 글 수정 시 id 전달
 	EditComment: { postId: string; commentId: string; body: string };
 	ChatRoom: { chatId: string };

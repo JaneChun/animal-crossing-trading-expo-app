@@ -42,13 +42,16 @@ export const navigateToEditPost = ({ postId }: { postId: string }) => {
 export const navigateToPostDetail = ({
 	postId,
 	collectionName,
+	notificationId,
 }: {
 	postId: string;
 	collectionName: Collection;
+	notificationId: string;
 }) => {
 	navigate('PostDetail', {
 		id: postId,
 		collectionName,
+		notificationId,
 	});
 };
 

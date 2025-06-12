@@ -2,8 +2,6 @@ import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useDeleteNotification } from '@/hooks/mutation/notification/useDeleteNotification';
-import { useMarkAsRead } from '@/hooks/mutation/notification/useMarkAsRead';
-import { usePostContext } from '@/hooks/shared/usePostContext';
 import { NotificationUnitProp } from '@/types/components';
 import { Collection } from '@/types/post';
 import { elapsedTime } from '@/utilities/elapsedTime';
@@ -18,7 +16,7 @@ import Reanimated, {
 } from 'react-native-reanimated';
 
 const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
-	const { isBoardPost, isCommunityPost } = usePostContext();
+	// const { isBoardPost, isCommunityPost } = usePostContext();
 
 	const {
 		id,
@@ -32,7 +30,6 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 		isRead,
 	} = item;
 
-	const { mutate: markAsRead } = useMarkAsRead(id);
 	const { mutate: deleteNotification } = useDeleteNotification(id);
 
 	let title = '게시글';
@@ -48,11 +45,7 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 		collectionName: Collection;
 		postId: string;
 	}) => {
-		markAsRead(undefined, {
-			onSuccess: () => {
-				navigateToPostDetail({ postId, collectionName });
-			},
-		});
+		navigateToPostDetail({ postId, collectionName, notificationId: id });
 	};
 
 	// Swipeable이 스와이프될 때 보여줄 삭제 버튼을 생성
