@@ -21,12 +21,12 @@ export const useCreateComment = ({
 			userId: string;
 		}) => createComment({ collectionName, postId, requestData, userId }),
 		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['posts', collectionName],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ['postDetail', collectionName, postId],
-			});
+			// queryClient.invalidateQueries({
+			// 	queryKey: ['posts', collectionName],
+			// });
+			// await queryClient.invalidateQueries({
+			// 	queryKey: ['postDetail', collectionName, postId],
+			// });
 			queryClient.invalidateQueries({
 				queryKey: ['comments', collectionName, postId],
 			});

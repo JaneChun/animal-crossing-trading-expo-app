@@ -151,7 +151,7 @@ export type BodyProps = {
 export type CommentInputProps = {
 	postId: string;
 	setIsCommentUploading: Dispatch<SetStateAction<boolean>>;
-	scrollToBottom: () => void;
+	setShouldScroll: Dispatch<SetStateAction<boolean>>;
 };
 
 export type CommentsListProps = {
@@ -159,6 +159,7 @@ export type CommentsListProps = {
 	postCreatorId: string;
 	comments: CommentWithCreatorInfo[];
 	containerStyle?: ViewStyle;
+	scrollToBottom: () => void;
 };
 
 export interface CommentUnitProps extends CommentWithCreatorInfo {
