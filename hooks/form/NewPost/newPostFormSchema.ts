@@ -21,6 +21,7 @@ const CartItemSchema = z.object({
 	name: z.string(),
 	quantity: z.number(),
 	price: z.number(),
+	unit: z.string().default('mileticket'),
 });
 
 const ImageTypeSchema = z.object({

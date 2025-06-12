@@ -97,6 +97,7 @@ export interface Item {
 export interface CartItem extends Item {
 	quantity: number;
 	price: number;
+	unit: CurrencyOption;
 }
 
 // firebase/services/postService.ts

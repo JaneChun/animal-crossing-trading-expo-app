@@ -10,6 +10,7 @@ import {
 	View,
 	ViewStyle,
 } from 'react-native';
+import Bell from '../ui/Icons/Bell';
 import MileTicket from '../ui/Icons/MileTicket';
 import ImageWithFallback from '../ui/ImageWithFallback';
 
@@ -36,7 +37,10 @@ const EditableItem = ({
 				{item.color && <Text style={styles.color}>{item.color}</Text>}
 
 				<View style={styles.quantityContainer}>
-					<Text style={styles.quantity}>{item.price}마일</Text>
+					<Text style={styles.quantity}>
+						{item.price}
+						{item.unit === 'bell' ? '벨' : '마일'}
+					</Text>
 					<Ionicons name='close' size={14} color={Colors.font_gray} />
 					<Text style={styles.quantity}>{item.quantity}</Text>
 				</View>
@@ -44,7 +48,11 @@ const EditableItem = ({
 
 			{/* 테일 */}
 			<View style={styles.priceContainer}>
-				<MileTicket style={styles.ticketIcon} />
+				{item.unit === 'bell' ? (
+					<Bell style={styles.ticketIcon} />
+				) : (
+					<MileTicket style={[styles.ticketIcon, { marginRight: 1 }]} />
+				)}
 				<Text style={styles.price}>{item.quantity * item.price}</Text>
 			</View>
 
@@ -107,8 +115,9 @@ const styles = StyleSheet.create({
 	},
 	priceContainer: {
 		flexDirection: 'row',
-		gap: 4,
+		alignItems: 'center',
 		paddingHorizontal: 4,
+		gap: 1,
 	},
 	ticketIcon: {
 		width: 20,

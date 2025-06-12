@@ -30,7 +30,7 @@ const EditItemModal = ({
 		if (item) {
 			setQuantityInput(item.quantity || 1);
 			setMilesTicketInput(item.price || 1);
-			setSelectedUnit('mileticket');
+			setSelectedUnit(item.unit || 'mileticket');
 		}
 	}, [item]);
 
@@ -42,10 +42,11 @@ const EditItemModal = ({
 			...item,
 			quantity: quantityInput,
 			price: milesTicketInput,
+			unit: selectedUnit,
 		} as CartItem;
 
 		updateItemFromCart(updatedCartItem);
-	}, [quantityInput, milesTicketInput]);
+	}, [quantityInput, milesTicketInput, selectedUnit]);
 
 	return (
 		<CustomBottomSheet
