@@ -18,7 +18,7 @@ const MessageUnit = ({ message }: { message: IMessage }) => {
 	return message.user._id === userInfo?.uid ? (
 		<View style={[styles.messageContainer, { alignSelf: 'flex-end' }]}>
 			<View style={styles.infoContainer}>
-				{message.received && <Text style={styles.infoText}>읽음</Text>}
+				{!message.received && <Text style={styles.infoText}>안읽음</Text>}
 				<Text style={[styles.infoText]}>{formattedDate}</Text>
 			</View>
 
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
 		maxWidth: '75%',
 		paddingVertical: 12,
 		paddingHorizontal: 16,
-		borderRadius: 8,
+		borderRadius: 16,
 	},
 	sentBubble: {
 		backgroundColor: Colors.primary,
