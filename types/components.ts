@@ -323,17 +323,20 @@ export type DropdownOption = {
 	value: string;
 };
 
-export type DropdownOptionProps = {
+export type DropdownInputProps = {
 	options: DropdownOption[];
 	value: string;
 	setValue: Dispatch<SetStateAction<string>>;
 	disabled?: boolean;
+	topOffset?: number;
+	style?: StyleProp<ViewStyle>;
 };
 
 export type NumberInputProps = {
 	value: number;
 	setValue: Dispatch<SetStateAction<number>>;
 	InputComponent?: typeof TextInput | typeof BottomSheetTextInput;
+	style?: StyleProp<ViewStyle>;
 };
 
 export type ActionSheetButtonProps = {

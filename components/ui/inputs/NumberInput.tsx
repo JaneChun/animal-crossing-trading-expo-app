@@ -9,6 +9,7 @@ const NumberInput = ({
 	value,
 	setValue,
 	InputComponent = TextInput,
+	style,
 }: NumberInputProps) => {
 	const [tempValue, setTempValue] = useState<string>(String(value));
 
@@ -51,13 +52,13 @@ const NumberInput = ({
 	};
 
 	return (
-		<View style={styles.inputContainer}>
+		<View style={[styles.inputContainer, style]}>
 			<Pressable onPress={onDecrement}>
 				<Feather name='minus' size={24} color={Colors.font_gray} />
 			</Pressable>
 
 			{/* 숫자 입력 필드 */}
-			<InputComponent
+			<TextInput
 				style={styles.text}
 				keyboardType='numeric'
 				value={tempValue}

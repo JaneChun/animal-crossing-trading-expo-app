@@ -1,8 +1,8 @@
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { DropdownOption, DropdownOptionProps } from '@/types/components';
+import { DropdownInputProps, DropdownOption } from '@/types/components';
 import { Feather } from '@expo/vector-icons';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
 	LayoutRectangle,
 	Pressable,
@@ -18,7 +18,9 @@ const DropdownInput = ({
 	value,
 	setValue,
 	disabled,
-}: DropdownOptionProps) => {
+	topOffset = 0,
+	style,
+}: DropdownInputProps) => {
 	const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
 	const [dropdownPosition, setDropdownPosition] =
 		useState<LayoutRectangle | null>(null);
@@ -26,16 +28,11 @@ const DropdownInput = ({
 	const comboBoxRef = useRef<View | null>(null);
 
 	const openModal = () => {
-		if (comboBoxRef?.current) {
-			comboBoxRef.current.measure((x, y, width, height, pageX, pageY) => {
-				setDropdownPosition({ x: pageX, y: pageY + height, width, height });
-			});
-		}
+		comboBoxRef.current?.measureInWindow?.((px, py, w, h) => {
+			setDropdownPosition({ x: px, y: py + h, width: w, height: h });
+		});
+		setDropdownVisible(true);
 	};
-
-	useEffect(() => {
-		if (dropdownPosition) setDropdownVisible(true);
-	}, [dropdownPosition]);
 
 	const handleSelect = (option: DropdownOption) => {
 		setValue(option.value);
@@ -49,6 +46,7 @@ const DropdownInput = ({
 				style={[
 					styles.inputContainer,
 					disabled && { backgroundColor: Colors.base },
+					style,
 				]}
 				onPress={openModal}
 				disabled={disabled}
@@ -75,7 +73,7 @@ const DropdownInput = ({
 						style={[
 							styles.modalContent,
 							{
-								top: dropdownPosition.y,
+								top: dropdownPosition.y + topOffset,
 								left: dropdownPosition.x,
 								width: dropdownPosition.width,
 							},

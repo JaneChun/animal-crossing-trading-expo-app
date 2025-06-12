@@ -5,7 +5,7 @@ import { PostFormProps } from '@/types/components';
 import { MarketType } from '@/types/post';
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import DropdownInput from '../ui/inputs/DropdownInput';
 import { PADDING } from '../ui/layout/Layout';
@@ -60,19 +60,13 @@ const PostForm = ({
 							control={control}
 							name='type'
 							render={({ field: { value, onChange } }) => (
-								<View
-									style={{
-										width: '40%',
-										flexDirection: 'row',
-										marginBottom: 16,
-									}}
-								>
-									<DropdownInput
-										options={dropdownOptions}
-										value={value}
-										setValue={onChange}
-									/>
-								</View>
+								<DropdownInput
+									options={dropdownOptions}
+									value={value}
+									setValue={onChange}
+									topOffset={100}
+									style={{ width: '40%', marginBottom: 16 }}
+								/>
 							)}
 						/>
 					)}

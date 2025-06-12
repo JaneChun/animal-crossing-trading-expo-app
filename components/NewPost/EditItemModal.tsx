@@ -64,12 +64,13 @@ const EditItemModal = ({
 						value={milesTicketInput}
 						setValue={setMilesTicketInput}
 						InputComponent={BottomSheetTextInput}
+						style={{ flexGrow: 1 }}
 					/>
 					<DropdownInput
 						options={dropdownOptions}
-						disabled
 						value={selectedUnit}
 						setValue={setSelectedUnit}
+						style={{ flexGrow: 1 }}
 					/>
 				</View>
 
