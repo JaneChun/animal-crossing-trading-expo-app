@@ -23,10 +23,10 @@ import { usePostContext } from '@/hooks/shared/usePostContext';
 import { goBack } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
 import { PostDetailRouteProp, RootStackNavigation } from '@/types/navigation';
-import { CommunityType, MarketType } from '@/types/post';
+import { Collection, CommunityType, MarketType } from '@/types/post';
 import { navigateToEditPost } from '@/utilities/navigationHelpers';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 
 const PostDetail = () => {
@@ -37,16 +37,19 @@ const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
 	const { id = '', collectionName = '' } = route.params;
 
+	const scrollableContentRef = useRef<any>(null);
+	const [shouldScroll, setShouldScroll] = useState(false);
+
 	const { data: post, isLoading: isPostFetching } = usePostDetail(
-		collectionName,
+		collectionName as Collection,
 		id,
 	);
 	const { data: comments = [], isLoading: isCommentsFetching } = useComments(
-		collectionName,
+		collectionName as Collection,
 		id,
 	);
 	const { mutate: deletePost, isPending: isDeleting } = useDeletePost(
-		collectionName,
+		collectionName as Collection,
 		id,
 	);
 
@@ -100,7 +103,10 @@ const PostDetail = () => {
 	};
 
 	const scrollToBottom = () => {
-		console.log('PostDetail scrollToBottom');
+		if (shouldScroll) {
+			scrollableContentRef.current?.scrollToEnd({ animated: true });
+			setShouldScroll(false);
+		}
 	};
 
 	if (
@@ -112,12 +118,13 @@ const PostDetail = () => {
 		return <LoadingIndicator />;
 	}
 
-	if (!post) {
+	if (!post || !collectionName) {
 		return <EmptyIndicator message='게시글을 찾을 수 없습니다.' />;
 	}
 
 	return (
 		<KeyboardStickyLayout
+			scrollableContentRef={scrollableContentRef}
 			containerStyle={styles.container}
 			scrollableContent={
 				<View style={styles.content}>
@@ -171,6 +178,7 @@ const PostDetail = () => {
 						postId={post.id}
 						postCreatorId={post.creatorId}
 						comments={comments}
+						scrollToBottom={scrollToBottom}
 					/>
 				</View>
 			}
@@ -178,7 +186,7 @@ const PostDetail = () => {
 				<CommentInput
 					postId={post.id}
 					setIsCommentUploading={setIsCommentUploading}
-					scrollToBottom={scrollToBottom}
+					setShouldScroll={setShouldScroll}
 				/>
 			}
 		/>

@@ -1,5 +1,5 @@
 import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
-import React, { isValidElement, ReactNode } from 'react';
+import React, { isValidElement, ReactNode, RefObject } from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
@@ -9,12 +9,14 @@ type KeyboardStickyLayoutProps = {
 	scrollableContent: ReactNode;
 	bottomContent?: ReactNode;
 	containerStyle?: ViewStyle;
+	scrollableContentRef: RefObject<any>;
 };
 
 const KeyboardStickyLayout = ({
 	scrollableContent,
 	bottomContent,
 	containerStyle,
+	scrollableContentRef,
 }: KeyboardStickyLayoutProps) => {
 	const insets = useSafeAreaInsets();
 	const keyboardHeight = useKeyboardHeight();
@@ -38,12 +40,11 @@ const KeyboardStickyLayout = ({
 				scrollableContent
 			) : (
 				<KeyboardAwareFlatList
+					ref={scrollableContentRef}
 					data={[]}
 					renderItem={null}
 					keyboardShouldPersistTaps='handled'
-					contentContainerStyle={{
-						flexGrow: 1,
-					}}
+					contentContainerStyle={{ flexGrow: 1 }}
 					ListHeaderComponent={() => scrollableContent}
 					enableAutomaticScroll={false}
 				/>

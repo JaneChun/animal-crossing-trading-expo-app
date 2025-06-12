@@ -1,6 +1,5 @@
 import { CommentsListProps } from '@/types/components';
 import { StyleSheet, Text, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
 import CommentUnit from './CommentUnit';
 
 const CommentsList = ({
@@ -8,29 +7,38 @@ const CommentsList = ({
 	postCreatorId,
 	comments,
 	containerStyle,
+	scrollToBottom,
 }: CommentsListProps) => {
 	return (
 		<View style={[styles.container, containerStyle]}>
 			<Text style={styles.commentHeader}>댓글 ({comments.length})</Text>
 
-			<FlatList
-				data={comments}
-				keyExtractor={({ id }) => id}
-				renderItem={({ item }) => (
+			<View onLayout={() => scrollToBottom()}>
+				{comments.map((item) => (
 					<CommentUnit
+						key={item.id}
 						postId={postId}
 						postCreatorId={postCreatorId}
 						{...item}
 					/>
-				)}
-			/>
+				))}
+			</View>
 		</View>
 	);
 };
 
 const styles = StyleSheet.create({
-	container: { flex: 1 },
-	commentHeader: { fontSize: 16, fontWeight: 'bold', marginBottom: 8 },
+	container: {
+		flex: 1,
+	},
+	commentHeader: {
+		fontSize: 16,
+		fontWeight: 'bold',
+		marginBottom: 8,
+	},
+	list: {
+		flex: 1,
+	},
 });
 
 export default CommentsList;

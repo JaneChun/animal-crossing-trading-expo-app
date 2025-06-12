@@ -16,7 +16,7 @@ import { showLongToast, showToast } from '../ui/Toast';
 const CommentInput = ({
 	postId,
 	setIsCommentUploading,
-	scrollToBottom,
+	setShouldScroll,
 }: CommentInputProps) => {
 	const activeTab = useActiveTabStore((state) => state.activeTab);
 	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
@@ -63,10 +63,10 @@ const CommentInput = ({
 			createComment(
 				{ requestData, userId: userInfo.uid },
 				{
-					onSuccess: (id) => {
+					onSuccess: async (id) => {
 						resetForm();
-						scrollToBottom();
 						Keyboard.dismiss();
+						setShouldScroll(true);
 
 						showToast('success', '댓글이 등록되었습니다.');
 					},
