@@ -46,12 +46,12 @@ export const navigateToPostDetail = ({
 }: {
 	postId: string;
 	collectionName: Collection;
-	notificationId: string;
+	notificationId?: string;
 }) => {
 	navigate('PostDetail', {
 		id: postId,
 		collectionName,
-		notificationId,
+		...(notificationId && { notificationId }),
 	});
 };
 

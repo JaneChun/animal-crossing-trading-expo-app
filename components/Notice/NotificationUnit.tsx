@@ -45,7 +45,8 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 		collectionName: Collection;
 		postId: string;
 	}) => {
-		navigateToPostDetail({ postId, collectionName, notificationId: id });
+		if (isRead) navigateToPostDetail({ postId, collectionName });
+		else navigateToPostDetail({ postId, collectionName, notificationId: id });
 	};
 
 	// Swipeable이 스와이프될 때 보여줄 삭제 버튼을 생성
