@@ -2,7 +2,6 @@ import CommunityNotices from '@/components/Notice/CommunityNotices';
 import MarketNotices from '@/components/Notice/MarketNotices';
 import TabBarLabel from '@/components/Notice/TabBarLabel';
 import Layout from '@/components/ui/layout/Layout';
-import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useNotificationStore } from '@/stores/NotificationStore';
@@ -14,7 +13,6 @@ import { SafeAreaView, StyleSheet } from 'react-native';
 const Notice = () => {
 	const Tab = createMaterialTopTabNavigator();
 	const notifications = useNotificationStore((state) => state.notifications);
-	const isLoading = useNotificationStore((state) => state.isLoading);
 
 	const marketNotifications = notifications.filter(
 		({ type }: { type: Collection }) => type === 'Boards',
@@ -29,10 +27,6 @@ const Notice = () => {
 	const hasUnreadCommunity = communityNotifications.some(
 		({ isRead }: { isRead: boolean }) => !isRead,
 	);
-
-	if (isLoading) {
-		return <LoadingIndicator />;
-	}
 
 	return (
 		<SafeAreaView style={styles.screen}>

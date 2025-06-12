@@ -41,9 +41,6 @@ const PostDetail = () => {
 	const scrollableContentRef = useRef<any>(null);
 	const [shouldScroll, setShouldScroll] = useState(false);
 
-	const scrollableContentRef = useRef<any>(null);
-	const [shouldScroll, setShouldScroll] = useState(false);
-
 	const { data: post, isLoading: isPostFetching } = usePostDetail(
 		collectionName as Collection,
 		id,
