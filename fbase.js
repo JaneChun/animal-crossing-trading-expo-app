@@ -1,4 +1,5 @@
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import { liteClient } from 'algoliasearch/lite';
 import { initializeApp } from 'firebase/app';
 import { getReactNativePersistence, initializeAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
@@ -22,3 +23,8 @@ export const auth = initializeAuth(app, {
 });
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+
+export const searchClient = liteClient(
+	process.env.EXPO_PUBLIC_ALGOLIA_APP_ID,
+	process.env.EXPO_PUBLIC_ALGOLIA_SEARCH_KEY,
+);
