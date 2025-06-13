@@ -36,7 +36,7 @@ const ItemSelect = ({
 		status,
 	} = useInfiniteItems(category, debouncedKeyword);
 
-	const items = data?.pages.flatMap((page) => page.data) ?? [];
+	const items = data?.pages.flat() ?? [];
 
 	const renderItemSelectItem = useCallback(
 		({ item }: { item: Item }) => (
