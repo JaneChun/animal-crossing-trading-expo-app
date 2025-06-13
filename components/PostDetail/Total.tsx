@@ -24,6 +24,8 @@ const Total = ({ cart = [], containerStyle }: TotalProps) => {
 		{ totalBell: 0, totalMileTicket: 0 },
 	);
 
+	if (!totalBell && !totalMileTicket) return null;
+
 	return (
 		<View style={[styles.container, containerStyle]}>
 			<Text style={styles.totalLabel}>총계</Text>
