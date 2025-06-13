@@ -37,15 +37,6 @@ const getFirestoreQuery = ({
 		limit(PAGE_SIZE),
 	);
 
-	// 검색 키워드가 있을 경우
-	const trimmed = filter?.keyword?.trim();
-	if (trimmed) {
-		q = query(
-			q,
-			where('searchKeywords', 'array-contains', trimmed.toLowerCase()),
-		);
-	}
-
 	// 특정 유저의 거래글(마켓)만 가져오는 필터
 	if (filter?.creatorId) {
 		q = query(

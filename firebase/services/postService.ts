@@ -7,10 +7,6 @@ import {
 	UpdatePostRequest,
 } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
-import {
-	generateSearchKeywords,
-	pickPostFieldsForSearchKeywords,
-} from '@/utilities/generateSearchKeywords';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { toPost } from '@/utilities/toPost';
 import {
@@ -156,7 +152,6 @@ export const createPost = async <C extends Collection>({
 				createdAt: Timestamp.now(),
 				isDeleted: false,
 				commentCount: 0,
-				searchKeywords: generateSearchKeywords({ collectionName, requestData }),
 			},
 		});
 
@@ -174,24 +169,11 @@ export const updatePost = async <C extends Collection>({
 	requestData: UpdatePostRequest<C>;
 }): Promise<void> => {
 	return firestoreRequest('게시글 수정', async () => {
-		// ① 기존 게시글 불러오기
 		const existingPost = await getPost(collectionName, postId);
 
 		if (!existingPost) {
 			throw new Error('게시글을 찾을 수 없습니다.');
 		}
-
-		// ② 기존 데이터와 수정 데이터 병합
-		const fullData: CreatePostRequest<C> = {
-			...pickPostFieldsForSearchKeywords(existingPost, collectionName),
-			...requestData,
-		};
-
-		// ③ 키워드 재생성
-		const updatedKeywords = generateSearchKeywords({
-			collectionName,
-			requestData: fullData,
-		});
 
 		await updateDocToFirestore({
 			collection: collectionName,
@@ -199,7 +181,6 @@ export const updatePost = async <C extends Collection>({
 			requestData: {
 				...requestData,
 				updatedAt: Timestamp.now(),
-				searchKeywords: updatedKeywords,
 			},
 		});
 	});
