@@ -119,8 +119,6 @@ const ChatRoom = () => {
 									onSend: handleSend,
 								})
 							}
-							// isScrollToBottomEnabled
-							// scrollToBottomComponent={renderScrollToBottomComponent}
 						/>
 					</KeyboardAvoidingView>
 				)}

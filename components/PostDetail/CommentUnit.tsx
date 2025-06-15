@@ -92,10 +92,16 @@ const CommentUnit = ({
 		navigateToChatRoom({ chatId });
 	};
 
+	const onPressUserProfile = () => {
+		if (creatorDisplayName === DEFAULT_USER_DISPLAY_NAME) return;
+
+		navigateToUserProfile({ userId: creatorId });
+	};
+
 	return (
 		<View style={styles.container}>
 			{/* 프로필 이미지 */}
-			<Pressable onPress={() => navigateToUserProfile({ userId: creatorId })}>
+			<Pressable onPress={onPressUserProfile}>
 				<ImageWithFallback
 					uri={creatorPhotoURL}
 					fallbackSource={require('../../assets/images/empty_profile_image.png')}
@@ -108,9 +114,7 @@ const CommentUnit = ({
 				<View style={styles.commentHeader}>
 					{/* 작성자 */}
 					<View style={styles.creatorInfo}>
-						<Pressable
-							onPress={() => navigateToUserProfile({ userId: creatorId })}
-						>
+						<Pressable onPress={onPressUserProfile}>
 							<Text style={styles.creatorDisplayNameText}>
 								{creatorDisplayName}
 							</Text>

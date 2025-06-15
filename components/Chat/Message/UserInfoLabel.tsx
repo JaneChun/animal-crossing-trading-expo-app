@@ -1,12 +1,20 @@
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { FontWeights } from '@/constants/Typography';
 import { PublicUserInfo } from '@/types/user';
+import { navigateToUserProfile } from '@/utilities/navigationHelpers';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 
 const UserInfoLabel = ({ userInfo }: { userInfo: PublicUserInfo }) => {
+	const onPressUserProfile = () => {
+		if (userInfo?.displayName === DEFAULT_USER_DISPLAY_NAME) return;
+
+		navigateToUserProfile({ userId: userInfo?.uid });
+	};
+
 	return (
-		<View style={styles.header}>
+		<Pressable style={styles.header} onPress={onPressUserProfile}>
 			<ImageWithFallback
 				uri={userInfo?.photoURL}
 				fallbackSource={require('../../../assets/images/empty_profile_image.png')}
@@ -14,7 +22,7 @@ const UserInfoLabel = ({ userInfo }: { userInfo: PublicUserInfo }) => {
 			/>
 
 			<Text style={styles.displayName}>{userInfo?.displayName}</Text>
-		</View>
+		</Pressable>
 	);
 };
 
