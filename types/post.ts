@@ -54,6 +54,7 @@ export interface CommonPostFields {
 type MarketOnlyFields = {
 	type: MarketType;
 	cart: CartItem[];
+	chatRoomIds: string[];
 };
 type CommunityOnlyFields = {
 	type: CommunityType;

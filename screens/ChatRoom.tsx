@@ -10,6 +10,7 @@ import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
+import { createChatRoom } from '@/firebase/services/chatService';
 
 import { useChatPresence } from '@/hooks/shared/useChatPresence';
 import { useChatRoom } from '@/hooks/shared/useChatRoom';
@@ -29,8 +30,9 @@ import {
 } from 'react-native-safe-area-context';
 
 const ChatRoom = () => {
+	const hasSentSystemMessage = useRef(false);
 	const route = useRoute<ChatRoomRouteProp>();
-	const { chatId, systemMessage } = route.params;
+	const { chatId, chatStartInfo, systemMessage } = route.params;
 
 	const {
 		userInfo,
@@ -66,13 +68,21 @@ const ChatRoom = () => {
 	const handleSend = async (chatInput: string) => {
 		if (!userInfo?.uid || !receiverInfo?.uid || !chatInput.trim()) return;
 
-		const newMessage: IMessage = createIMessage(userInfo.uid, chatInput);
+		// 1. 채팅방 생성
+		if (chatStartInfo) {
+			createChatRoom(chatStartInfo);
+		}
 
-		// 시스템 메세지가 있다면 전송
-		if (systemMessage) {
+		// 2. 시스템 메세지 전송
+		if (!hasSentSystemMessage.current && systemMessage) {
+			hasSentSystemMessage.current = true;
+
 			sendMessage(systemMessage); // DB에 추가 후
 			removeLocalSystemMessage(); // UI에서 삭제
 		}
+
+		// 3. 유저 메세지 전송
+		const newMessage: IMessage = createIMessage(userInfo.uid, chatInput);
 
 		sendMessage({
 			chatId,
