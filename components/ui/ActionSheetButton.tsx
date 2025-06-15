@@ -9,6 +9,7 @@ const ActionSheetButton = ({
 	color = Colors.font_black,
 	size = 24,
 	options,
+	destructiveButtonIndex,
 	cancelIndex,
 }: ActionSheetButtonProps) => {
 	const { showActionSheetWithOptions } = useActionSheet();
@@ -18,6 +19,7 @@ const ActionSheetButton = ({
 			{
 				options: options.map(({ label }) => label),
 				cancelButtonIndex: cancelIndex ?? options.length - 1, // 기본적으로 마지막 옵션을 '취소'로 설정
+				...(destructiveButtonIndex ? { destructiveButtonIndex } : {}),
 			},
 			(buttonIndex) => {
 				if (buttonIndex === undefined || !options[buttonIndex]) return;

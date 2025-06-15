@@ -343,6 +343,7 @@ export type ActionSheetButtonProps = {
 	color: string;
 	size: number;
 	options: { label: string; onPress: () => void }[];
+	destructiveButtonIndex?: number;
 	cancelIndex?: number;
 };
 

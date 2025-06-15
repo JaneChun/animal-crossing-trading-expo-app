@@ -17,6 +17,7 @@ import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { useMarkAsRead } from '@/hooks/mutation/notification/useMarkAsRead';
 import { useDeletePost } from '@/hooks/mutation/post/useDeletePost';
+import { useUpdatePost } from '@/hooks/mutation/post/useUpdatePost';
 import useComments from '@/hooks/query/comment/useComments';
 import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import useLoading from '@/hooks/shared/useLoading';
@@ -49,6 +50,10 @@ const PostDetail = () => {
 		collectionName as Collection,
 		id,
 	);
+	const { mutate: updatePost, isPending: isUpdating } = useUpdatePost(
+		collectionName as Collection,
+		id,
+	);
 	const { mutate: deletePost, isPending: isDeleting } = useDeletePost(
 		collectionName as Collection,
 		id,
@@ -58,6 +63,8 @@ const PostDetail = () => {
 	const { isLoading: isCommentUploading, setIsLoading: setIsCommentUploading } =
 		useLoading();
 
+	const hasDoneButton = collectionName === 'Boards' && post?.type !== 'done';
+
 	// 헤더에 글 수정/삭제 아이콘 설정
 	useEffect(() => {
 		if (post?.creatorId === userInfo?.uid) {
@@ -66,7 +73,16 @@ const PostDetail = () => {
 					<ActionSheetButton
 						color={Colors.font_black}
 						size={18}
+						destructiveButtonIndex={hasDoneButton ? 2 : 1}
 						options={[
+							...(hasDoneButton
+								? [
+										{
+											label: '거래완료',
+											onPress: closePost,
+										},
+								  ]
+								: []),
 							{
 								label: '수정',
 								onPress: () => navigateToEditPost({ postId: id }),
@@ -75,13 +91,14 @@ const PostDetail = () => {
 								label: '삭제',
 								onPress: handleDeletePost,
 							},
+
 							{ label: '취소', onPress: () => {} },
 						]}
 					/>
 				),
 			});
 		}
-	}, [post?.creatorId, userInfo?.uid, id, stackNavigation]);
+	}, [post?.type, post?.creatorId, userInfo?.uid, id, stackNavigation]);
 
 	// 알림 읽음 처리
 	useEffect(() => {
@@ -110,6 +127,12 @@ const PostDetail = () => {
 				showToast('error', '게시글 삭제 중 오류가 발생했습니다.');
 			},
 		});
+	};
+
+	const closePost = async () => {
+		updatePost({ type: 'done' });
+
+		// TODO: 후기 작성 메세지 전송
 	};
 
 	const scrollToBottom = () => {
