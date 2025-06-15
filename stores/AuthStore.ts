@@ -42,12 +42,17 @@ type AuthState = {
 
 export const useAuthStore = create<AuthState>((set) => ({
 	userInfo: null,
-	setUserInfo: (user) => set({ userInfo: user }),
+	setUserInfo: (user) => {
+		console.log(`\x1b[33m${'setUserInfo :' + JSON.stringify(user)}\x1b[0m`);
+		set({ userInfo: user });
+	},
 	oauthType: null,
 	isAuthLoading: false,
 	setIsAuthLoading: (loading) => set({ isAuthLoading: loading }),
 	kakaoLogin: async () => {
+		const setUserInfo = useAuthStore.getState().setUserInfo;
 		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+
 		setIsAuthLoading(true);
 
 		const isSuccess = await firebaseRequest('로그인', async () => {
@@ -85,7 +90,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 			}
 
 			// 로컬 상태 업데이트
-			set({ userInfo: fetchedUserInfo });
+			setUserInfo(fetchedUserInfo);
 			await AsyncStorage.setItem('@user', JSON.stringify(fetchedUserInfo));
 
 			return true;
@@ -114,6 +119,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 	},
 	kakaoDeleteAccount: async (uid) => {
 		const userInfo = useAuthStore.getState().userInfo;
+		const setUserInfo = useAuthStore.getState().setUserInfo;
 
 		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
 		setIsAuthLoading(true);
@@ -138,7 +144,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 			await deleteUser(user);
 
 			// 로컬 상태 초기화
-			set({ userInfo: null });
+			setUserInfo(null);
+
 			await AsyncStorage.removeItem('@user');
 
 			return true;
@@ -148,7 +155,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 		return isSuccess;
 	},
 	naverLogin: async () => {
+		const setUserInfo = useAuthStore.getState().setUserInfo;
 		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+
 		setIsAuthLoading(true);
 
 		const isSuccess = await firebaseRequest('로그인', async () => {
@@ -190,7 +199,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 			}
 
 			// 로컬 상태 업데이트
-			set({ userInfo: fetchedUserInfo });
+			setUserInfo(fetchedUserInfo);
 			await AsyncStorage.setItem('@user', JSON.stringify(fetchedUserInfo));
 
 			return true;
@@ -219,6 +228,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 	},
 	naverDeleteAccount: async (uid) => {
 		const userInfo = useAuthStore.getState().userInfo;
+		const setUserInfo = useAuthStore.getState().setUserInfo;
 
 		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
 		setIsAuthLoading(true);
@@ -246,7 +256,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 			await NaverLogin.deleteToken();
 
 			// 로컬 상태 초기화
-			set({ userInfo: null });
+			setUserInfo(null);
 			await AsyncStorage.removeItem('@user');
 
 			return true;
@@ -258,11 +268,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 }));
 
 export const useAuthInitializer = () => {
-	const userInfo = useAuthStore((state) => state.userInfo);
-	const setUserInfo = useAuthStore((state) => state.setUserInfo);
-	const expoPushToken = usePushNotificationStore(
-		(state) => state.expoPushToken,
-	);
+	const userInfo = useAuthStore.getState().userInfo;
+	const setUserInfo = useAuthStore.getState().setUserInfo;
+	const expoPushToken = usePushNotificationStore.getState().expoPushToken;
 
 	// 앱이 실행될 때 Kakao, Naver SDK 초기화
 	useEffect(() => {
@@ -282,7 +290,7 @@ export const useAuthInitializer = () => {
 	// Firebase Auth 상태 변화 감지하여 userInfo 저장
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
-			const oauthType = useAuthStore((state) => state.oauthType);
+			const oauthType = useAuthStore.getState().oauthType;
 
 			if (!oauthType) return;
 

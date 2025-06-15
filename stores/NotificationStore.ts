@@ -41,7 +41,11 @@ export const useNotificationSubscriptionInitializer = () => {
 
 	// 알림 목록 실시간 구독
 	useEffect(() => {
-		if (!userInfo) return;
+		if (!userInfo) {
+			setNotifications([]);
+			setUnreadCount(0);
+			return;
+		}
 
 		const q: Query = query(
 			collection(db, 'Notifications'),

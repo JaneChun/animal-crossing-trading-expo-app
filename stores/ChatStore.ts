@@ -39,7 +39,11 @@ export const useChatSubscriptionInitializer = () => {
 
 	// 채팅방 목록 실시간 구독
 	useEffect(() => {
-		if (!userInfo) return;
+		if (!userInfo) {
+			setChats([]);
+			setUnreadCount(0);
+			return;
+		}
 
 		const q: Query = query(
 			collection(db, 'Chats'),
