@@ -5,6 +5,7 @@ import {
 	popTo,
 	replace,
 } from '@/navigation/RootNavigation';
+import { SendChatMessageParams } from '@/types/chat';
 import { Collection } from '@/types/post';
 
 // Search/
@@ -82,8 +83,14 @@ export const navigateToEditComment = ({
 };
 
 // Chat/
-export const navigateToChatRoom = ({ chatId }: { chatId: string }) => {
-	navigate('ChatRoom', { chatId });
+export const navigateToChatRoom = ({
+	chatId,
+	systemMessage,
+}: {
+	chatId: string;
+	systemMessage?: SendChatMessageParams;
+}) => {
+	navigate('ChatRoom', { chatId, systemMessage });
 };
 
 // Profile/

@@ -30,7 +30,7 @@ import {
 
 const ChatRoom = () => {
 	const route = useRoute<ChatRoomRouteProp>();
-	const { chatId } = route.params;
+	const { chatId, systemMessage } = route.params;
 
 	const {
 		userInfo,
@@ -39,6 +39,8 @@ const ChatRoom = () => {
 		messages,
 		sendMessage,
 		leaveChatRoom,
+		addLocalSystemMessage,
+		removeLocalSystemMessage,
 	} = useChatRoom(chatId);
 
 	const insets = useSafeAreaInsets();
@@ -46,6 +48,13 @@ const ChatRoom = () => {
 	const giftedChatRef = useRef<any>(null);
 
 	useChatPresence(chatId);
+
+	// 채팅방 입장 시, 시스템 메세지를 params로 받았다면
+	useEffect(() => {
+		if (systemMessage) {
+			addLocalSystemMessage(systemMessage); // UI에만 추가
+		}
+	}, []);
 
 	// 새 메세지 올 때 아래로 스크롤
 	useEffect(() => {
@@ -55,14 +64,16 @@ const ChatRoom = () => {
 	}, [messages]);
 
 	const handleSend = async (chatInput: string) => {
-		if (!userInfo?.uid || !receiverInfo?.uid) return;
+		if (!userInfo?.uid || !receiverInfo?.uid || !chatInput.trim()) return;
 
 		const newMessage: IMessage = createIMessage(userInfo.uid, chatInput);
 
-		// 1. UI 업데이트
-		GiftedChat.append(messages, [newMessage]);
+		// 시스템 메세지가 있다면 전송
+		if (systemMessage) {
+			sendMessage(systemMessage); // DB에 추가 후
+			removeLocalSystemMessage(); // UI에서 삭제
+		}
 
-		// 2. DB 전송
 		sendMessage({
 			chatId,
 			senderId: userInfo.uid,

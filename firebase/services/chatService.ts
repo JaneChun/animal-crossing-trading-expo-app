@@ -119,16 +119,10 @@ export const createChatRoom = async ({
 			}
 		}
 
-		// 채팅이 시작한 게시글 정보 추가
-		// receiverId에 해당하는 pushToken이 없으므로 푸시 알림 발생 X
-		await sendMessage({
-			chatId,
-			senderId: 'system',
-			receiverId: 'system',
-			message: JSON.stringify({
-				collectionName,
-				postId,
-			}),
+		// 게시글의 chatRoomIds에 채팅방 ID 추가
+		const postRef = doc(db, collectionName, postId);
+		await updateDoc(postRef, {
+			chatRoomIds: arrayUnion(chatId),
 		});
 
 		return chatId;

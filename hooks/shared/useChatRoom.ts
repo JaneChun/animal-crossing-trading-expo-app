@@ -1,6 +1,8 @@
 import { useAuthStore } from '@/stores/AuthStore';
+import { Message, SendChatMessageParams } from '@/types/chat';
+import { convertSendParamsToMessage } from '@/utilities/convertSendParamsToMessage';
 import { formatIMessages } from '@/utilities/formatIMessages';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useGetChatMessages } from '../firebase/useGetChatMessages';
 import { useLeaveChatRoom } from '../mutation/chat/useLeaveChatRoom';
 import { useMarkMessagesAsRead } from '../mutation/chat/useMarkMessagesAsRead';
@@ -9,6 +11,9 @@ import { useReceiverInfo } from '../query/chat/useReceiverInfo';
 
 export const useChatRoom = (chatId: string) => {
 	const userInfo = useAuthStore((state) => state.userInfo);
+	const [systemLocalMessage, setLocalSystemMessage] = useState<Message | null>(
+		null,
+	);
 
 	const { messages, isLoading: isMessagesFetching } =
 		useGetChatMessages(chatId);
@@ -30,7 +35,24 @@ export const useChatRoom = (chatId: string) => {
 		readMessages();
 	}, [chatId, userInfo, messages]);
 
-	const formattedMessages = formatIMessages(messages, receiverInfo?.uid);
+	const allMessages = systemLocalMessage
+		? [...messages, systemLocalMessage]
+		: messages;
+
+	const formattedMessages = formatIMessages(allMessages, receiverInfo?.uid);
+
+	const addLocalSystemMessage = (localMessage: SendChatMessageParams) => {
+		const message = convertSendParamsToMessage({
+			sendParams: localMessage,
+			chatId,
+		});
+
+		setLocalSystemMessage(message);
+	};
+
+	const removeLocalSystemMessage = () => {
+		setLocalSystemMessage(null);
+	};
 
 	return {
 		userInfo,
@@ -39,5 +61,7 @@ export const useChatRoom = (chatId: string) => {
 		messages: formattedMessages,
 		sendMessage,
 		leaveChatRoom,
+		addLocalSystemMessage,
+		removeLocalSystemMessage,
 	};
 };
