@@ -39,7 +39,7 @@ const EditableItem = ({
 				<View style={styles.quantityContainer}>
 					<Text style={styles.quantity}>
 						{item.price}
-						{item.unit === 'bell' ? '벨' : '마일'}
+						{item.unit === 'bell' ? '덩' : '마일'}
 					</Text>
 					<Ionicons name='close' size={14} color={Colors.font_gray} />
 					<Text style={styles.quantity}>{item.quantity}</Text>

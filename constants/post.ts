@@ -24,7 +24,7 @@ export const CATEGORIES: CategoryItem[] = [
 
 export const CURRENCY_OPTIONS = [
 	{ KR: '마일 티켓', EN: 'mileticket' },
-	{ KR: '벨', EN: 'bell' },
+	{ KR: '덩', EN: 'bell' },
 ] as const;
 
 // 각 탭(Tab) 별로 연결된 Firestore 컬렉션을 정의한 config 객체

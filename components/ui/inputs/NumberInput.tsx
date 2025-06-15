@@ -58,7 +58,7 @@ const NumberInput = ({
 			</Pressable>
 
 			{/* 숫자 입력 필드 */}
-			<TextInput
+			<InputComponent
 				style={styles.text}
 				keyboardType='numeric'
 				value={tempValue}
