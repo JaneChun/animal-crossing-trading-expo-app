@@ -1,11 +1,11 @@
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { useCreateChatRoom } from '@/hooks/mutation/chat/useCreateChatRoom';
+import { generateChatId } from '@/firebase/services/chatService';
 import { useDeleteComment } from '@/hooks/mutation/comment/useDeleteComment';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
-import { SendChatMessageParams } from '@/types/chat';
+import { CreateChatRoomParams, SendChatMessageParams } from '@/types/chat';
 import { CommentUnitProps } from '@/types/components';
 import { Collection } from '@/types/post';
 import { createSystemMessage } from '@/utilities/createSystemMessage';
@@ -32,6 +32,7 @@ import { showToast } from '../ui/Toast';
 const CommentUnit = ({
 	postId,
 	postCreatorId,
+	chatRoomIds,
 	id,
 	body,
 	creatorId,
@@ -46,8 +47,6 @@ const CommentUnit = ({
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const { mutate: deleteComment, isPending: isDeletingComment } =
 		useDeleteComment(collectionName, postId, id);
-	const { mutateAsync: createChatRoom, isPending: isCreatingChatRoom } =
-		useCreateChatRoom();
 
 	const handleDeleteComment = async () => {
 		Alert.alert('댓글 삭제', '정말로 삭제하겠습니까?', [
@@ -82,22 +81,28 @@ const CommentUnit = ({
 	}) => {
 		if (!userInfo) return;
 
-		const chatId = await createChatRoom({
+		const chatId = generateChatId(userInfo.uid, receiverId);
+
+		// 채팅방 정보는 항상 전달
+		const chatStartInfo: CreateChatRoomParams = {
 			collectionName,
 			postId,
 			user1: userInfo.uid,
 			user2: receiverId,
-		});
+		};
 
-		if (!chatId) return;
-
+		// 해당 게시글로 생성된 채팅방이 처음일 경우에만 systemMessage 포함하여 채팅방으로 이동
 		const systemMessage: SendChatMessageParams = createSystemMessage({
 			chatId,
 			collectionName,
 			postId,
 		});
 
-		navigateToChatRoom({ chatId, systemMessage });
+		navigateToChatRoom({
+			chatId,
+			chatStartInfo,
+			...(!chatRoomIds.includes(chatId) ? { systemMessage } : {}),
+		});
 	};
 
 	const onPressUserProfile = () => {

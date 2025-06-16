@@ -28,7 +28,7 @@ import {
 import firestoreRequest from '../core/firebaseInterceptor';
 import { getPublicUserInfos } from './userService';
 
-const generateChatId = (user1: string, user2: string): string => {
+export const generateChatId = (user1: string, user2: string): string => {
 	return [user1, user2].sort().join('_');
 };
 
@@ -97,7 +97,7 @@ export const createChatRoom = async ({
 		const chatRef = doc(db, 'Chats', chatId);
 		const chatSnap = await getDoc(chatRef);
 
-		// 채팅방이 존재하지 않으면 새로 생성
+		// 🔹 채팅방이 존재하지 않으면 새로 생성
 		if (!chatSnap.exists()) {
 			await setDoc(chatRef, {
 				id: chatId,
@@ -111,7 +111,7 @@ export const createChatRoom = async ({
 		} else {
 			const participants = chatSnap.data().participants;
 
-			// 기존 채팅방이 있는데, 사용자가 나간 채팅방이라면 (participants 배열에 없다면) 다시 추가
+			// 🔸 기존 채팅방이 있고, 내가 나간 상태였다면 다시 참가 처리
 			if (!participants.includes(user1)) {
 				await rejoinChatRoom({ chatId });
 			} else {
@@ -119,7 +119,7 @@ export const createChatRoom = async ({
 			}
 		}
 
-		// 게시글의 chatRoomIds에 채팅방 ID 추가
+		// 해당 게시글의 chatRoomIds 배열에 채팅방 ID 추가
 		const postRef = doc(db, collectionName, postId);
 		await updateDoc(postRef, {
 			chatRoomIds: arrayUnion(chatId),

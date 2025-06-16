@@ -1,7 +1,7 @@
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { SendChatMessageParams } from './chat';
+import { CreateChatRoomParams, SendChatMessageParams } from './chat';
 import { Collection } from './post';
 
 // RootStack 네비게이션
@@ -14,7 +14,11 @@ export type RootStackParamList = {
 	};
 	NewPost: { id?: string }; // 글 수정 시 id 전달
 	EditComment: { postId: string; commentId: string; body: string };
-	ChatRoom: { chatId: string; systemMessage?: SendChatMessageParams };
+	ChatRoom: {
+		chatId: string;
+		chatStartInfo?: CreateChatRoomParams;
+		systemMessage?: SendChatMessageParams;
+	};
 	Profile: { userId?: string }; // 다른 유저 프로필 조회 시 userId 전달
 	Setting: undefined;
 	Search: undefined;

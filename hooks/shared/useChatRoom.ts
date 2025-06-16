@@ -1,19 +1,21 @@
 import { useAuthStore } from '@/stores/AuthStore';
-import { Message, SendChatMessageParams } from '@/types/chat';
-import { convertSendParamsToMessage } from '@/utilities/convertSendParamsToMessage';
+import { Message } from '@/types/chat';
 import { formatIMessages } from '@/utilities/formatIMessages';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useGetChatMessages } from '../firebase/useGetChatMessages';
 import { useLeaveChatRoom } from '../mutation/chat/useLeaveChatRoom';
 import { useMarkMessagesAsRead } from '../mutation/chat/useMarkMessagesAsRead';
 import { useSendMessage } from '../mutation/chat/useSendMessage';
 import { useReceiverInfo } from '../query/chat/useReceiverInfo';
 
-export const useChatRoom = (chatId: string) => {
+export const useChatRoom = ({
+	chatId,
+	localMessages = [],
+}: {
+	chatId: string;
+	localMessages?: Message[];
+}) => {
 	const userInfo = useAuthStore((state) => state.userInfo);
-	const [systemLocalMessage, setLocalSystemMessage] = useState<Message | null>(
-		null,
-	);
 
 	const { messages, isLoading: isMessagesFetching } =
 		useGetChatMessages(chatId);
@@ -35,24 +37,10 @@ export const useChatRoom = (chatId: string) => {
 		readMessages();
 	}, [chatId, userInfo, messages]);
 
-	const allMessages = systemLocalMessage
-		? [...messages, systemLocalMessage]
-		: messages;
-
-	const formattedMessages = formatIMessages(allMessages, receiverInfo?.uid);
-
-	const addLocalSystemMessage = (localMessage: SendChatMessageParams) => {
-		const message = convertSendParamsToMessage({
-			sendParams: localMessage,
-			chatId,
-		});
-
-		setLocalSystemMessage(message);
-	};
-
-	const removeLocalSystemMessage = () => {
-		setLocalSystemMessage(null);
-	};
+	const formattedMessages = formatIMessages(
+		[...messages, ...localMessages],
+		receiverInfo?.uid,
+	);
 
 	return {
 		userInfo,
@@ -61,7 +49,5 @@ export const useChatRoom = (chatId: string) => {
 		messages: formattedMessages,
 		sendMessage,
 		leaveChatRoom,
-		addLocalSystemMessage,
-		removeLocalSystemMessage,
 	};
 };

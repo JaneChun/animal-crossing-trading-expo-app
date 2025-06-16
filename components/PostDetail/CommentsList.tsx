@@ -6,6 +6,7 @@ const CommentsList = ({
 	postId,
 	postCreatorId,
 	comments,
+	chatRoomIds,
 	containerStyle,
 	scrollToBottom,
 }: CommentsListProps) => {
@@ -19,6 +20,7 @@ const CommentsList = ({
 						key={item.id}
 						postId={postId}
 						postCreatorId={postCreatorId}
+						chatRoomIds={chatRoomIds}
 						{...item}
 					/>
 				))}

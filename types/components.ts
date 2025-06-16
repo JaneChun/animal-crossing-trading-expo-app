@@ -158,6 +158,7 @@ export type CommentsListProps = {
 	postId: string;
 	postCreatorId: string;
 	comments: CommentWithCreatorInfo[];
+	chatRoomIds: string[];
 	containerStyle?: ViewStyle;
 	scrollToBottom: () => void;
 };
@@ -165,6 +166,7 @@ export type CommentsListProps = {
 export interface CommentUnitProps extends CommentWithCreatorInfo {
 	postId: string;
 	postCreatorId: string;
+	chatRoomIds: string[];
 }
 
 export type CreatedAtProps = {

@@ -211,6 +211,7 @@ const PostDetail = () => {
 						postId={post.id}
 						postCreatorId={post.creatorId}
 						comments={comments}
+						chatRoomIds={post.chatRoomIds ?? []}
 						scrollToBottom={scrollToBottom}
 					/>
 				</View>

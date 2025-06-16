@@ -10,17 +10,20 @@ import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
+import { createChatRoom } from '@/firebase/services/chatService';
 
 import { useChatPresence } from '@/hooks/shared/useChatPresence';
 import { useChatRoom } from '@/hooks/shared/useChatRoom';
 import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
 
 import { goBack } from '@/navigation/RootNavigation';
+import { Message } from '@/types/chat';
 import { ChatRoomRouteProp } from '@/types/navigation';
+import { convertSendParamsToMessage } from '@/utilities/convertSendParamsToMessage';
 import { createIMessage } from '@/utilities/createIMessage';
 
 import { useRoute } from '@react-navigation/native';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet } from 'react-native';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import {
@@ -29,8 +32,25 @@ import {
 } from 'react-native-safe-area-context';
 
 const ChatRoom = () => {
+	const hasChatRoomCreated = useRef<boolean>(false);
+	const hasSystemMessageSent = useRef<boolean>(false);
+
 	const route = useRoute<ChatRoomRouteProp>();
-	const { chatId, systemMessage } = route.params;
+	const { chatId, chatStartInfo, systemMessage } = route.params;
+
+	const [localMessages, setLocalMessages] = useState<Message[]>([]);
+
+	// 최초 진입 시 systemMessage가 전달되었다면 UI에만 표시 (DB에는 아직 저장되지 않음)
+	useEffect(() => {
+		if (systemMessage) {
+			const message = convertSendParamsToMessage({
+				sendParams: systemMessage,
+				chatId,
+			});
+
+			setLocalMessages([message]); // localMessages에 저장
+		}
+	}, [chatId, systemMessage]);
 
 	const {
 		userInfo,
@@ -39,22 +59,16 @@ const ChatRoom = () => {
 		messages,
 		sendMessage,
 		leaveChatRoom,
-		addLocalSystemMessage,
-		removeLocalSystemMessage,
-	} = useChatRoom(chatId);
+	} = useChatRoom({
+		chatId,
+		localMessages,
+	});
+
+	useChatPresence(chatId);
 
 	const insets = useSafeAreaInsets();
 	const keyboardHeight = useKeyboardHeight();
 	const giftedChatRef = useRef<any>(null);
-
-	useChatPresence(chatId);
-
-	// 채팅방 입장 시, 시스템 메세지를 params로 받았다면
-	useEffect(() => {
-		if (systemMessage) {
-			addLocalSystemMessage(systemMessage); // UI에만 추가
-		}
-	}, []);
 
 	// 새 메세지 올 때 아래로 스크롤
 	useEffect(() => {
@@ -66,13 +80,24 @@ const ChatRoom = () => {
 	const handleSend = async (chatInput: string) => {
 		if (!userInfo?.uid || !receiverInfo?.uid || !chatInput.trim()) return;
 
-		const newMessage: IMessage = createIMessage(userInfo.uid, chatInput);
+		// 채팅방 생성
+		if (chatStartInfo && !hasChatRoomCreated.current) {
+			const createdChatId = await createChatRoom(chatStartInfo);
+			if (!createdChatId) return;
 
-		// 시스템 메세지가 있다면 전송
-		if (systemMessage) {
-			sendMessage(systemMessage); // DB에 추가 후
-			removeLocalSystemMessage(); // UI에서 삭제
+			hasChatRoomCreated.current = true;
 		}
+
+		// 시스템 메세지 전송
+		if (systemMessage && !hasSystemMessageSent.current) {
+			sendMessage(systemMessage); // systemMessage를 DB에 저장 후
+			setLocalMessages([]); // localMessages 초기화
+
+			hasSystemMessageSent.current = true;
+		}
+
+		// 유저 메세지 전송
+		const newMessage: IMessage = createIMessage(userInfo.uid, chatInput);
 
 		sendMessage({
 			chatId,

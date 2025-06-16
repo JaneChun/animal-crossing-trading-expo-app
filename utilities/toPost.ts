@@ -27,6 +27,7 @@ export const toPost = <C extends Collection>(
 			...commonFields,
 			type: boardDoc.type as MarketType,
 			cart: boardDoc.cart as CartItem[],
+			chatRoomIds: boardDoc.chatRoomIds,
 		} as Post<C>;
 	}
 
