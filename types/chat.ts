@@ -9,6 +9,7 @@ export interface Chat {
 	lastMessageSenderId: string;
 	unreadCount: { [id: string]: number };
 	updatedAt: Timestamp;
+	visibleTo: string[];
 }
 
 export interface ChatWithReceiverInfo extends Chat {

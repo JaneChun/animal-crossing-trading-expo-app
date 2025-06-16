@@ -99,13 +99,17 @@ export const createChatRoom = async ({
 
 		// 🔹 채팅방이 존재하지 않으면 새로 생성
 		if (!chatSnap.exists()) {
-			await setDoc(chatRef, {
+			const newChat: Chat = {
 				id: chatId,
 				participants: [user1, user2],
 				lastMessage: '',
 				lastMessageSenderId: '',
+				unreadCount: {},
 				updatedAt: Timestamp.now(),
-			});
+				visibleTo: [user1, user2],
+			};
+
+			await setDoc(chatRef, newChat);
 
 			console.log(`새 채팅방 생성: ${chatId}`);
 		} else {
@@ -139,7 +143,7 @@ const rejoinChatRoom = async ({
 		const chatRef = doc(db, 'Chats', chatId);
 
 		await updateDoc(chatRef, {
-			participants: arrayUnion(...users),
+			visibleTo: arrayUnion(...users),
 		});
 	});
 };
@@ -173,6 +177,7 @@ export const sendMessage = async ({
 			lastMessageSenderId: senderId,
 			updatedAt: Timestamp.now(),
 			[`unreadCount.${receiverId}`]: increment(1), // 상대 유저의 unreadCount 1 증가
+			visibleTo: arrayUnion(receiverId), // 메시지를 받은 유저에게 채팅방 다시 표시
 		});
 	});
 };
@@ -185,7 +190,7 @@ export const leaveChatRoom = async ({
 		const chatRef = doc(db, 'Chats', chatId);
 
 		await updateDoc(chatRef, {
-			participants: arrayRemove(userId),
+			visibleTo: arrayRemove(userId),
 		});
 	});
 };

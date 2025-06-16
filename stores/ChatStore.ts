@@ -47,7 +47,8 @@ export const useChatSubscriptionInitializer = () => {
 
 		const q: Query = query(
 			collection(db, 'Chats'),
-			where('participants', 'array-contains', userInfo.uid), // 내가 포함된 채팅방
+			// where('participants', 'array-contains', userInfo.uid), // 내가 포함된 채팅방
+			where('visibleTo', 'array-contains', userInfo.uid), // 내가 나가지 않은 채팅방
 			orderBy('updatedAt', 'desc'), // 최신 메시지가 있는 채팅방부터 정렬
 		);
 

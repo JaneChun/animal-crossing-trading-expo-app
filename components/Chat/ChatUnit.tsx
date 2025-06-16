@@ -23,15 +23,7 @@ import Reanimated, {
 import ImageWithFallback from '../ui/ImageWithFallback';
 
 const ChatUnit = (props: ChatWithReceiverInfo) => {
-	const {
-		id,
-		lastMessage,
-		lastMessageSenderId,
-		participants,
-		unreadCount,
-		updatedAt,
-		receiverInfo,
-	} = props;
+	const { id, lastMessage, unreadCount, updatedAt, receiverInfo } = props;
 	const userInfo = useAuthStore((state) => state.userInfo);
 
 	const deleteChat = async (id: string) => {
