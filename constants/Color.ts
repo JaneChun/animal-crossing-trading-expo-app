@@ -14,6 +14,8 @@ export const Colors = {
 
 	// icon정
 	icon_gray: '#bebed2',
+	icon_red: '#fb657e',
+	icon_green: '#50d086',
 
 	// button
 	red_text: '#CD5067',

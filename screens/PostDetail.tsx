@@ -15,6 +15,7 @@ import KeyboardStickyLayout from '@/components/ui/layout/KeyboardStickyLayout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
+import { sendReviewSystemMessage } from '@/firebase/services/reviewService';
 import { useMarkAsRead } from '@/hooks/mutation/notification/useMarkAsRead';
 import { useDeletePost } from '@/hooks/mutation/post/useDeletePost';
 import { useUpdatePost } from '@/hooks/mutation/post/useUpdatePost';
@@ -50,10 +51,6 @@ const PostDetail = () => {
 		collectionName as Collection,
 		id,
 	);
-	const { mutate: updatePost, isPending: isUpdating } = useUpdatePost(
-		collectionName as Collection,
-		id,
-	);
 	const { mutate: deletePost, isPending: isDeleting } = useDeletePost(
 		collectionName as Collection,
 		id,
@@ -63,42 +60,42 @@ const PostDetail = () => {
 	const { isLoading: isCommentUploading, setIsLoading: setIsCommentUploading } =
 		useLoading();
 
-	const hasDoneButton = collectionName === 'Boards' && post?.type !== 'done';
+	const showDoneOption = collectionName === 'Boards' && post?.type !== 'done';
 
 	// 헤더에 글 수정/삭제 아이콘 설정
 	useEffect(() => {
-		if (post?.creatorId === userInfo?.uid) {
-			stackNavigation.setOptions({
-				headerRight: () => (
-					<ActionSheetButton
-						color={Colors.font_black}
-						size={18}
-						destructiveButtonIndex={hasDoneButton ? 2 : 1}
-						options={[
-							...(hasDoneButton
-								? [
-										{
-											label: '거래완료',
-											onPress: closePost,
-										},
-								  ]
-								: []),
-							{
-								label: '수정',
-								onPress: () => navigateToEditPost({ postId: id }),
-							},
-							{
-								label: '삭제',
-								onPress: handleDeletePost,
-							},
+		if (!post || !collectionName || post.creatorId !== userInfo?.uid) return;
 
-							{ label: '취소', onPress: () => {} },
-						]}
-					/>
-				),
-			});
-		}
-	}, [post?.type, post?.creatorId, userInfo?.uid, id, stackNavigation]);
+		stackNavigation.setOptions({
+			headerRight: () => (
+				<ActionSheetButton
+					color={Colors.font_black}
+					size={18}
+					destructiveButtonIndex={showDoneOption ? 2 : 1}
+					options={[
+						...(showDoneOption
+							? [
+									{
+										label: '거래완료',
+										onPress: closePost,
+									},
+							  ]
+							: []),
+						{
+							label: '수정',
+							onPress: () => navigateToEditPost({ postId: id }),
+						},
+						{
+							label: '삭제',
+							onPress: handleDeletePost,
+						},
+
+						{ label: '취소', onPress: () => {} },
+					]}
+				/>
+			),
+		});
+	}, [post, collectionName, userInfo?.uid, id, stackNavigation]);
 
 	// 알림 읽음 처리
 	useEffect(() => {
@@ -130,9 +127,21 @@ const PostDetail = () => {
 	};
 
 	const closePost = async () => {
-		updatePost({ type: 'done' });
+		if (!post || !collectionName || !isBoardPost(post, collectionName)) return;
 
-		// TODO: 후기 작성 메세지 전송
+		const { mutate: updatePost } = useUpdatePost('Boards', post.id);
+
+		if (!post.reviewPromptSent) {
+			await sendReviewSystemMessage({
+				postId: post.id,
+				chatRoomIds: post.chatRoomIds,
+			});
+		}
+
+		updatePost({
+			type: 'done',
+			reviewPromptSent: true,
+		});
 	};
 
 	const scrollToBottom = () => {
@@ -211,7 +220,9 @@ const PostDetail = () => {
 						postId={post.id}
 						postCreatorId={post.creatorId}
 						comments={comments}
-						chatRoomIds={post.chatRoomIds ?? []}
+						chatRoomIds={
+							isBoardPost(post, collectionName) ? post.chatRoomIds : []
+						}
 						scrollToBottom={scrollToBottom}
 					/>
 				</View>

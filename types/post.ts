@@ -50,29 +50,27 @@ export interface CommonPostFields {
 	commentCount: number;
 }
 
-// 단독 필드
-type MarketOnlyFields = {
+// 게시글 타입
+type MarketPost = CommonPostFields & {
 	type: MarketType;
 	cart: CartItem[];
 	chatRoomIds: string[];
+	reviewPromptSent: boolean;
 };
-type CommunityOnlyFields = {
+type CommunityPost = CommonPostFields & {
 	type: CommunityType;
 	images: string[];
 };
 
-// 게시글 타입
-type MarketPost = CommonPostFields & MarketOnlyFields;
-type CommunityPost = CommonPostFields & CommunityOnlyFields;
+export type PostMap = {
+	Boards: MarketPost;
+	Communities: CommunityPost;
+};
 
 // 컬렉션 기반으로 게시글 타입 분기
-export type Post<C extends Collection> = C extends 'Boards'
-	? MarketPost
-	: C extends 'Communities'
-	? CommunityPost
-	: never;
-
-export type PostWithCreatorInfo<C extends Collection> = Post<C> & CreatorInfo;
+export type Post<C extends Collection> = PostMap[C];
+export type PostWithCreatorInfo<C extends Collection> = PostMap[C] &
+	CreatorInfo;
 
 // Firestore용 PostDoc
 export type PostDoc<C extends Collection> = Post<C> & {
@@ -101,27 +99,13 @@ export interface CartItem extends Item {
 }
 
 // firebase/services/postService.ts
-type CommonRequestFields<C extends Collection> = C extends 'Boards'
-	? {
-			type: MarketType;
-			title: string;
-			body: string;
-			cart: CartItem[];
-			images?: never; // 금지
-	  }
-	: {
-			type: CommunityType;
-			title: string;
-			body: string;
-			images: string[];
-			cart?: never; // 금지
-	  };
+export type CreatePostRequest<C extends Collection> = Omit<
+	PostMap[C],
+	'id' | 'creatorId' | 'createdAt' | 'commentCount'
+>;
 
-export type CreatePostRequest<C extends Collection> = CommonRequestFields<C>;
-
-// 모든 필드를 선택적으로 받음
 export type UpdatePostRequest<C extends Collection> = Partial<
-	Omit<CommonRequestFields<C>, 'creatorId'>
+	CreatePostRequest<C>
 >;
 
 // hooks/query/useInfinitePosts.ts

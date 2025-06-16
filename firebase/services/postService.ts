@@ -152,6 +152,8 @@ export const createPost = async <C extends Collection>({
 				createdAt: Timestamp.now(),
 				isDeleted: false,
 				commentCount: 0,
+				chatRoomIds: [],
+				reviewPromptSent: false,
 			},
 		});
 
@@ -170,10 +172,7 @@ export const updatePost = async <C extends Collection>({
 }): Promise<void> => {
 	return firestoreRequest('게시글 수정', async () => {
 		const existingPost = await getPost(collectionName, postId);
-
-		if (!existingPost) {
-			throw new Error('게시글을 찾을 수 없습니다.');
-		}
+		if (!existingPost) throw new Error('게시글을 찾을 수 없습니다.');
 
 		await updateDocToFirestore({
 			collection: collectionName,

@@ -22,7 +22,7 @@ const SystemMessageUnit = ({ message }: { message: IMessage }) => {
 	);
 
 	return (
-		<View style={styles.postSummaryContainer}>
+		<View style={styles.container}>
 			{isPostLoading ? (
 				<PostSummaryLoading />
 			) : post ? (
@@ -37,7 +37,7 @@ const SystemMessageUnit = ({ message }: { message: IMessage }) => {
 export default SystemMessageUnit;
 
 const styles = StyleSheet.create({
-	postSummaryContainer: {
+	container: {
 		marginVertical: 16,
 		marginHorizontal: 24,
 	},

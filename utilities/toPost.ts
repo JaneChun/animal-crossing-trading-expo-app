@@ -1,12 +1,4 @@
-import {
-	CartItem,
-	Collection,
-	CommonPostFields,
-	CommunityType,
-	MarketType,
-	Post,
-	PostDoc,
-} from '@/types/post';
+import { Collection, CommonPostFields, Post, PostDoc } from '@/types/post';
 
 export const toPost = <C extends Collection>(
 	collectionName: C,
@@ -25,16 +17,17 @@ export const toPost = <C extends Collection>(
 		const boardDoc = doc as PostDoc<'Boards'>;
 		return {
 			...commonFields,
-			type: boardDoc.type as MarketType,
-			cart: boardDoc.cart as CartItem[],
+			type: boardDoc.type,
+			cart: boardDoc.cart,
 			chatRoomIds: boardDoc.chatRoomIds,
+			reviewPromptSent: boardDoc.reviewPromptSent,
 		} as Post<C>;
 	}
 
 	const communityDoc = doc as PostDoc<'Communities'>;
 	return {
 		...commonFields,
-		type: communityDoc.type as CommunityType,
+		type: communityDoc.type,
 		images: communityDoc.images,
 	} as Post<C>;
 };

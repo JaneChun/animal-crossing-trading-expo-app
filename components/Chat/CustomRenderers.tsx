@@ -6,6 +6,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
 import { IMessage } from 'react-native-gifted-chat';
 import ChatInput from './ChatInput';
+import ReviewMessageUnit from './ReviewMessageUnit';
 
 export const renderMessage = ({
 	currentMessage,
@@ -14,9 +15,13 @@ export const renderMessage = ({
 }) => {
 	if (currentMessage.user._id === 'system') {
 		return <SystemMessageUnit message={currentMessage} />;
-	} else {
-		return <MessageUnit message={currentMessage} />;
 	}
+
+	if (currentMessage.user._id === 'review') {
+		return <ReviewMessageUnit message={currentMessage} />;
+	}
+
+	return <MessageUnit message={currentMessage} />;
 };
 
 export const renderDay = (props: any) => {

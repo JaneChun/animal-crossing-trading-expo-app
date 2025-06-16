@@ -168,7 +168,7 @@ export const sendMessage = async ({
 			isReadBy: [senderId],
 		});
 
-		if (senderId === 'system') return;
+		if (senderId === 'system' || senderId === 'review') return;
 
 		// 2. 채팅방 정보 업데이트 (최근 메시지, 보낸 사람, 시간)
 		const chatRef = doc(db, 'Chats', chatId);
