@@ -1,9 +1,12 @@
 import {
+	DEFAULT_USER_BADGE_GRANTED,
 	DEFAULT_USER_DISPLAY_NAME,
 	DEFAULT_USER_ISLAND_NAME,
 	DEFAULT_USER_PHOTO_URL,
+	DEFAULT_USER_REVIEW,
 } from '@/constants/defaultUserInfo';
 import { db } from '@/fbase';
+import { ReviewValue } from '@/types/review';
 import { OauthType, PublicUserInfo, UserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import {
@@ -92,12 +95,16 @@ export const getPublicUserInfo = async (
 				return getDefaultUserInfo(creatorId);
 			}
 
-			return {
+			const userInfo: PublicUserInfo = {
 				uid: creatorId,
 				displayName: docData.displayName || DEFAULT_USER_DISPLAY_NAME,
 				islandName: docData.islandName || DEFAULT_USER_ISLAND_NAME,
 				photoURL: docData.photoURL || DEFAULT_USER_PHOTO_URL,
+				review: docData.review || DEFAULT_USER_REVIEW,
+				badgeGranted: docData.badgeGranted || DEFAULT_USER_BADGE_GRANTED,
 			};
+
+			return userInfo;
 		});
 	} catch (e) {
 		return getDefaultUserInfo(creatorId);
@@ -132,6 +139,8 @@ export const getPublicUserInfos = async (
 				displayName: user.displayName || DEFAULT_USER_DISPLAY_NAME,
 				islandName: user.islandName || DEFAULT_USER_ISLAND_NAME,
 				photoURL: user.photoURL || DEFAULT_USER_PHOTO_URL,
+				review: user.review || DEFAULT_USER_REVIEW,
+				badgeGranted: user.badgeGranted || DEFAULT_USER_BADGE_GRANTED,
 			};
 		});
 
@@ -241,5 +250,42 @@ export const setActiveChatRoom = async ({
 		requestData: {
 			activeChatRoomId: chatId,
 		},
+	});
+};
+
+export const updateUserReview = async ({
+	userId,
+	value,
+}: {
+	userId: string;
+	value: ReviewValue;
+}) => {
+	return firestoreRequest('리뷰 저장', async () => {
+		const userInfo = await getPublicUserInfo(userId);
+
+		const prevReview = userInfo.review || {
+			total: 0,
+			positive: 0,
+			negative: 0,
+		};
+
+		const newReview = {
+			total: prevReview.total + 1,
+			positive: prevReview.positive + (value === 1 ? 1 : 0),
+			negative: prevReview.negative + (value === -1 ? 1 : 0),
+		};
+
+		// 뱃지 부여 조건: total >= 10, 긍정 비율 ≥ 80%
+		const badgeGranted =
+			newReview.total >= 10 && newReview.positive / newReview.total >= 0.8;
+
+		updateDocToFirestore({
+			id: userId,
+			collection: 'Users',
+			requestData: {
+				review: newReview,
+				badgeGranted,
+			},
+		});
 	});
 };

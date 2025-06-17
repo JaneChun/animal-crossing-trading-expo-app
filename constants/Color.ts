@@ -1,8 +1,6 @@
 export const Colors = {
 	base: '#F5F5F8',
-	// primary: '#0f66f2',
 	primary: '#35d8c9',
-	// primary: '#0ec7b9',
 
 	//border
 	border_gray: '#eff0f4',
@@ -16,6 +14,7 @@ export const Colors = {
 	icon_gray: '#bebed2',
 	icon_red: '#fb657e',
 	icon_green: '#50d086',
+	icon_primary: '#3AECDB',
 
 	// button
 	red_text: '#CD5067',

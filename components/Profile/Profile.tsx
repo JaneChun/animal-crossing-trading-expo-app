@@ -1,6 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { ProfileProps } from '@/types/components';
+import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
@@ -22,7 +23,17 @@ const Profile = ({
 					style={styles.image}
 				/>
 			</View>
-			<Text style={styles.displayName}>{profileInfo?.displayName}</Text>
+			<View style={styles.nameContainer}>
+				<Text style={styles.displayName}>{profileInfo?.displayName}</Text>
+				{profileInfo?.badgeGranted && (
+					<MaterialIcons
+						name='verified'
+						color={Colors.icon_primary}
+						size={18}
+						style={styles.badgeIcon}
+					/>
+				)}
+			</View>
 			<View style={styles.islandInfoContainer}>
 				<Leaf style={styles.islandIcon} />
 				<Text style={styles.islandText}>
@@ -80,10 +91,20 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
+	nameContainer: {
+		position: 'relative',
+		justifyContent: 'center',
+		alignItems: 'center',
+		paddingHorizontal: 22,
+		marginBottom: 8,
+	},
 	displayName: {
 		fontSize: FontSizes.lg,
 		fontWeight: FontWeights.bold,
-		marginBottom: 8,
+	},
+	badgeIcon: {
+		position: 'absolute',
+		right: 0,
 	},
 	islandInfoContainer: {
 		flexDirection: 'row',

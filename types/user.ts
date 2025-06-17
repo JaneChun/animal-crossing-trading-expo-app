@@ -4,6 +4,12 @@ export interface PublicUserInfo {
 	islandName: string;
 	photoURL: string;
 	pushToken?: string;
+	review: {
+		total: number;
+		positive: number;
+		negative: number;
+	};
+	badgeGranted: boolean;
 }
 
 export interface UserInfo extends PublicUserInfo {
