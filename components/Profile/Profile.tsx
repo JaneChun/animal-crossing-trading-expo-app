@@ -24,8 +24,8 @@ const Profile = ({
 				/>
 			</View>
 			<View style={styles.nameContainer}>
-				<Text style={styles.displayName}>{profileInfo?.displayName}</Text>
-				{profileInfo?.badgeGranted && (
+				<Text style={styles.displayName}>{profileInfo.displayName}</Text>
+				{profileInfo.review.badgeGranted && (
 					<MaterialIcons
 						name='verified'
 						color={Colors.icon_primary}

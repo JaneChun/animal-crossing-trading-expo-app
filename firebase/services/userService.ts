@@ -1,13 +1,19 @@
 import {
-	DEFAULT_USER_BADGE_GRANTED,
 	DEFAULT_USER_DISPLAY_NAME,
 	DEFAULT_USER_ISLAND_NAME,
 	DEFAULT_USER_PHOTO_URL,
+	DEFAULT_USER_REPORT,
 	DEFAULT_USER_REVIEW,
 } from '@/constants/defaultUserInfo';
 import { db } from '@/fbase';
 import { ReviewValue } from '@/types/review';
-import { OauthType, PublicUserInfo, UserInfo } from '@/types/user';
+import {
+	OauthType,
+	PublicUserInfo,
+	UserInfo,
+	UserReport,
+	UserReview,
+} from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import {
 	collection,
@@ -26,6 +32,7 @@ import {
 	queryDocs,
 	updateDocToFirestore,
 } from '../core/firestoreService';
+import { getRecent30DaysReportCount } from './reviewService';
 
 export const getUserInfo = async (uid: string): Promise<UserInfo | null> => {
 	return firestoreRequest('나의 정보 조회', async () => {
@@ -101,7 +108,7 @@ export const getPublicUserInfo = async (
 				islandName: docData.islandName || DEFAULT_USER_ISLAND_NAME,
 				photoURL: docData.photoURL || DEFAULT_USER_PHOTO_URL,
 				review: docData.review || DEFAULT_USER_REVIEW,
-				badgeGranted: docData.badgeGranted || DEFAULT_USER_BADGE_GRANTED,
+				report: docData.report || DEFAULT_USER_REPORT,
 			};
 
 			return userInfo;
@@ -140,7 +147,7 @@ export const getPublicUserInfos = async (
 				islandName: user.islandName || DEFAULT_USER_ISLAND_NAME,
 				photoURL: user.photoURL || DEFAULT_USER_PHOTO_URL,
 				review: user.review || DEFAULT_USER_REVIEW,
-				badgeGranted: user.badgeGranted || DEFAULT_USER_BADGE_GRANTED,
+				report: user.report || DEFAULT_USER_REPORT,
 			};
 		});
 
@@ -260,32 +267,69 @@ export const updateUserReview = async ({
 	userId: string;
 	value: ReviewValue;
 }) => {
-	return firestoreRequest('리뷰 저장', async () => {
-		const userInfo = await getPublicUserInfo(userId);
+	const userInfo = await getPublicUserInfo(userId);
 
-		const prevReview = userInfo.review || {
-			total: 0,
-			positive: 0,
-			negative: 0,
-		};
+	const {
+		review = { total: 0, positive: 0, negative: 0, badgeGranted: false },
+	} = userInfo;
 
-		const newReview = {
-			total: prevReview.total + 1,
-			positive: prevReview.positive + (value === 1 ? 1 : 0),
-			negative: prevReview.negative + (value === -1 ? 1 : 0),
-		};
+	const total = review.total + 1;
+	const positive = review.positive + (value === 1 ? 1 : 0);
+	const negative = review.negative + (value === -1 ? 1 : 0);
+	const badgeGranted = total >= 10 && positive / total >= 0.8; // 뱃지 부여 조건: total >= 10, 긍정 비율 ≥ 80%
 
-		// 뱃지 부여 조건: total >= 10, 긍정 비율 ≥ 80%
-		const badgeGranted =
-			newReview.total >= 10 && newReview.positive / newReview.total >= 0.8;
+	const updatedReview: UserReview = {
+		total,
+		positive,
+		negative,
+		badgeGranted,
+	};
 
-		updateDocToFirestore({
-			id: userId,
-			collection: 'Users',
-			requestData: {
-				review: newReview,
-				badgeGranted,
-			},
-		});
+	updateDocToFirestore({
+		id: userId,
+		collection: 'Users',
+		requestData: {
+			review: updatedReview,
+		},
+	});
+};
+
+export const updateUserReport = async ({ userId }: { userId: string }) => {
+	const userInfo = await getPublicUserInfo(userId);
+	const { report = { total: 0, suspendUntil: null } } = userInfo;
+
+	const total = report.total + 1;
+	const recent30Days = await getRecent30DaysReportCount({ userId });
+
+	let suspendUntil = report.suspendUntil;
+	let needsAdminReview = false;
+	const now = Date.now();
+
+	// 최근 30일 신고 5회 이상 → 3일 정지
+	if (recent30Days >= 5) {
+		suspendUntil = Timestamp.fromDate(new Date(now + 3 * 24 * 60 * 60 * 1000));
+	}
+
+	// 누적 신고 10회 이상 → 장기 정지 + 관리자 플래그
+	if (total >= 10) {
+		suspendUntil = Timestamp.fromDate(
+			new Date(now + 365 * 24 * 60 * 60 * 1000),
+		);
+		needsAdminReview = true;
+	}
+
+	const updatedReport: UserReport = {
+		total,
+		recent30Days,
+		suspendUntil,
+		...(needsAdminReview ? { needsAdminReview } : {}),
+	};
+
+	await updateDocToFirestore({
+		id: userId,
+		collection: 'Users',
+		requestData: {
+			report: updatedReport,
+		},
 	});
 };

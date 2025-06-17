@@ -77,3 +77,23 @@ export const sendReviewSystemMessage = async ({
 		}),
 	);
 };
+
+export const getRecent30DaysReportCount = async ({
+	userId,
+}: {
+	userId: string;
+}): Promise<number> => {
+	const reportRef = collection(db, 'Report');
+	const now = new Date();
+	const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+	const q = query(
+		reportRef,
+		where('reporteeId', '==', userId),
+		where('createdAt', '>=', Timestamp.fromDate(thirtyDaysAgo)),
+	);
+
+	const recent30DaysReport = await queryDocs(q);
+
+	return recent30DaysReport.length;
+};
