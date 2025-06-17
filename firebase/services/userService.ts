@@ -7,13 +7,7 @@ import {
 } from '@/constants/defaultUserInfo';
 import { db } from '@/fbase';
 import { ReviewValue } from '@/types/review';
-import {
-	OauthType,
-	PublicUserInfo,
-	UserInfo,
-	UserReport,
-	UserReview,
-} from '@/types/user';
+import { OauthType, PublicUserInfo, UserInfo, UserReview } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import {
 	collection,
@@ -32,7 +26,6 @@ import {
 	queryDocs,
 	updateDocToFirestore,
 } from '../core/firestoreService';
-import { getRecent30DaysReportCount } from './reviewService';
 
 export const getUserInfo = async (uid: string): Promise<UserInfo | null> => {
 	return firestoreRequest('나의 정보 조회', async () => {
@@ -290,46 +283,6 @@ export const updateUserReview = async ({
 		collection: 'Users',
 		requestData: {
 			review: updatedReview,
-		},
-	});
-};
-
-export const updateUserReport = async ({ userId }: { userId: string }) => {
-	const userInfo = await getPublicUserInfo(userId);
-	const { report = { total: 0, suspendUntil: null } } = userInfo;
-
-	const total = report.total + 1;
-	const recent30Days = await getRecent30DaysReportCount({ userId });
-
-	let suspendUntil = report.suspendUntil;
-	let needsAdminReview = false;
-	const now = Date.now();
-
-	// 최근 30일 신고 5회 이상 → 3일 정지
-	if (recent30Days >= 5) {
-		suspendUntil = Timestamp.fromDate(new Date(now + 3 * 24 * 60 * 60 * 1000));
-	}
-
-	// 누적 신고 10회 이상 → 장기 정지 + 관리자 플래그
-	if (total >= 10) {
-		suspendUntil = Timestamp.fromDate(
-			new Date(now + 365 * 24 * 60 * 60 * 1000),
-		);
-		needsAdminReview = true;
-	}
-
-	const updatedReport: UserReport = {
-		total,
-		recent30Days,
-		suspendUntil,
-		...(needsAdminReview ? { needsAdminReview } : {}),
-	};
-
-	await updateDocToFirestore({
-		id: userId,
-		collection: 'Users',
-		requestData: {
-			report: updatedReport,
 		},
 	});
 };

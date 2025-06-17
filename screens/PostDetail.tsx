@@ -6,6 +6,7 @@ import CommentsList from '@/components/PostDetail/CommentsList';
 import CreatedAt from '@/components/PostDetail/CreatedAt';
 import ImageCarousel from '@/components/PostDetail/ImageCarousel';
 import ItemSummaryList from '@/components/PostDetail/ItemSummaryList';
+import ReportModal from '@/components/PostDetail/ReportModal';
 import Title from '@/components/PostDetail/Title';
 import Total from '@/components/PostDetail/Total';
 import UserInfo from '@/components/PostDetail/UserInfo';
@@ -15,6 +16,7 @@ import KeyboardStickyLayout from '@/components/ui/layout/KeyboardStickyLayout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
+import { createReport } from '@/firebase/services/reportService';
 import { sendReviewSystemMessage } from '@/firebase/services/reviewService';
 import { useMarkAsRead } from '@/hooks/mutation/notification/useMarkAsRead';
 import { useDeletePost } from '@/hooks/mutation/post/useDeletePost';
@@ -27,6 +29,7 @@ import { goBack } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
 import { PostDetailRouteProp, RootStackNavigation } from '@/types/navigation';
 import { Collection, CommunityType, MarketType } from '@/types/post';
+import { CreateReportRequest, ReportCategory } from '@/types/report';
 import { navigateToEditPost } from '@/utilities/navigationHelpers';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
@@ -41,7 +44,10 @@ const PostDetail = () => {
 	const { id = '', collectionName = '', notificationId = '' } = route.params;
 
 	const scrollableContentRef = useRef<any>(null);
-	const [shouldScroll, setShouldScroll] = useState(false);
+	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
+
+	const [isReportModalVisible, setIsReportModalVisible] =
+		useState<boolean>(false);
 
 	const { data: post, isLoading: isPostFetching } = usePostDetail(
 		collectionName as Collection,
@@ -60,27 +66,20 @@ const PostDetail = () => {
 	const { isLoading: isCommentUploading, setIsLoading: setIsCommentUploading } =
 		useLoading();
 
-	const showDoneOption = collectionName === 'Boards' && post?.type !== 'done';
-
 	// 헤더에 글 수정/삭제 아이콘 설정
 	useEffect(() => {
-		if (!post || !collectionName || post.creatorId !== userInfo?.uid) return;
+		if (!post || !collectionName) return;
 
-		stackNavigation.setOptions({
-			headerRight: () => (
-				<ActionSheetButton
-					color={Colors.font_black}
-					size={18}
-					destructiveButtonIndex={showDoneOption ? 2 : 1}
-					options={[
-						...(showDoneOption
-							? [
-									{
-										label: '거래완료',
-										onPress: closePost,
-									},
-							  ]
-							: []),
+		const isAuthor = post.creatorId === userInfo?.uid;
+		const showDoneOption = collectionName === 'Boards' && post?.type !== 'done';
+
+		const options = [
+			...(isAuthor
+				? [
+						showDoneOption && {
+							label: '거래완료',
+							onPress: closePost,
+						},
 						{
 							label: '수정',
 							onPress: () => navigateToEditPost({ postId: id }),
@@ -89,9 +88,25 @@ const PostDetail = () => {
 							label: '삭제',
 							onPress: handleDeletePost,
 						},
+				  ]
+				: [
+						{
+							label: '신고',
+							onPress: () => setIsReportModalVisible(true),
+						},
+				  ]),
+			{ label: '취소', onPress: () => {} },
+		].filter(Boolean) as { label: string; onPress: () => void }[];
 
-						{ label: '취소', onPress: () => {} },
-					]}
+		stackNavigation.setOptions({
+			headerRight: () => (
+				<ActionSheetButton
+					color={Colors.font_black}
+					size={18}
+					destructiveButtonIndex={
+						isAuthor ? (showDoneOption ? 2 : 1) : undefined
+					}
+					options={options}
 				/>
 			),
 		});
@@ -144,6 +159,31 @@ const PostDetail = () => {
 		});
 	};
 
+	const reportUser = async ({
+		category,
+		detail = '',
+	}: {
+		category: ReportCategory;
+		detail?: string;
+	}) => {
+		try {
+			if (!post || !userInfo) return;
+			const postReport: CreateReportRequest = {
+				reporterId: userInfo.uid,
+				reporteeId: post.creatorId,
+				postId: post.id,
+				category,
+				detail,
+			};
+
+			await createReport(postReport);
+
+			showToast('success', '신고가 제출되었습니다.');
+		} catch (e) {
+			showToast('error', '신고 제출 중 오류가 발생했습니다.');
+		}
+	};
+
 	const scrollToBottom = () => {
 		if (shouldScroll) {
 			scrollableContentRef.current?.scrollToEnd({ animated: true });
@@ -165,76 +205,89 @@ const PostDetail = () => {
 	}
 
 	return (
-		<KeyboardStickyLayout
-			scrollableContentRef={scrollableContentRef}
-			containerStyle={styles.container}
-			scrollableContent={
-				<View style={styles.content}>
-					{/* 헤더 */}
-					<View style={styles.header}>
-						<View style={[styles.typeAndMenuRow, { marginBottom: 8 }]}>
-							{isBoardPost(post, collectionName) && (
-								<MarketTypeBadge type={post.type as MarketType} />
-							)}
+		<>
+			<KeyboardStickyLayout
+				scrollableContentRef={scrollableContentRef}
+				containerStyle={styles.container}
+				scrollableContent={
+					<View style={styles.content}>
+						{/* 헤더 */}
+						<View style={styles.header}>
+							<View style={[styles.typeAndMenuRow, { marginBottom: 8 }]}>
+								{isBoardPost(post, collectionName) && (
+									<MarketTypeBadge type={post.type as MarketType} />
+								)}
 
+								{isCommunityPost(post, collectionName) && (
+									<CommunityTypeBadge type={post.type as CommunityType} />
+								)}
+							</View>
+
+							<Title title={post.title} containerStyle={{ marginBottom: 4 }} />
+
+							<View style={styles.infoContainer}>
+								<UserInfo
+									userId={post.creatorId}
+									displayName={post.creatorDisplayName}
+									islandName={post.creatorIslandName}
+								/>
+								<CreatedAt createdAt={post.createdAt} />
+							</View>
+						</View>
+
+						{/* 본문 */}
+						<View style={styles.body}>
 							{isCommunityPost(post, collectionName) && (
-								<CommunityTypeBadge type={post.type as CommunityType} />
-							)}
-						</View>
-
-						<Title title={post.title} containerStyle={{ marginBottom: 4 }} />
-
-						<View style={styles.infoContainer}>
-							<UserInfo
-								userId={post.creatorId}
-								displayName={post.creatorDisplayName}
-								islandName={post.creatorIslandName}
-							/>
-							<CreatedAt createdAt={post.createdAt} />
-						</View>
-					</View>
-
-					{/* 본문 */}
-					<View style={styles.body}>
-						{isCommunityPost(post, collectionName) && (
-							<ImageCarousel
-								images={post.images}
-								containerStyle={{ marginBottom: 16 }}
-							/>
-						)}
-						<Body body={post.body} containerStyle={{ marginBottom: 24 }} />
-
-						{isBoardPost(post, collectionName) && (
-							<>
-								<ItemSummaryList
-									cart={post.cart}
+								<ImageCarousel
+									images={post.images}
 									containerStyle={{ marginBottom: 16 }}
 								/>
-								<Total cart={post.cart} containerStyle={{ marginBottom: 24 }} />
-							</>
-						)}
-					</View>
+							)}
+							<Body body={post.body} containerStyle={{ marginBottom: 24 }} />
 
-					{/* 댓글 */}
-					<CommentsList
+							{isBoardPost(post, collectionName) && (
+								<>
+									<ItemSummaryList
+										cart={post.cart}
+										containerStyle={{ marginBottom: 16 }}
+									/>
+									<Total
+										cart={post.cart}
+										containerStyle={{ marginBottom: 24 }}
+									/>
+								</>
+							)}
+						</View>
+
+						{/* 댓글 */}
+						<CommentsList
+							postId={post.id}
+							postCreatorId={post.creatorId}
+							comments={comments}
+							chatRoomIds={
+								isBoardPost(post, collectionName) ? post.chatRoomIds : []
+							}
+							scrollToBottom={scrollToBottom}
+						/>
+					</View>
+				}
+				bottomContent={
+					<CommentInput
 						postId={post.id}
-						postCreatorId={post.creatorId}
-						comments={comments}
-						chatRoomIds={
-							isBoardPost(post, collectionName) ? post.chatRoomIds : []
-						}
-						scrollToBottom={scrollToBottom}
+						setIsCommentUploading={setIsCommentUploading}
+						setShouldScroll={setShouldScroll}
 					/>
-				</View>
-			}
-			bottomContent={
-				<CommentInput
-					postId={post.id}
-					setIsCommentUploading={setIsCommentUploading}
-					setShouldScroll={setShouldScroll}
+				}
+			/>
+
+			{isReportModalVisible && (
+				<ReportModal
+					isVisible={isReportModalVisible}
+					onClose={() => setIsReportModalVisible(false)}
+					onSubmit={({ category, detail }) => reportUser({ category, detail })}
 				/>
-			}
-		/>
+			)}
+		</>
 	);
 };
 

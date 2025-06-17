@@ -41,7 +41,7 @@ const EditProfileModal = ({
 		if (!userInfo) return;
 
 		setValue('displayName', userInfo.displayName);
-		setValue('islandName', userInfo.islandName);
+		setValue('islandName', userInfo?.islandName ?? '');
 
 		if (userInfo.photoURL) {
 			setValue('originalImageUrl', userInfo.photoURL);

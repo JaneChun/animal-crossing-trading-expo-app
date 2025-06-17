@@ -70,3 +70,11 @@ export const ITEM_CATEGORIES = [
 	{ KR: '미술품', EN: 'Artwork' },
 	{ KR: '기타', EN: 'Other' },
 ] as const;
+
+export const REPORT_CATEGORIES = [
+	{ KR: '사기', EN: 'fraud' },
+	{ KR: '욕설/비방', EN: 'abuse' },
+	{ KR: '광고/도배', EN: 'spam' },
+	{ KR: '음란/부적절 콘텐츠', EN: 'inappropriate' },
+	{ KR: '기타', EN: 'other' },
+];
