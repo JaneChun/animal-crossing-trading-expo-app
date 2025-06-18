@@ -5,25 +5,17 @@ import { collection, limit, query, Timestamp, where } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
 import { addDocToFirestore, queryDocs } from '../core/firestoreService';
 import { sendMessage } from './chatService';
-import { updateUserReview } from './userService';
 
 export const createReview = async (
 	requestData: CreateReviewParams,
 ): Promise<string> => {
 	return firestoreRequest('리뷰 생성', async () => {
-		// 리뷰 생성
 		const createdId = await addDocToFirestore({
 			directory: 'Reviews',
 			requestData: {
 				...requestData,
 				createdAt: Timestamp.now(),
 			},
-		});
-
-		// 사용자 데이터 수정
-		await updateUserReview({
-			userId: requestData.receiverId,
-			value: requestData.value,
 		});
 
 		return createdId;

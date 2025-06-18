@@ -5,7 +5,6 @@ import { addDocToFirestore } from '../core/firestoreService';
 
 export const createReport = async (requestData: CreateReportRequest) => {
 	return firestoreRequest('유저 신고', async () => {
-		// 신고 생성
 		const createdId = await addDocToFirestore({
 			directory: 'Reports',
 			requestData: {

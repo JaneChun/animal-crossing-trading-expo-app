@@ -229,3 +229,50 @@ export const updateUserReport = onDocumentCreated(
 		}
 	},
 );
+
+export const updateUserReview = onDocumentCreated(
+	'Reviews/{reviewId}',
+	async (event) => {
+		const snapshot = event.data;
+
+		if (!snapshot) return;
+
+		const review = snapshot.data();
+		const { receiverId, value } = review;
+
+		if (!receiverId) return;
+
+		try {
+			// 유저 정보 가져오기
+			const userDocRef = db.collection('Users').doc(receiverId);
+			const userSnap = await userDocRef.get();
+
+			if (!userSnap.exists) return;
+
+			const userInfo = userSnap.data();
+			const userReview = userInfo?.review || {
+				total: 0,
+				positive: 0,
+				negative: 0,
+				badgeGranted: false,
+			};
+
+			const total = userReview.total + 1;
+			const positive = userReview.positive + (value === 1 ? 1 : 0);
+			const negative = userReview.negative + (value === -1 ? 1 : 0);
+			const badgeGranted = total >= 10 && positive / total >= 0.8; // 뱃지 부여 조건: total >= 10, 긍정 비율 ≥ 80%
+
+			// 유저 도큐먼트 업데이트
+			await userDocRef.update({
+				review: {
+					total,
+					positive,
+					negative,
+					badgeGranted,
+				},
+			});
+		} catch (e) {
+			console.error(e);
+		}
+	},
+);
