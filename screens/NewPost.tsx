@@ -4,7 +4,6 @@ import Button from '@/components/ui/Button';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
-import { auth } from '@/fbase';
 import { NewPostFormValues } from '@/hooks/form/NewPost/newPostFormSchema';
 import { useNewPostForm } from '@/hooks/form/NewPost/useNewPostForm';
 import { useCreatePost } from '@/hooks/mutation/post/useCreatePost';
@@ -18,7 +17,6 @@ import { ImageType } from '@/types/image';
 import { RootStackNavigation, type NewPostRouteProp } from '@/types/navigation';
 import { CartItem, CommunityType, Item, MarketType } from '@/types/post';
 import { handleImageUpload } from '@/utilities/handleImageUpload';
-import { navigateToLogin } from '@/utilities/navigationHelpers';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
@@ -113,22 +111,8 @@ const NewPost = () => {
 		}
 	}, [isSubmitting, isCreating, isUpdating]);
 
-	const validateUser = () => {
-		if (!userInfo || !auth.currentUser) {
-			showToast('warn', '글 쓰기는 로그인 후 가능합니다.');
-			return false;
-		}
-		return true;
-	};
-
 	const onSubmit = async (formData: NewPostFormValues) => {
 		setIsSubmitting(true);
-
-		if (!validateUser()) {
-			navigateToLogin();
-			setIsSubmitting(false);
-			return;
-		}
 
 		try {
 			// 결과적으로 사용할 이미지 URL 배열

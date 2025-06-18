@@ -1,4 +1,5 @@
 // RootNavigator.tsx
+import AuthGuard from '@/components/ui/AuthGuard';
 import { Colors } from '@/constants/Color';
 import ChatRoom from '@/screens/ChatRoom';
 import EditComment from '@/screens/EditComment';
@@ -20,7 +21,7 @@ const RootStackNavigator = () => {
 		headerShown: isAuthLoading ? false : true,
 		title: '',
 		headerTintColor: Colors.font_black,
-		headerBackButtonDisplayMode: 'minimal',
+		headerBackButtonDisplayMode: 'minimal' as 'minimal',
 	};
 
 	return (
@@ -34,9 +35,14 @@ const RootStackNavigator = () => {
 				component={PostDetail}
 				options={commonOptions}
 			/>
+
 			<RootStack.Screen
 				name='NewPost'
-				component={NewPost}
+				children={() => (
+					<AuthGuard>
+						<NewPost />
+					</AuthGuard>
+				)}
 				options={{ ...commonOptions, title: '새 글 작성' }}
 			/>
 			<RootStack.Screen
@@ -46,7 +52,11 @@ const RootStackNavigator = () => {
 			/>
 			<RootStack.Screen
 				name='EditComment'
-				component={EditComment}
+				children={() => (
+					<AuthGuard>
+						<EditComment />
+					</AuthGuard>
+				)}
 				options={{
 					...commonOptions,
 					title: '댓글 수정',
@@ -55,12 +65,20 @@ const RootStackNavigator = () => {
 			/>
 			<RootStack.Screen
 				name='ChatRoom'
-				component={ChatRoom}
+				children={() => (
+					<AuthGuard>
+						<ChatRoom />
+					</AuthGuard>
+				)}
 				options={{ ...commonOptions, headerShown: false }}
 			/>
 			<RootStack.Screen
 				name='Setting'
-				component={Setting}
+				children={() => (
+					<AuthGuard>
+						<Setting />
+					</AuthGuard>
+				)}
 				options={{ ...commonOptions, title: '설정' }}
 			/>
 			<RootStack.Screen

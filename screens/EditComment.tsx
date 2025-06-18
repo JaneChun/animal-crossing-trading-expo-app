@@ -70,7 +70,6 @@ const EditComment = () => {
 
 		if (!postId) {
 			showToast('error', '게시글을 찾을 수 없습니다.');
-			navigateToLogin();
 			return;
 		}
 

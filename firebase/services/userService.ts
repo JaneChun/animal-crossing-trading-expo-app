@@ -52,16 +52,16 @@ export const getUserInfo = async (uid: string): Promise<UserInfo | null> => {
 
 export const saveUserInfo = async ({
 	uid,
-	displayName,
-	islandName,
-	photoURL,
+	displayName = '',
+	islandName = '',
+	photoURL = '',
 	oauthType,
 	lastLogin,
 }: {
 	uid: string;
 	displayName: string;
-	islandName: string;
-	photoURL: string;
+	islandName?: string;
+	photoURL?: string;
 	oauthType: OauthType;
 	lastLogin?: Timestamp;
 }): Promise<void> => {
@@ -69,9 +69,9 @@ export const saveUserInfo = async ({
 		await setDoc(
 			doc(db, 'Users', uid),
 			{
-				displayName: displayName ?? '',
-				photoURL: photoURL ?? '',
-				islandName: islandName ?? '',
+				displayName,
+				photoURL,
+				islandName,
 				createdAt: Timestamp.now(),
 				lastLogin,
 				oauthType,
