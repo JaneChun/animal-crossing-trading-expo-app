@@ -6,7 +6,7 @@ export default {
 		slug: 'animal-crossing-trading-app',
 		version: '1.0.0',
 		orientation: 'portrait',
-		icon: './assets/images/logo.png',
+		icon: './assets/images/app_icon.png',
 		scheme: 'animal-crossing-trading-app',
 		userInterfaceStyle: 'automatic',
 		newArchEnabled: true,

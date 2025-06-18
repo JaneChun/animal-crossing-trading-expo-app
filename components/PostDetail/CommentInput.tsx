@@ -1,4 +1,3 @@
-import { auth } from '@/fbase';
 import { useCreateComment } from '@/hooks/mutation/comment/useCreateComment';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
@@ -33,13 +32,7 @@ const CommentInput = ({
 	};
 
 	const onSubmit = async () => {
-		if (!userInfo || !auth.currentUser) {
-			showToast('warn', '댓글 쓰기는 로그인 후 가능합니다.');
-			navigateToLogin();
-			return;
-		}
-
-		if (!userInfo.islandName) {
+		if (!userInfo?.islandName) {
 			showLongToast('warn', '섬 이름이 있어야 다른 유저와 거래할 수 있어요!');
 			navigateToMyProfile();
 			return;
@@ -86,7 +79,10 @@ const CommentInput = ({
 			setInput={setCommentInput}
 			onPress={onSubmit}
 			style={{ borderTopWidth: 1 }}
-			placeholder='댓글을 입력해주세요.'
+			disabled={!userInfo}
+			placeholder={
+				userInfo ? '댓글을 입력해주세요.' : '댓글 쓰기는 로그인 후 가능합니다.'
+			}
 		/>
 	);
 };
