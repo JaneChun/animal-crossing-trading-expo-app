@@ -99,16 +99,17 @@ const PostDetail = () => {
 		].filter(Boolean) as { label: string; onPress: () => void }[];
 
 		stackNavigation.setOptions({
-			headerRight: () => (
-				<ActionSheetButton
-					color={Colors.font_black}
-					size={18}
-					destructiveButtonIndex={
-						isAuthor ? (showDoneOption ? 2 : 1) : undefined
-					}
-					options={options}
-				/>
-			),
+			headerRight: () =>
+				userInfo ? (
+					<ActionSheetButton
+						color={Colors.font_black}
+						size={18}
+						destructiveButtonIndex={
+							isAuthor ? (showDoneOption ? 2 : 1) : undefined
+						}
+						options={options}
+					/>
+				) : null,
 		});
 	}, [post, collectionName, userInfo?.uid, id, stackNavigation]);
 
