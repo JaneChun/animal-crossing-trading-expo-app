@@ -1,8 +1,10 @@
 import { Colors } from '@/constants/Color';
+import { auth } from '@/fbase';
 import { useInfinitePosts } from '@/hooks/query/post/useInfinitePosts';
 import { useAuthStore } from '@/stores/AuthStore';
 import { PostListProps } from '@/types/components';
 import {
+	navigateToLogin,
 	navigateToMyProfile,
 	navigateToNewPost,
 } from '@/utilities/navigationHelpers';
@@ -10,7 +12,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import React from 'react';
 import { FlatList, Pressable, StyleSheet, Text } from 'react-native';
 import LoadingIndicator from '../ui/loading/LoadingIndicator';
-import { showLongToast } from '../ui/Toast';
+import { showLongToast, showToast } from '../ui/Toast';
 import PostUnit from './PostUnit';
 
 const PostList = ({
@@ -35,7 +37,13 @@ const PostList = ({
 	const flatListData = data?.pages.flatMap((page) => page.data) ?? [];
 
 	const onPressAddPostButton = () => {
-		if (!userInfo?.islandName) {
+		if (!userInfo || !auth.currentUser) {
+			showToast('warn', '글 쓰기는 로그인 후 가능합니다.');
+			navigateToLogin();
+			return;
+		}
+
+		if (!userInfo.islandName) {
 			showLongToast('warn', '섬 이름이 있어야 다른 유저와 거래할 수 있어요!');
 			navigateToMyProfile();
 			return;

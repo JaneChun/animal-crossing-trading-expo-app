@@ -1,6 +1,7 @@
 import { useAuthStore } from '@/stores/AuthStore';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
 import { useEffect } from 'react';
+import EmptyIndicator from './EmptyIndicator';
 import LoadingIndicator from './loading/LoadingIndicator';
 import { showToast } from './Toast';
 
@@ -14,8 +15,12 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 		}
 	}, [userInfo, isAuthLoading]);
 
-	if (isAuthLoading || !userInfo) {
+	if (isAuthLoading) {
 		return <LoadingIndicator />;
+	}
+
+	if (!userInfo) {
+		return <EmptyIndicator message='접근 권한이 없습니다.' />;
 	}
 
 	return <>{children}</>;
