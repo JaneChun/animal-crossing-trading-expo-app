@@ -6,8 +6,7 @@ import {
 	DEFAULT_USER_REVIEW,
 } from '@/constants/defaultUserInfo';
 import { db } from '@/fbase';
-import { ReviewValue } from '@/types/review';
-import { OauthType, PublicUserInfo, UserInfo, UserReview } from '@/types/user';
+import { PublicUserInfo, UserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import {
 	collection,
@@ -38,46 +37,19 @@ export const getUserInfo = async (uid: string): Promise<UserInfo | null> => {
 			return null;
 		}
 
-		return {
-			uid,
-			displayName: docData.displayName,
-			photoURL: docData.photoURL,
-			islandName: docData.islandName,
-			createdAt: docData.createdAt,
-			lastLogin: docData.lastLogin,
-			oauthType: docData.oauthType,
-		};
+		const { id, ...userData } = docData;
+
+		return { uid: docData.id, ...userData };
 	});
 };
 
-export const saveUserInfo = async ({
-	uid,
-	displayName = '',
-	islandName = '',
-	photoURL = '',
-	oauthType,
-	lastLogin,
-}: {
-	uid: string;
-	displayName: string;
-	islandName?: string;
-	photoURL?: string;
-	oauthType: OauthType;
-	lastLogin?: Timestamp;
-}): Promise<void> => {
+export const saveUserInfo = async (
+	userInfo: Partial<UserInfo> & { uid: string },
+): Promise<void> => {
+	const { uid, ...data } = userInfo;
+
 	return firestoreRequest('나의 정보 저장', async () => {
-		await setDoc(
-			doc(db, 'Users', uid),
-			{
-				displayName,
-				photoURL,
-				islandName,
-				createdAt: Timestamp.now(),
-				lastLogin,
-				oauthType,
-			},
-			{ merge: true },
-		);
+		await setDoc(doc(db, 'Users', uid), data, { merge: true });
 	});
 };
 
@@ -183,28 +155,6 @@ const archiveUserPosts = async (uid: string) => {
 	await batch.commit();
 };
 
-export const restoreUserPosts = async (uid: string) => {
-	const collections = ['Boards', 'Communities'];
-	const batch = writeBatch(db);
-
-	for (const col of collections) {
-		const colRef = collection(db, col);
-		const q = query(
-			colRef,
-			where('creatorId', '==', uid),
-			where('isDeleted', '==', true),
-		);
-		const docs = await queryDocs(q);
-
-		docs.forEach(({ id }) => {
-			const docRef = doc(db, col, id);
-			batch.update(docRef, { isDeleted: false });
-		});
-	}
-
-	await batch.commit();
-};
-
 export const moveToDeletedUsers = async (userInfo: UserInfo) => {
 	// DeletedUsers 컬렉션에 추가
 	await addDocToFirestore({
@@ -249,40 +199,6 @@ export const setActiveChatRoom = async ({
 		collection: 'Users',
 		requestData: {
 			activeChatRoomId: chatId,
-		},
-	});
-};
-
-export const updateUserReview = async ({
-	userId,
-	value,
-}: {
-	userId: string;
-	value: ReviewValue;
-}) => {
-	const userInfo = await getPublicUserInfo(userId);
-
-	const {
-		review = { total: 0, positive: 0, negative: 0, badgeGranted: false },
-	} = userInfo;
-
-	const total = review.total + 1;
-	const positive = review.positive + (value === 1 ? 1 : 0);
-	const negative = review.negative + (value === -1 ? 1 : 0);
-	const badgeGranted = total >= 10 && positive / total >= 0.8; // 뱃지 부여 조건: total >= 10, 긍정 비율 ≥ 80%
-
-	const updatedReview: UserReview = {
-		total,
-		positive,
-		negative,
-		badgeGranted,
-	};
-
-	updateDocToFirestore({
-		id: userId,
-		collection: 'Users',
-		requestData: {
-			review: updatedReview,
 		},
 	});
 };

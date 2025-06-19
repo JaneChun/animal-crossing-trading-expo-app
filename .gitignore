@@ -42,3 +42,5 @@ yarn-error.*
 config.gypi
 
 functions/src/admin
+
+todo.ini

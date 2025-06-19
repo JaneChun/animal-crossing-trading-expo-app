@@ -52,28 +52,36 @@ export const useChatSubscriptionInitializer = () => {
 			orderBy('updatedAt', 'desc'), // 최신 메시지가 있는 채팅방부터 정렬
 		);
 
-		const unsubscribe = onSnapshot(q, async () => {
-			setIsLoading(true);
+		const unsubscribe = onSnapshot(
+			q,
+			async () => {
+				setIsLoading(true);
 
-			const { data } = await fetchAndPopulateReceiverInfo<
-				Chat,
-				ChatWithReceiverInfo
-			>(q, userInfo.uid);
-			setChats(data);
+				const { data } = await fetchAndPopulateReceiverInfo<
+					Chat,
+					ChatWithReceiverInfo
+				>(q, userInfo.uid);
+				setChats(data);
 
-			// 안읽은 알림 수 계산 & 전역 상태에 저장
-			const totalUnread = data.reduce(
-				(acc: number, chat: ChatWithReceiverInfo) => {
-					const count = chat.unreadCount?.[userInfo.uid] || 0;
-					return acc + Number(count);
-				},
-				0,
-			);
-			setUnreadCount(totalUnread);
+				// 안읽은 알림 수 계산 & 전역 상태에 저장
+				const totalUnread = data.reduce(
+					(acc: number, chat: ChatWithReceiverInfo) => {
+						const count = chat.unreadCount?.[userInfo.uid] || 0;
+						return acc + Number(count);
+					},
+					0,
+				);
+				setUnreadCount(totalUnread);
 
-			setIsLoading(false);
-		});
+				setIsLoading(false);
+			},
+			(e) => {
+				if (e.code === 'permission-denied') {
+					console.warn('⚠️ Firestore 권한 에러: Chats 리스너 접근 불가');
+				}
+			},
+		);
 
 		return () => unsubscribe();
-	}, [userInfo]);
+	}, [userInfo?.uid]);
 };

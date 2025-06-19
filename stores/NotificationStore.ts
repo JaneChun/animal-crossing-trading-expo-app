@@ -53,27 +53,37 @@ export const useNotificationSubscriptionInitializer = () => {
 			orderBy('createdAt', 'desc'), // 최신순 정렬
 		);
 
-		const unsubscribe = onSnapshot(q, async () => {
-			setIsLoading(true);
+		const unsubscribe = onSnapshot(
+			q,
+			async () => {
+				setIsLoading(true);
 
-			const { data = [] } = await fetchAndPopulate<
-				Notification,
-				PopulatedNotification
-			>(q);
+				const { data = [] } = await fetchAndPopulate<
+					Notification,
+					PopulatedNotification
+				>(q);
 
-			setNotifications(data);
+				setNotifications(data);
 
-			// 안읽은 알림 수 계산 & 전역 상태에 저장
-			const totalUnread = data.reduce(
-				(acc: number, { isRead }: { isRead: boolean }) =>
-					!isRead ? acc + 1 : acc,
-				0,
-			);
-			setUnreadCount(totalUnread);
+				// 안읽은 알림 수 계산 & 전역 상태에 저장
+				const totalUnread = data.reduce(
+					(acc: number, { isRead }: { isRead: boolean }) =>
+						!isRead ? acc + 1 : acc,
+					0,
+				);
+				setUnreadCount(totalUnread);
 
-			setIsLoading(false);
-		});
+				setIsLoading(false);
+			},
+			(e) => {
+				if (e.code === 'permission-denied') {
+					console.warn(
+						'⚠️ Firestore 권한 에러: Notifications 리스너 접근 불가',
+					);
+				}
+			},
+		);
 
 		return () => unsubscribe();
-	}, [userInfo]);
+	}, [userInfo?.uid]);
 };

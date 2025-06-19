@@ -26,8 +26,8 @@ export type UserReport = {
 
 export interface UserInfo extends PublicUserInfo {
 	oauthType: OauthType;
-	createdAt: Date;
-	lastLogin: Date;
+	createdAt: Timestamp;
+	lastLogin: Timestamp;
 }
 
 export type OauthType = 'kakao' | 'naver';

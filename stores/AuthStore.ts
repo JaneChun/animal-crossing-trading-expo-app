@@ -1,24 +1,27 @@
 import {
+	ensureUserExists,
+	getFirebaseCustomToken,
+	loginWithKakao,
+	loginWithNaver,
+	updateLastLogin,
+} from '@/firebase/services/authService';
+import {
 	archiveUserData,
 	getUserInfo,
 	savePushTokenToFirestore,
-	saveUserInfo,
 } from '@/firebase/services/userService';
-import { OauthType, UserInfo } from '@/types/user';
+import { UserInfo } from '@/types/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
 import { login, logout } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
-import axios from 'axios';
 import {
 	deleteUser,
 	OAuthProvider,
 	onAuthStateChanged,
 	reauthenticateWithCredential,
-	signInWithCredential,
 	signInWithCustomToken,
 } from 'firebase/auth';
-import { Timestamp } from 'firebase/firestore';
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
 import { create } from 'zustand';
@@ -29,7 +32,6 @@ import { usePushNotificationStore } from './PushNotificationStore';
 type AuthState = {
 	userInfo: UserInfo | null;
 	setUserInfo: (user: UserInfo | null) => void;
-	oauthType: OauthType | null;
 	isAuthLoading: boolean;
 	setIsAuthLoading: (loading: boolean) => void;
 	kakaoLogin: () => Promise<boolean>;
@@ -46,7 +48,6 @@ export const useAuthStore = create<AuthState>((set) => ({
 		console.log(`\x1b[33m${'setUserInfo :' + JSON.stringify(user)}\x1b[0m`);
 		set({ userInfo: user });
 	},
-	oauthType: null,
 	isAuthLoading: false,
 	setIsAuthLoading: (loading) => set({ isAuthLoading: loading }),
 	kakaoLogin: async () => {
@@ -56,42 +57,15 @@ export const useAuthStore = create<AuthState>((set) => ({
 		setIsAuthLoading(true);
 
 		const isSuccess = await firebaseRequest('로그인', async () => {
-			set({ oauthType: 'kakao' });
+			const firebaseUser = await loginWithKakao();
+			if (!firebaseUser) return false;
 
-			const kakaoTokenInfo = await login();
-			const provider = new OAuthProvider('oidc.kakao');
-			const credential = provider.credential({
-				idToken: kakaoTokenInfo.idToken,
-			});
-
-			const result = await signInWithCredential(auth, credential);
-			const { user } = result;
-
-			// Firestore에서 유저 정보 가져오기
-			let fetchedUserInfo = await getUserInfo(user.uid);
-
-			// Firestore에 없으면 새로 저장
-			if (!fetchedUserInfo) {
-				await saveUserInfo({
-					uid: user.uid,
-					displayName: user.displayName ?? '',
-					islandName: '',
-					photoURL: user.photoURL ?? '',
-					oauthType: 'kakao',
-					lastLogin: Timestamp.now(),
-				});
-
-				fetchedUserInfo = await getUserInfo(user.uid);
-			} else {
-				await saveUserInfo({
-					...fetchedUserInfo,
-					lastLogin: Timestamp.now(),
-				});
-			}
+			const userInfo = await ensureUserExists(firebaseUser, 'kakao');
+			await updateLastLogin(userInfo.uid);
 
 			// 로컬 상태 업데이트
-			setUserInfo(fetchedUserInfo);
-			await AsyncStorage.setItem('@user', JSON.stringify(fetchedUserInfo));
+			setUserInfo(userInfo);
+			await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
 
 			return true;
 		}).catch(() => false);
@@ -161,46 +135,15 @@ export const useAuthStore = create<AuthState>((set) => ({
 		setIsAuthLoading(true);
 
 		const isSuccess = await firebaseRequest('로그인', async () => {
-			set({ oauthType: 'naver' });
+			const firebaseUser = await loginWithNaver();
+			if (!firebaseUser) return false;
 
-			const { failureResponse, successResponse } = await NaverLogin.login();
-			if (failureResponse) return false;
-			const firebaseCustomToken = await getFirebaseCustomToken(
-				successResponse!.accessToken,
-			);
-
-			const result = await signInWithCustomToken(auth, firebaseCustomToken);
-			const { user } = result;
-
-			// Firestore에서 유저 정보 가져오기
-			let fetchedUserInfo = await getUserInfo(user.uid);
-
-			// Firestore에 없으면 새로 저장
-			if (!fetchedUserInfo) {
-				const profileResult = await NaverLogin.getProfile(
-					successResponse!.accessToken,
-				);
-
-				await saveUserInfo({
-					uid: user.uid,
-					displayName: profileResult.response.nickname ?? '',
-					islandName: '',
-					photoURL: profileResult.response.profile_image ?? '',
-					oauthType: 'naver',
-					lastLogin: Timestamp.now(),
-				});
-
-				fetchedUserInfo = await getUserInfo(user.uid);
-			} else {
-				await saveUserInfo({
-					...fetchedUserInfo,
-					lastLogin: Timestamp.now(),
-				});
-			}
+			const userInfo = await ensureUserExists(firebaseUser, 'naver');
+			await updateLastLogin(userInfo.uid);
 
 			// 로컬 상태 업데이트
-			setUserInfo(fetchedUserInfo);
-			await AsyncStorage.setItem('@user', JSON.stringify(fetchedUserInfo));
+			setUserInfo(userInfo);
+			await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
 
 			return true;
 		}).catch(() => false);
@@ -290,49 +233,38 @@ export const useAuthInitializer = () => {
 	// Firebase Auth 상태 변화 감지하여 userInfo 저장
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
-			const oauthType = useAuthStore.getState().oauthType;
+			const storedUser = await AsyncStorage.getItem('user');
+			if (!storedUser) return;
 
+			const parsedUser = JSON.parse(storedUser);
+			const oauthType = parsedUser.oauthType;
 			if (!oauthType) return;
 
-			if (user) {
-				let fetchedUserInfo = await getUserInfo(user.uid);
-
-				// Firestore에 유저 정보가 없으면 저장 후 다시 가져오기
-				if (!fetchedUserInfo) {
-					await saveUserInfo({
-						uid: user.uid,
-						displayName: user.displayName ?? '',
-						islandName: '',
-						photoURL: user.photoURL ?? '',
-						oauthType,
-						lastLogin: Timestamp.now(),
-					});
-					fetchedUserInfo = await getUserInfo(user.uid);
-				}
-
-				// 여전히 유저 정보가 없으면 Alert 표시
-				if (!fetchedUserInfo) {
-					Alert.alert(
-						'계정 정보 없음',
-						'유저 정보를 불러올 수 없습니다. 다시 로그인해 주세요.',
-						[{ text: '확인', onPress: () => auth.signOut() }],
-					);
-
-					setUserInfo(null);
-					await AsyncStorage.removeItem('@user');
-					useAuthStore.setState({ oauthType: null });
-
-					return;
-				}
-
-				setUserInfo(fetchedUserInfo);
-				await AsyncStorage.setItem('@user', JSON.stringify(fetchedUserInfo));
-
-				useAuthStore.setState({ oauthType: null });
-			} else {
+			if (!user) {
 				setUserInfo(null);
 				await AsyncStorage.removeItem('@user');
+				return;
 			}
+
+			// Firestore에 유저 정보가 없으면 저장 후 다시 가져오기
+			await ensureUserExists(user, oauthType);
+			const fetchedUserInfo = await getUserInfo(user.uid);
+
+			// 여전히 유저 정보가 없으면 Alert 표시
+			if (!fetchedUserInfo) {
+				Alert.alert(
+					'계정 정보 없음',
+					'유저 정보를 불러올 수 없습니다. 다시 로그인해 주세요.',
+					[{ text: '확인', onPress: () => auth.signOut() }],
+				);
+
+				setUserInfo(null);
+				await AsyncStorage.removeItem('@user');
+				return;
+			}
+
+			setUserInfo(fetchedUserInfo);
+			await AsyncStorage.setItem('@user', JSON.stringify(fetchedUserInfo));
 		});
 		return () => unsubscribe();
 	}, [setUserInfo]);
@@ -375,19 +307,4 @@ export const useAuthInitializer = () => {
 
 		savePushTokenToFirestore({ uid: userInfo.uid, pushToken: expoPushToken });
 	}, [userInfo, expoPushToken]);
-};
-
-const getFirebaseCustomToken = async (accessToken: string) => {
-	try {
-		const response = await axios.post(
-			process.env.EXPO_PUBLIC_GET_CUSTOM_TOKEN_URL || '',
-			{ accessToken },
-			{ headers: { 'Content-Type': 'application/json' } },
-		);
-
-		return response.data.firebaseToken;
-	} catch (error) {
-		console.error('Error getting Firebase custom token:', error);
-		throw error;
-	}
 };
