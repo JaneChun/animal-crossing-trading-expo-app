@@ -7,6 +7,7 @@ import {
 } from '@/navigation/RootNavigation';
 import { CreateChatRoomParams, SendChatMessageParams } from '@/types/chat';
 import { Collection } from '@/types/post';
+import { OauthType } from '@/types/user';
 
 // Search/
 export const navigateToSearch = () => {
@@ -103,6 +104,16 @@ export const navigateToUserProfile = ({ userId }: { userId: string }) => {
 
 export const replaceToMyProfile = () => {
 	replace('Profile', {});
+};
+
+export const navigateToSignUp = ({
+	uid,
+	oauthType,
+}: {
+	uid: string;
+	oauthType: OauthType;
+}) => {
+	navigate('SignUp', { uid, oauthType });
 };
 
 // stack to tab

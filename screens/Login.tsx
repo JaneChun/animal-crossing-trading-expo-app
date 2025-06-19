@@ -3,9 +3,13 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Leaf from '@/components/ui/Icons/Leaf';
 import { PADDING } from '@/components/ui/layout/Layout';
 import { showToast } from '@/components/ui/Toast';
-import { useAuthStore } from '@/stores/AuthStore';
+import { auth } from '@/fbase';
+import { LoginResult, useAuthStore } from '@/stores/AuthStore';
 import { OauthType } from '@/types/user';
-import { replaceToMyProfile } from '@/utilities/navigationHelpers';
+import {
+	navigateToSignUp,
+	replaceToMyProfile,
+} from '@/utilities/navigationHelpers';
 import FastImage from 'react-native-fast-image';
 
 const Login = () => {
@@ -13,14 +17,24 @@ const Login = () => {
 	const naverLogin = useAuthStore((state) => state.naverLogin);
 
 	const handleLogin = async (oauthType: OauthType) => {
-		let isSuccess: boolean | void = false;
+		let loginResult: LoginResult = {
+			isSuccess: false,
+			isNewUser: false,
+		};
 
-		if (oauthType === 'kakao') isSuccess = await kakaoLogin();
-		else if (oauthType === 'naver') isSuccess = await naverLogin();
+		if (oauthType === 'kakao') loginResult = await kakaoLogin();
+		else if (oauthType === 'naver') loginResult = await naverLogin();
 
-		if (Boolean(isSuccess)) {
-			showToast('success', '로그인 성공');
-			replaceToMyProfile();
+		if (loginResult.isSuccess) {
+			// 신규 유저
+			if (loginResult.isNewUser) {
+				navigateToSignUp({ uid: auth.currentUser?.uid!, oauthType });
+				return;
+			} else {
+				// 기존 유저
+				showToast('success', '로그인 성공');
+				replaceToMyProfile();
+			}
 		}
 	};
 

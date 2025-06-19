@@ -12,7 +12,7 @@ export const ProfileFormSchema = z.object({
 		),
 	islandName: z
 		.string()
-		.min(1, '섬 이름을 입력해주세요.')
+		.min(2, '섬 이름을 입력해주세요.')
 		.max(10, '섬 이름은 최대 10자까지 입력 가능합니다.')
 		.regex(
 			/^[a-zA-Z0-9가-힣]+$/,

@@ -13,6 +13,7 @@ import { useAuthStore } from '@/stores/AuthStore';
 import { EditProfileModalProps } from '@/types/components';
 import { UserInfo } from '@/types/user';
 import { FontAwesome } from '@expo/vector-icons';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImagePickerAsset } from 'expo-image-picker';
 import React, { useEffect } from 'react';
@@ -120,7 +121,7 @@ const EditProfileModal = ({
 					...requestData,
 				};
 
-				// 상태 갱신
+				// 로컬 상태 업데이트
 				setUserInfo(newUserInfo);
 				await AsyncStorage.setItem('@user', JSON.stringify(newUserInfo));
 
@@ -187,6 +188,7 @@ const EditProfileModal = ({
 										onChangeText={onChange}
 										label='닉네임'
 										placeholder='닉네임을 입력해주세요.'
+										InputComponent={BottomSheetTextInput}
 									/>
 								)}
 							/>
@@ -200,6 +202,7 @@ const EditProfileModal = ({
 										onChangeText={onChange}
 										label='섬 이름'
 										placeholder='섬 이름을 입력해주세요.'
+										InputComponent={BottomSheetTextInput}
 									/>
 								)}
 							/>

@@ -1,9 +1,4 @@
-import {
-	DEFAULT_USER_REPORT,
-	DEFAULT_USER_REVIEW,
-} from '@/constants/defaultUserInfo';
 import { auth } from '@/fbase';
-import { OauthType, UserInfo } from '@/types/user';
 import { login } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
 import axios from 'axios';
@@ -14,7 +9,7 @@ import {
 	User,
 } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
-import { getUserInfo, saveUserInfo } from './userService';
+import { saveUserInfo } from './userService';
 
 export const loginWithKakao = async (): Promise<User | null> => {
 	const kakaoTokenInfo = await login();
@@ -35,32 +30,6 @@ export const loginWithNaver = async (): Promise<User | null> => {
 
 	const result = await signInWithCustomToken(auth, firebaseCustomToken);
 	return result.user;
-};
-
-// Firestore에 유저가 없으면 생성, 있으면 반환
-export const ensureUserExists = async (
-	user: User,
-	oauthType: OauthType,
-): Promise<UserInfo> => {
-	let userInfo = await getUserInfo(user.uid);
-
-	if (!userInfo) {
-		const newUser: UserInfo = {
-			uid: user.uid,
-			displayName: user.displayName ?? '',
-			islandName: '',
-			photoURL: user.photoURL ?? '',
-			review: DEFAULT_USER_REVIEW,
-			report: DEFAULT_USER_REPORT,
-			oauthType,
-			createdAt: Timestamp.now(),
-			lastLogin: Timestamp.now(),
-		};
-		await saveUserInfo(newUser);
-		userInfo = newUser;
-	}
-
-	return userInfo;
 };
 
 export const updateLastLogin = async (uid: string) => {

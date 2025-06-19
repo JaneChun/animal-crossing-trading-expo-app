@@ -3,6 +3,7 @@ import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { CreateChatRoomParams, SendChatMessageParams } from './chat';
 import { Collection } from './post';
+import { OauthType } from './user';
 
 // RootStack 네비게이션
 export type RootStackParamList = {
@@ -20,6 +21,7 @@ export type RootStackParamList = {
 		systemMessage?: SendChatMessageParams;
 	};
 	Profile: { userId?: string }; // 다른 유저 프로필 조회 시 userId 전달
+	SignUp: { uid: string; oauthType: OauthType };
 	Setting: undefined;
 	Search: undefined;
 };
@@ -43,3 +45,4 @@ export type EditCommentRouteProp = RouteProp<RootStackParamList, 'EditComment'>;
 export type NewPostRouteProp = RouteProp<RootStackParamList, 'NewPost'>;
 export type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
 export type ChatRoomRouteProp = RouteProp<RootStackParamList, 'ChatRoom'>;
+export type SignUpRouteProp = RouteProp<RootStackParamList, 'SignUp'>;

@@ -1,5 +1,4 @@
 // RootNavigator.tsx
-import AuthGuard from '@/components/ui/AuthGuard';
 import { Colors } from '@/constants/Color';
 import ChatRoom from '@/screens/ChatRoom';
 import EditComment from '@/screens/EditComment';
@@ -8,6 +7,7 @@ import PostDetail from '@/screens/PostDetail';
 import Profile from '@/screens/Profile';
 import Search from '@/screens/Search';
 import Setting from '@/screens/Setting';
+import SignUp from '@/screens/SignUp';
 import { useAuthStore } from '@/stores/AuthStore';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainTabNavigator from './MainTabNavigator';
@@ -39,9 +39,9 @@ const RootStackNavigator = () => {
 			<RootStack.Screen
 				name='NewPost'
 				children={() => (
-					<AuthGuard>
-						<NewPost />
-					</AuthGuard>
+					// <AuthGuard>
+					<NewPost />
+					// </AuthGuard>
 				)}
 				options={{ ...commonOptions, title: '새 글 작성' }}
 			/>
@@ -51,11 +51,16 @@ const RootStackNavigator = () => {
 				options={commonOptions}
 			/>
 			<RootStack.Screen
+				name='SignUp'
+				component={SignUp}
+				options={{ ...commonOptions, headerShown: false }}
+			/>
+			<RootStack.Screen
 				name='EditComment'
 				children={() => (
-					<AuthGuard>
-						<EditComment />
-					</AuthGuard>
+					// <AuthGuard>
+					<EditComment />
+					// </AuthGuard>
 				)}
 				options={{
 					...commonOptions,
@@ -66,18 +71,18 @@ const RootStackNavigator = () => {
 			<RootStack.Screen
 				name='ChatRoom'
 				children={() => (
-					<AuthGuard>
-						<ChatRoom />
-					</AuthGuard>
+					// <AuthGuard>
+					<ChatRoom />
+					// </AuthGuard>
 				)}
 				options={{ ...commonOptions, headerShown: false }}
 			/>
 			<RootStack.Screen
 				name='Setting'
 				children={() => (
-					<AuthGuard>
-						<Setting />
-					</AuthGuard>
+					// <AuthGuard>
+					<Setting />
+					// </AuthGuard>
 				)}
 				options={{ ...commonOptions, title: '설정' }}
 			/>

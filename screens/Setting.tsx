@@ -32,8 +32,8 @@ const Setting = () => {
 		else if (userInfo.oauthType === 'naver') isSuccess = await naverLogout();
 
 		if (Boolean(isSuccess)) {
-			showToast('success', '로그아웃되었습니다.');
 			goBack();
+			showToast('success', '로그아웃되었습니다.');
 		} else {
 			showToast('error', '로그아웃 실패. 다시 시도해주세요.');
 		}

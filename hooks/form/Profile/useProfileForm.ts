@@ -8,6 +8,7 @@ export const useProfileForm = () => {
 
 	const methods = useForm<ProfileFormValues>({
 		resolver: zodResolver(ProfileFormSchema),
+		mode: 'onChange',
 		defaultValues: {
 			displayName: userInfo?.displayName || '',
 			islandName: userInfo?.islandName || '',

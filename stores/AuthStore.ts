@@ -1,5 +1,4 @@
 import {
-	ensureUserExists,
 	getFirebaseCustomToken,
 	loginWithKakao,
 	loginWithNaver,
@@ -23,21 +22,25 @@ import {
 	signInWithCustomToken,
 } from 'firebase/auth';
 import { useEffect } from 'react';
-import { Alert } from 'react-native';
 import { create } from 'zustand';
 import { auth } from '../fbase';
 import firebaseRequest from '../firebase/core/firebaseInterceptor';
 import { usePushNotificationStore } from './PushNotificationStore';
+
+export type LoginResult = {
+	isSuccess: boolean;
+	isNewUser: boolean;
+};
 
 type AuthState = {
 	userInfo: UserInfo | null;
 	setUserInfo: (user: UserInfo | null) => void;
 	isAuthLoading: boolean;
 	setIsAuthLoading: (loading: boolean) => void;
-	kakaoLogin: () => Promise<boolean>;
+	kakaoLogin: () => Promise<LoginResult>;
 	kakaoLogout: () => Promise<boolean>;
 	kakaoDeleteAccount: (uid: string) => Promise<boolean>;
-	naverLogin: () => Promise<boolean>;
+	naverLogin: () => Promise<LoginResult>;
 	naverLogout: () => Promise<boolean>;
 	naverDeleteAccount: (uid: string) => Promise<boolean>;
 };
@@ -56,11 +59,20 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 		setIsAuthLoading(true);
 
+		let isNewUser = false;
 		const isSuccess = await firebaseRequest('로그인', async () => {
 			const firebaseUser = await loginWithKakao();
 			if (!firebaseUser) return false;
 
-			const userInfo = await ensureUserExists(firebaseUser, 'kakao');
+			const userInfo = await getUserInfo(firebaseUser.uid);
+
+			// 신규 유저
+			if (!userInfo) {
+				isNewUser = true;
+				return true;
+			}
+
+			// 기존 유저
 			await updateLastLogin(userInfo.uid);
 
 			// 로컬 상태 업데이트
@@ -71,7 +83,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 		}).catch(() => false);
 
 		setIsAuthLoading(false);
-		return isSuccess;
+		return { isSuccess, isNewUser };
 	},
 	kakaoLogout: async () => {
 		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
@@ -133,11 +145,20 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 		setIsAuthLoading(true);
 
+		let isNewUser = false;
 		const isSuccess = await firebaseRequest('로그인', async () => {
 			const firebaseUser = await loginWithNaver();
 			if (!firebaseUser) return false;
 
-			const userInfo = await ensureUserExists(firebaseUser, 'naver');
+			const userInfo = await getUserInfo(firebaseUser.uid);
+
+			// 신규 유저
+			if (!userInfo) {
+				isNewUser = true;
+				return true;
+			}
+
+			// 기존 유저
 			await updateLastLogin(userInfo.uid);
 
 			// 로컬 상태 업데이트
@@ -148,7 +169,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 		}).catch(() => false);
 
 		setIsAuthLoading(false);
-		return isSuccess;
+		return { isSuccess, isNewUser };
 	},
 	naverLogout: async () => {
 		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
@@ -229,65 +250,55 @@ export const useAuthInitializer = () => {
 		});
 	}, []);
 
-	// Firebase Auth 상태 변화 감지하여 userInfo 저장
+	// Firebase Auth 로그인 상태가 변경될 때마다 실행됨
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
-			const storedUser = await AsyncStorage.getItem('user');
-			if (!storedUser) return;
-
-			const parsedUser = JSON.parse(storedUser);
-			const oauthType = parsedUser.oauthType;
-			if (!oauthType) return;
-
+			// 로그아웃 상태 → 상태 및 저장소 초기화
 			if (!user) {
 				setUserInfo(null);
 				await AsyncStorage.removeItem('@user');
 				return;
 			}
 
-			// Firestore에 유저 정보가 없으면 저장 후 다시 가져오기
-			await ensureUserExists(user, oauthType);
 			const fetchedUserInfo = await getUserInfo(user.uid);
 
-			// 여전히 유저 정보가 없으면 Alert 표시
+			// 로그인 상태 & Firestore에 유저 정보가 없는 경우  → 상태 및 저장소 초기화
 			if (!fetchedUserInfo) {
-				Alert.alert(
-					'계정 정보 없음',
-					'유저 정보를 불러올 수 없습니다. 다시 로그인해 주세요.',
-					[{ text: '확인', onPress: () => auth.signOut() }],
-				);
-
 				setUserInfo(null);
 				await AsyncStorage.removeItem('@user');
 				return;
 			}
 
+			// 로그인 상태 & 정상적인 유저 정보 → 상태와 저장소에 동기화
 			setUserInfo(fetchedUserInfo);
 			await AsyncStorage.setItem('@user', JSON.stringify(fetchedUserInfo));
 		});
 		return () => unsubscribe();
 	}, [setUserInfo]);
 
-	// 로컬 저장소(AsyncStorage)와 상태를 동기화
+	// 앱 실행 시 로컬 저장소(@user)에서 유저 정보 불러오기
+	// - 저장된 정보가 없거나 형식이 이상하면 초기화 처리
 	useEffect(() => {
 		const loadUser = async () => {
 			const storedUser = await AsyncStorage.getItem('@user');
 
+			// 로컬에 저장된 유저 정보 없음 → 상태 초기화
 			if (!storedUser) {
 				setUserInfo(null);
 				return;
 			}
 
-			// 데이터 검증
 			try {
 				const parsedUser = JSON.parse(storedUser);
 
+				// 저장된 정보가 유효한 형식인지 검증
 				if (!parsedUser.uid || typeof parsedUser.uid !== 'string') {
 					setUserInfo(null);
 					await AsyncStorage.removeItem('@user');
 					return;
 				}
 
+				// 정상적인 경우 상태에 반영
 				setUserInfo(parsedUser);
 			} catch (e) {
 				console.log('AsyncStorage 유저 파싱 실패:', e);
