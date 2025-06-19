@@ -1,6 +1,5 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import Leaf from '@/components/ui/Icons/Leaf';
 import { PADDING } from '@/components/ui/layout/Layout';
 import { showToast } from '@/components/ui/Toast';
 import { auth } from '@/fbase';
@@ -42,8 +41,11 @@ const Login = () => {
 		<View style={styles.container}>
 			<View style={styles.header}>
 				<View style={styles.titleContainer}>
-					<Text style={styles.title}>모동숲 마켓</Text>
-					<Leaf style={styles.logoImage} />
+					<FastImage
+						source={require('../assets/images/landing.png')}
+						style={{ width: 300, height: 300 }}
+						resizeMode='contain'
+					/>
 				</View>
 			</View>
 			<View style={styles.body}>
@@ -91,14 +93,11 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
+		marginTop: 10,
 	},
 	title: {
 		fontWeight: 'bold',
 		fontSize: 24,
-	},
-	logoImage: {
-		width: 40,
-		height: 40,
 	},
 	body: {
 		width: '100%',
