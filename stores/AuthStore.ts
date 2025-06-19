@@ -6,8 +6,8 @@ import {
 	updateLastLogin,
 } from '@/firebase/services/authService';
 import {
-	archiveUserData,
 	getUserInfo,
+	moveToDeletedUsers,
 	savePushTokenToFirestore,
 } from '@/firebase/services/userService';
 import { UserInfo } from '@/types/user';
@@ -111,15 +111,14 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 			await reauthenticateWithCredential(user, credential);
 
-			// 탈퇴한 유저 정보 아카이브
-			await archiveUserData(userInfo);
+			// DeletedUsers 컬렉션으로 이동
+			await moveToDeletedUsers(userInfo);
 
 			// Firebase Authentication에서 유저 삭제
 			await deleteUser(user);
 
 			// 로컬 상태 초기화
 			setUserInfo(null);
-
 			await AsyncStorage.removeItem('@user');
 
 			return true;
@@ -189,8 +188,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 			await signInWithCustomToken(auth, firebaseCustomToken);
 
-			// 탈퇴한 유저 정보 아카이브
-			await archiveUserData(userInfo);
+			// DeletedUsers 컬렉션으로 이동
+			await moveToDeletedUsers(userInfo);
 
 			// Firebase Authentication에서 유저 삭제
 			await deleteUser(user);

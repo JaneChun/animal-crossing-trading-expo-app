@@ -276,3 +276,38 @@ export const updateUserReview = onDocumentCreated(
 		}
 	},
 );
+
+export const archivePostsOfDeletedUser = onDocumentCreated(
+	'DeletedUsers/{docId}',
+	async (event) => {
+		const snapshot = event.data;
+		if (!snapshot) return;
+
+		const user = snapshot.data();
+		const { uid } = user;
+
+		if (!uid) return;
+
+		try {
+			const collections = ['Boards', 'Communities'];
+
+			const batch = db.batch();
+
+			for (const col of collections) {
+				const querySnapshot = await db
+					.collection(col)
+					.where('creatorId', '==', uid)
+					.get();
+
+				querySnapshot.forEach((doc) => {
+					const docRef = db.collection(col).doc(doc.id);
+					batch.update(docRef, { isDeleted: true });
+				});
+			}
+
+			await batch.commit();
+		} catch (e) {
+			console.error(e);
+		}
+	},
+);
