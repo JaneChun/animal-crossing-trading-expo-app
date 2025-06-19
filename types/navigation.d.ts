@@ -21,7 +21,8 @@ export type RootStackParamList = {
 		systemMessage?: SendChatMessageParams;
 	};
 	Profile: { userId?: string }; // 다른 유저 프로필 조회 시 userId 전달
-	SignUp: { uid: string; oauthType: OauthType };
+	SignUpDisplayName: { uid: string; oauthType: OauthType };
+	SignUpIslandName: { uid: string; oauthType: OauthType; displayName: string };
 	Setting: undefined;
 	Search: undefined;
 };
@@ -45,4 +46,11 @@ export type EditCommentRouteProp = RouteProp<RootStackParamList, 'EditComment'>;
 export type NewPostRouteProp = RouteProp<RootStackParamList, 'NewPost'>;
 export type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
 export type ChatRoomRouteProp = RouteProp<RootStackParamList, 'ChatRoom'>;
-export type SignUpRouteProp = RouteProp<RootStackParamList, 'SignUp'>;
+export type SignUpDisplayNameRouteProp = RouteProp<
+	RootStackParamList,
+	'SignUpDisplayName'
+>;
+export type SignUpIslandNameRouteProp = RouteProp<
+	RootStackParamList,
+	'SignUpIslandName'
+>;

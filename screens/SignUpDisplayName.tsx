@@ -1,0 +1,135 @@
+import NameInput from '@/components/Profile/NameInput';
+import Button from '@/components/ui/Button';
+import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { useProfileForm } from '@/hooks/form/Profile/useProfileForm';
+import { goBack } from '@/navigation/RootNavigation';
+import { SignUpDisplayNameRouteProp } from '@/types/navigation';
+import { navigateToSignUpEnd } from '@/utilities/navigationHelpers';
+import { Ionicons } from '@expo/vector-icons';
+import { useRoute } from '@react-navigation/native';
+import React from 'react';
+import { Controller, FormProvider } from 'react-hook-form';
+import {
+	Keyboard,
+	KeyboardAvoidingView,
+	Platform,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+	TouchableWithoutFeedback,
+	View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+const SignUpDisplayName = () => {
+	const route = useRoute<SignUpDisplayNameRouteProp>();
+	const { uid, oauthType } = route.params;
+
+	// form hook 가져오기
+	const methods = useProfileForm();
+	const {
+		control,
+		watch,
+		formState: { errors },
+	} = methods;
+
+	const displayName = watch('displayName');
+	const isDisplayNameValid = !errors.displayName;
+
+	const handleNext = () => {
+		if (!isDisplayNameValid) return;
+
+		navigateToSignUpEnd({ uid, oauthType, displayName });
+	};
+
+	return (
+		<SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+			<KeyboardAvoidingView
+				style={{ flex: 1 }}
+				behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+			>
+				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+					<FormProvider {...methods}>
+						<View style={styles.container}>
+							{/* 닫기 버튼 */}
+							<TouchableOpacity
+								style={styles.closeButton}
+								onPress={() => goBack()}
+							>
+								<Ionicons name='close' size={24} color='#000' />
+							</TouchableOpacity>
+
+							{/* 타이틀 */}
+							<Text style={styles.title}>{'닉네임을\n입력해주세요'}</Text>
+
+							<Controller
+								control={control}
+								name='displayName'
+								render={({ field: { value, onChange } }) => (
+									<NameInput
+										type='displayName'
+										value={value}
+										onChangeText={onChange}
+										label='닉네임'
+										placeholder='닉네임을 입력해주세요.'
+									/>
+								)}
+							/>
+
+							{/*  버튼 */}
+							<Button
+								disabled={!isDisplayNameValid}
+								onPress={handleNext}
+								color='mint'
+								size='lg'
+							>
+								다음
+							</Button>
+						</View>
+					</FormProvider>
+				</TouchableWithoutFeedback>
+			</KeyboardAvoidingView>
+		</SafeAreaView>
+	);
+};
+
+export default SignUpDisplayName;
+
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		backgroundColor: '#fff',
+		padding: 24,
+	},
+	closeButton: {
+		alignSelf: 'flex-end',
+	},
+	title: {
+		fontSize: 24,
+		fontWeight: 'bold',
+		marginTop: 24,
+		marginBottom: 32,
+		lineHeight: 32,
+	},
+	inputContainer: {
+		width: '100%',
+		marginBottom: 24,
+	},
+	label: {
+		fontSize: FontSizes.md,
+		fontWeight: FontWeights.semibold,
+		color: Colors.font_black,
+		marginBottom: 16,
+	},
+	input: {
+		fontSize: FontSizes.md,
+		padding: 12,
+		borderWidth: 1,
+		borderColor: Colors.base,
+		borderRadius: 8,
+		backgroundColor: Colors.base,
+		marginBottom: 8,
+		textAlignVertical: 'center',
+	},
+});

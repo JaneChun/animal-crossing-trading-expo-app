@@ -7,7 +7,8 @@ import PostDetail from '@/screens/PostDetail';
 import Profile from '@/screens/Profile';
 import Search from '@/screens/Search';
 import Setting from '@/screens/Setting';
-import SignUp from '@/screens/SignUp';
+import SignUpDisplayName from '@/screens/SignUpDisplayName';
+import SignUpIslandName from '@/screens/SignUpIslandName';
 import { useAuthStore } from '@/stores/AuthStore';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainTabNavigator from './MainTabNavigator';
@@ -51,8 +52,13 @@ const RootStackNavigator = () => {
 				options={commonOptions}
 			/>
 			<RootStack.Screen
-				name='SignUp'
-				component={SignUp}
+				name='SignUpDisplayName'
+				component={SignUpDisplayName}
+				options={{ ...commonOptions, headerShown: false }}
+			/>
+			<RootStack.Screen
+				name='SignUpIslandName'
+				component={SignUpIslandName}
 				options={{ ...commonOptions, headerShown: false }}
 			/>
 			<RootStack.Screen

@@ -1,4 +1,3 @@
-// SignUp.tsx
 import NameInput from '@/components/Profile/NameInput';
 import Button from '@/components/ui/Button';
 import { showToast } from '@/components/ui/Toast';
@@ -9,17 +8,16 @@ import {
 } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { saveUserInfo } from '@/firebase/services/userService';
-import { ProfileFormValues } from '@/hooks/form/Profile/profileFormSchema';
 import { useProfileForm } from '@/hooks/form/Profile/useProfileForm';
-import { goBack } from '@/navigation/RootNavigation';
+import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
-import { SignUpRouteProp } from '@/types/navigation';
+import { SignUpIslandNameRouteProp } from '@/types/navigation';
 import { UserInfo } from '@/types/user';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
 import { Timestamp } from 'firebase/firestore';
-import React, { useState } from 'react';
+import React from 'react';
 import { Controller, FormProvider } from 'react-hook-form';
 import {
 	Keyboard,
@@ -33,11 +31,9 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const SignUp = () => {
-	const route = useRoute<SignUpRouteProp>();
-	const { uid, oauthType } = route.params;
-
-	const [step, setStep] = useState<0 | 1>(0);
+const SignUpIslandName = () => {
+	const route = useRoute<SignUpIslandNameRouteProp>();
+	const { uid, oauthType, displayName } = route.params;
 
 	const setUserInfo = useAuthStore((state) => state.setUserInfo);
 
@@ -47,21 +43,13 @@ const SignUp = () => {
 		control,
 		watch,
 		formState: { errors },
-		handleSubmit,
 	} = methods;
-
-	const displayName = watch('displayName');
-	const isDisplayNameValid = !errors.displayName;
 
 	const islandName = watch('islandName');
 	const isIslandNameValid = !errors.islandName;
 
-	const handleNext = () => {
-		setStep(1);
-	};
-
-	const onSubmit = async (data: ProfileFormValues) => {
-		if (!isDisplayNameValid || !isIslandNameValid) return;
+	const onSubmit = async () => {
+		if (!isIslandNameValid) return;
 
 		try {
 			const newUserInfo: UserInfo = {
@@ -83,10 +71,10 @@ const SignUp = () => {
 			await AsyncStorage.setItem('@user', JSON.stringify(newUserInfo));
 
 			showToast('success', '회원가입 성공');
-			goBack();
 		} catch (e) {
 			showToast('error', '회원가입 중 오류가 발생했습니다.');
-			goBack();
+		} finally {
+			pop(2);
 		}
 	};
 
@@ -102,62 +90,36 @@ const SignUp = () => {
 							{/* 닫기 버튼 */}
 							<TouchableOpacity
 								style={styles.closeButton}
-								onPress={() => goBack()}
+								onPress={() => pop(2)}
 							>
 								<Ionicons name='close' size={24} color='#000' />
 							</TouchableOpacity>
 
 							{/* 타이틀 */}
-							<Text style={styles.title}>
-								{step === 0
-									? '닉네임을\n입력해주세요'
-									: '섬 이름을\n입력해주세요'}
-							</Text>
+							<Text style={styles.title}>{'섬 이름을\n입력해주세요'}</Text>
 
-							{step === 0 && (
-								<Controller
-									control={control}
-									name='displayName'
-									render={({ field: { value, onChange } }) => (
-										<NameInput
-											type='displayName'
-											value={value}
-											onChangeText={onChange}
-											label='닉네임'
-											placeholder='닉네임을 입력해주세요.'
-										/>
-									)}
-								/>
-							)}
-
-							{step === 1 && (
-								<Controller
-									control={control}
-									name='islandName'
-									render={({ field: { value, onChange } }) => (
-										<NameInput
-											type='islandName'
-											value={value}
-											onChangeText={onChange}
-											label='섬 이름'
-											placeholder='섬 이름을 입력해주세요.'
-										/>
-									)}
-								/>
-							)}
+							<Controller
+								control={control}
+								name='islandName'
+								render={({ field: { value, onChange } }) => (
+									<NameInput
+										type='islandName'
+										value={value}
+										onChangeText={onChange}
+										label='섬 이름'
+										placeholder='섬 이름을 입력해주세요.'
+									/>
+								)}
+							/>
 
 							{/*  버튼 */}
 							<Button
-								disabled={
-									step === 0
-										? !isDisplayNameValid
-										: !isDisplayNameValid || !isIslandNameValid
-								}
-								onPress={step === 0 ? handleNext : handleSubmit(onSubmit)}
+								disabled={!isIslandNameValid}
+								onPress={onSubmit}
 								color='mint'
 								size='lg'
 							>
-								{step === 0 ? '다음' : '시작하기'}
+								시작하기
 							</Button>
 						</View>
 					</FormProvider>
@@ -167,7 +129,7 @@ const SignUp = () => {
 	);
 };
 
-export default SignUp;
+export default SignUpIslandName;
 
 const styles = StyleSheet.create({
 	container: {

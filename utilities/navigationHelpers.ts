@@ -113,7 +113,19 @@ export const navigateToSignUp = ({
 	uid: string;
 	oauthType: OauthType;
 }) => {
-	navigate('SignUp', { uid, oauthType });
+	navigate('SignUpDisplayName', { uid, oauthType });
+};
+
+export const navigateToSignUpEnd = ({
+	uid,
+	oauthType,
+	displayName,
+}: {
+	uid: string;
+	oauthType: OauthType;
+	displayName: string;
+}) => {
+	navigate('SignUpIslandName', { uid, oauthType, displayName });
 };
 
 // stack to tab
