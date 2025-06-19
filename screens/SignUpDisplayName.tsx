@@ -6,7 +6,7 @@ import { useProfileForm } from '@/hooks/form/Profile/useProfileForm';
 import { goBack } from '@/navigation/RootNavigation';
 import { SignUpDisplayNameRouteProp } from '@/types/navigation';
 import { navigateToSignUpEnd } from '@/utilities/navigationHelpers';
-import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import React from 'react';
 import { Controller, FormProvider } from 'react-hook-form';
@@ -35,7 +35,7 @@ const SignUpDisplayName = () => {
 	} = methods;
 
 	const displayName = watch('displayName');
-	const isDisplayNameValid = !errors.displayName;
+	const isDisplayNameValid = !errors.displayName && displayName.length > 0;
 
 	const handleNext = () => {
 		if (!isDisplayNameValid) return;
@@ -76,6 +76,13 @@ const SignUpDisplayName = () => {
 									/>
 								)}
 							/>
+
+							<View style={styles.messageContainer}>
+								<FontAwesome name='leaf' color={Colors.primary} size={14} />
+								<Text style={styles.infoText}>
+									닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
+								</Text>
+							</View>
 
 							{/*  버튼 */}
 							<Button
@@ -131,5 +138,16 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.base,
 		marginBottom: 8,
 		textAlignVertical: 'center',
+	},
+	messageContainer: {
+		paddingHorizontal: 12,
+		flexDirection: 'row',
+		gap: 8,
+		marginBottom: 8,
+	},
+	infoText: {
+		color: Colors.primary,
+		fontSize: FontSizes.sm,
+		marginBottom: 16,
 	},
 });

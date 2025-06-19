@@ -13,7 +13,7 @@ import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
 import { SignUpIslandNameRouteProp } from '@/types/navigation';
 import { UserInfo } from '@/types/user';
-import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
 import { Timestamp } from 'firebase/firestore';
@@ -46,7 +46,7 @@ const SignUpIslandName = () => {
 	} = methods;
 
 	const islandName = watch('islandName');
-	const isIslandNameValid = !errors.islandName;
+	const isIslandNameValid = !errors.islandName && islandName.length > 0;
 
 	const onSubmit = async () => {
 		if (!isIslandNameValid) return;
@@ -112,6 +112,13 @@ const SignUpIslandName = () => {
 								)}
 							/>
 
+							<View style={styles.messageContainer}>
+								<FontAwesome name='leaf' color={Colors.primary} size={14} />
+								<Text style={styles.infoText}>
+									닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
+								</Text>
+							</View>
+
 							{/*  버튼 */}
 							<Button
 								disabled={!isIslandNameValid}
@@ -166,5 +173,16 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.base,
 		marginBottom: 8,
 		textAlignVertical: 'center',
+	},
+	messageContainer: {
+		paddingHorizontal: 12,
+		flexDirection: 'row',
+		gap: 8,
+		marginBottom: 8,
+	},
+	infoText: {
+		color: Colors.primary,
+		fontSize: FontSizes.sm,
+		marginBottom: 16,
 	},
 });
