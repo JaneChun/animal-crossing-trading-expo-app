@@ -1,5 +1,4 @@
 import {
-	getFirebaseCustomToken,
 	loginWithKakao,
 	loginWithNaver,
 	updateLastLogin,
@@ -12,15 +11,9 @@ import {
 import { UserInfo } from '@/types/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
-import { login, logout } from '@react-native-kakao/user';
+import { logout } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
-import {
-	deleteUser,
-	OAuthProvider,
-	onAuthStateChanged,
-	reauthenticateWithCredential,
-	signInWithCustomToken,
-} from 'firebase/auth';
+import { deleteUser, onAuthStateChanged } from 'firebase/auth';
 import { useEffect } from 'react';
 import { create } from 'zustand';
 import { auth } from '../fbase';
@@ -115,13 +108,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 			if (!user || !userInfo) return false;
 
 			// 재인증 후 탈퇴 가능
-			const kakaoTokenInfo = await login();
-			const provider = new OAuthProvider('oidc.kakao');
-			const credential = provider.credential({
-				idToken: kakaoTokenInfo.idToken,
-			});
-
-			await reauthenticateWithCredential(user, credential);
+			await loginWithKakao();
 
 			// DeletedUsers 컬렉션으로 이동
 			await moveToDeletedUsers(userInfo);
@@ -201,13 +188,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 			if (!user || !userInfo) return false;
 
 			// 재인증 후 탈퇴 가능
-			const { failureResponse, successResponse } = await NaverLogin.login();
-			if (failureResponse) return false;
-			const firebaseCustomToken = await getFirebaseCustomToken(
-				successResponse!.accessToken,
-			);
-
-			await signInWithCustomToken(auth, firebaseCustomToken);
+			await loginWithNaver();
 
 			// DeletedUsers 컬렉션으로 이동
 			await moveToDeletedUsers(userInfo);
