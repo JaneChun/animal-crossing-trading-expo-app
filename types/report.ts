@@ -6,6 +6,7 @@ export interface Report {
 	reporterId: string; // 신고한 유저 UID
 	reporteeId: string; // 신고 대상 유저 UID
 	postId?: string; // (게시글 신고인 경우)
+	commentId?: string; // (댓글 신고인 경우)
 	chatId?: string; // (채팅 신고인 경우)
 	category: ReportCategory;
 	detail: string;

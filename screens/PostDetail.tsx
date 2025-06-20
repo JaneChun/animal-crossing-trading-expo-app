@@ -48,6 +48,11 @@ const PostDetail = () => {
 
 	const [isReportModalVisible, setIsReportModalVisible] =
 		useState<boolean>(false);
+	const [reportTarget, setReportTarget] = useState<{
+		postId: string;
+		commentId?: string;
+		reporteeId: string;
+	} | null>(null);
 
 	const { data: post, isLoading: isPostFetching } = usePostDetail(
 		collectionName as Collection,
@@ -65,6 +70,15 @@ const PostDetail = () => {
 
 	const { isLoading: isCommentUploading, setIsLoading: setIsCommentUploading } =
 		useLoading();
+
+	const openReportModal = (params: {
+		postId: string;
+		reporteeId: string;
+		commentId?: string;
+	}) => {
+		setReportTarget(params);
+		setIsReportModalVisible(true);
+	};
 
 	// 헤더에 글 수정/삭제 아이콘 설정
 	useEffect(() => {
@@ -92,7 +106,11 @@ const PostDetail = () => {
 				: [
 						{
 							label: '신고',
-							onPress: () => setIsReportModalVisible(true),
+							onPress: () =>
+								openReportModal({
+									postId: id,
+									reporteeId: post.creatorId,
+								}),
 						},
 				  ]),
 			{ label: '취소', onPress: () => {} },
@@ -168,11 +186,16 @@ const PostDetail = () => {
 		detail?: string;
 	}) => {
 		try {
-			if (!post || !userInfo) return;
+			if (!reportTarget || !userInfo) return;
+			const { postId, commentId, reporteeId } = reportTarget;
+
+			if (reporteeId === userInfo.uid) return;
+
 			const postReport: CreateReportRequest = {
 				reporterId: userInfo.uid,
-				reporteeId: post.creatorId,
-				postId: post.id,
+				reporteeId,
+				postId,
+				commentId,
 				category,
 				detail,
 			};
@@ -182,6 +205,9 @@ const PostDetail = () => {
 			showToast('success', '신고가 제출되었습니다.');
 		} catch (e) {
 			showToast('error', '신고 제출 중 오류가 발생했습니다.');
+		} finally {
+			setIsReportModalVisible(false);
+			setReportTarget(null);
 		}
 	};
 
@@ -269,6 +295,13 @@ const PostDetail = () => {
 								isBoardPost(post, collectionName) ? post.chatRoomIds : []
 							}
 							scrollToBottom={scrollToBottom}
+							openReportModal={({ commentId, reporteeId }) =>
+								openReportModal({
+									postId: post.id,
+									commentId,
+									reporteeId,
+								})
+							}
 						/>
 					</View>
 				}

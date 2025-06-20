@@ -3,7 +3,7 @@ import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { generateChatId } from '@/firebase/services/chatService';
 import { useDeleteComment } from '@/hooks/mutation/comment/useDeleteComment';
-import { useActiveTabStore } from '@/stores/ActiveTabstore';
+import { usePostContext } from '@/hooks/shared/usePostContext';
 import { useAuthStore } from '@/stores/AuthStore';
 import { CreateChatRoomParams, SendChatMessageParams } from '@/types/chat';
 import { CommentUnitProps } from '@/types/components';
@@ -33,6 +33,8 @@ const CommentUnit = ({
 	postId,
 	postCreatorId,
 	chatRoomIds,
+	openReportModal,
+	// Comment props
 	id,
 	body,
 	creatorId,
@@ -41,10 +43,9 @@ const CommentUnit = ({
 	creatorIslandName,
 	creatorPhotoURL,
 }: CommentUnitProps) => {
-	const activeTab = useActiveTabStore((state) => state.activeTab);
-	const isMarket = activeTab === 'Home' || activeTab === 'Profile';
-	const collectionName = isMarket ? 'Boards' : 'Communities';
+	const { collectionName } = usePostContext();
 	const userInfo = useAuthStore((state) => state.userInfo);
+
 	const { mutate: deleteComment, isPending: isDeletingComment } =
 		useDeleteComment(collectionName, postId, id);
 
@@ -111,6 +112,30 @@ const CommentUnit = ({
 		navigateToUserProfile({ userId: creatorId });
 	};
 
+	const isAuthor = creatorId === userInfo?.uid;
+	const options = [
+		...(isAuthor
+			? [
+					{
+						label: '수정',
+						onPress: () =>
+							navigateToEditComment({ postId, commentId: id, body }),
+					},
+					{
+						label: '삭제',
+						onPress: handleDeleteComment,
+					},
+			  ]
+			: [
+					{
+						label: '신고',
+						onPress: () =>
+							openReportModal({ commentId: id, reporteeId: creatorId }),
+					},
+			  ]),
+		{ label: '취소', onPress: () => {} },
+	].filter(Boolean) as { label: string; onPress: () => void }[];
+
 	return (
 		<View style={styles.container}>
 			{/* 프로필 이미지 */}
@@ -138,22 +163,11 @@ const CommentUnit = ({
 					</View>
 					{/* 액션 시트 버튼 */}
 					<View style={styles.actionContainer}>
-						{creatorId === userInfo?.uid && (
+						{userInfo && (
 							<ActionSheetButton
 								color={Colors.font_gray}
 								size={14}
-								options={[
-									{
-										label: '수정',
-										onPress: () =>
-											navigateToEditComment({ postId, commentId: id, body }),
-									},
-									{
-										label: '삭제',
-										onPress: handleDeleteComment,
-									},
-									{ label: '취소', onPress: () => {} },
-								]}
+								options={options}
 							/>
 						)}
 					</View>

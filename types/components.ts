@@ -161,12 +161,19 @@ export type CommentsListProps = {
 	chatRoomIds: string[];
 	containerStyle?: ViewStyle;
 	scrollToBottom: () => void;
+	openReportModal: (params: OpenReportModalParams) => void;
+};
+
+type OpenReportModalParams = {
+	commentId: string;
+	reporteeId: string;
 };
 
 export interface CommentUnitProps extends CommentWithCreatorInfo {
 	postId: string;
 	postCreatorId: string;
 	chatRoomIds: string[];
+	openReportModal: (params: OpenReportModalParams) => void;
 }
 
 export type CreatedAtProps = {

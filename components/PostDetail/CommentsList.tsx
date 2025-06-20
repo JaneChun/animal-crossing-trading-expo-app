@@ -9,6 +9,7 @@ const CommentsList = ({
 	chatRoomIds,
 	containerStyle,
 	scrollToBottom,
+	openReportModal,
 }: CommentsListProps) => {
 	return (
 		<View style={[styles.container, containerStyle]}>
@@ -21,6 +22,7 @@ const CommentsList = ({
 						postId={postId}
 						postCreatorId={postCreatorId}
 						chatRoomIds={chatRoomIds}
+						openReportModal={openReportModal}
 						{...item}
 					/>
 				))}
