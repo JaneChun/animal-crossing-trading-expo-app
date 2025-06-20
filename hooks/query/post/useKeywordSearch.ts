@@ -26,7 +26,6 @@ export const useKeywordSearch = <C extends Collection>({
 					query: keyword,
 					hitsPerPage: PAGE_SIZE,
 					page: pageParam, // 시작 페이지 번호
-					filters: 'isDeleted:false',
 				},
 			],
 		});

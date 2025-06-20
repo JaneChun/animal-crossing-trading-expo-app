@@ -1,5 +1,5 @@
 import { db } from '@/fbase';
-import { fetchAndPopulate } from '@/firebase/services/notificationService';
+import { fetchAndPopulateSenderInfo } from '@/firebase/services/notificationService';
 import { Notification, PopulatedNotification } from '@/types/notification';
 import {
 	collection,
@@ -58,7 +58,7 @@ export const useNotificationSubscriptionInitializer = () => {
 			async () => {
 				setIsLoading(true);
 
-				const { data = [] } = await fetchAndPopulate<
+				const { data = [] } = await fetchAndPopulateSenderInfo<
 					Notification,
 					PopulatedNotification
 				>(q);

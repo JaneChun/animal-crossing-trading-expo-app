@@ -26,10 +26,8 @@ export const getFirebaseToken = functions.https.onRequest(
 				const email = data.kakao_account.email;
 				const nickname = data.kakao_account.profile?.nickname;
 
-				const firebaseUid = `kakao_${kakaoId}`;
-
 				// Firebase에서 사용자 ID로 커스텀 토큰 생성
-				const customToken = await admin.auth().createCustomToken(firebaseUid);
+				const customToken = await admin.auth().createCustomToken(`${kakaoId}`);
 
 				return res.json({
 					firebaseToken: customToken,
@@ -54,9 +52,7 @@ export const getFirebaseToken = functions.https.onRequest(
 
 				const { id, email, nickname } = data.response;
 
-				const firebaseUid = `naver_${id}`;
-
-				const customToken = await admin.auth().createCustomToken(firebaseUid);
+				const customToken = await admin.auth().createCustomToken(id);
 
 				return res.json({
 					firebaseToken: customToken,
@@ -320,41 +316,6 @@ export const updateUserReview = onDocumentCreated(
 					badgeGranted,
 				},
 			});
-		} catch (e) {
-			console.error(e);
-		}
-	},
-);
-
-export const archivePostsOfDeletedUser = onDocumentCreated(
-	'DeletedUsers/{docId}',
-	async (event) => {
-		const snapshot = event.data;
-		if (!snapshot) return;
-
-		const user = snapshot.data();
-		const { uid } = user;
-
-		if (!uid) return;
-
-		try {
-			const collections = ['Boards', 'Communities'];
-
-			const batch = db.batch();
-
-			for (const col of collections) {
-				const querySnapshot = await db
-					.collection(col)
-					.where('creatorId', '==', uid)
-					.get();
-
-				querySnapshot.forEach((doc) => {
-					const docRef = db.collection(col).doc(doc.id);
-					batch.update(docRef, { isDeleted: true });
-				});
-			}
-
-			await batch.commit();
 		} catch (e) {
 			console.error(e);
 		}

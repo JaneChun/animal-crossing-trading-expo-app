@@ -7,13 +7,11 @@ import {
 	FirestoreQueryParams,
 	PaginatedPosts,
 	Post,
-	PostDoc,
 	PostWithCreatorInfo,
 } from '@/types/post';
 import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
 import {
 	collection,
-	DocumentData,
 	limit,
 	orderBy,
 	query,
@@ -31,8 +29,6 @@ const getFirestoreQuery = ({
 }: FirestoreQueryParams) => {
 	let q = query(
 		collection(db, collectionName),
-		where('isDeleted', '!=', true),
-		orderBy('isDeleted'),
 		orderBy('createdAt', 'desc'),
 		limit(PAGE_SIZE),
 	);
@@ -42,8 +38,6 @@ const getFirestoreQuery = ({
 		q = query(
 			collection(db, collectionName),
 			where('creatorId', '==', filter.creatorId),
-			where('isDeleted', '!=', true),
-			orderBy('isDeleted'),
 			orderBy('createdAt', 'desc'),
 			limit(PAGE_SIZE),
 		);
@@ -70,9 +64,10 @@ export const fetchPostsByCursor = async <C extends Collection>({
 }: FirestoreQueryParams): Promise<PaginatedPosts<C>> => {
 	const q = getFirestoreQuery({ collectionName, filter, lastDoc });
 	const { data, lastDoc: _lastDoc } = await fetchAndPopulateUsers<
+		C,
 		Post<C>,
 		PostWithCreatorInfo<C>
-	>(q, (doc: DocumentData, id: string) => ({ id, ...doc } as PostDoc<C>));
+	>(q);
 	return { data, lastDoc: _lastDoc };
 };
 

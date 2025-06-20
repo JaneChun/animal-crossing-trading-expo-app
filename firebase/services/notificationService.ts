@@ -11,7 +11,7 @@ import {
 import { getPosts } from './postService';
 import { getPublicUserInfos } from './userService';
 
-export const fetchAndPopulate = async <
+export const fetchAndPopulateSenderInfo = async <
 	T extends { postId: string; senderId: string },
 	U extends T & {
 		postInfo: Post<Collection>;

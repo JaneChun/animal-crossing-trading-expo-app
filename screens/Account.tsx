@@ -3,7 +3,7 @@ import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { goBack, pop } from '@/navigation/RootNavigation';
+import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -31,7 +31,7 @@ const Account = () => {
 		else if (userInfo.oauthType === 'naver') isSuccess = await naverLogout();
 
 		if (Boolean(isSuccess)) {
-			pop(2);
+			backToProfile();
 			showToast('success', '로그아웃되었습니다.');
 		} else {
 			showToast('error', '로그아웃 실패. 다시 시도해주세요.');
@@ -64,10 +64,14 @@ const Account = () => {
 
 		if (Boolean(isSuccess)) {
 			Alert.alert('탈퇴 완료', '탈퇴 처리가 성공적으로 완료되었습니다.');
-			goBack();
+			backToProfile();
 		} else {
 			Alert.alert('탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.');
 		}
+	};
+
+	const backToProfile = () => {
+		pop(2);
 	};
 
 	if (isAuthLoading) return <LoadingIndicator />;

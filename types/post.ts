@@ -74,7 +74,6 @@ export type PostWithCreatorInfo<C extends Collection> = PostMap[C] &
 
 // Firestore용 PostDoc
 export type PostDoc<C extends Collection> = Post<C> & {
-	isDeleted: boolean;
 	updatedAt?: Timestamp;
 };
 

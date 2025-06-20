@@ -1,10 +1,20 @@
 import { db } from '@/fbase';
-import { CreateCommentRequest, UpdateCommentRequest } from '@/types/comment';
+import {
+	Comment,
+	CreateCommentRequest,
+	UpdateCommentRequest,
+} from '@/types/comment';
+import { Notification } from '@/types/notification';
 import { Collection } from '@/types/post';
+import { PublicUserInfo } from '@/types/user';
+import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import {
 	collection,
 	doc,
+	DocumentData,
+	getDocs,
 	increment,
+	Query,
 	Timestamp,
 	updateDoc,
 	writeBatch,
@@ -12,6 +22,48 @@ import {
 import { Alert } from 'react-native';
 import firestoreRequest from '../core/firebaseInterceptor';
 import { getDocFromFirestore } from '../core/firestoreService';
+import { getPublicUserInfos } from './userService';
+
+export const fetchAndPopulateUsers = async <T extends Comment, U>(
+	q: Query<DocumentData>,
+) => {
+	return firestoreRequest('댓글 조회', async () => {
+		const querySnapshot = await getDocs(q);
+
+		if (querySnapshot.empty) return { data: [], lastDoc: null };
+
+		const data: T[] = querySnapshot.docs.map((doc) => {
+			const docData = doc.data();
+			const id = doc.id;
+
+			return { id, ...docData } as unknown as T;
+		});
+
+		const uniqueCreatorIds: string[] = [
+			...new Set(data.map((item) => item.creatorId)),
+		] as string[];
+
+		const publicUserInfos: Record<string, PublicUserInfo> =
+			await getPublicUserInfos(uniqueCreatorIds);
+
+		const populatedData: U[] = data.map((item) => {
+			const userInfo =
+				publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);
+
+			return {
+				...item,
+				creatorDisplayName: userInfo.displayName,
+				creatorIslandName: userInfo.islandName,
+				creatorPhotoURL: userInfo.photoURL,
+			} as U;
+		});
+
+		return {
+			data: populatedData,
+			lastDoc: querySnapshot.docs[querySnapshot.docs.length - 1],
+		};
+	});
+};
 
 export const createComment = async ({
 	collectionName,
@@ -29,11 +81,13 @@ export const createComment = async ({
 
 		// 1. 댓글 문서 추가
 		const commentRef = doc(collection(db, collectionName, postId, 'Comments'));
-		batch.set(commentRef, {
+		const newComment: Omit<Comment, 'id'> = {
 			...requestData,
 			creatorId: userId,
 			createdAt: Timestamp.now(),
-		});
+		};
+
+		batch.set(commentRef, newComment);
 
 		// 2. post 문서의 commentCount 필드 수정
 		const postRef = doc(db, collectionName, postId);
@@ -55,8 +109,7 @@ export const createComment = async ({
 
 		if (receiverId !== senderId) {
 			const notificationRef = doc(collection(db, 'Notifications'));
-
-			batch.set(notificationRef, {
+			const newNotification: Omit<Notification, 'id'> = {
 				receiverId,
 				senderId,
 				type: collectionName,
@@ -64,7 +117,9 @@ export const createComment = async ({
 				body: requestData.body,
 				createdAt: Timestamp.now(),
 				isRead: false,
-			});
+			};
+
+			batch.set(notificationRef, newNotification);
 		}
 		await batch.commit();
 	});

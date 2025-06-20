@@ -28,39 +28,32 @@ import {
 } from '../core/firestoreService';
 import { chunkArray, getPublicUserInfos } from './userService';
 
-export const fetchAndPopulateUsers = async <T extends { creatorId: string }, U>(
+export const fetchAndPopulateUsers = async <
+	C extends Collection,
+	T extends Post<C>,
+	U,
+>(
 	q: Query<DocumentData>,
-	transform: (doc: DocumentData, id: string) => T,
 ) => {
 	return firestoreRequest('컬렉션 데이터 조회', async () => {
-		// 1. 데이터 조회
 		const querySnapshot = await getDocs(q);
 
 		if (querySnapshot.empty) return { data: [], lastDoc: null };
 
-		// 2. 데이터 변환
-		const data: T[] = [];
-
-		querySnapshot.docs.forEach((doc) => {
+		const data: T[] = querySnapshot.docs.map((doc) => {
 			const docData = doc.data();
 			const id = doc.id;
 
-			if (docData) {
-				const transformed = transform(docData, id) as T;
-				data.push(transformed);
-			}
+			return { id, ...docData } as T;
 		});
 
-		// 3. 데이터에서 creatorId 추출
 		const uniqueCreatorIds: string[] = [
 			...new Set(data.map((item) => item.creatorId)),
 		];
 
-		// 4. 유저 정보 한 번에 조회
 		const publicUserInfos: Record<string, PublicUserInfo> =
 			await getPublicUserInfos(uniqueCreatorIds);
 
-		// 5. 유저 정보와 데이터 병합
 		const populatedData: U[] = data.map((item) => {
 			const userInfo =
 				publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);
@@ -90,7 +83,7 @@ export const getPost = async <C extends Collection>(
 			id: postId,
 		})) as PostDoc<C>;
 
-		if (!docData || docData.isDeleted) return null;
+		if (!docData) return null;
 
 		return toPost(collectionName, docData);
 	});
@@ -122,10 +115,8 @@ export const getPosts = async (
 
 			// 결과 병합
 			chunkResults.flat().forEach((postDoc) => {
-				if (!postDoc.isDeleted) {
-					const post = toPost(collectionName, postDoc);
-					postsMap[postDoc.id] = post;
-				}
+				const post = toPost(collectionName, postDoc);
+				postsMap[postDoc.id] = post;
 			});
 		}
 
@@ -150,7 +141,6 @@ export const createPost = async <C extends Collection>({
 				...requestData,
 				creatorId: userId,
 				createdAt: Timestamp.now(),
-				isDeleted: false,
 				commentCount: 0,
 				chatRoomIds: [],
 				reviewPromptSent: false,
