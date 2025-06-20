@@ -25,6 +25,7 @@ export type UserReport = {
 };
 
 export interface UserInfo extends PublicUserInfo {
+	email: string;
 	oauthType: OauthType;
 	createdAt: Timestamp;
 	lastLogin: Timestamp;

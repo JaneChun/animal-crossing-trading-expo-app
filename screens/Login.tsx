@@ -19,6 +19,7 @@ const Login = () => {
 		let loginResult: LoginResult = {
 			isSuccess: false,
 			isNewUser: false,
+			email: '',
 		};
 
 		if (oauthType === 'kakao') loginResult = await kakaoLogin();
@@ -27,7 +28,11 @@ const Login = () => {
 		if (loginResult.isSuccess) {
 			// 신규 유저
 			if (loginResult.isNewUser) {
-				navigateToSignUp({ uid: auth.currentUser?.uid!, oauthType });
+				navigateToSignUp({
+					uid: auth.currentUser?.uid!,
+					oauthType,
+					email: loginResult.email ?? '',
+				});
 				return;
 			} else {
 				// 기존 유저

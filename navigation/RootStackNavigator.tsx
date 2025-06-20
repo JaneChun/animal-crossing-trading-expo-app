@@ -1,5 +1,6 @@
 // RootNavigator.tsx
 import { Colors } from '@/constants/Color';
+import Account from '@/screens/Account';
 import ChatRoom from '@/screens/ChatRoom';
 import EditComment from '@/screens/EditComment';
 import NewPost from '@/screens/NewPost';
@@ -91,6 +92,15 @@ const RootStackNavigator = () => {
 					// </AuthGuard>
 				)}
 				options={{ ...commonOptions, title: '설정' }}
+			/>
+			<RootStack.Screen
+				name='Account'
+				children={() => (
+					// <AuthGuard>
+					<Account />
+					// </AuthGuard>
+				)}
+				options={{ ...commonOptions, title: '내 계정' }}
 			/>
 			<RootStack.Screen
 				name='Search'

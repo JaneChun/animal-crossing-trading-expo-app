@@ -7,7 +7,10 @@ import { signInWithCustomToken, User } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
 import { saveUserInfo } from './userService';
 
-export const loginWithKakao = async (): Promise<User | null> => {
+export const loginWithKakao = async (): Promise<{
+	user: User;
+	email: string;
+} | null> => {
 	const kakaoTokenInfo = await login();
 
 	const {
@@ -19,12 +22,15 @@ export const loginWithKakao = async (): Promise<User | null> => {
 	});
 
 	const result = await signInWithCustomToken(auth, firebaseToken);
-	// await updateEmail(result.user, email);
+	if (!result.user) return null;
 
-	return result.user;
+	return { user: result.user, email };
 };
 
-export const loginWithNaver = async (): Promise<User | null> => {
+export const loginWithNaver = async (): Promise<{
+	user: User;
+	email: string;
+} | null> => {
 	const { successResponse } = await NaverLogin.login();
 	const {
 		firebaseToken,
@@ -35,9 +41,9 @@ export const loginWithNaver = async (): Promise<User | null> => {
 	});
 
 	const result = await signInWithCustomToken(auth, firebaseToken);
-	// await updateEmail(result.user, email);
+	if (!result.user) return null;
 
-	return result.user;
+	return { user: result.user, email };
 };
 
 export const updateLastLogin = async (uid: string) => {

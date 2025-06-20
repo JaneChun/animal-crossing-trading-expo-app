@@ -21,9 +21,15 @@ export type RootStackParamList = {
 		systemMessage?: SendChatMessageParams;
 	};
 	Profile: { userId?: string }; // 다른 유저 프로필 조회 시 userId 전달
-	SignUpDisplayName: { uid: string; oauthType: OauthType };
-	SignUpIslandName: { uid: string; oauthType: OauthType; displayName: string };
+	SignUpDisplayName: { uid: string; oauthType: OauthType; email: string };
+	SignUpIslandName: {
+		uid: string;
+		oauthType: OauthType;
+		email: string;
+		displayName: string;
+	};
 	Setting: undefined;
+	Account: undefined;
 	Search: undefined;
 };
 

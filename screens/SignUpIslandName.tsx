@@ -33,7 +33,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SignUpIslandName = () => {
 	const route = useRoute<SignUpIslandNameRouteProp>();
-	const { uid, oauthType, displayName } = route.params;
+	const { uid, oauthType, email, displayName } = route.params;
 
 	const setUserInfo = useAuthStore((state) => state.setUserInfo);
 
@@ -54,6 +54,7 @@ const SignUpIslandName = () => {
 		try {
 			const newUserInfo: UserInfo = {
 				uid,
+				email,
 				displayName,
 				islandName,
 				photoURL: '',

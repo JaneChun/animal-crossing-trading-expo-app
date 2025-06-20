@@ -23,6 +23,7 @@ import { usePushNotificationStore } from './PushNotificationStore';
 export type LoginResult = {
 	isSuccess: boolean;
 	isNewUser: boolean;
+	email: string;
 };
 
 type AuthState = {
@@ -53,11 +54,16 @@ export const useAuthStore = create<AuthState>((set) => ({
 		setIsAuthLoading(true);
 
 		let isNewUser = false;
-		const isSuccess = await firebaseRequest('로그인', async () => {
-			const firebaseUser = await loginWithKakao();
-			if (!firebaseUser) return false;
+		let userEmail = '';
 
-			const userInfo = await getUserInfo(firebaseUser.uid);
+		const isSuccess = await firebaseRequest('로그인', async () => {
+			const loginResult = await loginWithKakao();
+			if (!loginResult) return false;
+
+			const { user, email } = loginResult;
+			userEmail = email;
+
+			const userInfo = await getUserInfo(user.uid);
 
 			// 신규 유저
 			if (!userInfo) {
@@ -76,7 +82,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 		}).catch(() => false);
 
 		setIsAuthLoading(false);
-		return { isSuccess, isNewUser };
+		return { isSuccess, isNewUser, email: userEmail };
 	},
 	kakaoLogout: async () => {
 		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
@@ -133,11 +139,16 @@ export const useAuthStore = create<AuthState>((set) => ({
 		setIsAuthLoading(true);
 
 		let isNewUser = false;
-		const isSuccess = await firebaseRequest('로그인', async () => {
-			const firebaseUser = await loginWithNaver();
-			if (!firebaseUser) return false;
+		let userEmail = '';
 
-			const userInfo = await getUserInfo(firebaseUser.uid);
+		const isSuccess = await firebaseRequest('로그인', async () => {
+			const loginResult = await loginWithNaver();
+			if (!loginResult) return false;
+
+			const { user, email } = loginResult;
+			userEmail = email;
+
+			const userInfo = await getUserInfo(user.uid);
 
 			// 신규 유저
 			if (!userInfo) {
@@ -156,7 +167,7 @@ export const useAuthStore = create<AuthState>((set) => ({
 		}).catch(() => false);
 
 		setIsAuthLoading(false);
-		return { isSuccess, isNewUser };
+		return { isSuccess, isNewUser, email: userEmail };
 	},
 	naverLogout: async () => {
 		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;

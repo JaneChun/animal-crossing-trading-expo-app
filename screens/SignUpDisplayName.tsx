@@ -24,7 +24,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SignUpDisplayName = () => {
 	const route = useRoute<SignUpDisplayNameRouteProp>();
-	const { uid, oauthType } = route.params;
+	const { uid, oauthType, email } = route.params;
 
 	// form hook 가져오기
 	const methods = useProfileForm();
@@ -40,7 +40,7 @@ const SignUpDisplayName = () => {
 	const handleNext = () => {
 		if (!isDisplayNameValid) return;
 
-		navigateToSignUpEnd({ uid, oauthType, displayName });
+		navigateToSignUpEnd({ uid, oauthType, email, displayName });
 	};
 
 	return (

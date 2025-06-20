@@ -109,23 +109,31 @@ export const replaceToMyProfile = () => {
 export const navigateToSignUp = ({
 	uid,
 	oauthType,
+	email,
 }: {
 	uid: string;
 	oauthType: OauthType;
+	email: string;
 }) => {
-	navigate('SignUpDisplayName', { uid, oauthType });
+	navigate('SignUpDisplayName', { uid, oauthType, email });
 };
 
 export const navigateToSignUpEnd = ({
 	uid,
 	oauthType,
+	email,
 	displayName,
 }: {
 	uid: string;
 	oauthType: OauthType;
+	email: string;
 	displayName: string;
 }) => {
-	navigate('SignUpIslandName', { uid, oauthType, displayName });
+	navigate('SignUpIslandName', { uid, oauthType, email, displayName });
+};
+
+export const navigateToAccount = () => {
+	navigateWithoutParams('Account');
 };
 
 // stack to tab
