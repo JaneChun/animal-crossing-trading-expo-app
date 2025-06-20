@@ -9,6 +9,7 @@ import Toast from 'react-native-toast-message';
 import { toastConfig } from './components/ui/Toast';
 import { useAppState } from './hooks/shared/useAppState';
 import { useOnlineManager } from './hooks/shared/useOnlineManager';
+import { useSuspensionGuard } from './hooks/shared/useSuspensionGuard';
 import { navigationRef } from './navigation/RootNavigation';
 import RootStackNavigator from './navigation/RootStackNavigator';
 import ErrorBoundary from './screens/ErrorBoundary';
@@ -50,6 +51,7 @@ export default function App() {
 	usePushNotificationInitializer();
 	useNotificationSubscriptionInitializer();
 	useChatSubscriptionInitializer();
+	useSuspensionGuard();
 
 	const queryClient = new QueryClient({
 		defaultOptions: { queries: { retry: 2 } },

@@ -11,7 +11,7 @@ import {
 import { UserInfo } from '@/types/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
-import { logout } from '@react-native-kakao/user';
+import { isLogined, logout } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
 import { deleteUser, onAuthStateChanged } from 'firebase/auth';
 import { useEffect } from 'react';
@@ -86,6 +86,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 	},
 	kakaoLogout: async () => {
 		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+
+		if (!isLogined() || !auth.currentUser) return;
+
 		setIsAuthLoading(true);
 
 		const isSuccess = await firebaseRequest('로그아웃', async () => {
@@ -171,6 +174,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 	},
 	naverLogout: async () => {
 		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+
+		if (!auth.currentUser) return;
+
 		setIsAuthLoading(true);
 
 		const isSuccess = await firebaseRequest('로그아웃', async () => {

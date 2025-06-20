@@ -190,70 +190,89 @@ export const updateUserReport = onDocumentCreated(
 	'Reports/{reportId}',
 	async (event) => {
 		const snapshot = event.data;
-
 		if (!snapshot) return;
 
 		const report = snapshot.data();
 		const { reporteeId } = report;
-
 		if (!reporteeId) return;
 
 		try {
 			// 유저 정보 가져오기
 			const userDocRef = db.collection('Users').doc(reporteeId);
 			const userSnap = await userDocRef.get();
-
 			if (!userSnap.exists) return;
 
 			const userInfo = userSnap.data();
-			const userReport = userInfo?.report || {
+			const userReport = userInfo?.report ?? {
 				total: 0,
 				suspendUntil: null,
+				needsAdminReview: false,
 			};
 
-			// total 값 증가
-			const total = userReport.total + 1;
-			let suspendUntil = userReport.suspendUntil;
-			let needsAdminReview = false;
+			let total = userReport.total + 1; // 기존 신고 누적 수 +1
+			let suspendUntil = userReport.suspendUntil; // 기존 정지 기간
+			let needsAdminReview = false; // 관리자 확인 플래그 (기본 false)
 
-			// 최근 30일 이내 신고 수 조회
+			// 최근 7일 이내, 30일 이내 해당 유저가 신고당한 횟수 조회
 			const now = Date.now();
+			const sevenDaysAgo = admin.firestore.Timestamp.fromDate(
+				new Date(now - 7 * 24 * 60 * 60 * 1000),
+			);
 			const thirtyDaysAgo = admin.firestore.Timestamp.fromDate(
 				new Date(now - 30 * 24 * 60 * 60 * 1000),
 			);
 
-			const recentReportsSnap = await db
+			const recent7DaysReportsSnap = await db
+				.collection('Reports')
+				.where('reporteeId', '==', reporteeId)
+				.where('createdAt', '>=', sevenDaysAgo)
+				.get();
+
+			const recent30DaysReportsSnap = await db
 				.collection('Reports')
 				.where('reporteeId', '==', reporteeId)
 				.where('createdAt', '>=', thirtyDaysAgo)
 				.get();
 
-			const recent30Days = recentReportsSnap.size;
+			const recent7Days = recent7DaysReportsSnap.size;
+			const recent30Days = recent30DaysReportsSnap.size;
 
-			// 최근 30일 신고 5회 이상 → 3일 정지
-			if (recent30Days >= 5) {
-				suspendUntil = admin.firestore.Timestamp.fromDate(
-					new Date(now + 3 * 24 * 60 * 60 * 1000),
+			// 기존 suspendUntil을 millis로 변환 (null일 경우 0)
+			const suspendMillis = suspendUntil?.toMillis?.() || 0;
+			let newSuspendMillis = suspendMillis;
+
+			if (recent30Days >= 7) {
+				// 최근 30일 신고 7회 이상 → 30일 정지 + 관리자 플래그
+				newSuspendMillis = Math.max(
+					suspendMillis,
+					now + 30 * 24 * 60 * 60 * 1000,
+				);
+				needsAdminReview = true;
+			} else if (recent7Days >= 3) {
+				// 최근 7일 신고 3회 이상 → 7일 정지
+				newSuspendMillis = Math.max(
+					suspendMillis,
+					now + 7 * 24 * 60 * 60 * 1000,
 				);
 			}
 
-			// 누적 신고 10회 이상 → 장기 정지 + 관리자 플래그
-			if (total >= 10) {
-				suspendUntil = admin.firestore.Timestamp.fromDate(
-					new Date(now + 365 * 24 * 60 * 60 * 1000),
-				);
-				needsAdminReview = true;
+			// 더 나중 값으로 갱신
+			if (newSuspendMillis > suspendMillis) {
+				suspendUntil = admin.firestore.Timestamp.fromMillis(newSuspendMillis);
 			}
 
 			// 유저 도큐먼트 업데이트
-			await userDocRef.update({
-				report: {
-					total,
-					recent30Days,
-					suspendUntil,
-					...(needsAdminReview ? { needsAdminReview: true } : {}),
+			await userDocRef.set(
+				{
+					report: {
+						total,
+						recent30Days,
+						suspendUntil,
+						...(needsAdminReview ? { needsAdminReview: true } : {}),
+					},
 				},
-			});
+				{ merge: true },
+			);
 		} catch (e) {
 			console.error(e);
 		}
