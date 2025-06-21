@@ -35,7 +35,14 @@ const EditProfileModal = ({
 
 	// form hook 가져오기
 	const methods = useProfileForm();
-	const { control, watch, setValue, handleSubmit, reset } = methods;
+	const {
+		control,
+		watch,
+		setValue,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = methods;
 
 	// userInfo 값으로 form 초기 세팅
 	useEffect(() => {
@@ -55,7 +62,14 @@ const EditProfileModal = ({
 	const image = watch('image');
 	const originalImageUrl = watch('originalImageUrl');
 
-	const isValid = displayName && islandName;
+	const isDisplayNameValid = !errors.displayName && displayName.length > 0;
+	const isIslandNameValid = !errors.islandName && islandName.length > 0;
+
+	const isSomethingChanged =
+		displayName !== userInfo?.displayName ||
+		islandName !== userInfo?.islandName;
+
+	const isValid = isDisplayNameValid && isIslandNameValid && isSomethingChanged;
 
 	const handleClose = () => {
 		reset();
