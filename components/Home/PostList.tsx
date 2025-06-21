@@ -10,7 +10,7 @@ import {
 } from '@/utilities/navigationHelpers';
 import { FontAwesome6 } from '@expo/vector-icons';
 import React from 'react';
-import { FlatList, Pressable, StyleSheet, Text } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import LoadingIndicator from '../ui/loading/LoadingIndicator';
 import { showLongToast, showToast } from '../ui/Toast';
 import PostUnit from './PostUnit';
@@ -81,6 +81,7 @@ const PostList = ({
 			{isAddPostButtonVisible && (
 				<Pressable style={styles.addPostButton} onPress={onPressAddPostButton}>
 					<FontAwesome6 name='circle-plus' size={48} color={Colors.primary} />
+					<View style={styles.whiteBackground} />
 				</Pressable>
 			)}
 		</>
@@ -97,7 +98,18 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		bottom: 20,
 		right: 20,
+		width: 50,
+		height: 50,
+	},
+	whiteBackground: {
+		position: 'absolute',
+		top: 10,
+		left: 10,
+		width: 30,
+		height: 30,
+		zIndex: -1,
 		backgroundColor: 'white',
+		borderRadius: '50%',
 	},
 });
 
