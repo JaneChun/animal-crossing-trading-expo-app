@@ -1,11 +1,10 @@
 import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
-import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useAuthStore } from '@/stores/AuthStore';
 import { navigateToAccount } from '@/utilities/navigationHelpers';
-import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import SettingListItem from './SettingListItem';
 
 const Setting = () => {
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
@@ -16,42 +15,32 @@ const Setting = () => {
 		<View style={styles.screen}>
 			<View style={styles.container}>
 				<Text style={styles.title}>개인 정보 설정</Text>
-				<TouchableOpacity
-					style={[styles.row, styles.topRow, styles.bottomRow]}
+				<SettingListItem
+					borderRound='all'
+					showChevron
 					onPress={() => navigateToAccount()}
 				>
 					<Text style={styles.text}>내 계정</Text>
-					<Ionicons
-						name='chevron-forward'
-						size={20}
-						color={Colors.font_black}
-					/>
-				</TouchableOpacity>
+				</SettingListItem>
 			</View>
 
 			<View style={styles.container}>
 				<Text style={styles.title}>앱 설정</Text>
-				<TouchableOpacity
-					style={[styles.row, styles.topRow]}
-					onPress={() => {}}
-				>
+				<SettingListItem borderRound='top' onPress={() => {}}>
 					<Text style={styles.text}>알림 수신 설정</Text>
-				</TouchableOpacity>
-				<TouchableOpacity style={styles.row} onPress={() => {}}>
+				</SettingListItem>
+				<SettingListItem onPress={() => {}}>
 					<Text style={styles.text}>문의하기</Text>
-				</TouchableOpacity>
-				<TouchableOpacity style={styles.row} onPress={() => {}}>
+				</SettingListItem>
+				<SettingListItem onPress={() => {}}>
 					<Text style={styles.text}>개인정보 처리방침</Text>
-				</TouchableOpacity>
-				<TouchableOpacity style={styles.row} onPress={() => {}}>
+				</SettingListItem>
+				<SettingListItem onPress={() => {}}>
 					<Text style={styles.text}>이용약관</Text>
-				</TouchableOpacity>
-				<TouchableOpacity
-					style={[styles.row, styles.bottomRow]}
-					onPress={() => {}}
-				>
+				</SettingListItem>
+				<SettingListItem borderRound='bottom' onPress={() => {}}>
 					<Text style={styles.text}>앱 버전 정보</Text>
-				</TouchableOpacity>
+				</SettingListItem>
 			</View>
 		</View>
 	);
@@ -72,24 +61,6 @@ const styles = StyleSheet.create({
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.semibold,
 		marginBottom: 16,
-	},
-	row: {
-		padding: 16,
-		borderTopWidth: 1,
-		borderColor: Colors.border_gray,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		backgroundColor: Colors.base,
-	},
-	topRow: {
-		borderTopWidth: 0,
-		borderTopLeftRadius: 10,
-		borderTopRightRadius: 10,
-	},
-	bottomRow: {
-		borderBottomLeftRadius: 10,
-		borderBottomRightRadius: 10,
 	},
 	text: {
 		fontSize: FontSizes.md,

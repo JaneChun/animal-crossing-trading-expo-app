@@ -116,9 +116,6 @@ export const useAuthStore = create<AuthState>((set) => ({
 			const user = auth.currentUser;
 			if (!user || !userInfo) return false;
 
-			// 재인증 후 탈퇴 가능
-			await loginWithKakao();
-
 			// DeletedUsers 컬렉션으로 이동
 			await moveToDeletedUsers(userInfo);
 
@@ -203,9 +200,6 @@ export const useAuthStore = create<AuthState>((set) => ({
 		const isSuccess = await firebaseRequest('회원 탈퇴', async () => {
 			const user = auth.currentUser;
 			if (!user || !userInfo) return false;
-
-			// 재인증 후 탈퇴 가능
-			await loginWithNaver();
 
 			// DeletedUsers 컬렉션으로 이동
 			await moveToDeletedUsers(userInfo);

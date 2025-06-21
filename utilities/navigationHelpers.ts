@@ -136,6 +136,14 @@ export const navigateToAccount = () => {
 	navigateWithoutParams('Account');
 };
 
+export const navigateToSocialAccountCheck = () => {
+	navigateWithoutParams('SocialAccountCheck');
+};
+
+export const navigateToDeleteAccount = () => {
+	navigateWithoutParams('DeleteAccount');
+};
+
 // stack to tab
 export const navigateToLogin = () => {
 	navigateToTabAndResetStack('ProfileTab', 'Login');
