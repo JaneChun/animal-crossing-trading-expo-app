@@ -22,6 +22,7 @@ const Input = ({
 				placeholder={
 					disabled && disabledPlaceHolder ? disabledPlaceHolder : placeholder
 				}
+				placeholderTextColor={Colors.font_gray}
 				multiline
 				enterKeyHint='send'
 				editable={!disabled}

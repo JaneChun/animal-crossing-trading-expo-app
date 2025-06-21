@@ -12,7 +12,6 @@ import Total from '@/components/PostDetail/Total';
 import UserInfo from '@/components/PostDetail/UserInfo';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
-import KeyboardStickyLayout from '@/components/ui/layout/KeyboardStickyLayout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
@@ -23,6 +22,7 @@ import { useDeletePost } from '@/hooks/mutation/post/useDeletePost';
 import { useUpdatePost } from '@/hooks/mutation/post/useUpdatePost';
 import useComments from '@/hooks/query/comment/useComments';
 import { usePostDetail } from '@/hooks/query/post/usePostDetail';
+import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
 import useLoading from '@/hooks/shared/useLoading';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { goBack } from '@/navigation/RootNavigation';
@@ -34,8 +34,13 @@ import { navigateToEditPost } from '@/utilities/navigationHelpers';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
+import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const PostDetail = () => {
+	const insets = useSafeAreaInsets();
+	const keyboardHeight = useKeyboardHeight();
+
 	const { isBoardPost, isCommunityPost } = usePostContext();
 
 	const stackNavigation = useNavigation<RootStackNavigation>();
@@ -213,7 +218,7 @@ const PostDetail = () => {
 
 	const scrollToBottom = () => {
 		if (shouldScroll) {
-			scrollableContentRef.current?.scrollToEnd({ animated: true });
+			scrollableContentRef.current?.scrollToEnd({ animated: false });
 			setShouldScroll(false);
 		}
 	};
@@ -232,11 +237,17 @@ const PostDetail = () => {
 	}
 
 	return (
-		<>
-			<KeyboardStickyLayout
-				scrollableContentRef={scrollableContentRef}
-				containerStyle={styles.container}
-				scrollableContent={
+		<View
+			style={[styles.screen, { paddingBottom: keyboardHeight + insets.bottom }]}
+		>
+			<KeyboardAwareFlatList
+				ref={scrollableContentRef}
+				data={[]}
+				renderItem={null}
+				keyboardShouldPersistTaps='handled'
+				contentContainerStyle={{ flexGrow: 1 }}
+				enableAutomaticScroll={false}
+				ListHeaderComponent={
 					<View style={styles.content}>
 						{/* 헤더 */}
 						<View style={styles.header}>
@@ -305,13 +316,12 @@ const PostDetail = () => {
 						/>
 					</View>
 				}
-				bottomContent={
-					<CommentInput
-						postId={post.id}
-						setIsCommentUploading={setIsCommentUploading}
-						setShouldScroll={setShouldScroll}
-					/>
-				}
+			/>
+
+			<CommentInput
+				postId={post.id}
+				setIsCommentUploading={setIsCommentUploading}
+				setShouldScroll={setShouldScroll}
 			/>
 
 			{isReportModalVisible && (
@@ -321,14 +331,15 @@ const PostDetail = () => {
 					onSubmit={({ category, detail }) => reportUser({ category, detail })}
 				/>
 			)}
-		</>
+		</View>
 	);
 };
 
 export default PostDetail;
 
 const styles = StyleSheet.create({
-	container: {
+	screen: {
+		flex: 1,
 		backgroundColor: 'white',
 	},
 	content: {
