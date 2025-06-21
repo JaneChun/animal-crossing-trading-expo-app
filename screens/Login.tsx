@@ -1,6 +1,7 @@
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { PADDING } from '@/components/ui/layout/Layout';
+import SocialLoginButton from '@/components/ui/SocialLoginButton';
 import { showToast } from '@/components/ui/Toast';
 import { auth } from '@/fbase';
 import { LoginResult, useAuthStore } from '@/stores/AuthStore';
@@ -54,28 +55,16 @@ const Login = () => {
 				</View>
 			</View>
 			<View style={styles.body}>
-				<TouchableOpacity
-					activeOpacity={0.7}
+				<SocialLoginButton
+					oauthType='naver'
 					onPress={() => handleLogin('naver')}
-					style={styles.buttonContainer}
-				>
-					<FastImage
-						source={require('../assets/images/naver_login.png')}
-						style={styles.kakaoLoginImage}
-						resizeMode={FastImage.resizeMode.contain}
-					/>
-				</TouchableOpacity>
-				<TouchableOpacity
-					activeOpacity={0.7}
+					style={{ width: '90%' }}
+				/>
+				<SocialLoginButton
+					oauthType='kakao'
 					onPress={() => handleLogin('kakao')}
-					style={styles.buttonContainer}
-				>
-					<FastImage
-						source={require('../assets/images/kakao_login.png')}
-						style={styles.kakaoLoginImage}
-						resizeMode={FastImage.resizeMode.contain}
-					/>
-				</TouchableOpacity>
+					style={{ width: '90%' }}
+				/>
 			</View>
 		</View>
 	);
@@ -107,14 +96,7 @@ const styles = StyleSheet.create({
 	body: {
 		width: '100%',
 		alignItems: 'center',
-	},
-	buttonContainer: {
-		width: '90%',
-	},
-	kakaoLoginImage: {
-		width: '100%',
-		height: 60,
-		resizeMode: 'contain',
+		gap: 12,
 	},
 });
 

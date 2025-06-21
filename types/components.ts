@@ -25,7 +25,7 @@ import {
 	Post,
 	PostWithCreatorInfo,
 } from './post';
-import { PublicUserInfo } from './user';
+import { OauthType, PublicUserInfo } from './user';
 
 // Home/
 export type PostListProps = {
@@ -395,4 +395,11 @@ export type SearchIconProps = {
 	color?: string;
 	size?: number;
 	containerStyle?: ViewStyle;
+};
+
+export type SocialLoginButtonProp = {
+	oauthType: OauthType;
+	onPress: () => void;
+	round?: boolean;
+	style?: StyleProp<ViewStyle>;
 };
