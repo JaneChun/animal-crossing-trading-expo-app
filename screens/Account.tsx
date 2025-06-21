@@ -1,3 +1,5 @@
+import Kakao from '@/components/ui/Icons/Kakao';
+import Naver from '@/components/ui/Icons/Naver';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
@@ -48,12 +50,23 @@ const Account = () => {
 		<View style={styles.screen}>
 			<View style={styles.container}>
 				<SettingListItem borderRound='all'>
-					<>
+					<View style={styles.emailRow}>
 						<Text style={styles.text}>이메일</Text>
-						<Text style={[styles.text, { color: Colors.font_dark_gray }]}>
-							{userInfo?.email}
-						</Text>
-					</>
+						<View style={styles.email}>
+							{userInfo?.oauthType === 'naver' ? (
+								<Naver style={styles.icon} />
+							) : (
+								<Kakao style={styles.icon} />
+							)}
+							<Text
+								numberOfLines={1}
+								ellipsizeMode='tail'
+								style={[styles.text, styles.emailText]}
+							>
+								{userInfo?.email}
+							</Text>
+						</View>
+					</View>
 				</SettingListItem>
 			</View>
 			<View style={styles.container}>
@@ -91,5 +104,26 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.regular,
+	},
+	emailRow: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		gap: 16,
+	},
+	email: {
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+		gap: 6,
+	},
+	icon: {
+		width: 16,
+		height: 16,
+	},
+	emailText: {
+		flexShrink: 1,
+		color: Colors.font_dark_gray,
 	},
 });
