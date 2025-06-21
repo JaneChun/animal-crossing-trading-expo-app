@@ -1,12 +1,13 @@
 import NameInput from '@/components/Profile/NameInput';
 import Button from '@/components/ui/Button';
+import CloseButton from '@/components/ui/CloseButton';
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useProfileForm } from '@/hooks/form/Profile/useProfileForm';
 import { goBack } from '@/navigation/RootNavigation';
 import { SignUpDisplayNameRouteProp } from '@/types/navigation';
 import { navigateToSignUpEnd } from '@/utilities/navigationHelpers';
-import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import React from 'react';
 import { Controller, FormProvider } from 'react-hook-form';
@@ -16,7 +17,6 @@ import {
 	Platform,
 	StyleSheet,
 	Text,
-	TouchableOpacity,
 	TouchableWithoutFeedback,
 	View,
 } from 'react-native';
@@ -43,6 +43,10 @@ const SignUpDisplayName = () => {
 		navigateToSignUpEnd({ uid, oauthType, email, displayName });
 	};
 
+	const backToProfile = () => {
+		goBack();
+	};
+
 	return (
 		<SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
 			<KeyboardAvoidingView
@@ -53,12 +57,7 @@ const SignUpDisplayName = () => {
 					<FormProvider {...methods}>
 						<View style={styles.container}>
 							{/* 닫기 버튼 */}
-							<TouchableOpacity
-								style={styles.closeButton}
-								onPress={() => goBack()}
-							>
-								<Ionicons name='close' size={24} color='#000' />
-							</TouchableOpacity>
+							<CloseButton style={styles.closeButton} onPress={backToProfile} />
 
 							{/* 타이틀 */}
 							<Text style={styles.title}>{'닉네임을\n입력해주세요'}</Text>
@@ -111,6 +110,7 @@ const styles = StyleSheet.create({
 	},
 	closeButton: {
 		alignSelf: 'flex-end',
+		padding: 0,
 	},
 	title: {
 		fontSize: 24,

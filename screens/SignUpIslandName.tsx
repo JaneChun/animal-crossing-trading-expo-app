@@ -1,5 +1,6 @@
 import NameInput from '@/components/Profile/NameInput';
 import Button from '@/components/ui/Button';
+import CloseButton from '@/components/ui/CloseButton';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import {
@@ -13,7 +14,7 @@ import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
 import { SignUpIslandNameRouteProp } from '@/types/navigation';
 import { UserInfo } from '@/types/user';
-import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
 import { Timestamp } from 'firebase/firestore';
@@ -25,7 +26,6 @@ import {
 	Platform,
 	StyleSheet,
 	Text,
-	TouchableOpacity,
 	TouchableWithoutFeedback,
 	View,
 } from 'react-native';
@@ -75,8 +75,12 @@ const SignUpIslandName = () => {
 		} catch (e) {
 			showToast('error', '회원가입 중 오류가 발생했습니다.');
 		} finally {
-			pop(2);
+			backToProfile();
 		}
+	};
+
+	const backToProfile = () => {
+		pop(2);
 	};
 
 	return (
@@ -89,12 +93,7 @@ const SignUpIslandName = () => {
 					<FormProvider {...methods}>
 						<View style={styles.container}>
 							{/* 닫기 버튼 */}
-							<TouchableOpacity
-								style={styles.closeButton}
-								onPress={() => pop(2)}
-							>
-								<Ionicons name='close' size={24} color='#000' />
-							</TouchableOpacity>
+							<CloseButton style={styles.closeButton} onPress={backToProfile} />
 
 							{/* 타이틀 */}
 							<Text style={styles.title}>{'섬 이름을\n입력해주세요'}</Text>
@@ -147,6 +146,7 @@ const styles = StyleSheet.create({
 	},
 	closeButton: {
 		alignSelf: 'flex-end',
+		padding: 0,
 	},
 	title: {
 		fontSize: 24,

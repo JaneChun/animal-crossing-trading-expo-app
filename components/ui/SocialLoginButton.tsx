@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { FontSizes } from '@/constants/Typography';
-import { SocialLoginButtonProp } from '@/types/components';
+import { SocialLoginButtonProps } from '@/types/components';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import FastImage from 'react-native-fast-image';
@@ -17,7 +17,7 @@ const SocialLoginButton = ({
 	onPress,
 	round = false,
 	style,
-}: SocialLoginButtonProp) => {
+}: SocialLoginButtonProps) => {
 	const key = `${oauthType}${round ? '_round' : ''}`;
 	const imageSource = socialImages[key];
 

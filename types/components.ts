@@ -397,9 +397,15 @@ export type SearchIconProps = {
 	containerStyle?: ViewStyle;
 };
 
-export type SocialLoginButtonProp = {
+export type SocialLoginButtonProps = {
 	oauthType: OauthType;
 	onPress: () => void;
 	round?: boolean;
+	style?: StyleProp<ViewStyle>;
+};
+
+export type CloseButtonProps = {
+	onPress: () => void;
+	size?: number;
 	style?: StyleProp<ViewStyle>;
 };
