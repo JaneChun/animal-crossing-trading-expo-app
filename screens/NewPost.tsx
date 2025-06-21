@@ -254,23 +254,19 @@ const NewPost = () => {
 				</Layout>
 			</SafeAreaView>
 
-			{isAddItemModalVisible && (
-				<AddItemModal
-					cart={getValues('cart') ?? []}
-					addItemToCart={addItemToCart}
-					isVisible={isAddItemModalVisible}
-					onClose={closeAddItemModal}
-				/>
-			)}
+			<AddItemModal
+				cart={getValues('cart') ?? []}
+				addItemToCart={addItemToCart}
+				isVisible={isAddItemModalVisible}
+				onClose={closeAddItemModal}
+			/>
 
-			{isEditItemModalVisible && (
-				<EditItemModal
-					item={selectedItem}
-					updateItemFromCart={updateItemFromCart}
-					isVisible={isEditItemModalVisible}
-					onClose={closeEditItemModal}
-				/>
-			)}
+			<EditItemModal
+				item={selectedItem}
+				updateItemFromCart={updateItemFromCart}
+				isVisible={isEditItemModalVisible}
+				onClose={closeEditItemModal}
+			/>
 		</FormProvider>
 	);
 };
@@ -281,7 +277,7 @@ const styles = StyleSheet.create({
 		backgroundColor: 'white',
 	},
 	buttonContainer: {
-		paddingHorizontal: PADDING,
+		padding: PADDING,
 		marginTop: 8,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
