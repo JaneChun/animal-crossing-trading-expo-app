@@ -37,9 +37,7 @@ const PostForm = ({
 			data={[]}
 			renderItem={null}
 			keyboardShouldPersistTaps='handled'
-			contentContainerStyle={{
-				padding: PADDING,
-			}}
+			contentContainerStyle={{ padding: PADDING }}
 			ListHeaderComponent={
 				<>
 					{isMarket && (
