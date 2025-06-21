@@ -188,7 +188,14 @@ const NewPost = () => {
 		if (isAlreadyAdded) {
 			showToast('warn', '이미 추가된 아이템이에요.');
 		} else {
-			setValue('cart', [...cart, { ...item, quantity: 1, price: 1 }]);
+			const newAddedItem: CartItem = {
+				...item,
+				quantity: 1,
+				price: 1,
+				unit: 'mileticket',
+			};
+
+			setValue('cart', [...cart, newAddedItem]);
 			showToast('success', `${item.name}이(가) 추가되었어요.`);
 		}
 	};
@@ -233,19 +240,14 @@ const NewPost = () => {
 
 					<View style={styles.buttonContainer}>
 						{collectionName === 'Boards' && (
-							<Button
-								color='white'
-								size='lg'
-								style={{ flex: 1 }}
-								onPress={openAddItemModal}
-							>
+							<Button color='white' size='lg' flex onPress={openAddItemModal}>
 								아이템 추가
 							</Button>
 						)}
 						<Button
 							color='mint'
 							size='lg2'
-							style={{ flex: 1 }}
+							flex
 							onPress={handleSubmit(onSubmit, onError)}
 						>
 							등록

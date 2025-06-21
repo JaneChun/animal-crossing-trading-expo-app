@@ -9,6 +9,7 @@ const Button = ({
 	onPress,
 	color,
 	size,
+	flex = false,
 	style,
 	disabled,
 }: ButtonProps) => {
@@ -66,7 +67,7 @@ const Button = ({
 				styles.button,
 				sizeStyles,
 				disabled ? styles.disabledStyle : colorStyles,
-
+				flex && { flex: 1 },
 				style,
 			]}
 		>

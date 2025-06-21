@@ -283,6 +283,7 @@ export type ButtonProps = {
 	onPress: (event: GestureResponderEvent) => void;
 	color: ButtonColor;
 	size: ButtonSize;
+	flex?: boolean;
 	style?: object;
 	disabled?: boolean;
 };

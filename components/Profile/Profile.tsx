@@ -44,12 +44,7 @@ const Profile = ({
 			{/* 버튼 */}
 			{isMyProfile && (
 				<View style={styles.buttonsContainer}>
-					<Button
-						color='white'
-						size='lg'
-						onPress={openEditProfileModal}
-						style={styles.button}
-					>
+					<Button color='white' size='lg' flex onPress={openEditProfileModal}>
 						프로필 수정
 					</Button>
 				</View>
@@ -127,9 +122,6 @@ const styles = StyleSheet.create({
 	buttonsContainer: {
 		width: '100%',
 		marginTop: 24,
-	},
-	button: {
-		borderRadius: 12,
-		marginHorizontal: 16,
+		paddingHorizontal: 16,
 	},
 });
