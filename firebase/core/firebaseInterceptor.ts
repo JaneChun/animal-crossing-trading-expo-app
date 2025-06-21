@@ -10,12 +10,12 @@ const firestoreRequest = async (
 		// console.log(`✅ Firestore 요청 : ${requestName} 성공`);
 		return result;
 	} catch (error: any) {
-		console.log(`❌ Firestore 요청 : ${requestName} 실패`, error);
-
-		// 카카오 로그인 취소 에러는 Alert 무시
+		// 로그인 취소 에러는 Alert 무시
 		if (error.code === 'Cancelled') {
 			return null;
 		}
+
+		console.log(`❌ Firestore 요청 : ${requestName} 실패`, error);
 
 		// 인증 오류 처리
 		if (error.code?.startsWith('auth/')) {

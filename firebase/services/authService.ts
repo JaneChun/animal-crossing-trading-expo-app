@@ -32,6 +32,14 @@ export const loginWithNaver = async (): Promise<{
 	email: string;
 } | null> => {
 	const { successResponse } = await NaverLogin.login();
+
+	// 사용자가 로그인 도중 취소한 경우
+	if (!successResponse || !successResponse.accessToken) {
+		const error = new Error('네이버 로그인 취소');
+		(error as any).code = 'Cancelled';
+		throw error;
+	}
+
 	const {
 		firebaseToken,
 		user: { email, nickname },
