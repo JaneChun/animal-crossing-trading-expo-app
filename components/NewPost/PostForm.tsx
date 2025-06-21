@@ -33,7 +33,7 @@ const PostForm = ({
 
 	return (
 		<KeyboardAwareFlatList
-			innerRef={(ref) => (flatListRef.current = ref)}
+			ref={flatListRef}
 			data={[]}
 			renderItem={null}
 			keyboardShouldPersistTaps='handled'

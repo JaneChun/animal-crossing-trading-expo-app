@@ -2,7 +2,7 @@ import { ICON_MAP } from '@/components/ui/EmptyIndicator';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
-import { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 import {
 	GestureResponderEvent,
 	ImageProps,
@@ -12,7 +12,6 @@ import {
 	TextStyle,
 	ViewStyle,
 } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
 import { CommentWithCreatorInfo } from './comment';
 import { PopulatedNotification } from './notification';
 import {
@@ -61,7 +60,7 @@ export type ItemThumabnailProps = ThumabnailProps & { itemLength?: number };
 // NewPost/
 export interface PostFormProps {
 	collectionName: Collection;
-	flatListRef: RefObject<FlatList<any>>;
+	flatListRef: any;
 	handleEditItemPress: (item: CartItem) => void;
 	deleteItemFromCart: (deleteCartItemId: string) => void;
 }
@@ -149,9 +148,8 @@ export type BodyProps = {
 };
 
 export type CommentInputProps = {
-	postId: string;
-	setIsCommentUploading: Dispatch<SetStateAction<boolean>>;
-	setShouldScroll: Dispatch<SetStateAction<boolean>>;
+	disabled: boolean;
+	onSubmit: (input: string) => void;
 };
 
 export type CommentsListProps = {

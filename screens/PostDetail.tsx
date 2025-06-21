@@ -17,23 +17,24 @@ import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { createReport } from '@/firebase/services/reportService';
 import { sendReviewSystemMessage } from '@/firebase/services/reviewService';
+import { useCreateComment } from '@/hooks/mutation/comment/useCreateComment';
 import { useMarkAsRead } from '@/hooks/mutation/notification/useMarkAsRead';
 import { useDeletePost } from '@/hooks/mutation/post/useDeletePost';
 import { useUpdatePost } from '@/hooks/mutation/post/useUpdatePost';
 import useComments from '@/hooks/query/comment/useComments';
 import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
-import useLoading from '@/hooks/shared/useLoading';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { goBack } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
+import { CreateCommentRequest } from '@/types/comment';
 import { PostDetailRouteProp, RootStackNavigation } from '@/types/navigation';
 import { Collection, CommunityType, MarketType } from '@/types/post';
 import { CreateReportRequest, ReportCategory } from '@/types/report';
 import { navigateToEditPost } from '@/utilities/navigationHelpers';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
+import { Alert, Keyboard, StyleSheet, View } from 'react-native';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -48,7 +49,7 @@ const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
 	const { id = '', collectionName = '', notificationId = '' } = route.params;
 
-	const scrollableContentRef = useRef<any>(null);
+	const flatListRef = useRef<any>(null);
 	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
 
 	const [isReportModalVisible, setIsReportModalVisible] =
@@ -72,9 +73,11 @@ const PostDetail = () => {
 		id,
 	);
 	const { mutate: markAsRead } = useMarkAsRead();
-
-	const { isLoading: isCommentUploading, setIsLoading: setIsCommentUploading } =
-		useLoading();
+	const { mutate: createComment, isPending: isCommentCreating } =
+		useCreateComment({
+			collectionName: collectionName as Collection,
+			postId: id,
+		});
 
 	const openReportModal = (params: {
 		postId: string;
@@ -183,6 +186,28 @@ const PostDetail = () => {
 		});
 	};
 
+	const onSubmitComment = async (commentInput: string) => {
+		if (!userInfo) return;
+
+		const requestData: CreateCommentRequest = {
+			body: commentInput,
+		};
+
+		createComment(
+			{ requestData, userId: userInfo.uid },
+			{
+				onSuccess: async (id) => {
+					setShouldScroll(true);
+					showToast('success', '댓글이 등록되었습니다.');
+					Keyboard.dismiss();
+				},
+				onError: (e) => {
+					showToast('error', '댓글 등록 중 오류가 발생했습니다.');
+				},
+			},
+		);
+	};
+
 	const reportUser = async ({
 		category,
 		detail = '',
@@ -218,17 +243,13 @@ const PostDetail = () => {
 
 	const scrollToBottom = () => {
 		if (shouldScroll) {
-			scrollableContentRef.current?.scrollToEnd({ animated: false });
+			// flatListRef.current?.scrollToPosition(0, 9999);
+			flatListRef.current?.scrollToEnd({ animated: false });
 			setShouldScroll(false);
 		}
 	};
 
-	if (
-		isPostFetching ||
-		isCommentsFetching ||
-		isDeleting ||
-		isCommentUploading
-	) {
+	if (isPostFetching || isCommentsFetching || isDeleting || isCommentCreating) {
 		return <LoadingIndicator />;
 	}
 
@@ -241,7 +262,7 @@ const PostDetail = () => {
 			style={[styles.screen, { paddingBottom: keyboardHeight + insets.bottom }]}
 		>
 			<KeyboardAwareFlatList
-				ref={scrollableContentRef}
+				ref={flatListRef}
 				data={[]}
 				renderItem={null}
 				keyboardShouldPersistTaps='handled'
@@ -318,11 +339,7 @@ const PostDetail = () => {
 				}
 			/>
 
-			<CommentInput
-				postId={post.id}
-				setIsCommentUploading={setIsCommentUploading}
-				setShouldScroll={setShouldScroll}
-			/>
+			<CommentInput onSubmit={onSubmitComment} disabled={!userInfo} />
 
 			{isReportModalVisible && (
 				<ReportModal
