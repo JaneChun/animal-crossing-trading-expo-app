@@ -294,9 +294,7 @@ export type ValidationInputProp = TextInputProps & {
 };
 
 export type InputProps = {
-	input: string;
-	setInput: Dispatch<SetStateAction<string>>;
-	onPress: () => void;
+	onSubmit: (input: string) => void;
 	style?: StyleProp<ViewStyle>;
 	placeholder?: string;
 	disabled?: boolean;

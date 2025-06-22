@@ -15,19 +15,6 @@ export const navigateToSearch = () => {
 };
 
 // NewPost/
-export const navigateToPost = ({
-	postId,
-	collectionName,
-}: {
-	postId: string;
-	collectionName: Collection;
-}) => {
-	navigate('PostDetail', {
-		id: postId,
-		collectionName,
-	});
-};
-
 export const navigateToNewPost = () => {
 	navigate('NewPost', {
 		id: undefined,
@@ -41,7 +28,7 @@ export const navigateToEditPost = ({ postId }: { postId: string }) => {
 };
 
 // PostDetail/
-export const navigateToPostDetail = ({
+export const navigateToPost = ({
 	postId,
 	collectionName,
 	notificationId,
