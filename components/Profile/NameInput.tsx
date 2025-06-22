@@ -56,6 +56,7 @@ const styles = StyleSheet.create({
 		backgroundColor: Colors.base,
 		marginBottom: 8,
 		textAlignVertical: 'center',
+		height: 45,
 	},
 });
 
