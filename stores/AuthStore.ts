@@ -5,7 +5,6 @@ import {
 } from '@/firebase/services/authService';
 import {
 	getUserInfo,
-	moveToDeletedUsers,
 	savePushTokenToFirestore,
 } from '@/firebase/services/userService';
 import { UserInfo } from '@/types/user';
@@ -13,10 +12,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
 import { isLogined, logout } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
-import { deleteUser, onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
+import { httpsCallable } from 'firebase/functions';
 import { useEffect } from 'react';
 import { create } from 'zustand';
-import { auth } from '../fbase';
+import { auth, functions } from '../fbase';
 import firebaseRequest from '../firebase/core/firebaseInterceptor';
 import { usePushNotificationStore } from './PushNotificationStore';
 
@@ -116,11 +116,10 @@ export const useAuthStore = create<AuthState>((set) => ({
 			const user = auth.currentUser;
 			if (!user || !userInfo) return false;
 
-			// DeletedUsers 컬렉션으로 이동
-			await moveToDeletedUsers(userInfo);
-
-			// Firebase Authentication에서 유저 삭제
-			await deleteUser(user);
+			await httpsCallable(
+				functions,
+				'deleteUserAndArchive',
+			)({ uid: userInfo.uid });
 
 			// 로컬 상태 초기화
 			setUserInfo(null);
@@ -201,11 +200,10 @@ export const useAuthStore = create<AuthState>((set) => ({
 			const user = auth.currentUser;
 			if (!user || !userInfo) return false;
 
-			// DeletedUsers 컬렉션으로 이동
-			await moveToDeletedUsers(userInfo);
-
-			// Firebase Authentication에서 유저 삭제
-			await deleteUser(user);
+			await httpsCallable(
+				functions,
+				'deleteUserAndArchive',
+			)({ uid: userInfo.uid });
 
 			// 네이버 로그인 토큰 삭제
 			await NaverLogin.deleteToken();

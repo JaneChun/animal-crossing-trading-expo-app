@@ -8,18 +8,9 @@ import {
 import { db } from '@/fbase';
 import { PublicUserInfo, UserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
-import {
-	collection,
-	doc,
-	query,
-	setDoc,
-	Timestamp,
-	where,
-} from 'firebase/firestore';
+import { collection, doc, query, setDoc, where } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';
 import {
-	addDocToFirestore,
-	deleteDocFromFirestore,
 	getDocFromFirestore,
 	queryDocs,
 	updateDocToFirestore,
@@ -126,20 +117,6 @@ export const chunkArray = <T>(array: T[], size: number): T[][] => {
 		result.push(array.slice(i, i + size));
 	}
 	return result;
-};
-
-export const moveToDeletedUsers = async (userInfo: UserInfo) => {
-	// DeletedUsers 컬렉션에 추가
-	await addDocToFirestore({
-		directory: 'DeletedUsers',
-		requestData: {
-			...userInfo,
-			deletedAt: Timestamp.now(),
-		},
-	});
-
-	// Users 컬렉션에서 유저 삭제
-	await deleteDocFromFirestore({ id: userInfo.uid, collection: 'Users' });
 };
 
 export const savePushTokenToFirestore = async ({

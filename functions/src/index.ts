@@ -336,3 +336,53 @@ export const updateUserReview = onDocumentCreated(
 		}
 	},
 );
+
+export const deleteUserAndArchive = functions.https.onCall(async (request) => {
+	const {
+		data: { uid },
+	} = request;
+
+	if (!uid) {
+		throw new functions.https.HttpsError(
+			'invalid-argument',
+			'uid 파라미터가 누락되었습니다.',
+		);
+	}
+
+	try {
+		const userSnap = await db.collection('Users').doc(uid).get();
+		if (!userSnap.exists) {
+			throw new functions.https.HttpsError(
+				'not-found',
+				'존재하지 않는 유저입니다.',
+			);
+		}
+		const userData = userSnap.data();
+
+		// 1. Auth: 사용자 삭제
+		await admin.auth().deleteUser(uid);
+
+		// 2. Firestore: Users 삭제 & DeletedUsers로 이동
+		const batch = db.batch();
+
+		const deletedRef = db.collection('DeletedUsers').doc(uid);
+		batch.set(deletedRef, {
+			...userData,
+			deletedAt: Timestamp.now(),
+		});
+
+		const userRef = db.collection('Users').doc(uid);
+		batch.delete(userRef);
+
+		await batch.commit();
+
+		return { message: '유저 삭제에 성공했습니다.' };
+	} catch (e: any) {
+		console.error(`유저 ${uid} 삭제 실패:`, e);
+		throw new functions.https.HttpsError(
+			'internal',
+			'유저 삭제 중 오류가 발생했습니다.',
+			e.message,
+		);
+	}
+});

@@ -57,10 +57,11 @@ const DeleteAccount = () => {
 			isSuccess = await naverDeleteAccount(userInfo.uid);
 
 		if (Boolean(isSuccess)) {
-			Alert.alert('탈퇴 완료', '탈퇴 처리가 성공적으로 완료되었습니다.');
+			Alert.alert('탈퇴 완료', '회원 탈퇴가 완료되었습니다.');
 			backToProfile();
 		} else {
 			Alert.alert('탈퇴 중 오류가 발생했습니다. 다시 시도해주세요.');
+			backToProfile();
 		}
 	};
 

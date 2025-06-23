@@ -3,6 +3,7 @@ import { liteClient } from 'algoliasearch/lite';
 import { initializeApp } from 'firebase/app';
 import { getReactNativePersistence, initializeAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getFunctions } from 'firebase/functions';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
@@ -23,6 +24,7 @@ export const auth = initializeAuth(app, {
 });
 export const db = getFirestore(app);
 export const storage = getStorage(app);
+export const functions = getFunctions(app);
 
 export const searchClient = liteClient(
 	process.env.EXPO_PUBLIC_ALGOLIA_APP_ID,
