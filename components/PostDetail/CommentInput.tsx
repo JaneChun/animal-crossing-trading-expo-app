@@ -34,7 +34,7 @@ const CommentInput = ({ disabled, onSubmit }: CommentInputProps) => {
 				}
 				placeholderTextColor={Colors.font_gray}
 				multiline
-				scrollEnabled={false}
+				scrollEnabled
 				enterKeyHint='send'
 				editable={!disabled}
 			/>
@@ -62,7 +62,8 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		borderTopWidth: 1,
 		borderColor: Colors.border_gray,
-		height: 60,
+		minHeight: 60,
+		maxHeight: 100,
 	},
 	inputText: {
 		flex: 1,
@@ -76,7 +77,6 @@ const styles = StyleSheet.create({
 		fontSize: FontSizes.md,
 		color: Colors.font_gray,
 		minHeight: 42,
-		maxHeight: 90,
 	},
 	iconContainer: {
 		marginRight: 16,
