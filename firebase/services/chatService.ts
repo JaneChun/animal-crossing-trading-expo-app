@@ -8,6 +8,7 @@ import {
 } from '@/types/chat';
 import { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
+import { sanitize } from '@/utilities/sanitize';
 import {
 	addDoc,
 	arrayRemove,
@@ -16,7 +17,6 @@ import {
 	doc,
 	getDoc,
 	getDocs,
-	increment,
 	Query,
 	query,
 	setDoc,
@@ -157,27 +157,16 @@ export const sendMessage = async ({
 	return firestoreRequest('메세지 전송', async () => {
 		if (!chatId || !senderId || !receiverId || !message.trim()) return;
 
-		// 1. 메세지 추가
 		const messageRef = collection(db, 'Chats', chatId, 'Messages'); // Boards/{chatId}/Messages 서브컬렉션
 
+		const cleanMessage = sanitize(message);
+
 		await addDoc(messageRef, {
-			body: message,
+			body: cleanMessage,
 			senderId,
 			receiverId,
 			createdAt: Timestamp.now(),
 			isReadBy: [senderId],
-		});
-
-		if (senderId === 'system' || senderId === 'review') return;
-
-		// 2. 채팅방 정보 업데이트 (최근 메시지, 보낸 사람, 시간)
-		const chatRef = doc(db, 'Chats', chatId);
-		await updateDoc(chatRef, {
-			lastMessage: message,
-			lastMessageSenderId: senderId,
-			updatedAt: Timestamp.now(),
-			[`unreadCount.${receiverId}`]: increment(1), // 상대 유저의 unreadCount 1 증가
-			visibleTo: arrayUnion(receiverId), // 메시지를 받은 유저에게 채팅방 다시 표시
 		});
 	});
 };

@@ -1,10 +1,12 @@
 import axios from 'axios';
 import * as admin from 'firebase-admin';
+import { Timestamp } from 'firebase-admin/firestore';
 import * as functions from 'firebase-functions';
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 
 admin.initializeApp();
 const db = admin.firestore();
+const { FieldValue } = admin.firestore;
 
 export const getFirebaseToken = functions.https.onRequest(
 	async (req: any, res: any) => {
@@ -69,15 +71,30 @@ export const getFirebaseToken = functions.https.onRequest(
 	},
 );
 
-export const sendChatNotification = onDocumentCreated(
+export const onMessageCreated = onDocumentCreated(
 	'Chats/{chatId}/Messages/{messageId}',
 	async (event) => {
-		const snapshot = event.data;
+		const { chatId } = event.params;
 
+		const snapshot = event.data;
 		if (!snapshot) return;
 
 		const message = snapshot.data();
+
+		// 1. 채팅방 정보 업데이트 (최근 메시지, 보낸 사람, 시간)
+		const chatRef = db.collection('Chats').doc(chatId);
+		await chatRef.update({
+			lastMessage: message.body,
+			lastMessageSenderId: message.senderId,
+			updatedAt: Timestamp.now(),
+			[`unreadCount.${message.receiverId}`]: FieldValue.increment(1), // 상대 유저의 unreadCount 1 증가
+			visibleTo: FieldValue.arrayUnion(message.receiverId), // 메시지를 받은 유저에게 채팅방 다시 표시
+		});
+
+		// 2. 푸시 알림 전송
 		const { receiverId, senderId, body } = message;
+
+		if (senderId === 'system' || senderId === 'review') return;
 
 		// 시스템 메세지는 채팅 알림 발생 X
 		if (senderId === 'system' || !senderId || !receiverId || !body) return;
@@ -93,8 +110,6 @@ export const sendChatNotification = onDocumentCreated(
 
 		const expoPushToken = receiverInfo?.pushToken;
 		if (!expoPushToken) return;
-
-		const chatId = event.params.chatId;
 
 		// 유저가 채팅방에 들어와있는 경우 채팅 알림 발생 X
 		if (receiverInfo?.activeChatRoomId === chatId) return;
@@ -124,7 +139,7 @@ export const sendChatNotification = onDocumentCreated(
 	},
 );
 
-export const sendCommentNotification = onDocumentCreated(
+export const onCommentCreated = onDocumentCreated(
 	'Notifications/{notificationId}',
 	async (event) => {
 		const snapshot = event.data;
