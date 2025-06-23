@@ -8,6 +8,7 @@ import {
 } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
+import { sanitize } from '@/utilities/sanitize';
 import { toPost } from '@/utilities/toPost';
 import {
 	collection,
@@ -135,10 +136,14 @@ export const createPost = async <C extends Collection>({
 	userId: string;
 }): Promise<string> => {
 	return firestoreRequest('게시글 생성', async () => {
+		const cleanData: CreatePostRequest<C> = { ...requestData };
+		cleanData.title = sanitize(cleanData.title);
+		cleanData.body = sanitize(cleanData.body);
+
 		const createdId = await addDocToFirestore({
 			directory: collectionName,
 			requestData: {
-				...requestData,
+				...cleanData,
 				creatorId: userId,
 				createdAt: Timestamp.now(),
 				commentCount: 0,
@@ -164,11 +169,15 @@ export const updatePost = async <C extends Collection>({
 		const existingPost = await getPost(collectionName, postId);
 		if (!existingPost) throw new Error('게시글을 찾을 수 없습니다.');
 
+		const cleanData: Partial<UpdatePostRequest<C>> = { ...requestData };
+		if (cleanData?.title) cleanData.title = sanitize(cleanData.title);
+		if (cleanData?.body) cleanData.body = sanitize(cleanData.body);
+
 		await updateDocToFirestore({
 			collection: collectionName,
 			id: postId,
 			requestData: {
-				...requestData,
+				...cleanData,
 				updatedAt: Timestamp.now(),
 			},
 		});

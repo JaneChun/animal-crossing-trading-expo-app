@@ -8,6 +8,7 @@ import { Notification } from '@/types/notification';
 import { Collection } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
+import { sanitize } from '@/utilities/sanitize';
 import {
 	collection,
 	doc,
@@ -81,8 +82,12 @@ export const createComment = async ({
 
 		// 1. 댓글 문서 추가
 		const commentRef = doc(collection(db, collectionName, postId, 'Comments'));
+
+		const cleanData: CreateCommentRequest = { ...requestData };
+		cleanData.body = sanitize(cleanData.body);
+
 		const newComment: Omit<Comment, 'id'> = {
-			...requestData,
+			...cleanData,
 			creatorId: userId,
 			createdAt: Timestamp.now(),
 		};
@@ -138,8 +143,12 @@ export const updateComment = async ({
 }): Promise<void> => {
 	return firestoreRequest('댓글 수정', async () => {
 		const commentRef = doc(db, collectionName, postId, 'Comments', commentId);
+
+		const cleanData: UpdateCommentRequest = { ...requestData };
+		if (cleanData?.body) cleanData.body = sanitize(cleanData.body);
+
 		await updateDoc(commentRef, {
-			...requestData,
+			...cleanData,
 			updatedAt: Timestamp.now(),
 		});
 	});
