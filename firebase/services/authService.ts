@@ -1,10 +1,10 @@
-import { auth } from '@/fbase';
-import { OauthType } from '@/types/user';
+import { auth, functions } from '@/fbase';
+import { GetFirebaseCustomTokenResponse, OauthType } from '@/types/user';
 import { login } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
-import axios from 'axios';
 import { signInWithCustomToken, User } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
 import { saveUserInfo } from './userService';
 
 export const loginWithKakao = async (): Promise<{
@@ -67,17 +67,14 @@ export const getFirebaseCustomToken = async ({
 }: {
 	oauthType: OauthType;
 	accessToken: string;
-}) => {
+}): Promise<GetFirebaseCustomTokenResponse> => {
 	try {
-		const response = await axios.post(
-			process.env.EXPO_PUBLIC_GET_CUSTOM_TOKEN_URL || '',
-			{ oauthType, accessToken },
-			{ headers: { 'Content-Type': 'application/json' } },
-		);
+		const getCustomToken = httpsCallable(functions, 'getFirebaseCustomToken');
+		const { data } = await getCustomToken({ oauthType, accessToken });
 
-		return response.data;
-	} catch (error) {
-		console.error('Error getting Firebase custom token:', error);
-		throw error;
+		return data as GetFirebaseCustomTokenResponse;
+	} catch (e) {
+		console.error('Error getting Firebase custom token:', e);
+		throw e;
 	}
 };

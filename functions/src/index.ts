@@ -8,37 +8,37 @@ admin.initializeApp();
 const db = admin.firestore();
 const { FieldValue } = admin.firestore;
 
-export const getFirebaseToken = functions.https.onRequest(
-	async (req: any, res: any) => {
-		try {
-			const { oauthType, accessToken } = req.body;
+export const getFirebaseCustomToken = functions.https.onCall(
+	async (request) => {
+		const {
+			data: { oauthType, accessToken },
+		} = request;
 
-			if (!accessToken) {
-				return res.status(400).json({ error: 'Access token이 필요합니다.' });
-			}
+		if (!oauthType || !accessToken) {
+			throw new functions.https.HttpsError(
+				'invalid-argument',
+				'oauthType 및 accessToken 파라미터가 누락되었습니다.',
+			);
+		}
+
+		try {
+			let providerId: string;
+			let email: string | undefined;
+			let nickname: string | undefined;
 
 			if (oauthType === 'kakao') {
+				// 카카오 API 호출
 				const { data } = await axios.get('https://kapi.kakao.com/v2/user/me', {
 					headers: {
 						Authorization: `Bearer ${accessToken}`,
 					},
 				});
 
-				const kakaoId = data.id;
-				const email = data.kakao_account.email;
-				const nickname = data.kakao_account.profile?.nickname;
-
-				// Firebase에서 사용자 ID로 커스텀 토큰 생성
-				const customToken = await admin.auth().createCustomToken(`${kakaoId}`);
-
-				return res.json({
-					firebaseToken: customToken,
-					user: {
-						email,
-						nickname,
-					},
-				});
+				providerId = String(data.id);
+				email = data.kakao_account.email;
+				nickname = data.kakao_account.profile?.nickname;
 			} else if (oauthType === 'naver') {
+				// 네이버 API 호출
 				const { data } = await axios.get(
 					'https://openapi.naver.com/v1/nid/me',
 					{
@@ -52,21 +52,33 @@ export const getFirebaseToken = functions.https.onRequest(
 					throw new Error('네이버 사용자 정보 조회 실패');
 				}
 
-				const { id, email, nickname } = data.response;
-
-				const customToken = await admin.auth().createCustomToken(id);
-
-				return res.json({
-					firebaseToken: customToken,
-					user: {
-						email,
-						nickname,
-					},
-				});
+				providerId = String(data.response.id);
+				email = data.response.email;
+				nickname = data.response.nickname;
+			} else {
+				throw new functions.https.HttpsError(
+					'invalid-argument',
+					'지원하지 않는 oauthType입니다.',
+				);
 			}
-		} catch (error) {
-			console.error('Firebase Custom Token 생성 실패:', error);
-			return res.status(500).json({ error: 'Firebase Custom Token 생성 실패' });
+
+			// Firebase Custom Token 생성
+			const customToken = await admin.auth().createCustomToken(providerId);
+
+			return {
+				firebaseToken: customToken,
+				user: {
+					email,
+					nickname,
+				},
+			};
+		} catch (e: any) {
+			console.error('Firebase Custom Token 생성 실패:', e);
+			throw new functions.https.HttpsError(
+				'internal',
+				'Firebase Custom Token 생성 중 오류가 발생했습니다.',
+				e.message,
+			);
 		}
 	},
 );

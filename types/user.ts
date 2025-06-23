@@ -32,3 +32,8 @@ export interface UserInfo extends PublicUserInfo {
 }
 
 export type OauthType = 'kakao' | 'naver';
+
+export type GetFirebaseCustomTokenResponse = {
+	firebaseToken: string;
+	user: { email: string; nickname: string };
+};
