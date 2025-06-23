@@ -14,7 +14,6 @@ export type RootStackParamList = {
 		notificationId?: string; // 알림탭에서 이동 시 알림 처리 위해 전달
 	};
 	NewPost: { id?: string }; // 글 수정 시 id 전달
-	EditComment: { postId: string; commentId: string; body: string };
 	ChatRoom: {
 		chatId: string;
 		chatStartInfo?: CreateChatRoomParams;
@@ -50,7 +49,6 @@ export type TabNavigation = BottomTabNavigationProp<MainTabParamList>;
 
 // Route Props (for useRoute)
 export type PostDetailRouteProp = RouteProp<RootStackParamList, 'PostDetail'>;
-export type EditCommentRouteProp = RouteProp<RootStackParamList, 'EditComment'>;
 export type NewPostRouteProp = RouteProp<RootStackParamList, 'NewPost'>;
 export type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
 export type ChatRoomRouteProp = RouteProp<RootStackParamList, 'ChatRoom'>;

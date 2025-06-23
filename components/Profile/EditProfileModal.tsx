@@ -240,10 +240,10 @@ export default EditProfileModal;
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
+		backgroundColor: 'white',
 	},
 	container: {
 		flex: 1,
-		backgroundColor: 'white',
 		alignItems: 'center',
 		gap: 4,
 	},

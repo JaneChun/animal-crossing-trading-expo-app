@@ -24,6 +24,7 @@ import {
 	Post,
 	PostWithCreatorInfo,
 } from './post';
+import { ReportCategory } from './report';
 import { OauthType, PublicUserInfo } from './user';
 
 // Home/
@@ -159,19 +160,31 @@ export type CommentsListProps = {
 	chatRoomIds: string[];
 	containerStyle?: ViewStyle;
 	scrollToBottom: () => void;
-	openReportModal: (params: OpenReportModalParams) => void;
+	onReportClick: (params: OpenReportModalParams) => void;
+	onEditClick: (params: OpenEditCommentModalParams) => void;
 };
 
-type OpenReportModalParams = {
+export type reportUserParams = {
+	category: ReportCategory;
+	detail?: string;
+};
+
+export type OpenReportModalParams = {
 	commentId: string;
 	reporteeId: string;
+};
+
+export type OpenEditCommentModalParams = {
+	commentId: string;
+	commentText: string;
 };
 
 export interface CommentUnitProps extends CommentWithCreatorInfo {
 	postId: string;
 	postCreatorId: string;
 	chatRoomIds: string[];
-	openReportModal: (params: OpenReportModalParams) => void;
+	onReportClick: (params: OpenReportModalParams) => void;
+	onEditClick: (params: OpenEditCommentModalParams) => void;
 }
 
 export type CreatedAtProps = {

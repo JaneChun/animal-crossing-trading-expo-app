@@ -6,7 +6,14 @@ import BottomSheet, {
 } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import React, { ReactNode, useCallback, useMemo, useRef } from 'react';
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import {
+	StyleProp,
+	StyleSheet,
+	Text,
+	useWindowDimensions,
+	View,
+	ViewStyle,
+} from 'react-native';
 
 const CustomBottomSheet = ({
 	children,
@@ -15,6 +22,7 @@ const CustomBottomSheet = ({
 	title,
 	leftButton,
 	rightButton,
+	bodyStyle = {},
 	onClose,
 }: {
 	children: ReactNode;
@@ -23,6 +31,7 @@ const CustomBottomSheet = ({
 	title?: string;
 	leftButton?: ReactNode;
 	rightButton?: ReactNode;
+	bodyStyle?: StyleProp<ViewStyle>;
 	onClose: () => void;
 }) => {
 	const bottomSheetRef = useRef<BottomSheet>(null);
@@ -90,6 +99,7 @@ const CustomBottomSheet = ({
 						{
 							height: (screenHeight - headerHeight) * heightRatio,
 						},
+						bodyStyle,
 					]}
 				>
 					{children}

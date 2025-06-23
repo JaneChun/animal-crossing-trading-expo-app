@@ -3,7 +3,6 @@ import { Colors } from '@/constants/Color';
 import Account from '@/screens/Account';
 import ChatRoom from '@/screens/ChatRoom';
 import DeleteAccount from '@/screens/DeleteAccount';
-import EditComment from '@/screens/EditComment';
 import NewPost from '@/screens/NewPost';
 import PostDetail from '@/screens/PostDetail';
 import Profile from '@/screens/Profile';
@@ -63,19 +62,6 @@ const RootStackNavigator = () => {
 				name='SignUpIslandName'
 				component={SignUpIslandName}
 				options={{ ...commonOptions, headerShown: false }}
-			/>
-			<RootStack.Screen
-				name='EditComment'
-				children={() => (
-					// <AuthGuard>
-					<EditComment />
-					// </AuthGuard>
-				)}
-				options={{
-					...commonOptions,
-					title: '댓글 수정',
-					presentation: 'modal',
-				}}
 			/>
 			<RootStack.Screen
 				name='ChatRoom'

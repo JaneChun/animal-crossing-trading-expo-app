@@ -3,16 +3,23 @@ import { UpdateCommentRequest } from '@/types/comment';
 import { Collection } from '@/types/post';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-export const useUpdateComment = (
-	collectionName: Collection,
-	postId: string,
-	commentId: string,
-) => {
+export const useUpdateComment = ({
+	collectionName,
+	postId,
+}: {
+	collectionName: Collection;
+	postId: string;
+}) => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: (requestData: UpdateCommentRequest) =>
-			updateComment({ collectionName, postId, commentId, requestData }),
+		mutationFn: ({
+			commentId,
+			requestData,
+		}: {
+			commentId: string;
+			requestData: UpdateCommentRequest;
+		}) => updateComment({ collectionName, postId, commentId, requestData }),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: ['postDetail', collectionName, postId],

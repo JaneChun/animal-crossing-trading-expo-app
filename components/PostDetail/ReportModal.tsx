@@ -40,7 +40,7 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 			isVisible={isVisible}
 			onClose={onClose}
 			title='신고하기'
-			heightRatio={0.5}
+			heightRatio={0.6}
 			rightButton={
 				step === 1 ? (
 					<Button

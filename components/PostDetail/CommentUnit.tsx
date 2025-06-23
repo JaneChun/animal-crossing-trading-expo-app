@@ -12,7 +12,6 @@ import { createSystemMessage } from '@/utilities/createSystemMessage';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import {
 	navigateToChatRoom,
-	navigateToEditComment,
 	navigateToUserProfile,
 } from '@/utilities/navigationHelpers';
 import { AntDesign } from '@expo/vector-icons';
@@ -33,7 +32,8 @@ const CommentUnit = ({
 	postId,
 	postCreatorId,
 	chatRoomIds,
-	openReportModal,
+	onReportClick,
+	onEditClick,
 	// Comment props
 	id,
 	body,
@@ -118,8 +118,7 @@ const CommentUnit = ({
 			? [
 					{
 						label: '수정',
-						onPress: () =>
-							navigateToEditComment({ postId, commentId: id, body }),
+						onPress: () => onEditClick({ commentId: id, commentText: body }),
 					},
 					{
 						label: '삭제',
@@ -130,7 +129,7 @@ const CommentUnit = ({
 					{
 						label: '신고',
 						onPress: () =>
-							openReportModal({ commentId: id, reporteeId: creatorId }),
+							onReportClick({ commentId: id, reporteeId: creatorId }),
 					},
 			  ]),
 		{ label: '취소', onPress: () => {} },

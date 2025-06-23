@@ -18,6 +18,7 @@ import { Colors } from '@/constants/Color';
 import { createReport } from '@/firebase/services/reportService';
 import { sendReviewSystemMessage } from '@/firebase/services/reviewService';
 import { useCreateComment } from '@/hooks/mutation/comment/useCreateComment';
+import { useUpdateComment } from '@/hooks/mutation/comment/useUpdateComment';
 import { useMarkAsRead } from '@/hooks/mutation/notification/useMarkAsRead';
 import { useDeletePost } from '@/hooks/mutation/post/useDeletePost';
 import { useUpdatePost } from '@/hooks/mutation/post/useUpdatePost';
@@ -26,11 +27,18 @@ import { usePostDetail } from '@/hooks/query/post/usePostDetail';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { goBack } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
-import { CreateCommentRequest } from '@/types/comment';
+import { CreateCommentRequest, UpdateCommentRequest } from '@/types/comment';
+import {
+	OpenEditCommentModalParams,
+	reportUserParams,
+} from '@/types/components';
 import { PostDetailRouteProp, RootStackNavigation } from '@/types/navigation';
 import { Collection, CommunityType, MarketType } from '@/types/post';
-import { CreateReportRequest, ReportCategory } from '@/types/report';
-import { navigateToEditPost } from '@/utilities/navigationHelpers';
+import { CreateReportRequest } from '@/types/report';
+import {
+	navigateToEditPost,
+	navigateToLogin,
+} from '@/utilities/navigationHelpers';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
@@ -43,6 +51,7 @@ import {
 	View,
 } from 'react-native';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
+import EditCommentModal from '../components/PostDetail/EditCommentModal';
 
 const PostDetail = () => {
 	const headerHeight = useHeaderHeight();
@@ -57,32 +66,47 @@ const PostDetail = () => {
 	const flatListRef = useRef<any>(null);
 	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
 
-	const [isReportModalVisible, setIsReportModalVisible] =
-		useState<boolean>(false);
-	const [reportTarget, setReportTarget] = useState<{
-		postId: string;
-		commentId?: string;
-		reporteeId: string;
-	} | null>(null);
-
+	// 게시글
 	const { data: post, isLoading: isPostFetching } = usePostDetail(
 		collectionName as Collection,
 		id,
 	);
+	const { mutate: markAsRead } = useMarkAsRead();
+	const { mutate: deletePost, isPending: isPostDeleting } = useDeletePost(
+		collectionName as Collection,
+		id,
+	);
+
+	// 댓글
+	const [isEditCommentModalVisible, setIsEditCommentModalVisible] =
+		useState<boolean>(false);
+	const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+	const [editingCommentText, setEditingCommentText] = useState<string>('');
+
 	const { data: comments = [], isLoading: isCommentsFetching } = useComments(
 		collectionName as Collection,
 		id,
 	);
-	const { mutate: deletePost, isPending: isDeleting } = useDeletePost(
-		collectionName as Collection,
-		id,
-	);
-	const { mutate: markAsRead } = useMarkAsRead();
 	const { mutate: createComment, isPending: isCommentCreating } =
 		useCreateComment({
 			collectionName: collectionName as Collection,
 			postId: id,
 		});
+	const { mutate: updateComment, isPending: isCommentUpdating } =
+		useUpdateComment({
+			collectionName: collectionName as Collection,
+			postId: id,
+		});
+
+	// 신고
+	const [isReportModalVisible, setIsReportModalVisible] =
+		useState<boolean>(false);
+
+	const [reportTarget, setReportTarget] = useState<{
+		postId: string;
+		commentId?: string;
+		reporteeId: string;
+	} | null>(null);
 
 	const openReportModal = (params: {
 		postId: string;
@@ -212,18 +236,66 @@ const PostDetail = () => {
 		);
 	};
 
-	const reportUser = async ({
-		category,
-		detail = '',
-	}: {
-		category: ReportCategory;
-		detail?: string;
-	}) => {
+	const openEditCommentModal = ({
+		commentId,
+		commentText,
+	}: OpenEditCommentModalParams) => {
+		setEditingCommentId(commentId);
+		setEditingCommentText(commentText);
+		setIsEditCommentModalVisible(true);
+	};
+
+	const onUpdateComment = async (commentText: string) => {
+		if (!userInfo) {
+			showToast('warn', '댓글 쓰기는 로그인 후 가능합니다.');
+			navigateToLogin();
+			return;
+		}
+
+		if (!post) {
+			showToast('error', '게시글을 찾을 수 없습니다.');
+			return;
+		}
+
+		if (!editingCommentId) {
+			showToast('error', '댓글을 찾을 수 없습니다.');
+			return;
+		}
+
+		const requestData: UpdateCommentRequest = {
+			body: commentText,
+		};
+
+		updateComment(
+			{ commentId: editingCommentId, requestData },
+			{
+				onSuccess: () => {
+					setIsEditCommentModalVisible(false);
+					showToast('success', '댓글이 수정되었습니다.');
+				},
+				onError: (e) => {
+					showToast('error', '댓글 수정 중 오류가 발생했습니다.');
+				},
+			},
+		);
+	};
+
+	const reportUser = async ({ category, detail = '' }: reportUserParams) => {
+		if (!userInfo) {
+			showToast('warn', '댓글 신고는 로그인 후 가능합니다.');
+			navigateToLogin();
+			return;
+		}
+
+		if (!reportTarget) {
+			showToast('error', '신고 대상을 찾을 수 없습니다.');
+			return;
+		}
+
 		try {
-			if (!reportTarget || !userInfo) return;
 			const { postId, commentId, reporteeId } = reportTarget;
 
-			if (reporteeId === userInfo.uid) return;
+			if (reporteeId === userInfo.uid) return; // 자기 자신 신고 X
 
 			const postReport: CreateReportRequest = {
 				reporterId: userInfo.uid,
@@ -247,13 +319,18 @@ const PostDetail = () => {
 
 	const scrollToBottom = () => {
 		if (shouldScroll) {
-			// flatListRef.current?.scrollToPosition(0, 9999);
 			flatListRef.current?.scrollToEnd({ animated: false });
 			setShouldScroll(false);
 		}
 	};
 
-	if (isPostFetching || isCommentsFetching || isDeleting || isCommentCreating) {
+	if (
+		isPostFetching ||
+		isPostDeleting ||
+		isCommentsFetching ||
+		isCommentCreating ||
+		isCommentUpdating
+	) {
 		return <LoadingIndicator />;
 	}
 
@@ -333,12 +410,15 @@ const PostDetail = () => {
 									isBoardPost(post, collectionName) ? post.chatRoomIds : []
 								}
 								scrollToBottom={scrollToBottom}
-								openReportModal={({ commentId, reporteeId }) =>
+								onReportClick={({ commentId, reporteeId }) =>
 									openReportModal({
 										postId: post.id,
 										commentId,
 										reporteeId,
 									})
+								}
+								onEditClick={({ commentId, commentText }) =>
+									openEditCommentModal({ commentId, commentText })
 								}
 							/>
 						</View>
@@ -351,13 +431,20 @@ const PostDetail = () => {
 					<CommentInput onSubmit={onSubmitComment} disabled={!userInfo} />
 				</KeyboardAvoidingView>
 
+				{isEditCommentModalVisible && (
+					<EditCommentModal
+						comment={editingCommentText}
+						isVisible={isEditCommentModalVisible}
+						onClose={() => setIsEditCommentModalVisible(false)}
+						onSubmit={onUpdateComment}
+					/>
+				)}
+
 				{isReportModalVisible && (
 					<ReportModal
 						isVisible={isReportModalVisible}
 						onClose={() => setIsReportModalVisible(false)}
-						onSubmit={({ category, detail }) =>
-							reportUser({ category, detail })
-						}
+						onSubmit={reportUser}
 					/>
 				)}
 			</SafeAreaView>
