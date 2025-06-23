@@ -1,12 +1,29 @@
 import { Colors } from '@/constants/Color';
+import { MAX_COMMENT_LENGTH } from '@/constants/post';
 import { FontSizes } from '@/constants/Typography';
 import { CommentInputProps } from '@/types/components';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { memo, useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { showToast } from '../ui/Toast';
 
 const CommentInput = ({ disabled, onSubmit }: CommentInputProps) => {
 	const [commentInput, setCommentInput] = useState<string>('');
+
+	const handleChangeText = (text: string) => {
+		if (text.length >= MAX_COMMENT_LENGTH) {
+			const truncated = text.slice(0, MAX_COMMENT_LENGTH);
+
+			showToast(
+				'warn',
+				`댓글은 최대 ${MAX_COMMENT_LENGTH}자까지만 입력 가능합니다.`,
+			);
+
+			setCommentInput(truncated);
+			return;
+		}
+		setCommentInput(text);
+	};
 
 	const handleSubmit = () => {
 		if (!commentInput.trim()) return;
@@ -24,7 +41,7 @@ const CommentInput = ({ disabled, onSubmit }: CommentInputProps) => {
 			<TextInput
 				style={styles.inputText}
 				value={commentInput}
-				onChangeText={setCommentInput}
+				onChangeText={handleChangeText}
 				onSubmitEditing={handleSubmit}
 				returnKeyType='send'
 				placeholder={
@@ -35,6 +52,7 @@ const CommentInput = ({ disabled, onSubmit }: CommentInputProps) => {
 				placeholderTextColor={Colors.font_gray}
 				multiline
 				scrollEnabled
+				maxLength={MAX_COMMENT_LENGTH}
 				enterKeyHint='send'
 				editable={!disabled}
 			/>

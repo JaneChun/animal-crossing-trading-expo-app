@@ -78,3 +78,5 @@ export const REPORT_CATEGORIES = [
 	{ KR: '음란/부적절 콘텐츠', EN: 'inappropriate' },
 	{ KR: '기타', EN: 'other' },
 ];
+
+export const MAX_COMMENT_LENGTH = 1000;
