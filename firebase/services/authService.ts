@@ -68,13 +68,8 @@ export const getFirebaseCustomToken = async ({
 	oauthType: OauthType;
 	accessToken: string;
 }): Promise<GetFirebaseCustomTokenResponse> => {
-	try {
-		const getCustomToken = httpsCallable(functions, 'getFirebaseCustomToken');
-		const { data } = await getCustomToken({ oauthType, accessToken });
+	const getCustomToken = httpsCallable(functions, 'getFirebaseCustomToken');
+	const { data } = await getCustomToken({ oauthType, accessToken });
 
-		return data as GetFirebaseCustomTokenResponse;
-	} catch (e) {
-		console.error('Error getting Firebase custom token:', e);
-		throw e;
-	}
+	return data as GetFirebaseCustomTokenResponse;
 };

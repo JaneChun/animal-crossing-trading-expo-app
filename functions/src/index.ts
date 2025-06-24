@@ -62,6 +62,25 @@ export const getFirebaseCustomToken = functions.https.onCall(
 				);
 			}
 
+			// 30일 이내 재가입 제한
+			const deletedDoc = await admin
+				.firestore()
+				.doc(`DeletedUsers/${providerId}`)
+				.get();
+
+			if (deletedDoc.exists) {
+				const { deletedAt } = deletedDoc.data()!;
+				if (
+					Date.now() - deletedAt.toDate().getTime() <
+					30 * 24 * 60 * 60 * 1000
+				) {
+					throw new functions.https.HttpsError(
+						'failed-precondition',
+						'30일 이내 재가입이 제한된 계정입니다.',
+					);
+				}
+			}
+
 			// Firebase Custom Token 생성
 			const customToken = await admin.auth().createCustomToken(providerId);
 
@@ -74,6 +93,13 @@ export const getFirebaseCustomToken = functions.https.onCall(
 			};
 		} catch (e: any) {
 			console.error('Firebase Custom Token 생성 실패:', e);
+
+			// 이미 HttpsError 로 던져진 경우 (failed-precondition 등) 그대로 재던짐
+			if (e instanceof functions.https.HttpsError) {
+				throw e;
+			}
+
+			// 그 외 예외만 internal 로 감싸기
 			throw new functions.https.HttpsError(
 				'internal',
 				'Firebase Custom Token 생성 중 오류가 발생했습니다.',

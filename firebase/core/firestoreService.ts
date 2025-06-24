@@ -8,6 +8,7 @@ import {
 	doc,
 	getDoc,
 	getDocs,
+	setDoc,
 	updateDoc,
 } from 'firebase/firestore';
 import { deleteObjectFromStorage } from '../services/imageService';
@@ -38,6 +39,18 @@ export const addDocToFirestore = async ({
 }): Promise<string> => {
 	const docRef = await addDoc(collection(db, directory), requestData);
 	return docRef.id;
+};
+
+export const setDocToFirestore = async ({
+	directory,
+	id,
+	requestData,
+}: {
+	directory: string;
+	id: string;
+	requestData: any;
+}): Promise<void> => {
+	await setDoc(doc(db, directory, id), requestData);
 };
 
 export const deleteDocFromFirestore = async ({
