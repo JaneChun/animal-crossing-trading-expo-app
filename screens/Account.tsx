@@ -9,7 +9,7 @@ import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
 import { navigateToSocialAccountCheck } from '@/utilities/navigationHelpers';
 import { Alert, StyleSheet, Text, View } from 'react-native';
-import SettingListItem from './SettingListItem';
+import SettingListItem from '../components/Profile/SettingListItem';
 
 const Account = () => {
 	const userInfo = useAuthStore((state) => state.userInfo);

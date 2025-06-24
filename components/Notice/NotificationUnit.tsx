@@ -5,7 +5,7 @@ import { useDeleteNotification } from '@/hooks/mutation/notification/useDeleteNo
 import { NotificationUnitProp } from '@/types/components';
 import { Collection } from '@/types/post';
 import { elapsedTime } from '@/utilities/elapsedTime';
-import { navigateToPostDetail } from '@/utilities/navigationHelpers';
+import { navigateToPost } from '@/utilities/navigationHelpers';
 import { FontAwesome } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -45,8 +45,9 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 		collectionName: Collection;
 		postId: string;
 	}) => {
-		if (isRead) navigateToPostDetail({ postId, collectionName });
-		else navigateToPostDetail({ postId, collectionName, notificationId: id });
+		console.log('onPressNotification');
+		if (isRead) navigateToPost({ postId, collectionName });
+		else navigateToPost({ postId, collectionName, notificationId: id });
 	};
 
 	// Swipeable이 스와이프될 때 보여줄 삭제 버튼을 생성

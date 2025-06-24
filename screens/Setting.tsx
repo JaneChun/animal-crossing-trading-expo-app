@@ -4,7 +4,7 @@ import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useAuthStore } from '@/stores/AuthStore';
 import { navigateToAccount } from '@/utilities/navigationHelpers';
 import { StyleSheet, Text, View } from 'react-native';
-import SettingListItem from './SettingListItem';
+import SettingListItem from '../components/Profile/SettingListItem';
 
 const Setting = () => {
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
