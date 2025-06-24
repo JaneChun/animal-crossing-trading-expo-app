@@ -48,9 +48,9 @@ const SignUpDisplayName = () => {
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+		<SafeAreaView style={styles.screen} edges={['bottom']}>
 			<KeyboardAvoidingView
-				style={{ flex: 1 }}
+				style={styles.screen}
 				behavior={Platform.OS === 'ios' ? 'padding' : undefined}
 			>
 				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -103,6 +103,10 @@ const SignUpDisplayName = () => {
 export default SignUpDisplayName;
 
 const styles = StyleSheet.create({
+	screen: {
+		flex: 1,
+		backgroundColor: 'white',
+	},
 	container: {
 		flex: 1,
 		backgroundColor: '#fff',

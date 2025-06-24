@@ -40,7 +40,7 @@ const SocialAccountCheck = () => {
 	if (isAuthLoading) return <LoadingIndicator />;
 
 	return (
-		<SafeAreaView style={styles.screen}>
+		<SafeAreaView style={styles.screen} edges={['bottom']}>
 			<LayoutWithHeader
 				headerRightComponent={<CloseButton onPress={backToAccount} />}
 				hasBorderBottom={false}

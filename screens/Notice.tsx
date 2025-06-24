@@ -8,7 +8,6 @@ import { useNotificationStore } from '@/stores/NotificationStore';
 import { Collection } from '@/types/post';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
 
 const Notice = () => {
 	const Tab = createMaterialTopTabNavigator();
@@ -29,55 +28,44 @@ const Notice = () => {
 	);
 
 	return (
-		<SafeAreaView style={styles.screen}>
-			<Layout title='알림'>
-				<Tab.Navigator
-					screenOptions={{
-						tabBarLabelStyle: {
-							fontSize: FontSizes.sm,
-							fontWeight: FontWeights.semibold,
-						},
-						tabBarStyle: {
-							backgroundColor: 'white',
-						},
-						tabBarIndicatorStyle: { backgroundColor: Colors.primary }, // 선택된 탭 밑줄 색상
-						tabBarActiveTintColor: Colors.primary, // 활성 탭 색상
-						tabBarInactiveTintColor: Colors.font_gray, // 비활성 탭 색상
+		<Layout title='알림'>
+			<Tab.Navigator
+				screenOptions={{
+					tabBarLabelStyle: {
+						fontSize: FontSizes.sm,
+						fontWeight: FontWeights.semibold,
+					},
+					tabBarStyle: {
+						backgroundColor: 'white',
+					},
+					tabBarIndicatorStyle: { backgroundColor: Colors.primary }, // 선택된 탭 밑줄 색상
+					tabBarActiveTintColor: Colors.primary, // 활성 탭 색상
+					tabBarInactiveTintColor: Colors.font_gray, // 비활성 탭 색상
+				}}
+			>
+				<Tab.Screen
+					name='마켓'
+					children={() => <MarketNotices notifications={marketNotifications} />}
+					options={{
+						tabBarLabel: () => (
+							<TabBarLabel label='마켓' hasUnread={hasUnreadMarket} />
+						),
 					}}
-				>
-					<Tab.Screen
-						name='마켓'
-						children={() => (
-							<MarketNotices notifications={marketNotifications} />
-						)}
-						options={{
-							tabBarLabel: () => (
-								<TabBarLabel label='마켓' hasUnread={hasUnreadMarket} />
-							),
-						}}
-					/>
-					<Tab.Screen
-						name='커뮤니티'
-						children={() => (
-							<CommunityNotices notifications={communityNotifications} />
-						)}
-						options={{
-							tabBarLabel: () => (
-								<TabBarLabel label='커뮤니티' hasUnread={hasUnreadCommunity} />
-							),
-						}}
-					/>
-				</Tab.Navigator>
-			</Layout>
-		</SafeAreaView>
+				/>
+				<Tab.Screen
+					name='커뮤니티'
+					children={() => (
+						<CommunityNotices notifications={communityNotifications} />
+					)}
+					options={{
+						tabBarLabel: () => (
+							<TabBarLabel label='커뮤니티' hasUnread={hasUnreadCommunity} />
+						),
+					}}
+				/>
+			</Tab.Navigator>
+		</Layout>
 	);
 };
 
 export default Notice;
-
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: 'white',
-	},
-});

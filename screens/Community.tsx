@@ -8,7 +8,6 @@ import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { Category, CategoryItem, Tab } from '@/types/post';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
 
 const Community = () => {
 	const setActiveTab = useActiveTabStore((state) => state.setActiveTab);
@@ -23,31 +22,22 @@ const Community = () => {
 	);
 
 	return (
-		<SafeAreaView style={styles.screen}>
-			<Layout title='커뮤니티' headerRightComponent={<SearchIcon />}>
-				<Categories<Category, CategoryItem>
-					categories={CATEGORIES}
-					category={category}
-					setCategory={setCategory}
-					containerStyle={{ paddingHorizontal: PADDING, marginBottom: 8 }}
-				/>
+		<Layout title='커뮤니티' headerRightComponent={<SearchIcon />}>
+			<Categories<Category, CategoryItem>
+				categories={CATEGORIES}
+				category={category}
+				setCategory={setCategory}
+				containerStyle={{ paddingHorizontal: PADDING, marginBottom: 8 }}
+			/>
 
-				<PostList
-					collectionName='Communities'
-					filter={{ category }}
-					isAddPostButtonVisible
-					containerStyle={{ paddingHorizontal: PADDING }}
-				/>
-			</Layout>
-		</SafeAreaView>
+			<PostList
+				collectionName='Communities'
+				filter={{ category }}
+				isAddPostButtonVisible
+				containerStyle={{ paddingHorizontal: PADDING }}
+			/>
+		</Layout>
 	);
 };
 
 export default Community;
-
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: 'white',
-	},
-});

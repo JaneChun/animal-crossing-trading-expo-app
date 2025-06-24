@@ -5,7 +5,6 @@ import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
 import { usePostContext } from '@/hooks/shared/usePostContext';
 import { useState } from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
 
 const Search = () => {
 	const { collectionName } = usePostContext();
@@ -18,45 +17,36 @@ const Search = () => {
 	};
 
 	return (
-		<SafeAreaView style={styles.screen}>
-			<LayoutWithHeader
-				headerCenterComponent={
-					<SearchInput
-						searchInput={searchInput}
-						onChangeText={(text: string) => {
-							setSearchInput(text);
-							if (isSearchResultMode) {
-								setIsSearchResultMode(false);
-							}
-						}}
-						resetSearchInput={() => setSearchInput('')}
-						onSubmit={onSubmit}
-						containerStyle={{ marginLeft: 8, marginRight: 12 }}
-						placeholder={`${
-							collectionName === 'Boards' ? '거래글' : '게시글'
-						} 검색`}
-					/>
-				}
-				hasBorderBottom={false}
-			>
-				{/* 검색 결과 */}
-				{isSearchResultMode ? (
-					<SearchResultPostList
-						collectionName={collectionName}
-						keyword={debouncedKeyword}
-						containerStyle={{ paddingHorizontal: PADDING }}
-					/>
-				) : null}
-			</LayoutWithHeader>
-		</SafeAreaView>
+		<LayoutWithHeader
+			headerCenterComponent={
+				<SearchInput
+					searchInput={searchInput}
+					onChangeText={(text: string) => {
+						setSearchInput(text);
+						if (isSearchResultMode) {
+							setIsSearchResultMode(false);
+						}
+					}}
+					resetSearchInput={() => setSearchInput('')}
+					onSubmit={onSubmit}
+					containerStyle={{ marginLeft: 8, marginRight: 12 }}
+					placeholder={`${
+						collectionName === 'Boards' ? '거래글' : '게시글'
+					} 검색`}
+				/>
+			}
+			hasBorderBottom={false}
+		>
+			{/* 검색 결과 */}
+			{isSearchResultMode ? (
+				<SearchResultPostList
+					collectionName={collectionName}
+					keyword={debouncedKeyword}
+					containerStyle={{ paddingHorizontal: PADDING }}
+				/>
+			) : null}
+		</LayoutWithHeader>
 	);
 };
 
 export default Search;
-
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: 'white',
-	},
-});

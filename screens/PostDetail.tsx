@@ -46,15 +46,19 @@ import {
 	Alert,
 	KeyboardAvoidingView,
 	Platform,
-	SafeAreaView,
 	StyleSheet,
 	View,
 } from 'react-native';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
+import {
+	SafeAreaView,
+	useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import EditCommentModal from '../components/PostDetail/EditCommentModal';
 
 const PostDetail = () => {
 	const headerHeight = useHeaderHeight();
+	const insets = useSafeAreaInsets();
 
 	const { isBoardPost, isCommunityPost } = usePostContext();
 
@@ -340,7 +344,7 @@ const PostDetail = () => {
 
 	return (
 		<>
-			<SafeAreaView style={styles.screen}>
+			<SafeAreaView style={styles.screen} edges={['bottom']}>
 				<KeyboardAwareFlatList
 					ref={flatListRef}
 					data={[]}
@@ -426,7 +430,7 @@ const PostDetail = () => {
 				/>
 				<KeyboardAvoidingView
 					behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-					keyboardVerticalOffset={headerHeight}
+					keyboardVerticalOffset={headerHeight + insets.top}
 				>
 					<CommentInput onSubmit={onSubmitComment} disabled={!userInfo} />
 				</KeyboardAvoidingView>
@@ -461,6 +465,7 @@ const styles = StyleSheet.create({
 	},
 	content: {
 		padding: 24,
+		paddingTop: 16,
 	},
 	typeAndMenuRow: {
 		flexDirection: 'row',

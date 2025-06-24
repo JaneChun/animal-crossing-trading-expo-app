@@ -152,7 +152,7 @@ const ChatRoom = () => {
 
 	return (
 		<>
-			<SafeAreaView style={styles.screen}>
+			<SafeAreaView style={styles.screen} edges={['bottom']}>
 				<LayoutWithHeader
 					headerCenterComponent={
 						receiverInfo && <UserInfoLabel userInfo={receiverInfo} />
@@ -219,16 +219,5 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: 'white',
 	},
-	invalidPostContainer: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: 'white',
-	},
-	invalidPostText: {
-		color: Colors.font_gray,
-		alignSelf: 'center',
-	},
 });
-
 export default ChatRoom;

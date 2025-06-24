@@ -2,9 +2,10 @@ import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as Linking from 'expo-linking';
+import { StyleSheet } from 'react-native';
 import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { toastConfig } from './components/ui/Toast';
 import { useAppState } from './hooks/shared/useAppState';
@@ -64,7 +65,7 @@ export default function App() {
 		<QueryClientProvider client={queryClient}>
 			<ErrorBoundary>
 				<ActionSheetProvider>
-					<GestureHandlerRootView style={{ flex: 1 }}>
+					<GestureHandlerRootView style={styles.flex}>
 						<SafeAreaProvider>
 							<NavigationContainer
 								ref={navigationRef}
@@ -79,7 +80,12 @@ export default function App() {
 								// 	);
 								// }}
 							>
-								<RootStackNavigator />
+								<SafeAreaView
+									style={styles.screen}
+									edges={['top', 'left', 'right']}
+								>
+									<RootStackNavigator />
+								</SafeAreaView>
 								<Toast config={toastConfig} />
 							</NavigationContainer>
 						</SafeAreaProvider>
@@ -89,3 +95,13 @@ export default function App() {
 		</QueryClientProvider>
 	);
 }
+
+const styles = StyleSheet.create({
+	screen: {
+		flex: 1,
+		backgroundColor: 'white',
+	},
+	flex: {
+		flex: 1,
+	},
+});
