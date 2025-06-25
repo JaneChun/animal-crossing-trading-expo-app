@@ -2,8 +2,8 @@ import SearchResultPostList from '@/components/Search/SearchResultPostList';
 import SearchInput from '@/components/ui/inputs/SearchInput';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
+import { usePostContext } from '@/hooks/post/usePostContext';
 import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
-import { usePostContext } from '@/hooks/shared/usePostContext';
 import { useState } from 'react';
 
 const Search = () => {

@@ -46,7 +46,6 @@ export const usePostContext = () => {
 	return {
 		activeTab,
 		collectionName,
-		isDynamic: config.isDynamic,
 		isBoardPost,
 		isCommunityPost,
 	};

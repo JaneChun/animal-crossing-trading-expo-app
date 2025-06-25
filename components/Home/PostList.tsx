@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { auth } from '@/fbase';
-import { useInfinitePosts } from '@/hooks/query/post/useInfinitePosts';
+import { useInfinitePosts } from '@/hooks/post/query/useInfinitePosts';
 import { useAuthStore } from '@/stores/AuthStore';
 import { PostListProps } from '@/types/components';
 import {

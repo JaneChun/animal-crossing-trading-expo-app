@@ -1,4 +1,3 @@
-// src/hooks/query/useKeywordSearch.ts
 import { searchClient } from '@/fbase';
 import { getPublicUserInfos } from '@/firebase/services/userService';
 import type { Collection, Post, PostWithCreatorInfo } from '@/types/post';
@@ -9,7 +8,7 @@ import { Timestamp } from 'firebase/firestore';
 
 const PAGE_SIZE = 10;
 
-export const useKeywordSearch = <C extends Collection>({
+export const useSearchPosts = <C extends Collection>({
 	collectionName,
 	keyword,
 }: {

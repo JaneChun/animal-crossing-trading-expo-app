@@ -1,4 +1,4 @@
-import { useMarkAllAsRead } from '@/hooks/mutation/notification/useMarkAllAsRead';
+import { useMarkAllAsRead } from '@/hooks/notification/query/mutation/useMarkAllAsRead';
 import { useNotificationStore } from '@/stores/NotificationStore';
 import { NoticeTabProps } from '@/types/components';
 import { PopulatedNotification } from '@/types/notification';

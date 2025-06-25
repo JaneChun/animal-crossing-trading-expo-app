@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { ITEM_CATEGORIES } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { useInfiniteItems } from '@/hooks/query/item/useInfiniteItems';
+import { useSearchItems } from '@/hooks/item/query/useSearchItems';
 import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
 import { ItemSelectProps } from '@/types/components';
 import { Item, ItemCategory, ItemCategoryItem } from '@/types/post';
@@ -34,7 +34,7 @@ const ItemSelect = ({
 		refetch,
 		isFetching,
 		status,
-	} = useInfiniteItems(category, debouncedKeyword);
+	} = useSearchItems(category, debouncedKeyword);
 
 	const items = data?.pages.flat() ?? [];
 

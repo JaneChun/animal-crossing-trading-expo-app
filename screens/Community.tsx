@@ -3,7 +3,7 @@ import SearchIcon from '@/components/Search/SearchIcon';
 import Categories from '@/components/ui/Categories';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import { CATEGORIES } from '@/constants/post';
-import { useCurrentTab } from '@/hooks/useCurrentTab';
+import { useCurrentTab } from '@/hooks/shared/useCurrentTab';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { Category, CategoryItem, Tab } from '@/types/post';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';

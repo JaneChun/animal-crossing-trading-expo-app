@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { usePostContext } from '@/hooks/shared/usePostContext';
+import { usePostContext } from '@/hooks/post/usePostContext';
 import { PostSummaryProps } from '@/types/components';
 import { Collection } from '@/types/post';
 import { navigateToPost } from '@/utilities/navigationHelpers';

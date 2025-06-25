@@ -8,7 +8,7 @@ import {
 	deleteObjectFromStorage,
 	uploadObjectToStorage,
 } from '@/firebase/services/imageService';
-import { useProfileForm } from '@/hooks/form/Profile/useProfileForm';
+import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
 import { useAuthStore } from '@/stores/AuthStore';
 import { EditProfileModalProps } from '@/types/components';
 import { UserInfo } from '@/types/user';

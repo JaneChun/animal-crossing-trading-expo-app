@@ -1,4 +1,4 @@
-import { usePostDetail } from '@/hooks/query/post/usePostDetail';
+import { usePostDetail } from '@/hooks/post/query/usePostDetail';
 import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { IMessage } from 'react-native-gifted-chat';

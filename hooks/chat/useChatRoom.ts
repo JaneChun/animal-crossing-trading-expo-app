@@ -3,10 +3,10 @@ import { Message } from '@/types/chat';
 import { formatIMessages } from '@/utilities/formatIMessages';
 import { useEffect } from 'react';
 import { useGetChatMessages } from '../firebase/useGetChatMessages';
-import { useLeaveChatRoom } from '../mutation/chat/useLeaveChatRoom';
-import { useMarkMessagesAsRead } from '../mutation/chat/useMarkMessagesAsRead';
-import { useSendMessage } from '../mutation/chat/useSendMessage';
-import { useReceiverInfo } from '../query/chat/useReceiverInfo';
+import { useLeaveChatRoom } from './mutation/useLeaveChatRoom';
+import { useMarkMessagesAsRead } from './mutation/useMarkMessagesAsRead';
+import { useSendMessage } from './mutation/useSendMessage';
+import { useReceiverInfo } from './query/useReceiverInfo';
 
 export const useChatRoom = ({
 	chatId,

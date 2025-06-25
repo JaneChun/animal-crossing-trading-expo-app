@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Color';
-import { useKeywordSearch } from '@/hooks/query/post/useKeywordSearch';
+import { useSearchPosts } from '@/hooks/post/query/useSearchPosts';
 import { Collection } from '@/types/post';
 import React from 'react';
 import { FlatList, StyleProp, StyleSheet, Text, ViewStyle } from 'react-native';
@@ -27,7 +27,7 @@ const SearchResultPostList = ({
 		refetch,
 		isFetching,
 		status,
-	} = useKeywordSearch({
+	} = useSearchPosts({
 		collectionName,
 		keyword,
 	});

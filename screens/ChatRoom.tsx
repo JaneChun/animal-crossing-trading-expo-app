@@ -15,8 +15,8 @@ import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { createChatRoom } from '@/firebase/services/chatService';
 import { createReport } from '@/firebase/services/reportService';
 
+import { useChatRoom } from '@/hooks/chat/useChatRoom';
 import { useChatPresence } from '@/hooks/shared/useChatPresence';
-import { useChatRoom } from '@/hooks/shared/useChatRoom';
 import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
 
 import { goBack } from '@/navigation/RootNavigation';

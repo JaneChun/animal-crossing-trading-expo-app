@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { useDeleteNotification } from '@/hooks/mutation/notification/useDeleteNotification';
+import { useDeleteNotification } from '@/hooks/notification/query/mutation/useDeleteNotification';
 import { NotificationUnitProp } from '@/types/components';
 import { Collection } from '@/types/post';
 import { elapsedTime } from '@/utilities/elapsedTime';

@@ -3,7 +3,7 @@ import Button from '@/components/ui/Button';
 import CloseButton from '@/components/ui/CloseButton';
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { useProfileForm } from '@/hooks/form/Profile/useProfileForm';
+import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
 import { goBack } from '@/navigation/RootNavigation';
 import { SignUpDisplayNameRouteProp } from '@/types/navigation';
 import { navigateToSignUpEnd } from '@/utilities/navigationHelpers';

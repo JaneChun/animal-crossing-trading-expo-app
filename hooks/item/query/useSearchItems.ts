@@ -36,7 +36,7 @@ const searchItemsByCursor = async ({
 	}));
 };
 
-export const useInfiniteItems = (category?: ItemCategory, keyword?: string) => {
+export const useSearchItems = (category?: ItemCategory, keyword?: string) => {
 	return useInfiniteQuery<
 		Item[],
 		Error,

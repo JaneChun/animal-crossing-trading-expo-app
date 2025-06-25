@@ -1,7 +1,7 @@
 import PostList from '@/components/Home/PostList';
 import SearchIcon from '@/components/Search/SearchIcon';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
-import { useCurrentTab } from '@/hooks/useCurrentTab';
+import { useCurrentTab } from '@/hooks/shared/useCurrentTab';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { Tab } from '@/types/post';
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';

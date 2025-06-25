@@ -9,7 +9,7 @@ import {
 } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { saveUserInfo } from '@/firebase/services/userService';
-import { useProfileForm } from '@/hooks/form/Profile/useProfileForm';
+import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
 import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
 import { SignUpIslandNameRouteProp } from '@/types/navigation';
