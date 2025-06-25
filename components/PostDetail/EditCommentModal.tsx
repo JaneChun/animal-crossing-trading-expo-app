@@ -16,6 +16,7 @@ type EditCommentModalProps = {
 	isVisible: boolean;
 	onClose: () => void;
 	onSubmit: (comment: string) => void;
+	keyboardVerticalOffset: number;
 };
 
 const EditCommentModal = ({
@@ -23,6 +24,7 @@ const EditCommentModal = ({
 	isVisible,
 	onClose,
 	onSubmit,
+	keyboardVerticalOffset,
 }: EditCommentModalProps) => {
 	const [newCommentInput, setNewCommentInput] = useState(comment);
 
@@ -74,7 +76,10 @@ const EditCommentModal = ({
 			title='댓글 수정'
 			rightButton={submitButton}
 			leftButton={cancelButton}
-			bodyStyle={styles.bottomSheetBodyStyle}
+			bodyStyle={[
+				styles.bottomSheetBodyStyle,
+				{ paddingBottom: keyboardVerticalOffset },
+			]}
 		>
 			<KeyboardAwareScrollView style={styles.screen}>
 				<BottomSheetTextInput

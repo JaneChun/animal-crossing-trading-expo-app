@@ -1,0 +1,72 @@
+import { showToast } from '@/components/ui/Toast';
+import { sendReviewSystemMessage } from '@/firebase/services/reviewService';
+import { goBack } from '@/navigation/RootNavigation';
+import { Collection } from '@/types/post';
+import { useEffect } from 'react';
+import { useMarkAsRead } from '../notification/query/mutation/useMarkAsRead';
+import { useDeletePost } from './mutation/useDeletePost';
+import { useUpdatePost } from './mutation/useUpdatePost';
+import { usePostDetail } from './query/usePostDetail';
+import { usePostContext } from './usePostContext';
+
+export const usePost = (
+	collectionName: Collection,
+	id: string,
+	notificationId: string,
+) => {
+	const { isBoardPost } = usePostContext();
+
+	const { data: post, isLoading: isPostFetching } = usePostDetail(
+		collectionName as Collection,
+		id,
+	);
+	const { mutate: markAsRead } = useMarkAsRead();
+	const { mutate: deletePost, isPending: isPostDeleting } = useDeletePost(
+		collectionName as Collection,
+		id,
+	);
+
+	// 알림 읽음 처리
+	useEffect(() => {
+		if (notificationId) {
+			markAsRead(notificationId);
+		}
+	}, [notificationId]);
+
+	const onConfirmDeletePost = async () => {
+		deletePost(undefined, {
+			onSuccess: () => {
+				showToast('success', '게시글이 삭제되었습니다.');
+				goBack();
+			},
+			onError: (e) => {
+				showToast('error', '게시글 삭제 중 오류가 발생했습니다.');
+			},
+		});
+	};
+
+	const closePost = async () => {
+		if (!post || !collectionName || !isBoardPost(post, collectionName)) return;
+
+		const { mutate: updatePost } = useUpdatePost('Boards', post.id);
+
+		if (!post.reviewPromptSent) {
+			await sendReviewSystemMessage({
+				postId: post.id,
+				chatRoomIds: post.chatRoomIds,
+			});
+		}
+
+		updatePost({
+			type: 'done',
+			reviewPromptSent: true,
+		});
+	};
+
+	return {
+		post,
+		deletePost: onConfirmDeletePost,
+		closePost,
+		isPostLoading: isPostFetching || isPostDeleting,
+	};
+};
