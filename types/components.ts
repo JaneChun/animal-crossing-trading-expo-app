@@ -159,7 +159,6 @@ export type CommentsListProps = {
 	comments: CommentWithCreatorInfo[];
 	chatRoomIds: string[];
 	containerStyle?: ViewStyle;
-	scrollToBottom: () => void;
 	onReportClick: (params: OpenReportModalParams) => void;
 	onEditClick: (params: OpenEditCommentModalParams) => void;
 };

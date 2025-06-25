@@ -36,7 +36,7 @@ const RootStackNavigator = () => {
 			<RootStack.Screen
 				name='PostDetail'
 				component={PostDetail}
-				options={commonOptions}
+				options={{ ...commonOptions, headerShown: false }}
 			/>
 
 			<RootStack.Screen

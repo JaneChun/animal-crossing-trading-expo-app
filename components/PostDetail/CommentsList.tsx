@@ -8,7 +8,6 @@ const CommentsList = ({
 	comments,
 	chatRoomIds,
 	containerStyle,
-	scrollToBottom,
 	onReportClick,
 	onEditClick,
 }: CommentsListProps) => {
@@ -16,7 +15,7 @@ const CommentsList = ({
 		<View style={[styles.container, containerStyle]}>
 			<Text style={styles.commentHeader}>댓글 ({comments.length})</Text>
 
-			<View onLayout={() => scrollToBottom()}>
+			<View>
 				{comments.map((item) => (
 					<CommentUnit
 						key={item.id}

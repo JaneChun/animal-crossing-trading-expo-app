@@ -12,6 +12,7 @@ import Total from '@/components/PostDetail/Total';
 import UserInfo from '@/components/PostDetail/UserInfo';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
+import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
@@ -21,7 +22,7 @@ import { usePostComment } from '@/hooks/post/usePostComment';
 import { usePostContext } from '@/hooks/post/usePostContext';
 import { useAuthStore } from '@/stores/AuthStore';
 import { reportUserParams } from '@/types/components';
-import { PostDetailRouteProp, RootStackNavigation } from '@/types/navigation';
+import { PostDetailRouteProp } from '@/types/navigation';
 import { Collection, CommunityType, MarketType } from '@/types/post';
 import { CreateReportRequest } from '@/types/report';
 import {
@@ -29,8 +30,8 @@ import {
 	navigateToLogin,
 } from '@/utilities/navigationHelpers';
 import { useHeaderHeight } from '@react-navigation/elements';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import React, { useEffect, useRef, useState } from 'react';
+import { useRoute } from '@react-navigation/native';
+import React, { useRef, useState } from 'react';
 import {
 	Alert,
 	KeyboardAvoidingView,
@@ -48,11 +49,10 @@ import EditCommentModal from '../components/PostDetail/EditCommentModal';
 const PostDetail = () => {
 	const headerHeight = useHeaderHeight();
 	const insets = useSafeAreaInsets();
-	const keyboardVerticalOffset = headerHeight + insets.top;
+	const keyboardVerticalOffset = headerHeight + insets.top + insets.bottom + 10;
 
 	const { isBoardPost, isCommunityPost } = usePostContext();
 
-	const stackNavigation = useNavigation<RootStackNavigation>();
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const route = useRoute<PostDetailRouteProp>();
 	const { id = '', collectionName = '', notificationId = '' } = route.params;
@@ -95,57 +95,6 @@ const PostDetail = () => {
 		setIsReportModalVisible(true);
 	};
 
-	// 헤더에 글 수정/삭제 아이콘 설정
-	useEffect(() => {
-		if (!post || !collectionName) return;
-
-		const isAuthor = post.creatorId === userInfo?.uid;
-		const showDoneOption = collectionName === 'Boards' && post?.type !== 'done';
-
-		const options = [
-			...(isAuthor
-				? [
-						showDoneOption && {
-							label: '거래완료',
-							onPress: closePost,
-						},
-						{
-							label: '수정',
-							onPress: () => navigateToEditPost({ postId: id }),
-						},
-						{
-							label: '삭제',
-							onPress: handleDeletePost,
-						},
-				  ]
-				: [
-						{
-							label: '신고',
-							onPress: () =>
-								openReportModal({
-									postId: id,
-									reporteeId: post.creatorId,
-								}),
-						},
-				  ]),
-			{ label: '취소', onPress: () => {} },
-		].filter(Boolean) as { label: string; onPress: () => void }[];
-
-		stackNavigation.setOptions({
-			headerRight: () =>
-				userInfo ? (
-					<ActionSheetButton
-						color={Colors.font_black}
-						size={18}
-						destructiveButtonIndex={
-							isAuthor ? (showDoneOption ? 2 : 1) : undefined
-						}
-						options={options}
-					/>
-				) : null,
-		});
-	}, [post, collectionName, userInfo?.uid, id, stackNavigation]);
-
 	const handleDeletePost = async () => {
 		Alert.alert('게시글 삭제', '정말로 삭제하겠습니까?', [
 			{ text: '취소', style: 'cancel' },
@@ -155,6 +104,38 @@ const PostDetail = () => {
 			},
 		]);
 	};
+
+	const isAuthor = post?.creatorId === userInfo?.uid;
+	const showDoneOption = collectionName === 'Boards' && post?.type !== 'done';
+
+	const headerOptions = [
+		...(isAuthor
+			? [
+					showDoneOption && {
+						label: '거래완료',
+						onPress: closePost,
+					},
+					{
+						label: '수정',
+						onPress: () => navigateToEditPost({ postId: id }),
+					},
+					{
+						label: '삭제',
+						onPress: handleDeletePost,
+					},
+			  ]
+			: [
+					post && {
+						label: '신고',
+						onPress: () =>
+							openReportModal({
+								postId: id,
+								reporteeId: post.creatorId,
+							}),
+					},
+			  ]),
+		{ label: '취소', onPress: () => {} },
+	].filter(Boolean) as { label: string; onPress: () => void }[];
 
 	const reportUser = async ({ category, detail = '' }: reportUserParams) => {
 		if (!userInfo) {
@@ -211,113 +192,130 @@ const PostDetail = () => {
 	return (
 		<>
 			<SafeAreaView style={styles.screen} edges={['bottom']}>
-				<KeyboardAwareFlatList
-					ref={flatListRef}
-					data={[]}
-					renderItem={null}
-					keyboardShouldPersistTaps='handled'
-					contentContainerStyle={{ flexGrow: 1 }}
-					enableAutomaticScroll={false}
-					ListHeaderComponent={
-						<View style={styles.content}>
-							{/* 헤더 */}
-							<View style={styles.header}>
-								<View style={[styles.typeAndMenuRow, { marginBottom: 8 }]}>
-									{isBoardPost(post, collectionName) && (
-										<MarketTypeBadge type={post.type as MarketType} />
-									)}
+				<LayoutWithHeader
+					headerRightComponent={
+						userInfo ? (
+							<ActionSheetButton
+								color={Colors.font_black}
+								size={18}
+								destructiveButtonIndex={
+									isAuthor ? (showDoneOption ? 2 : 1) : undefined
+								}
+								options={headerOptions}
+							/>
+						) : null
+					}
+				>
+					<KeyboardAwareFlatList
+						ref={flatListRef}
+						data={[]}
+						renderItem={null}
+						keyboardShouldPersistTaps='handled'
+						contentContainerStyle={{ flexGrow: 1 }}
+						onContentSizeChange={scrollToBottom}
+						enableAutomaticScroll={false}
+						ListHeaderComponent={
+							<View style={styles.content}>
+								{/* 헤더 */}
+								<View style={styles.header}>
+									<View style={[styles.typeAndMenuRow, { marginBottom: 8 }]}>
+										{isBoardPost(post, collectionName) && (
+											<MarketTypeBadge type={post.type as MarketType} />
+										)}
 
+										{isCommunityPost(post, collectionName) && (
+											<CommunityTypeBadge type={post.type as CommunityType} />
+										)}
+									</View>
+
+									<Title
+										title={post.title}
+										containerStyle={{ marginBottom: 4 }}
+									/>
+
+									<View style={styles.infoContainer}>
+										<UserInfo
+											userId={post.creatorId}
+											displayName={post.creatorDisplayName}
+											islandName={post.creatorIslandName}
+										/>
+										<CreatedAt createdAt={post.createdAt} />
+									</View>
+								</View>
+
+								{/* 본문 */}
+								<View style={styles.body}>
 									{isCommunityPost(post, collectionName) && (
-										<CommunityTypeBadge type={post.type as CommunityType} />
-									)}
-								</View>
-
-								<Title
-									title={post.title}
-									containerStyle={{ marginBottom: 4 }}
-								/>
-
-								<View style={styles.infoContainer}>
-									<UserInfo
-										userId={post.creatorId}
-										displayName={post.creatorDisplayName}
-										islandName={post.creatorIslandName}
-									/>
-									<CreatedAt createdAt={post.createdAt} />
-								</View>
-							</View>
-
-							{/* 본문 */}
-							<View style={styles.body}>
-								{isCommunityPost(post, collectionName) && (
-									<ImageCarousel
-										images={post.images}
-										containerStyle={{ marginBottom: 16 }}
-									/>
-								)}
-								<Body body={post.body} containerStyle={{ marginBottom: 24 }} />
-
-								{isBoardPost(post, collectionName) && (
-									<>
-										<ItemSummaryList
-											cart={post.cart}
+										<ImageCarousel
+											images={post.images}
 											containerStyle={{ marginBottom: 16 }}
 										/>
-										<Total
-											cart={post.cart}
-											containerStyle={{ marginBottom: 24 }}
-										/>
-									</>
-								)}
+									)}
+									<Body
+										body={post.body}
+										containerStyle={{ marginBottom: 24 }}
+									/>
+
+									{isBoardPost(post, collectionName) && (
+										<>
+											<ItemSummaryList
+												cart={post.cart}
+												containerStyle={{ marginBottom: 16 }}
+											/>
+											<Total
+												cart={post.cart}
+												containerStyle={{ marginBottom: 24 }}
+											/>
+										</>
+									)}
+								</View>
+
+								{/* 댓글 */}
+								<CommentsList
+									postId={post.id}
+									postCreatorId={post.creatorId}
+									comments={comments}
+									chatRoomIds={
+										isBoardPost(post, collectionName) ? post.chatRoomIds : []
+									}
+									onReportClick={({ commentId, reporteeId }) =>
+										openReportModal({
+											postId: post.id,
+											commentId,
+											reporteeId,
+										})
+									}
+									onEditClick={({ commentId, commentText }) =>
+										openEditCommentModal({ commentId, commentText })
+									}
+								/>
 							</View>
-
-							{/* 댓글 */}
-							<CommentsList
-								postId={post.id}
-								postCreatorId={post.creatorId}
-								comments={comments}
-								chatRoomIds={
-									isBoardPost(post, collectionName) ? post.chatRoomIds : []
-								}
-								scrollToBottom={scrollToBottom}
-								onReportClick={({ commentId, reporteeId }) =>
-									openReportModal({
-										postId: post.id,
-										commentId,
-										reporteeId,
-									})
-								}
-								onEditClick={({ commentId, commentText }) =>
-									openEditCommentModal({ commentId, commentText })
-								}
-							/>
-						</View>
-					}
-				/>
-				<KeyboardAvoidingView
-					behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-					keyboardVerticalOffset={keyboardVerticalOffset}
-				>
-					<CommentInput onSubmit={createComment} disabled={!userInfo} />
-				</KeyboardAvoidingView>
-
-				{isEditCommentModalVisible && (
-					<EditCommentModal
-						comment={editingCommentText}
-						isVisible={isEditCommentModalVisible}
-						onClose={closeEditCommentModal}
-						onSubmit={updateComment}
+						}
+					/>
+					<KeyboardAvoidingView
+						behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 						keyboardVerticalOffset={keyboardVerticalOffset}
-					/>
-				)}
+					>
+						<CommentInput onSubmit={createComment} disabled={!userInfo} />
+					</KeyboardAvoidingView>
 
-				{isReportModalVisible && (
-					<ReportModal
-						isVisible={isReportModalVisible}
-						onClose={() => setIsReportModalVisible(false)}
-						onSubmit={reportUser}
-					/>
-				)}
+					{isEditCommentModalVisible && (
+						<EditCommentModal
+							comment={editingCommentText}
+							isVisible={isEditCommentModalVisible}
+							onClose={closeEditCommentModal}
+							onSubmit={updateComment}
+						/>
+					)}
+
+					{isReportModalVisible && (
+						<ReportModal
+							isVisible={isReportModalVisible}
+							onClose={() => setIsReportModalVisible(false)}
+							onSubmit={reportUser}
+						/>
+					)}
+				</LayoutWithHeader>
 			</SafeAreaView>
 		</>
 	);
