@@ -72,7 +72,7 @@ export type TypeSelectProps = {
 	labelStyle?: StyleProp<TextStyle>;
 };
 
-export type TitleInputProps = {
+export type TitleInputProps = ValidationInputProp & {
 	title: string;
 	setTitle: Dispatch<SetStateAction<string>>;
 	containerStyle?: StyleProp<ViewStyle>;
@@ -80,7 +80,7 @@ export type TitleInputProps = {
 	inputStyle?: StyleProp<TextStyle>;
 };
 
-export type BodyInputProps = {
+export type BodyInputProps = ValidationInputProp & {
 	body: string;
 	setBody: Dispatch<SetStateAction<string>>;
 	containerStyle?: StyleProp<ViewStyle>;

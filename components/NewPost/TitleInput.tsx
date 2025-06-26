@@ -7,6 +7,7 @@ import ValidationInput from '../ui/inputs/ValidationInput';
 const TitleInput = ({
 	title,
 	setTitle,
+	onBlur,
 	containerStyle,
 	labelStyle,
 	inputStyle,
@@ -23,6 +24,7 @@ const TitleInput = ({
 				value={title}
 				onChangeText={setTitle}
 				placeholder='제목'
+				onBlur={onBlur}
 				inputStyle={inputStyle}
 				errorMessageContainerStyle={{
 					marginTop: 0,

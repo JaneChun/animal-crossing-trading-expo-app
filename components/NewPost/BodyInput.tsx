@@ -7,6 +7,7 @@ import ValidationInput from '../ui/inputs/ValidationInput';
 const BodyInput = ({
 	body,
 	setBody,
+	onBlur,
 	containerStyle,
 	labelStyle,
 	inputStyle,
@@ -25,6 +26,7 @@ const BodyInput = ({
 			<ValidationInput
 				value={body}
 				onChangeText={setBody}
+				onBlur={onBlur}
 				placeholder='내용을 입력하세요.'
 				inputStyle={[inputStyle, styles.textarea]}
 				multiline

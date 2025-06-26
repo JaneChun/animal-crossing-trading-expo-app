@@ -6,6 +6,8 @@ import { NewPostFormSchema, NewPostFormValues } from './newPostFormSchema';
 export const useNewPostForm = (collectionName: Collection) => {
 	const methods = useForm<NewPostFormValues>({
 		resolver: zodResolver(NewPostFormSchema),
+		mode: 'onTouched', // onBlur 시에 검증
+		reValidateMode: 'onChange', // 에러 난 필드는 onChange 시에 재검증
 		defaultValues:
 			collectionName === 'Boards'
 				? {

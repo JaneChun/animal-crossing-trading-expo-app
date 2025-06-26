@@ -62,7 +62,7 @@ const PostForm = ({
 									options={dropdownOptions}
 									value={value}
 									setValue={onChange}
-									topOffset={100}
+									// topOffset={100}
 									style={{ width: '40%', marginBottom: 16 }}
 								/>
 							)}
@@ -73,10 +73,11 @@ const PostForm = ({
 					<Controller
 						control={control}
 						name='title'
-						render={({ field: { value, onChange } }) => (
+						render={({ field: { value, onChange, onBlur } }) => (
 							<TitleInput
 								title={value}
 								setTitle={onChange}
+								onBlur={onBlur}
 								containerStyle={{
 									...styles.inputContainer,
 									marginBottom: 0,
@@ -93,10 +94,11 @@ const PostForm = ({
 					<Controller
 						control={control}
 						name='body'
-						render={({ field: { value, onChange } }) => (
+						render={({ field: { value, onChange, onBlur } }) => (
 							<BodyInput
 								body={value}
 								setBody={onChange}
+								onBlur={onBlur}
 								containerStyle={styles.inputContainer}
 								inputStyle={styles.input}
 							/>

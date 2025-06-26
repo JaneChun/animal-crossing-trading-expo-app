@@ -247,6 +247,7 @@ const NewPost = () => {
 						color='mint'
 						size='lg2'
 						flex
+						disabled={Object.keys(errors).length > 0}
 						onPress={handleSubmit(onSubmit, onError)}
 					>
 						등록
