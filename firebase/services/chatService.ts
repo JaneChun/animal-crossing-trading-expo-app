@@ -32,6 +32,16 @@ export const generateChatId = (user1: string, user2: string): string => {
 	return [user1, user2].sort().join('_');
 };
 
+export const getReceiverId = ({
+	chatId,
+	userId,
+}: {
+	chatId: string;
+	userId: string;
+}) => {
+	return chatId.split('_').find((id) => id !== userId);
+};
+
 export const fetchAndPopulateReceiverInfo = async <T extends Chat, U>(
 	q: Query,
 	userId: string,

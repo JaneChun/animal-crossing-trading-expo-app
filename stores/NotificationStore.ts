@@ -76,11 +76,7 @@ export const useNotificationSubscriptionInitializer = () => {
 				setIsLoading(false);
 			},
 			(e) => {
-				if (e.code === 'permission-denied') {
-					console.warn(
-						'⚠️ Firestore 권한 에러: Notifications 리스너 접근 불가',
-					);
-				}
+				console.warn('⚠️ NotificationStore 구독 에러', e);
 			},
 		);
 

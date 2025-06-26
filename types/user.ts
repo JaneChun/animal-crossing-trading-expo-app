@@ -37,3 +37,12 @@ export type GetFirebaseCustomTokenResponse = {
 	firebaseToken: string;
 	user: { email: string; nickname: string };
 };
+
+// 내가 차단한 유저
+export interface BlockedUser {
+	blockedAt: Timestamp;
+}
+// 나를 차단한 유저
+export interface BlockedBy {
+	blockedAt: Timestamp;
+}

@@ -12,6 +12,7 @@ import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
+import { blockUser, unblockUser } from '@/firebase/services/blockService';
 import { createChatRoom } from '@/firebase/services/chatService';
 import { createReport } from '@/firebase/services/reportService';
 
@@ -20,15 +21,23 @@ import { useChatPresence } from '@/hooks/shared/useChatPresence';
 import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
 
 import { goBack } from '@/navigation/RootNavigation';
+import { useBlockStore } from '@/stores/BlockStore';
 import { Message } from '@/types/chat';
 import { ChatRoomRouteProp } from '@/types/navigation';
 import { CreateReportRequest, ReportCategory } from '@/types/report';
+import { PublicUserInfo } from '@/types/user';
 import { convertSendParamsToMessage } from '@/utilities/convertSendParamsToMessage';
 import { createIMessage } from '@/utilities/createIMessage';
 
 import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet } from 'react-native';
+import {
+	Alert,
+	KeyboardAvoidingView,
+	StyleSheet,
+	Text,
+	View,
+} from 'react-native';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import {
 	SafeAreaView,
@@ -72,6 +81,17 @@ const ChatRoom = () => {
 
 	useChatPresence(chatId);
 
+	const blockedUsers = useBlockStore((state) => state.blockedUsers);
+	const blockedBy = useBlockStore((state) => state.blockedBy);
+	const isBlockedByMe = blockedUsers.some((uid) => uid === receiverInfo?.uid);
+	const amIBlockedBy = blockedBy.some((uid) => uid === receiverInfo?.uid);
+
+	const blockMessage = isBlockedByMe
+		? '내가 차단한 사용자입니다.'
+		: amIBlockedBy
+		? '상대방이 나를 차단하여 메시지를 보낼 수 없습니다.'
+		: '';
+
 	const insets = useSafeAreaInsets();
 	const keyboardHeight = useKeyboardHeight();
 	const giftedChatRef = useRef<any>(null);
@@ -84,7 +104,14 @@ const ChatRoom = () => {
 	}, [messages]);
 
 	const handleSend = async (chatInput: string) => {
-		if (!userInfo?.uid || !receiverInfo?.uid || !chatInput.trim()) return;
+		if (
+			!userInfo?.uid ||
+			!receiverInfo?.uid ||
+			!chatInput.trim() ||
+			isBlockedByMe ||
+			amIBlockedBy
+		)
+			return;
 
 		// 채팅방 생성
 		if (chatStartInfo && !hasChatRoomCreated.current) {
@@ -118,6 +145,47 @@ const ChatRoom = () => {
 
 		leaveChatRoom({ userId: userInfo.uid });
 		goBack();
+	};
+
+	const handleBlockUser = async (
+		targetUserInfo: PublicUserInfo | null | undefined,
+	) => {
+		if (!targetUserInfo || !userInfo) return;
+
+		Alert.alert(
+			'상대방을 차단할까요?',
+			`차단하면 ${targetUserInfo.displayName}님과 더 이상 메세지를 주고 받을 수 없어요.`,
+			[
+				{ text: '취소', style: 'cancel' },
+				{
+					text: '네, 차단할게요',
+					onPress: async () => {
+						await blockUser({
+							userId: userInfo.uid,
+							targetUserId: targetUserInfo.uid,
+						});
+
+						showToast(
+							'success',
+							`${targetUserInfo.displayName}님을 차단했어요.`,
+						);
+					},
+				},
+			],
+		);
+	};
+
+	const handleUnblockUser = async (
+		targetUserInfo: PublicUserInfo | null | undefined,
+	) => {
+		if (!targetUserInfo || !userInfo) return;
+
+		await unblockUser({
+			userId: userInfo.uid,
+			targetUserId: targetUserInfo.uid,
+		});
+
+		showToast('success', `${targetUserInfo.displayName}님을 차단 해제했어요.`);
 	};
 
 	const reportUser = async ({
@@ -161,8 +229,15 @@ const ChatRoom = () => {
 						<ActionSheetButton
 							color={Colors.font_black}
 							size={18}
-							destructiveButtonIndex={1}
+							destructiveButtonIndex={2}
 							options={[
+								{
+									label: isBlockedByMe ? '차단 해제' : '차단',
+									onPress: () =>
+										isBlockedByMe
+											? handleUnblockUser(receiverInfo)
+											: handleBlockUser(receiverInfo),
+								},
 								{
 									label: '신고',
 									onPress: () => setIsReportModalVisible(true),
@@ -179,6 +254,11 @@ const ChatRoom = () => {
 						<EmptyIndicator message='채팅방을 찾을 수 없습니다.' />
 					) : (
 						<KeyboardAvoidingView style={{ flex: 1 }}>
+							{blockMessage && (
+								<View style={styles.blockMessageContainer}>
+									<Text style={styles.blockMessageText}>{blockMessage}</Text>
+								</View>
+							)}
 							<GiftedChat
 								messageContainerRef={giftedChatRef}
 								messages={messages}
@@ -193,7 +273,9 @@ const ChatRoom = () => {
 								renderComposer={() =>
 									renderComposer({
 										disabled:
-											receiverInfo?.displayName === DEFAULT_USER_DISPLAY_NAME,
+											receiverInfo?.displayName === DEFAULT_USER_DISPLAY_NAME ||
+											isBlockedByMe ||
+											amIBlockedBy,
 										onSend: handleSend,
 									})
 								}
@@ -218,6 +300,14 @@ const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
 		backgroundColor: 'white',
+	},
+	blockMessageContainer: {
+		paddingVertical: 16,
+		backgroundColor: Colors.font_dark_gray,
+	},
+	blockMessageText: {
+		textAlign: 'center',
+		color: 'white',
 	},
 });
 export default ChatRoom;

@@ -45,7 +45,6 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 		collectionName: Collection;
 		postId: string;
 	}) => {
-		console.log('onPressNotification');
 		if (isRead) navigateToPost({ postId, collectionName });
 		else navigateToPost({ postId, collectionName, notificationId: id });
 	};

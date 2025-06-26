@@ -2,7 +2,10 @@ import axios from 'axios';
 import * as admin from 'firebase-admin';
 import { Timestamp } from 'firebase-admin/firestore';
 import * as functions from 'firebase-functions';
-import { onDocumentCreated } from 'firebase-functions/v2/firestore';
+import {
+	onDocumentCreated,
+	onDocumentDeleted,
+} from 'firebase-functions/v2/firestore';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -369,6 +372,53 @@ export const updateUserReview = onDocumentCreated(
 					badgeGranted,
 				},
 			});
+		} catch (e) {
+			console.error(e);
+		}
+	},
+);
+
+export const onBlockUser = onDocumentCreated(
+	'Users/{userId}/BlockedUsers/{blockedUserId}',
+	async (event) => {
+		const { userId, blockedUserId } = event.params;
+
+		const snapshot = event.data;
+		if (!snapshot) return;
+
+		const { blockedAt } = snapshot.data();
+
+		try {
+			await db
+				.collection('Users')
+				.doc(blockedUserId)
+				.collection('BlockedBy')
+				.doc(userId)
+				.set(
+					{
+						id: userId,
+						blockedAt,
+					},
+					{ merge: true },
+				);
+		} catch (e) {
+			console.error(e);
+		}
+	},
+);
+
+export const onUnblockUser = onDocumentDeleted(
+	'Users/{userId}/BlockedUsers/{blockedUserId}',
+	async (event) => {
+		const { userId, blockedUserId } = event.params;
+
+		try {
+			await db
+				.collection('Users')
+				.doc(blockedUserId)
+				.collection('BlockedBy')
+				.doc(userId)
+				.delete();
 		} catch (e) {
 			console.error(e);
 		}
