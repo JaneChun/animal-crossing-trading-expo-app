@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Color';
+import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { UserInfoProps } from '@/types/components';
 import { navigateToUserProfile } from '@/utilities/navigationHelpers';
@@ -11,9 +12,15 @@ const UserInfo = ({
 	islandName,
 	containerStyle,
 }: UserInfoProps) => {
+	const onPressUserProfile = () => {
+		if (displayName === DEFAULT_USER_DISPLAY_NAME) return;
+
+		navigateToUserProfile({ userId });
+	};
+
 	return (
 		<View style={[styles.container, containerStyle]}>
-			<Pressable onPress={() => navigateToUserProfile({ userId })}>
+			<Pressable onPress={onPressUserProfile}>
 				<Text style={styles.displayName}>{displayName}</Text>
 			</Pressable>
 			<View style={styles.IslandContainer}>
