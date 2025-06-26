@@ -44,7 +44,6 @@ const MainTabNavigator = () => {
 				tabBarStyle: {
 					display: isAuthLoading ? 'none' : 'flex',
 				},
-				tabBarActiveBackgroundColor: Colors.base,
 				tabBarIconStyle: { flex: 1 },
 				tabBarActiveTintColor: Colors.primary,
 			}}

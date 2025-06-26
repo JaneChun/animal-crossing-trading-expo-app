@@ -21,6 +21,7 @@ export const usePost = (
 		id,
 	);
 	const { mutate: markAsRead } = useMarkAsRead();
+	const { mutate: updatePost } = useUpdatePost('Boards', id);
 	const { mutate: deletePost, isPending: isPostDeleting } = useDeletePost(
 		collectionName as Collection,
 		id,
@@ -47,8 +48,6 @@ export const usePost = (
 
 	const closePost = async () => {
 		if (!post || !collectionName || !isBoardPost(post, collectionName)) return;
-
-		const { mutate: updatePost } = useUpdatePost('Boards', post.id);
 
 		if (!post.reviewPromptSent) {
 			await sendReviewSystemMessage({

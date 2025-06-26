@@ -121,6 +121,17 @@ export const onMessageCreated = onDocumentCreated(
 		if (!snapshot) return;
 
 		const message = snapshot.data();
+		const { receiverId, senderId, body } = message;
+
+		// 시스템, 리뷰 작성 메세지는 제외 X
+		if (
+			senderId === 'system' ||
+			senderId === 'review' ||
+			!senderId ||
+			!receiverId ||
+			!body
+		)
+			return;
 
 		// 1. 채팅방 정보 업데이트 (최근 메시지, 보낸 사람, 시간)
 		const chatRef = db.collection('Chats').doc(chatId);
@@ -133,13 +144,6 @@ export const onMessageCreated = onDocumentCreated(
 		});
 
 		// 2. 푸시 알림 전송
-		const { receiverId, senderId, body } = message;
-
-		if (senderId === 'system' || senderId === 'review') return;
-
-		// 시스템 메세지는 채팅 알림 발생 X
-		if (senderId === 'system' || !senderId || !receiverId || !body) return;
-
 		const receiverDoc = await admin
 			.firestore()
 			.doc(`Users/${receiverId}`)
