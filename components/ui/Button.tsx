@@ -21,6 +21,12 @@ const Button = ({
 				return styles.white;
 			case 'gray':
 				return styles.gray;
+			case 'red': {
+				return styles.red;
+			}
+			case 'redWhite': {
+				return styles.redWhite;
+			}
 			default:
 				return {};
 		}
@@ -34,6 +40,12 @@ const Button = ({
 				return { color: Colors.primary };
 			case 'gray':
 				return { color: Colors.font_black };
+			case 'red': {
+				return { color: 'white' };
+			}
+			case 'redWhite': {
+				return { color: Colors.badge_red };
+			}
 			default:
 				return {};
 		}
@@ -106,6 +118,16 @@ const styles = StyleSheet.create({
 		backgroundColor: 'transparent',
 		borderWidth: 1,
 		borderColor: Colors.border_gray,
+	},
+	red: {
+		backgroundColor: Colors.badge_red,
+		borderWidth: 1,
+		borderColor: Colors.badge_red,
+	},
+	redWhite: {
+		backgroundColor: 'transparent',
+		borderWidth: 1,
+		borderColor: Colors.badge_red,
 	},
 	text: {
 		fontWeight: FontWeights.bold,

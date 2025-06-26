@@ -286,7 +286,7 @@ export type ChatInputProps = {
 };
 
 // ui/
-export type ButtonColor = 'mint' | 'white' | 'gray';
+export type ButtonColor = 'mint' | 'white' | 'gray' | 'red' | 'redWhite';
 export type ButtonSize = 'sm' | 'md' | 'md2' | 'lg' | 'lg2';
 export type ButtonProps = {
 	children: React.ReactNode;
