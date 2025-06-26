@@ -6,8 +6,10 @@ import { useAuthStore } from '@/stores/AuthStore';
 import {
 	navigateToAccount,
 	navigateToBlock,
+	navigateToPrivacyPolicy,
+	navigateToTermsOfService,
 } from '@/utilities/navigationHelpers';
-import { StyleSheet, Text, View } from 'react-native';
+import { Linking, StyleSheet, Text, View } from 'react-native';
 import SettingListItem from '../components/Profile/SettingListItem';
 
 const Setting = () => {
@@ -43,18 +45,28 @@ const Setting = () => {
 
 			<View style={styles.container}>
 				<Text style={styles.title}>앱 정보</Text>
-				<SettingListItem borderRound='top' onPress={() => {}}>
+				<SettingListItem
+					borderRound='top'
+					showChevron
+					onPress={() => {
+						Linking.openURL('mailto:janechun22@gmail.com');
+					}}
+				>
 					<Text style={styles.text}>문의하기</Text>
 				</SettingListItem>
-				<SettingListItem onPress={() => {}}>
-					<Text style={styles.text}>개인정보 처리방침</Text>
-				</SettingListItem>
-				<SettingListItem onPress={() => {}}>
+				<SettingListItem showChevron onPress={navigateToTermsOfService}>
 					<Text style={styles.text}>이용약관</Text>
 				</SettingListItem>
-				<SettingListItem borderRound='bottom' onPress={() => {}}>
-					<Text style={styles.text}>앱 버전 정보</Text>
+				<SettingListItem
+					borderRound='bottom'
+					showChevron
+					onPress={navigateToPrivacyPolicy}
+				>
+					<Text style={styles.text}>개인정보 처리방침</Text>
 				</SettingListItem>
+				{/* <SettingListItem borderRound='bottom' onPress={() => {}}>
+					<Text style={styles.text}>앱 버전 정보</Text>
+				</SettingListItem> */}
 			</View>
 		</View>
 	);

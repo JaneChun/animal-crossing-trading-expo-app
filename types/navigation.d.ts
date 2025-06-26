@@ -32,6 +32,8 @@ export type RootStackParamList = {
 	SocialAccountCheck: undefined;
 	DeleteAccount: undefined;
 	Block: undefined;
+	TermsOfService: undefined;
+	PrivacyPolicy: undefined;
 	Search: undefined;
 };
 

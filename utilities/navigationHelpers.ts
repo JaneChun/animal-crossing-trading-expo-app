@@ -135,6 +135,14 @@ export const navigateToBlock = () => {
 	navigateWithoutParams('Block');
 };
 
+export const navigateToTermsOfService = () => {
+	navigateWithoutParams('TermsOfService');
+};
+
+export const navigateToPrivacyPolicy = () => {
+	navigateWithoutParams('PrivacyPolicy');
+};
+
 // stack to tab
 export const navigateToLogin = () => {
 	navigateToTabAndResetStack('ProfileTab', 'Login');

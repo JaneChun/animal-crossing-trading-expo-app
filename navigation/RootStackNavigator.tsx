@@ -6,12 +6,14 @@ import ChatRoom from '@/screens/ChatRoom';
 import DeleteAccount from '@/screens/DeleteAccount';
 import NewPost from '@/screens/NewPost';
 import PostDetail from '@/screens/PostDetail';
+import PrivacyPolicy from '@/screens/PrivacyPolicy';
 import Profile from '@/screens/Profile';
 import Search from '@/screens/Search';
 import Setting from '@/screens/Setting';
 import SignUpDisplayName from '@/screens/SignUpDisplayName';
 import SignUpIslandName from '@/screens/SignUpIslandName';
 import SocialAccountCheck from '@/screens/SocialAccountCheck';
+import TermsOfService from '@/screens/TermsOfService';
 import { useAuthStore } from '@/stores/AuthStore';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainTabNavigator from './MainTabNavigator';
@@ -117,6 +119,24 @@ const RootStackNavigator = () => {
 					// </AuthGuard>
 				)}
 				options={{ ...commonOptions, title: '차단 사용자 관리' }}
+			/>
+			<RootStack.Screen
+				name='TermsOfService'
+				children={() => (
+					// <AuthGuard>
+					<TermsOfService />
+					// </AuthGuard>
+				)}
+				options={{ ...commonOptions, title: '이용약관' }}
+			/>
+			<RootStack.Screen
+				name='PrivacyPolicy'
+				children={() => (
+					// <AuthGuard>
+					<PrivacyPolicy />
+					// </AuthGuard>
+				)}
+				options={{ ...commonOptions, title: '개인정보 처리방침' }}
 			/>
 			<RootStack.Screen
 				name='Search'
