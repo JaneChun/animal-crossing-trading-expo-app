@@ -31,6 +31,7 @@ export type RootStackParamList = {
 	Account: undefined;
 	SocialAccountCheck: undefined;
 	DeleteAccount: undefined;
+	Block: undefined;
 	Search: undefined;
 };
 

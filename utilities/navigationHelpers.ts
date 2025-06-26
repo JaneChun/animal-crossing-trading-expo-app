@@ -131,6 +131,10 @@ export const navigateToDeleteAccount = () => {
 	navigateWithoutParams('DeleteAccount');
 };
 
+export const navigateToBlock = () => {
+	navigateWithoutParams('Block');
+};
+
 // stack to tab
 export const navigateToLogin = () => {
 	navigateToTabAndResetStack('ProfileTab', 'Login');

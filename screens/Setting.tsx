@@ -2,7 +2,10 @@ import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useAuthStore } from '@/stores/AuthStore';
-import { navigateToAccount } from '@/utilities/navigationHelpers';
+import {
+	navigateToAccount,
+	navigateToBlock,
+} from '@/utilities/navigationHelpers';
 import { StyleSheet, Text, View } from 'react-native';
 import SettingListItem from '../components/Profile/SettingListItem';
 
@@ -14,22 +17,29 @@ const Setting = () => {
 	return (
 		<View style={styles.screen}>
 			<View style={styles.container}>
-				<Text style={styles.title}>개인 정보 설정</Text>
+				<Text style={styles.title}>사용자 설정</Text>
 				<SettingListItem
-					borderRound='all'
+					borderRound='top'
 					showChevron
-					onPress={() => navigateToAccount()}
+					onPress={navigateToAccount}
 				>
 					<Text style={styles.text}>내 계정</Text>
+				</SettingListItem>
+				<SettingListItem showChevron onPress={() => {}}>
+					<Text style={styles.text}>푸시 알림</Text>
+				</SettingListItem>
+				<SettingListItem
+					borderRound='bottom'
+					showChevron
+					onPress={navigateToBlock}
+				>
+					<Text style={styles.text}>차단 사용자 관리</Text>
 				</SettingListItem>
 			</View>
 
 			<View style={styles.container}>
-				<Text style={styles.title}>앱 설정</Text>
+				<Text style={styles.title}>앱 정보</Text>
 				<SettingListItem borderRound='top' onPress={() => {}}>
-					<Text style={styles.text}>알림 수신 설정</Text>
-				</SettingListItem>
-				<SettingListItem onPress={() => {}}>
 					<Text style={styles.text}>문의하기</Text>
 				</SettingListItem>
 				<SettingListItem onPress={() => {}}>

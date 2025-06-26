@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
 	},
 	blockMessageContainer: {
 		paddingVertical: 16,
-		backgroundColor: Colors.font_dark_gray,
+		backgroundColor: Colors.badge_red,
 	},
 	blockMessageText: {
 		textAlign: 'center',

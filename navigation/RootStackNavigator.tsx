@@ -1,6 +1,7 @@
 // RootNavigator.tsx
 import { Colors } from '@/constants/Color';
 import Account from '@/screens/Account';
+import Block from '@/screens/Block';
 import ChatRoom from '@/screens/ChatRoom';
 import DeleteAccount from '@/screens/DeleteAccount';
 import NewPost from '@/screens/NewPost';
@@ -99,7 +100,6 @@ const RootStackNavigator = () => {
 				)}
 				options={{ ...commonOptions, headerShown: false }}
 			/>
-
 			<RootStack.Screen
 				name='DeleteAccount'
 				children={() => (
@@ -108,6 +108,15 @@ const RootStackNavigator = () => {
 					// </AuthGuard>
 				)}
 				options={{ ...commonOptions, headerShown: false }}
+			/>
+			<RootStack.Screen
+				name='Block'
+				children={() => (
+					// <AuthGuard>
+					<Block />
+					// </AuthGuard>
+				)}
+				options={{ ...commonOptions, title: '차단 사용자 관리' }}
 			/>
 			<RootStack.Screen
 				name='Search'
