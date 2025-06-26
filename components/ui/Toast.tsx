@@ -16,7 +16,9 @@ export const toastConfig = {
 				color='white'
 				style={{ marginRight: 8 }}
 			/>
-			<Text style={styles.text}>{text1}</Text>
+			<View style={styles.textContainer}>
+				<Text style={styles.text}>{text1}</Text>
+			</View>
 		</View>
 	),
 	error: ({ text1 }: CustomToastProps) => (
@@ -27,7 +29,9 @@ export const toastConfig = {
 				color='white'
 				style={{ marginRight: 8 }}
 			/>
-			<Text style={styles.text}>{text1}</Text>
+			<View style={styles.textContainer}>
+				<Text style={styles.text}>{text1}</Text>
+			</View>
 		</View>
 	),
 	warn: ({ text1 }: CustomToastProps) => (
@@ -38,7 +42,9 @@ export const toastConfig = {
 				color='white'
 				style={{ marginRight: 8 }}
 			/>
-			<Text style={styles.text}>{text1}</Text>
+			<View style={styles.textContainer}>
+				<Text style={styles.text}>{text1}</Text>
+			</View>
 		</View>
 	),
 	info: ({ text1 }: CustomToastProps) => (
@@ -49,7 +55,9 @@ export const toastConfig = {
 				color='white'
 				style={{ marginRight: 8 }}
 			/>
-			<Text style={styles.text}>{text1}</Text>
+			<View style={styles.textContainer}>
+				<Text style={styles.text}>{text1}</Text>
+			</View>
 		</View>
 	),
 };
@@ -85,15 +93,21 @@ export const showLongToast = (
 const styles = StyleSheet.create({
 	container: {
 		flexDirection: 'row',
+		justifyContent: 'space-between',
 		alignItems: 'center',
-		justifyContent: 'center',
 		width: '85%',
 		padding: 14,
 		borderRadius: 16,
+	},
+	textContainer: {
+		flex: 1,
+		marginLeft: 8,
 	},
 	text: {
 		color: 'white',
 		fontSize: FontSizes.sm,
 		fontWeight: FontWeights.regular,
+		flexWrap: 'wrap',
+		textAlign: 'center',
 	},
 });
