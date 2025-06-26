@@ -19,8 +19,10 @@ import { ImagePickerAsset } from 'expo-image-picker';
 import React, { useEffect } from 'react';
 import { Controller, FormProvider } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Button from '../ui/Button';
 import CustomBottomSheet from '../ui/CustomBottomSheet';
+import { PADDING } from '../ui/layout/Layout';
 import LoadingIndicator from '../ui/loading/LoadingIndicator';
 import NameInput from './NameInput';
 
@@ -178,8 +180,9 @@ const EditProfileModal = ({
 				heightRatio={0.9}
 				title='프로필 수정'
 				rightButton={submitButton}
+				bodyStyle={styles.bottomSheetBodyStyle}
 			>
-				<View style={styles.screen}>
+				<KeyboardAwareScrollView style={styles.screen}>
 					<View style={styles.container}>
 						{/* 이미지 */}
 						<Controller
@@ -229,7 +232,7 @@ const EditProfileModal = ({
 							</View>
 						</View>
 					</View>
-				</View>
+				</KeyboardAwareScrollView>
 			</CustomBottomSheet>
 		</FormProvider>
 	);
@@ -238,8 +241,14 @@ const EditProfileModal = ({
 export default EditProfileModal;
 
 const styles = StyleSheet.create({
+	bottomSheetBodyStyle: {
+		padding: PADDING,
+		paddingRight: 0,
+		paddingBottom: 150,
+	},
 	screen: {
 		flex: 1,
+		paddingRight: PADDING,
 		backgroundColor: 'white',
 	},
 	container: {
