@@ -1,5 +1,5 @@
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
-import { NavigationContainer } from '@react-navigation/native';
+import { LinkingOptions, NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as Linking from 'expo-linking';
 import { StyleSheet } from 'react-native';
@@ -19,30 +19,18 @@ import { useBlockSubscriptionInitializer } from './stores/BlockStore';
 import { useChatSubscriptionInitializer } from './stores/ChatStore';
 import { useNotificationSubscriptionInitializer } from './stores/NotificationStore';
 import { usePushNotificationInitializer } from './stores/PushNotificationStore';
+import { RootStackParamList } from './types/navigation';
 
 const prefix = Linking.createURL('/');
-
-const linking = {
+const linking: LinkingOptions<RootStackParamList> = {
 	prefixes: [prefix, 'animal-crossing-trading-app://'],
 	config: {
 		screens: {
-			HomeTab: {
-				path: 'home',
-				screens: {
-					PostDetail: 'post/:id',
-				},
+			PostDetail: {
+				path: 'post/:collectionName/:id/:notificationId',
 			},
-			CommunityTab: {
-				path: 'community',
-				screens: {
-					PostDetail: 'post/:id',
-				},
-			},
-			ChatTab: {
-				path: 'chat',
-				screens: {
-					ChatRoom: 'room/:chatId',
-				},
+			ChatRoom: {
+				path: 'chat/:chatId',
 			},
 		},
 	},

@@ -165,10 +165,8 @@ export const onMessageCreated = onDocumentCreated(
 			body: `${senderInfo?.displayName}: ${
 				body.length > 50 ? body.substring(0, 50) + '...' : body
 			}`,
-			// title: `${senderInfo?.displayName}님으로부터 새 메시지`,
-			// body: body.length > 50 ? body.substring(0, 50) + '...' : body,
 			data: {
-				url: `animal-crossing-trading-app://chat/room/${chatId}`,
+				url: `animal-crossing-trading-app://chat/${chatId}`,
 			},
 		};
 
@@ -187,6 +185,7 @@ export const onMessageCreated = onDocumentCreated(
 export const onCommentCreated = onDocumentCreated(
 	'Notifications/{notificationId}',
 	async (event) => {
+		const { notificationId } = event.params;
 		const snapshot = event.data;
 
 		if (!snapshot) return;
@@ -212,9 +211,6 @@ export const onCommentCreated = onDocumentCreated(
 		const expoPushToken = receiverInfo?.pushToken;
 		if (!expoPushToken) return;
 
-		// const collectionName = type === 'Boards' ? '마켓' : '커뮤니티';
-		const path = type === 'Boards' ? 'home' : 'community';
-
 		const messagePayload = {
 			to: expoPushToken,
 			title: `📝 새로운 댓글이 달렸어구리!`,
@@ -226,7 +222,7 @@ export const onCommentCreated = onDocumentCreated(
 			// title: `[${collectionName}] ${senderInfo?.displayName}님이 ${post?.title}에 댓글을 남겼습니다.`,
 			// body: body.length > 50 ? body.substring(0, 50) + '...' : body,
 			data: {
-				url: `animal-crossing-trading-app://${path}/post/${postId}`,
+				url: `animal-crossing-trading-app://post/${type}/${postId}/${notificationId}`,
 			},
 		};
 
