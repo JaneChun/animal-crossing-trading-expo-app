@@ -1,3 +1,4 @@
+import PushNotificationToggle from '@/components/Profile/PushNotificationToggle';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { FontSizes, FontWeights } from '@/constants/Typography';
@@ -25,8 +26,11 @@ const Setting = () => {
 				>
 					<Text style={styles.text}>내 계정</Text>
 				</SettingListItem>
-				<SettingListItem showChevron onPress={() => {}}>
-					<Text style={styles.text}>푸시 알림</Text>
+				<SettingListItem style={styles.pushNotificationRow}>
+					<View style={styles.flexRow}>
+						<Text style={styles.text}>푸시 알림</Text>
+						<PushNotificationToggle />
+					</View>
 				</SettingListItem>
 				<SettingListItem
 					borderRound='bottom'
@@ -75,5 +79,14 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.regular,
+	},
+	flexRow: {
+		flex: 1,
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center',
+	},
+	pushNotificationRow: {
+		paddingVertical: 10,
 	},
 });

@@ -1,18 +1,25 @@
 import { Colors } from '@/constants/Color';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import {
+	StyleProp,
+	StyleSheet,
+	TouchableOpacity,
+	ViewStyle,
+} from 'react-native';
 
 const SettingListItem = ({
 	children,
 	borderRound,
 	onPress,
 	showChevron = false,
+	style = {},
 }: {
 	children: JSX.Element;
 	borderRound?: 'top' | 'bottom' | 'all';
 	onPress?: () => void;
 	showChevron?: boolean;
+	style?: StyleProp<ViewStyle>;
 }) => {
 	return (
 		<TouchableOpacity
@@ -21,6 +28,7 @@ const SettingListItem = ({
 				borderRound === 'top' && styles.topRow,
 				borderRound === 'bottom' && styles.bottomRow,
 				borderRound === 'all' && [styles.topRow, styles.bottomRow],
+				style,
 			]}
 			onPress={onPress}
 			disabled={!onPress}
