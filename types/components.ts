@@ -411,6 +411,7 @@ export type SocialLoginButtonProps = {
 	onPress: () => void;
 	round?: boolean;
 	style?: StyleProp<ViewStyle>;
+	disabled?: boolean;
 };
 
 export type CloseButtonProps = {

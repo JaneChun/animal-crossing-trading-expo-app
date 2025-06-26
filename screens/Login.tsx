@@ -56,13 +56,14 @@ const Login = () => {
 			</View>
 			<View style={styles.body}>
 				<SocialLoginButton
-					oauthType='naver'
-					onPress={() => handleLogin('naver')}
-					style={{ width: '90%' }}
-				/>
-				<SocialLoginButton
 					oauthType='kakao'
 					onPress={() => handleLogin('kakao')}
+					style={{ width: '90%' }}
+					disabled
+				/>
+				<SocialLoginButton
+					oauthType='naver'
+					onPress={() => handleLogin('naver')}
 					style={{ width: '90%' }}
 				/>
 			</View>
