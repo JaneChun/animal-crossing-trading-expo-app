@@ -2,6 +2,7 @@ import Button from '@/components/ui/Button';
 import CloseButton from '@/components/ui/CloseButton';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
+import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color'; // 프로젝트 컬러 상수
 import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
@@ -28,9 +29,10 @@ const guideList = [
 ];
 
 const DeleteAccount = () => {
-	const { userInfo } = useAuthStore();
+	const { userInfo, isAuthLoading } = useAuthStore();
 	const kakaoDeleteAccount = useAuthStore((state) => state.kakaoDeleteAccount);
 	const naverDeleteAccount = useAuthStore((state) => state.naverDeleteAccount);
+	const appleDeleteAccount = useAuthStore((state) => state.appleDeleteAccount);
 
 	const handleDeleteAccount = async () => {
 		Alert.alert(
@@ -55,6 +57,8 @@ const DeleteAccount = () => {
 			isSuccess = await kakaoDeleteAccount(userInfo.uid);
 		else if (userInfo.oauthType === 'naver')
 			isSuccess = await naverDeleteAccount(userInfo.uid);
+		else if (userInfo.oauthType === 'apple')
+			isSuccess = await appleDeleteAccount(userInfo.uid);
 
 		if (Boolean(isSuccess)) {
 			Alert.alert('탈퇴 완료', '회원 탈퇴가 완료되었습니다.');
@@ -72,6 +76,10 @@ const DeleteAccount = () => {
 	const backToProfile = () => {
 		pop(4);
 	};
+
+	if (isAuthLoading) {
+		return <LoadingIndicator />;
+	}
 
 	return (
 		<SafeAreaView style={styles.screen} edges={['bottom']}>

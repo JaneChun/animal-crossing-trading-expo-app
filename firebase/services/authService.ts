@@ -1,7 +1,12 @@
 import { auth, functions } from '@/fbase';
-import { GetFirebaseCustomTokenResponse, OauthType } from '@/types/user';
+import {
+	GetFirebaseCustomTokenParams,
+	GetFirebaseCustomTokenResponse,
+} from '@/types/user';
 import { login } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import * as Crypto from 'expo-crypto';
 import { signInWithCustomToken, User } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
@@ -13,18 +18,20 @@ export const loginWithKakao = async (): Promise<{
 } | null> => {
 	const kakaoTokenInfo = await login();
 
-	const {
-		firebaseToken,
-		user: { email, nickname },
-	} = await getFirebaseCustomToken({
+	const credential = await getFirebaseCustomToken({
 		oauthType: 'kakao',
 		accessToken: kakaoTokenInfo!.accessToken,
+	}).catch((e) => {
+		if (e.code === 'Cancelled') return null;
+		throw e;
 	});
+	const { firebaseToken, user } = credential ?? {};
+	if (!firebaseToken) return null;
 
 	const result = await signInWithCustomToken(auth, firebaseToken);
 	if (!result.user) return null;
 
-	return { user: result.user, email };
+	return { user: result.user, email: user!.email };
 };
 
 export const loginWithNaver = async (): Promise<{
@@ -33,16 +40,13 @@ export const loginWithNaver = async (): Promise<{
 } | null> => {
 	const { successResponse } = await NaverLogin.login();
 
-	// 사용자가 로그인 도중 취소한 경우
 	if (!successResponse || !successResponse.accessToken) {
-		const error = new Error('네이버 로그인 취소');
-		(error as any).code = 'Cancelled';
-		throw error;
+		return null;
 	}
 
 	const {
 		firebaseToken,
-		user: { email, nickname },
+		user: { email },
 	} = await getFirebaseCustomToken({
 		oauthType: 'naver',
 		accessToken: successResponse!.accessToken,
@@ -50,6 +54,45 @@ export const loginWithNaver = async (): Promise<{
 
 	const result = await signInWithCustomToken(auth, firebaseToken);
 	if (!result.user) return null;
+
+	return { user: result.user, email };
+};
+
+export const loginWithApple = async (): Promise<{
+	user: User;
+	email: string;
+} | null> => {
+	// rawNonce 생성 → SHA256 해시
+	const rawNonce = Crypto.randomUUID();
+	const hashedNonce = await Crypto.digestStringAsync(
+		Crypto.CryptoDigestAlgorithm.SHA256,
+		rawNonce,
+	);
+
+	// Apple 로그인 팝업 (해시된 nonce 전달)
+	const credential = await AppleAuthentication.signInAsync({
+		requestedScopes: [
+			AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+			AppleAuthentication.AppleAuthenticationScope.EMAIL,
+		],
+		nonce: hashedNonce,
+	}).catch((e) => {
+		if (e.code === 'ERR_REQUEST_CANCELED') return null;
+		throw e;
+	});
+	const { identityToken } = credential ?? {};
+	if (!identityToken) return null;
+
+	const {
+		firebaseToken,
+		user: { email },
+	} = await getFirebaseCustomToken({
+		oauthType: 'apple',
+		idToken: identityToken,
+		rawNonce,
+	});
+
+	const result = await signInWithCustomToken(auth, firebaseToken);
 
 	return { user: result.user, email };
 };
@@ -64,12 +107,16 @@ export const updateLastLogin = async (uid: string) => {
 export const getFirebaseCustomToken = async ({
 	oauthType,
 	accessToken,
-}: {
-	oauthType: OauthType;
-	accessToken: string;
-}): Promise<GetFirebaseCustomTokenResponse> => {
+	idToken,
+	rawNonce,
+}: GetFirebaseCustomTokenParams): Promise<GetFirebaseCustomTokenResponse> => {
 	const getCustomToken = httpsCallable(functions, 'getFirebaseCustomToken');
-	const { data } = await getCustomToken({ oauthType, accessToken });
+	const { data } = await getCustomToken({
+		oauthType,
+		accessToken,
+		idToken,
+		rawNonce,
+	});
 
 	return data as GetFirebaseCustomTokenResponse;
 };

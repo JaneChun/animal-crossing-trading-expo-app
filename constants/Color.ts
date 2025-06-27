@@ -34,6 +34,8 @@ export const Colors = {
 	naver: '#03C75A',
 	kakao: '#FEE500',
 	kakao_text: '#3B1E1E',
+	apple: '#ffffff',
+	apple_text: '#000000',
 
 	// badge
 	badge_red: '#ff3a30',

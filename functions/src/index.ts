@@ -1,4 +1,5 @@
 import axios from 'axios';
+import * as crypto from 'crypto';
 import * as admin from 'firebase-admin';
 import { Timestamp } from 'firebase-admin/firestore';
 import * as functions from 'firebase-functions';
@@ -6,30 +7,87 @@ import {
 	onDocumentCreated,
 	onDocumentDeleted,
 } from 'firebase-functions/v2/firestore';
+import * as jwt from 'jsonwebtoken';
+import jwksClient from 'jwks-rsa';
 
 admin.initializeApp();
 const db = admin.firestore();
 const { FieldValue } = admin.firestore;
 
+// Apple이 제공하는 공개키 모음(JSON Web Key Set)을 가져오는 클라이언트
+const appleClient = jwksClient({
+	jwksUri: 'https://appleid.apple.com/auth/keys',
+});
+
+// JWT의 key ID를 입력받아, 해당 kid에 해당하는 PEM 형식 공개 키 문자열 반환
+function getAppleSigningKey(kid: string): Promise<string> {
+	return new Promise((resolve, reject) => {
+		appleClient.getSigningKey(kid, (err, key) => {
+			if (err) return reject(err);
+			resolve(key!.getPublicKey());
+		});
+	});
+}
+
+// Apple ID Token 검증
+async function verifyAppleIdToken(idToken: string, rawNonce: string) {
+	// 1. JWT 헤더 디코딩 -> kid 추출
+	const decodedHeader: any = jwt.decode(idToken, { complete: true })?.header;
+	if (!decodedHeader?.kid) {
+		throw new functions.https.HttpsError(
+			'invalid-argument',
+			'Invalid Apple ID Token',
+		);
+	}
+
+	// 2. JWKS에서 공개키 가져와 서명 검증
+	const publicKey = await getAppleSigningKey(decodedHeader.kid);
+	const payload: any = jwt.verify(idToken, publicKey, {
+		algorithms: ['RS256'],
+		audience: 'com.janechun.animalcrossingtradingapp',
+		issuer: 'https://appleid.apple.com',
+	});
+
+	// 3. payload.nonce 와 rawNonce 해시값 비교
+	const expectedNonce = crypto
+		.createHash('sha256')
+		.update(rawNonce)
+		.digest('hex');
+	if (payload.nonce !== expectedNonce) {
+		throw new functions.https.HttpsError('invalid-argument', 'Invalid nonce');
+	}
+
+	return payload; // { sub, email, email_verified, ... }
+}
+
 export const getFirebaseCustomToken = functions.https.onCall(
 	async (request) => {
-		const {
-			data: { oauthType, accessToken },
-		} = request;
+		const { oauthType, accessToken, idToken, rawNonce } = request.data as {
+			oauthType: string;
+			accessToken?: string; // 네이버, 카카오
+			idToken?: string; // Apple
+			rawNonce?: string; // Apple
+		};
 
-		if (!oauthType || !accessToken) {
+		if (!oauthType) {
 			throw new functions.https.HttpsError(
 				'invalid-argument',
-				'oauthType 및 accessToken 파라미터가 누락되었습니다.',
+				'oauthType가 누락되었습니다.',
 			);
 		}
 
 		try {
 			let providerId: string;
 			let email: string | undefined;
-			let nickname: string | undefined;
 
 			if (oauthType === 'kakao') {
+				if (!accessToken) {
+					throw new functions.https.HttpsError(
+						'invalid-argument',
+						'accessToken이 누락되었습니다.',
+					);
+				}
+
 				// 카카오 API 호출
 				const { data } = await axios.get('https://kapi.kakao.com/v2/user/me', {
 					headers: {
@@ -39,8 +97,14 @@ export const getFirebaseCustomToken = functions.https.onCall(
 
 				providerId = String(data.id);
 				email = data.kakao_account.email;
-				nickname = data.kakao_account.profile?.nickname;
 			} else if (oauthType === 'naver') {
+				if (!accessToken) {
+					throw new functions.https.HttpsError(
+						'invalid-argument',
+						'accessToken이 누락되었습니다.',
+					);
+				}
+
 				// 네이버 API 호출
 				const { data } = await axios.get(
 					'https://openapi.naver.com/v1/nid/me',
@@ -57,7 +121,17 @@ export const getFirebaseCustomToken = functions.https.onCall(
 
 				providerId = String(data.response.id);
 				email = data.response.email;
-				nickname = data.response.nickname;
+			} else if (oauthType === 'apple') {
+				if (!idToken || !rawNonce) {
+					throw new functions.https.HttpsError(
+						'invalid-argument',
+						'idToken과 rawNonce가 누락되었습니다.',
+					);
+				}
+
+				const payload = await verifyAppleIdToken(idToken, rawNonce);
+				providerId = payload.sub;
+				email = payload.email as string;
 			} else {
 				throw new functions.https.HttpsError(
 					'invalid-argument',
@@ -89,10 +163,7 @@ export const getFirebaseCustomToken = functions.https.onCall(
 
 			return {
 				firebaseToken: customToken,
-				user: {
-					email,
-					nickname,
-				},
+				user: { email },
 			};
 		} catch (e: any) {
 			console.error('Firebase Custom Token 생성 실패:', e);

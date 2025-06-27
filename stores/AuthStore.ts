@@ -1,4 +1,5 @@
 import {
+	loginWithApple,
 	loginWithKakao,
 	loginWithNaver,
 	updateLastLogin,
@@ -37,6 +38,9 @@ type AuthState = {
 	naverLogin: () => Promise<LoginResult>;
 	naverLogout: () => Promise<boolean>;
 	naverDeleteAccount: (uid: string) => Promise<boolean>;
+	appleLogin: () => Promise<LoginResult>;
+	appleLogout: () => Promise<boolean>;
+	appleDeleteAccount: (uid: string) => Promise<boolean>;
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -108,14 +112,13 @@ export const useAuthStore = create<AuthState>((set) => ({
 	kakaoDeleteAccount: async (uid) => {
 		const userInfo = useAuthStore.getState().userInfo;
 		const setUserInfo = useAuthStore.getState().setUserInfo;
-
 		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+
+		if (!auth.currentUser || !userInfo) return false;
+
 		setIsAuthLoading(true);
 
 		const isSuccess = await firebaseRequest('회원 탈퇴', async () => {
-			const user = auth.currentUser;
-			if (!user || !userInfo) return false;
-
 			await httpsCallable(
 				functions,
 				'deleteUserAndArchive',
@@ -192,14 +195,13 @@ export const useAuthStore = create<AuthState>((set) => ({
 	naverDeleteAccount: async (uid) => {
 		const userInfo = useAuthStore.getState().userInfo;
 		const setUserInfo = useAuthStore.getState().setUserInfo;
-
 		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+
+		if (!auth.currentUser || !userInfo) return false;
+
 		setIsAuthLoading(true);
 
 		const isSuccess = await firebaseRequest('회원 탈퇴', async () => {
-			const user = auth.currentUser;
-			if (!user || !userInfo) return false;
-
 			await httpsCallable(
 				functions,
 				'deleteUserAndArchive',
@@ -207,6 +209,88 @@ export const useAuthStore = create<AuthState>((set) => ({
 
 			// 네이버 로그인 토큰 삭제
 			await NaverLogin.deleteToken();
+
+			// 로컬 상태 초기화
+			setUserInfo(null);
+			await AsyncStorage.removeItem('@user');
+
+			return true;
+		}).catch(() => false);
+
+		setIsAuthLoading(false);
+		return isSuccess;
+	},
+	appleLogin: async () => {
+		const setUserInfo = useAuthStore.getState().setUserInfo;
+		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+
+		setIsAuthLoading(true);
+
+		let isNewUser = false;
+		let userEmail = '';
+
+		const isSuccess = await firebaseRequest('로그인', async () => {
+			const loginResult = await loginWithApple();
+			if (!loginResult) return false;
+
+			const { user, email } = loginResult;
+			userEmail = email;
+
+			const userInfo = await getUserInfo(user.uid);
+
+			// 신규 유저
+			if (!userInfo) {
+				isNewUser = true;
+				return true;
+			}
+
+			// 기존 유저
+			await updateLastLogin(userInfo.uid);
+
+			// 로컬 상태 업데이트
+			setUserInfo(userInfo);
+			await AsyncStorage.setItem('@user', JSON.stringify(userInfo));
+
+			return true;
+		}).catch(() => false);
+
+		setIsAuthLoading(false);
+		return { isSuccess, isNewUser, email: userEmail };
+	},
+	appleLogout: async () => {
+		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+
+		if (!auth.currentUser) return;
+
+		setIsAuthLoading(true);
+
+		const isSuccess = await firebaseRequest('로그아웃', async () => {
+			await auth.signOut(); // Firebase auth 로그아웃
+
+			// 로컬 상태 초기화
+			set({ userInfo: null });
+			await AsyncStorage.removeItem('@user');
+
+			return true;
+		}).catch(() => false);
+
+		setIsAuthLoading(false);
+		return isSuccess;
+	},
+	appleDeleteAccount: async (uid) => {
+		const userInfo = useAuthStore.getState().userInfo;
+		const setUserInfo = useAuthStore.getState().setUserInfo;
+		const setIsAuthLoading = useAuthStore.getState().setIsAuthLoading;
+
+		if (!auth.currentUser || !userInfo) return false;
+
+		setIsAuthLoading(true);
+
+		const isSuccess = await firebaseRequest('회원 탈퇴', async () => {
+			await httpsCallable(
+				functions,
+				'deleteUserAndArchive',
+			)({ uid: userInfo.uid });
 
 			// 로컬 상태 초기화
 			setUserInfo(null);

@@ -10,11 +10,6 @@ const firestoreRequest = async (
 		// console.log(`✅ Firestore 요청 : ${requestName} 성공`);
 		return result;
 	} catch (error: any) {
-		// 로그인 취소 에러는 Alert 무시
-		if (error.code === 'Cancelled') {
-			return null;
-		}
-
 		console.log(`❌ Firestore 요청 : ${requestName} 실패`, error);
 
 		console.log(error.code, error.message);

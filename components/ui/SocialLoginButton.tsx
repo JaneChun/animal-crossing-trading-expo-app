@@ -10,6 +10,7 @@ const socialImages: Record<string, any> = {
 	kakao_round: require('../../assets/images/kakao_round.png'),
 	naver: require('../../assets/images/naver.png'),
 	naver_round: require('../../assets/images/naver_round.png'),
+	apple: require('../../assets/images/apple.webp'),
 };
 
 const SocialLoginButton = ({
@@ -35,16 +36,27 @@ const SocialLoginButton = ({
 		>
 			<FastImage
 				source={imageSource}
-				style={styles.icon}
+				style={[styles.icon, oauthType === 'apple' && styles.appleIcon]}
 				resizeMode={FastImage.resizeMode.contain}
 			/>
 			<Text
 				style={[
 					styles.text,
-					{ color: oauthType === 'naver' ? 'white' : Colors.kakao_text },
+					{
+						color:
+							oauthType === 'naver'
+								? 'white'
+								: oauthType === 'kakao'
+								? Colors.kakao_text
+								: Colors.apple_text,
+					},
 				]}
 			>
-				{oauthType === 'naver' ? '네이버로 로그인' : '카카오로 로그인'}
+				{oauthType === 'naver'
+					? '네이버로 로그인'
+					: oauthType === 'kakao'
+					? '카카오로 로그인'
+					: 'Apple로 로그인'}
 			</Text>
 			{disabled && (
 				<View style={styles.bubbleWrapper}>
@@ -66,14 +78,19 @@ const styles = StyleSheet.create({
 		height: 50,
 		flexDirection: 'row',
 		alignItems: 'center',
-		borderRadius: 8,
+		borderRadius: 12,
 	},
 	icon: {
 		position: 'absolute',
 		left: 0,
-		width: 40,
-		height: 40,
+		width: 36,
+		height: 36,
 		marginLeft: 8,
+	},
+	appleIcon: {
+		width: 22,
+		height: 22,
+		marginLeft: 14,
 	},
 	text: {
 		flex: 1,

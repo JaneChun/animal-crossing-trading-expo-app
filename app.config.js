@@ -2,9 +2,9 @@ import 'dotenv/config';
 
 export default {
 	expo: {
-		name: 'animal-crossing-trading-app',
+		name: '모동숲 마켓',
 		slug: 'animal-crossing-trading-app',
-		version: '1.0.0',
+		version: '1.0.1',
 		orientation: 'portrait',
 		icon: './assets/images/app_icon.png',
 		scheme: 'animal-crossing-trading-app',
@@ -13,6 +13,7 @@ export default {
 		ios: {
 			supportsTablet: true,
 			bundleIdentifier: 'com.janechun.animalcrossingtradingapp',
+			usesAppleSignIn: true,
 		},
 		android: {
 			adaptiveIcon: {
@@ -65,6 +66,7 @@ export default {
 					urlScheme: 'com.janechun.animalcrossingtradingapp',
 				},
 			],
+			['expo-apple-authentication'],
 		],
 		experiments: {
 			typedRoutes: true,

@@ -1,5 +1,3 @@
-import { StyleSheet, View } from 'react-native';
-
 import { PADDING } from '@/components/ui/layout/Layout';
 import SocialLoginButton from '@/components/ui/SocialLoginButton';
 import { showToast } from '@/components/ui/Toast';
@@ -10,11 +8,13 @@ import {
 	navigateToSignUp,
 	replaceToMyProfile,
 } from '@/utilities/navigationHelpers';
+import { StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 const Login = () => {
 	const kakaoLogin = useAuthStore((state) => state.kakaoLogin);
 	const naverLogin = useAuthStore((state) => state.naverLogin);
+	const appleLogin = useAuthStore((state) => state.appleLogin);
 
 	const handleLogin = async (oauthType: OauthType) => {
 		let loginResult: LoginResult = {
@@ -25,6 +25,7 @@ const Login = () => {
 
 		if (oauthType === 'kakao') loginResult = await kakaoLogin();
 		else if (oauthType === 'naver') loginResult = await naverLogin();
+		else if (oauthType === 'apple') loginResult = await appleLogin();
 
 		if (loginResult.isSuccess) {
 			// 신규 유저
@@ -58,13 +59,18 @@ const Login = () => {
 				<SocialLoginButton
 					oauthType='kakao'
 					onPress={() => handleLogin('kakao')}
-					style={{ width: '90%' }}
+					style={{ width: '95%' }}
 					disabled
 				/>
 				<SocialLoginButton
 					oauthType='naver'
 					onPress={() => handleLogin('naver')}
-					style={{ width: '90%' }}
+					style={{ width: '95%' }}
+				/>
+				<SocialLoginButton
+					oauthType='apple'
+					onPress={() => handleLogin('apple')}
+					style={{ width: '95%', borderWidth: 1 }}
 				/>
 			</View>
 		</View>

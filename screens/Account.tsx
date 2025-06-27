@@ -1,3 +1,4 @@
+import Apple from '@/components/ui/Icons/Apple';
 import Kakao from '@/components/ui/Icons/Kakao';
 import Naver from '@/components/ui/Icons/Naver';
 import { PADDING } from '@/components/ui/layout/Layout';
@@ -7,7 +8,10 @@ import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/AuthStore';
-import { navigateToSocialAccountCheck } from '@/utilities/navigationHelpers';
+import {
+	navigateToDeleteAccount,
+	navigateToSocialAccountCheck,
+} from '@/utilities/navigationHelpers';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import SettingListItem from '../components/Profile/SettingListItem';
 
@@ -15,6 +19,7 @@ const Account = () => {
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const kakaoLogout = useAuthStore((state) => state.kakaoLogout);
 	const naverLogout = useAuthStore((state) => state.naverLogout);
+	const appleLogout = useAuthStore((state) => state.appleLogout);
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 
 	const handleLogout = () => {
@@ -31,6 +36,7 @@ const Account = () => {
 
 		if (userInfo.oauthType === 'kakao') isSuccess = await kakaoLogout();
 		else if (userInfo.oauthType === 'naver') isSuccess = await naverLogout();
+		else if (userInfo.oauthType === 'apple') isSuccess = await appleLogout();
 
 		if (Boolean(isSuccess)) {
 			backToProfile();
@@ -44,6 +50,16 @@ const Account = () => {
 		pop(2);
 	};
 
+	const handleNavigateToDeleteAccount = () => {
+		if (!userInfo) return;
+
+		if (userInfo.oauthType === 'kakao' || userInfo.oauthType === 'naver') {
+			navigateToSocialAccountCheck();
+		} else if (userInfo.oauthType === 'apple') {
+			navigateToDeleteAccount();
+		}
+	};
+
 	if (isAuthLoading) return <LoadingIndicator />;
 
 	return (
@@ -55,8 +71,10 @@ const Account = () => {
 						<View style={styles.email}>
 							{userInfo?.oauthType === 'naver' ? (
 								<Naver style={styles.icon} />
-							) : (
+							) : userInfo?.oauthType === 'kakao' ? (
 								<Kakao style={styles.icon} />
+							) : (
+								<Apple style={styles.appleIcon} />
 							)}
 							<Text
 								numberOfLines={1}
@@ -76,7 +94,7 @@ const Account = () => {
 				<SettingListItem
 					borderRound='bottom'
 					showChevron
-					onPress={navigateToSocialAccountCheck}
+					onPress={handleNavigateToDeleteAccount}
 				>
 					<Text style={styles.text}>탈퇴하기</Text>
 				</SettingListItem>
@@ -121,6 +139,10 @@ const styles = StyleSheet.create({
 	icon: {
 		width: 16,
 		height: 16,
+	},
+	appleIcon: {
+		width: 14,
+		height: 14,
 	},
 	emailText: {
 		flexShrink: 1,
