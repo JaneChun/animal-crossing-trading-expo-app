@@ -67,11 +67,7 @@ const EditProfileModal = ({
 	const isDisplayNameValid = !errors.displayName && displayName.length > 0;
 	const isIslandNameValid = !errors.islandName && islandName.length > 0;
 
-	const isSomethingChanged =
-		displayName !== userInfo?.displayName ||
-		islandName !== userInfo?.islandName;
-
-	const isValid = isDisplayNameValid && isIslandNameValid && isSomethingChanged;
+	const isValid = isDisplayNameValid && isIslandNameValid;
 
 	const handleClose = () => {
 		reset();
