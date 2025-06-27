@@ -1,3 +1,4 @@
+import { MAX_IMAGES } from '@/constants/post';
 import { useImagePicker } from '@/hooks/shared/useImagePicker';
 import { ImageInputProps } from '@/types/components';
 import { ImagePickerAsset } from 'expo-image-picker';
@@ -19,11 +20,12 @@ const ImageInput = ({
 
 	const addImage = async () => {
 		const newImages: ImagePickerAsset[] | null = await pickImage();
+		if (!newImages) return;
 
-		if (newImages) {
-			const currentImages = watch('images') ?? [];
-			setImages([...currentImages, ...newImages]);
-		}
+		const allowed = Math.min(newImages.length, MAX_IMAGES - images.length);
+		if (allowed <= 0) return;
+
+		setImages([...images, ...newImages.slice(0, allowed)]);
 	};
 
 	const deleteImage = (uri: string) => {

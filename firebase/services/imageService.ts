@@ -1,5 +1,6 @@
 import { storage } from '@/fbase';
 import { StorageCollection } from '@/types/image';
+import * as Crypto from 'expo-crypto';
 import { ImagePickerAsset } from 'expo-image-picker';
 import {
 	deleteObject,
@@ -19,7 +20,9 @@ export const uploadObjectToStorage = async ({
 }): Promise<string[]> => {
 	return firestoreRequest('Storage 이미지 업로드', async () => {
 		const uploadPromises = images.map(async (image) => {
-			const fileName = `${Date.now()}_${image.fileName || 'image.jpg'}`;
+			const fileName = `${Date.now()}_${Crypto.randomUUID()}_${
+				image.fileName || 'image.jpg'
+			}`;
 			const storageRef = ref(storage, `${directory}/${fileName}`);
 
 			const response = await fetch(image.uri); // 이미지 URL을 fetch하여 Blob 변환

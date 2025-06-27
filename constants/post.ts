@@ -80,3 +80,4 @@ export const REPORT_CATEGORIES = [
 ];
 
 export const MAX_COMMENT_LENGTH = 1000;
+export const MAX_IMAGES = 10;
