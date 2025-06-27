@@ -23,17 +23,23 @@ export const useImagePicker = (
 		return currentPermission.status === 'granted';
 	};
 
-	const pickImage = async () => {
+	const pickImage = async (selectionLimit: number) => {
 		const hasPermission = await verifyPermissions();
-
 		if (!hasPermission) return null;
+
+		const limit =
+			selectionLimit != null // selectionLimit이 있으면 selectionLimit
+				? selectionLimit
+				: options.multiple // 없으면 multiple 모드시 10장, 아니면 1장
+				? 10
+				: 1;
 
 		const result = await launchImageLibraryAsync({
 			mediaTypes: 'images',
 			allowsMultipleSelection: options.multiple,
 			aspect: [1, 1],
 			quality: 0,
-			selectionLimit: options.multiple ? 10 : 1,
+			selectionLimit: limit,
 		});
 
 		if (result.canceled) return null;

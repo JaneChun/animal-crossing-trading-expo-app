@@ -3,11 +3,11 @@ import { useImagePicker } from '@/hooks/shared/useImagePicker';
 import { ImageInputProps } from '@/types/components';
 import { ImagePickerAsset } from 'expo-image-picker';
 import React from 'react';
-import { useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import AddImageButton from '../ui/AddImageButton';
 import ImagePreview from '../ui/ImagePreview';
+import { showToast } from '../ui/Toast';
 
 const ImageInput = ({
 	images,
@@ -15,17 +15,19 @@ const ImageInput = ({
 	containerStyle,
 	labelStyle,
 }: ImageInputProps) => {
-	const { watch } = useFormContext();
 	const { pickImage } = useImagePicker({ multiple: true });
 
 	const addImage = async () => {
-		const newImages: ImagePickerAsset[] | null = await pickImage();
-		if (!newImages) return;
+		const remaining = MAX_IMAGES - images.length;
+		if (remaining <= 0) {
+			showToast('warn', '이미지는 최대 10장까지 첨부할 수 있어요.');
+			return;
+		}
 
-		const allowed = Math.min(newImages.length, MAX_IMAGES - images.length);
-		if (allowed <= 0) return;
+		const newImages: ImagePickerAsset[] | null = await pickImage(remaining);
+		if (!newImages || newImages.length === 0) return;
 
-		setImages([...images, ...newImages.slice(0, allowed)]);
+		setImages([...images, ...newImages]);
 	};
 
 	const deleteImage = (uri: string) => {
