@@ -253,30 +253,23 @@ export const onMessageCreated = onDocumentCreated(
 	},
 );
 
-export const onCommentCreated = onDocumentCreated(
+export const onNotificationCreated = onDocumentCreated(
 	'Notifications/{notificationId}',
 	async (event) => {
-		const { notificationId } = event.params;
-		const snapshot = event.data;
+		const notification = event.data?.data();
+		if (!notification) return;
 
-		if (!snapshot) return;
-
-		const notification = snapshot.data();
 		const { receiverId, senderId, type, postId, body } = notification;
-
 		if (!receiverId || !senderId || !body) return;
 
 		const receiverDoc = await admin
 			.firestore()
 			.doc(`Users/${receiverId}`)
 			.get();
-		// const senderDoc = await admin.firestore().doc(`Users/${senderId}`).get();
 		const postDoc = await admin.firestore().doc(`${type}/${postId}`).get();
-
-		if (!postDoc.exists) return;
+		if (!receiverDoc.exists || !postDoc.exists) return;
 
 		const receiverInfo = receiverDoc.data();
-		// const senderInfo = senderDoc.data();
 		const post = postDoc.data();
 
 		const expoPushToken = receiverInfo?.pushToken;
@@ -293,7 +286,7 @@ export const onCommentCreated = onDocumentCreated(
 			// title: `[${collectionName}] ${senderInfo?.displayName}님이 ${post?.title}에 댓글을 남겼습니다.`,
 			// body: body.length > 50 ? body.substring(0, 50) + '...' : body,
 			data: {
-				url: `animal-crossing-trading-app://post/${type}/${postId}/${notificationId}`,
+				url: `animal-crossing-trading-app://post/${type}/${postId}/${event.params.notificationId}`,
 			},
 		};
 
@@ -305,6 +298,42 @@ export const onCommentCreated = onDocumentCreated(
 			});
 		} catch (e) {
 			console.error(e);
+		}
+	},
+);
+
+export const onCommentCreated = onDocumentCreated(
+	'{collection}/{postId}/Comments/{commentId}',
+	async (event) => {
+		const { collection, postId } = event.params;
+		const postRef = admin.firestore().doc(`${collection}/${postId}`);
+		try {
+			await postRef.update({
+				commentCount: admin.firestore.FieldValue.increment(1),
+			});
+		} catch (e) {
+			console.error(
+				`onCommentCreated: 댓글 수 증가 실패 ${collection}/${postId}`,
+				e,
+			);
+		}
+	},
+);
+
+export const onCommentDeleted = onDocumentDeleted(
+	'{collection}/{postId}/Comments/{commentId}',
+	async (event) => {
+		const { collection, postId } = event.params;
+		const postRef = admin.firestore().doc(`${collection}/${postId}`);
+		try {
+			await postRef.update({
+				commentCount: admin.firestore.FieldValue.increment(-1),
+			});
+		} catch (e) {
+			console.error(
+				`onCommentDeleted: 댓글 수 감소 실패 ${collection}/${postId}`,
+				e,
+			);
 		}
 	},
 );

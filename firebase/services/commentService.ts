@@ -11,10 +11,10 @@ import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { sanitize } from '@/utilities/sanitize';
 import {
 	collection,
+	deleteDoc,
 	doc,
 	DocumentData,
 	getDocs,
-	increment,
 	Query,
 	Timestamp,
 	updateDoc,
@@ -94,11 +94,7 @@ export const createComment = async ({
 
 		batch.set(commentRef, newComment);
 
-		// 2. post 문서의 commentCount 필드 수정
-		const postRef = doc(db, collectionName, postId);
-		batch.update(postRef, { commentCount: increment(1) });
-
-		// 3. notification 문서 생성
+		// 2. 알림 문서 생성
 		const post = await getDocFromFirestore({
 			collection: collectionName,
 			id: postId,
@@ -160,16 +156,7 @@ export const deleteComment = async (
 	commentId: string,
 ): Promise<void> => {
 	return firestoreRequest('댓글 삭제', async () => {
-		const batch = writeBatch(db);
-
-		// 1. 댓글 문서 삭제
 		const commentRef = doc(db, collectionName, postId, 'Comments', commentId);
-		batch.delete(commentRef);
-
-		// 2. post 문서의 commentCount 필드 수정
-		const postRef = doc(db, collectionName, postId);
-		batch.update(postRef, { commentCount: increment(-1) });
-
-		await batch.commit();
+		await deleteDoc(commentRef);
 	});
 };
