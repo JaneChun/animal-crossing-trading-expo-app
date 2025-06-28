@@ -22,6 +22,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AddItemModal from '../components/NewPost/AddItemModal';
 
@@ -58,7 +59,7 @@ const NewPost = () => {
 	const { isLoading: isSubmitting, setIsLoading: setIsSubmitting } =
 		useLoading();
 
-	const flatListRef = useRef<any>(null);
+	const scrollViewRef = useRef<ScrollView | null>(null);
 
 	const methods = useNewPostForm(collectionName);
 	const {
@@ -162,12 +163,12 @@ const NewPost = () => {
 	const onError = (errors: any) => {
 		console.log('🧨 Zod Errors', JSON.stringify(errors, null, 2));
 
-		showToast('error', '게시글 작성 중 오류가 발생했습니다.');
 		scrollToTop();
 	};
 
 	const scrollToTop = () => {
-		flatListRef.current?.scrollToOffset({ animated: true, offset: 0 });
+		console.log('scrollToTop');
+		scrollViewRef.current?.scrollTo(0);
 	};
 
 	const openAddItemModal = useCallback(() => {
@@ -242,7 +243,7 @@ const NewPost = () => {
 				>
 					<PostForm
 						collectionName={collectionName}
-						flatListRef={flatListRef}
+						scrollViewRef={scrollViewRef}
 						handleEditItemPress={handleEditItemPress}
 						deleteItemFromCart={deleteItemFromCart}
 					/>

@@ -2,7 +2,7 @@ import { ICON_MAP } from '@/components/ui/EmptyIndicator';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
 import {
 	GestureResponderEvent,
 	ImageProps,
@@ -12,6 +12,7 @@ import {
 	TextStyle,
 	ViewStyle,
 } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { CommentWithCreatorInfo } from './comment';
 import { PopulatedNotification } from './notification';
 import {
@@ -61,7 +62,7 @@ export type ItemThumabnailProps = ThumabnailProps & { itemLength?: number };
 // NewPost/
 export interface PostFormProps {
 	collectionName: Collection;
-	flatListRef: any;
+	scrollViewRef: RefObject<ScrollView>;
 	handleEditItemPress: (item: CartItem) => void;
 	deleteItemFromCart: (deleteCartItemId: string) => void;
 }

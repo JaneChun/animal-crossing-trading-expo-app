@@ -17,7 +17,7 @@ import TypeSelect from './TypeSelect';
 
 const PostForm = ({
 	collectionName,
-	flatListRef,
+	scrollViewRef,
 	handleEditItemPress,
 	deleteItemFromCart,
 }: PostFormProps) => {
@@ -32,7 +32,7 @@ const PostForm = ({
 	}));
 
 	return (
-		<ScrollView style={{ padding: PADDING }}>
+		<ScrollView ref={scrollViewRef} style={{ padding: PADDING }}>
 			{isMarket && (
 				<Controller
 					control={control}
