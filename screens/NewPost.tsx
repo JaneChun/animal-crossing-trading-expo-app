@@ -17,10 +17,12 @@ import { ImageType } from '@/types/image';
 import { RootStackNavigation, type NewPostRouteProp } from '@/types/navigation';
 import { CartItem, CommunityType, Item, MarketType } from '@/types/post';
 import { handleImageUpload } from '@/utilities/handleImageUpload';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormProvider } from 'react-hook-form';
-import { StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AddItemModal from '../components/NewPost/AddItemModal';
 
 const NewPost = () => {
@@ -29,6 +31,9 @@ const NewPost = () => {
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const route = useRoute<NewPostRouteProp>();
 	const stackNavigation = useNavigation<RootStackNavigation>();
+
+	const insets = useSafeAreaInsets();
+	const headerHeight = useHeaderHeight();
 
 	const [editingId, setEditingId] = useState<string>(route.params?.id || '');
 
@@ -230,12 +235,18 @@ const NewPost = () => {
 	return (
 		<FormProvider {...methods}>
 			<Layout>
-				<PostForm
-					collectionName={collectionName}
-					flatListRef={flatListRef}
-					handleEditItemPress={handleEditItemPress}
-					deleteItemFromCart={deleteItemFromCart}
-				/>
+				<KeyboardAvoidingView
+					behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+					style={{ flex: 1 }}
+					keyboardVerticalOffset={headerHeight + insets.top}
+				>
+					<PostForm
+						collectionName={collectionName}
+						flatListRef={flatListRef}
+						handleEditItemPress={handleEditItemPress}
+						deleteItemFromCart={deleteItemFromCart}
+					/>
+				</KeyboardAvoidingView>
 
 				<View style={styles.buttonContainer}>
 					{collectionName === 'Boards' && (

@@ -6,7 +6,7 @@ import { MarketType } from '@/types/post';
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet } from 'react-native';
-import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
+import { ScrollView } from 'react-native-gesture-handler';
 import DropdownInput from '../ui/inputs/DropdownInput';
 import { PADDING } from '../ui/layout/Layout';
 import BodyInput from './BodyInput';
@@ -32,120 +32,111 @@ const PostForm = ({
 	}));
 
 	return (
-		<KeyboardAwareFlatList
-			ref={flatListRef}
-			data={[]}
-			renderItem={null}
-			keyboardShouldPersistTaps='handled'
-			contentContainerStyle={{ padding: PADDING }}
-			ListHeaderComponent={
-				<>
-					{isMarket && (
-						<Controller
-							control={control}
-							name='type'
-							render={({ field: { value, onChange } }) => (
-								<TypeSelect
-									type={value as MarketType}
-									setType={onChange}
-									labelStyle={styles.label}
-								/>
-							)}
+		<ScrollView style={{ padding: PADDING }}>
+			{isMarket && (
+				<Controller
+					control={control}
+					name='type'
+					render={({ field: { value, onChange } }) => (
+						<TypeSelect
+							type={value as MarketType}
+							setType={onChange}
+							labelStyle={styles.label}
 						/>
 					)}
-					{isCommunity && (
-						<Controller
-							control={control}
-							name='type'
-							render={({ field: { value, onChange } }) => (
-								<DropdownInput
-									options={dropdownOptions}
-									value={value}
-									setValue={onChange}
-									// topOffset={100}
-									style={{ width: '40%', marginBottom: 16 }}
-								/>
-							)}
+				/>
+			)}
+			{isCommunity && (
+				<Controller
+					control={control}
+					name='type'
+					render={({ field: { value, onChange } }) => (
+						<DropdownInput
+							options={dropdownOptions}
+							value={value}
+							setValue={onChange}
+							// topOffset={100}
+							style={{ width: '40%', marginBottom: 16 }}
 						/>
 					)}
+				/>
+			)}
 
-					{/* 제목 입력 */}
-					<Controller
-						control={control}
-						name='title'
-						render={({ field: { value, onChange, onBlur } }) => (
-							<TitleInput
-								title={value}
-								setTitle={onChange}
-								onBlur={onBlur}
-								containerStyle={{
-									...styles.inputContainer,
-									marginBottom: 0,
-								}}
-								inputStyle={{
-									...styles.input,
-									...styles.titleInput,
-								}}
-							/>
-						)}
+			{/* 제목 입력 */}
+			<Controller
+				control={control}
+				name='title'
+				render={({ field: { value, onChange, onBlur } }) => (
+					<TitleInput
+						title={value}
+						setTitle={onChange}
+						onBlur={onBlur}
+						containerStyle={{
+							...styles.inputContainer,
+							marginBottom: 0,
+						}}
+						inputStyle={{
+							...styles.input,
+							...styles.titleInput,
+						}}
 					/>
+				)}
+			/>
 
-					{/* 본문 입력 */}
-					<Controller
-						control={control}
-						name='body'
-						render={({ field: { value, onChange, onBlur } }) => (
-							<BodyInput
-								body={value}
-								setBody={onChange}
-								onBlur={onBlur}
-								containerStyle={styles.inputContainer}
-								inputStyle={styles.input}
-							/>
-						)}
+			{/* 본문 입력 */}
+			<Controller
+				control={control}
+				name='body'
+				render={({ field: { value, onChange, onBlur } }) => (
+					<BodyInput
+						body={value}
+						setBody={onChange}
+						onBlur={onBlur}
+						containerStyle={styles.inputContainer}
+						inputStyle={styles.input}
 					/>
+				)}
+			/>
 
-					{/* 커뮤니티용 이미지 업로드 */}
-					{isCommunity && (
-						<Controller
-							control={control}
-							name='images'
-							render={({ field: { value, onChange } }) => (
-								<ImageInput
-									images={value}
-									setImages={onChange}
-									containerStyle={{
-										...styles.inputContainer,
-										borderBottomWidth: 0,
-									}}
-									labelStyle={styles.label}
-								/>
-							)}
+			{/* 커뮤니티용 이미지 업로드 */}
+			{isCommunity && (
+				<Controller
+					control={control}
+					name='images'
+					render={({ field: { value, onChange } }) => (
+						<ImageInput
+							images={value}
+							setImages={onChange}
+							containerStyle={{
+								...styles.inputContainer,
+								borderBottomWidth: 0,
+							}}
+							labelStyle={styles.label}
 						/>
 					)}
+				/>
+			)}
 
-					{/* 마켓용 아이템 리스트 */}
-					{isMarket && (
-						<Controller
-							control={control}
-							name='cart'
-							render={({ field: { value, onChange } }) => (
-								<ItemList
-									cart={value}
-									handleEditItemPress={(item) => handleEditItemPress(item)}
-									deleteItemFromCart={(id) => deleteItemFromCart(id)}
-									containerStyle={{
-										...styles.inputContainer,
-										borderBottomWidth: 0,
-									}}
-									labelStyle={styles.label}
-								/>
-							)}
+			{/* 마켓용 아이템 리스트 */}
+			{isMarket && (
+				<Controller
+					control={control}
+					name='cart'
+					render={({ field: { value, onChange } }) => (
+						<ItemList
+							cart={value}
+							handleEditItemPress={(item) => handleEditItemPress(item)}
+							deleteItemFromCart={(id) => deleteItemFromCart(id)}
+							containerStyle={{
+								...styles.inputContainer,
+								borderBottomWidth: 0,
+							}}
+							labelStyle={styles.label}
 						/>
 					)}
-				</>
-			}
-		/>
+				/>
+			)}
+		</ScrollView>
 	);
 };
 

@@ -1,5 +1,5 @@
 import { BodyInputProps } from '@/types/components';
-import React, { useState } from 'react';
+import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
 import ValidationInput from '../ui/inputs/ValidationInput';
@@ -16,10 +16,6 @@ const BodyInput = ({
 		formState: { errors },
 	} = useFormContext();
 	const errorMessage = errors.body?.message as string;
-	const [isEditable, setIsEditable] = useState(true);
-
-	const enableEditing = () => setIsEditable(true);
-	const disableEditing = () => setIsEditable(false);
 
 	return (
 		<View style={containerStyle}>
@@ -30,11 +26,6 @@ const BodyInput = ({
 				placeholder='내용을 입력하세요.'
 				inputStyle={[inputStyle, styles.textarea]}
 				multiline
-				editable={isEditable}
-				onTouchMove={disableEditing}
-				onTouchEnd={enableEditing}
-				onTouchCancel={enableEditing}
-				scrollEnabled={false}
 				errorMessageContainerStyle={{
 					marginTop: 0,
 					marginBottom: 8,
