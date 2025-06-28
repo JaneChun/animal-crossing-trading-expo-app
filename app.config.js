@@ -11,7 +11,7 @@ export default {
 		userInterfaceStyle: 'automatic',
 		newArchEnabled: true,
 		splash: {
-			image: './assets/images/app_icon.png',
+			image: './assets/images/splash_image.png',
 			resizeMode: 'contain',
 			backgroundColor: '#ffffff',
 		},
@@ -19,6 +19,14 @@ export default {
 			supportsTablet: true,
 			bundleIdentifier: 'com.janechun.animalcrossingtradingapp',
 			usesAppleSignIn: true,
+			infoPlist: {
+				ITSAppUsesNonExemptEncryption: false,
+			},
+			splash: {
+				image: './assets/images/splash_image.png',
+				resizeMode: 'contain',
+				backgroundColor: '#ffffff',
+			},
 		},
 		android: {
 			adaptiveIcon: {
