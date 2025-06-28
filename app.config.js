@@ -10,6 +10,11 @@ export default {
 		scheme: 'animal-crossing-trading-app',
 		userInterfaceStyle: 'automatic',
 		newArchEnabled: true,
+		splash: {
+			image: './assets/images/app_icon.png',
+			resizeMode: 'contain',
+			backgroundColor: '#ffffff',
+		},
 		ios: {
 			supportsTablet: true,
 			bundleIdentifier: 'com.janechun.animalcrossingtradingapp',
