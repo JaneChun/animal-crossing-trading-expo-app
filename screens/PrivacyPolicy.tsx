@@ -8,7 +8,7 @@ const PrivacyPolicy = () => {
 			<ScrollView contentContainerStyle={styles.contentContainer}>
 				{/* 헤더 */}
 				<Text style={styles.mainTitle}>개인정보 처리방침</Text>
-				<Text style={styles.subTitle}>최종 업데이트: 2025년 6월 26일</Text>
+				<Text style={styles.subTitle}>최종 업데이트: 2025년 6월 28일</Text>
 				<Text style={styles.paragraph}>
 					본 개인정보처리방침은 행정안전부 권고 『개인정보처리방침 작성
 					가이드라인(2020.12)』에 따라 작성되었습니다.
@@ -38,7 +38,7 @@ const PrivacyPolicy = () => {
 					회원가입, 로그인, 서비스 이용 과정에서 아래 개인정보를 수집합니다.
 				</Text>
 				<Text style={styles.listItem}>
-					• 필수: 이메일, 소셜 ID(네이버·카카오), 닉네임
+					• 필수: 이메일, 소셜 ID(네이버·카카오)
 				</Text>
 				<Text style={styles.listItem}>• 선택: 프로필 사진</Text>
 
@@ -61,13 +61,19 @@ const PrivacyPolicy = () => {
 				</Text>
 				<Text style={styles.listItem}>
 					• 카카오주식회사(소셜 로그인 제공)
-					{'\n'}– 제공항목: 이메일, 닉네임
+					{'\n'}– 제공항목: 이메일
 					{'\n'}– 제공목적: 본인 식별 및 서비스 연동
 					{'\n'}– 보유기간: 소셜 플랫폼 정책에 따름
 				</Text>
 				<Text style={styles.listItem}>
 					• 네이버주식회사(소셜 로그인 제공)
-					{'\n'}– 제공항목: 이메일, 닉네임
+					{'\n'}– 제공항목: 이메일
+					{'\n'}– 제공목적: 본인 식별 및 서비스 연동
+					{'\n'}– 보유기간: 소셜 플랫폼 정책에 따름
+				</Text>
+				<Text style={styles.listItem}>
+					• Apple Inc.(소셜 로그인 제공)
+					{'\n'}– 제공항목: 이메일
 					{'\n'}– 제공목적: 본인 식별 및 서비스 연동
 					{'\n'}– 보유기간: 소셜 플랫폼 정책에 따름
 				</Text>

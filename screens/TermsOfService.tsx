@@ -13,7 +13,7 @@ const TermsOfService = () => (
 		<ScrollView contentContainerStyle={styles.contentContainer}>
 			{/* Header */}
 			<Text style={styles.mainTitle}>이용약관</Text>
-			<Text style={styles.subTitle}>최종 업데이트: 2025년 6월 26일</Text>
+			<Text style={styles.subTitle}>최종 업데이트: 2025년 6월 28일</Text>
 
 			{/* 제1조 목적 */}
 			<Text style={styles.sectionTitle}>제1조 (목적)</Text>
@@ -36,12 +36,12 @@ const TermsOfService = () => (
 			{/* 제3조 회원가입 및 소셜 로그인 */}
 			<Text style={styles.sectionTitle}>제3조 (회원가입 및 소셜 로그인)</Text>
 			<Text style={styles.listItem}>
-				• 이용자는 네이버/카카오 소셜 로그인(OAuth 2.0)을 통해 회원가입할 수
+				• 이용자는 네이버/카카오/Apple 소셜 로그인을 통해 회원가입할 수
 				있습니다.
 			</Text>
 			<Text style={styles.listItem}>
-				• 소셜 로그인 시 수집되는 정보(닉네임, 이메일)는 본인 식별 및 서비스
-				제공 목적으로만 사용됩니다.
+				• 소셜 로그인 시 수집되는 정보(이메일)는 본인 식별 및 서비스 제공
+				목적으로만 사용됩니다.
 			</Text>
 			<Text style={styles.listItem}>
 				• 회원가입 직후 닉네임 입력 페이지를 거쳐 커뮤니티 활동용 닉네임을
