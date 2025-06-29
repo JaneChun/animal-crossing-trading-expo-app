@@ -6,6 +6,13 @@ export const usePostContext = () => {
 	const activeTab = useActiveTabStore((state) => state.activeTab);
 	const config = TAB_COLLECTION_CONFIG[activeTab];
 
+	if (!config) {
+		return {
+			activeTab: 'Home',
+			collectionName: 'Boards',
+		};
+	}
+
 	const collectionName = config.collection as CollectionFromTab<
 		typeof activeTab
 	>;
