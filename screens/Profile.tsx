@@ -2,6 +2,7 @@ import EditProfileModal from '@/components/Profile/EditProfileModal';
 import MyPosts from '@/components/Profile/MyPosts';
 import ProfileBox from '@/components/Profile/Profile';
 import SettingIcon from '@/components/Profile/SettingIcon';
+import ImageViewerModal from '@/components/ui/ImageViewerModal';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { getPublicUserInfo } from '@/firebase/services/userService';
@@ -18,22 +19,31 @@ import {
 	useRoute,
 } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
-import { Keyboard, View } from 'react-native';
+import { Image, Keyboard, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 const Profile = () => {
 	const route = useRoute<ProfileRouteProp>();
 	const { userId: targetUserId } = route?.params ?? {};
-	const userInfo = useAuthStore((state) => state.userInfo);
-	const { isLoading: isUploading, setIsLoading: setIsUploading } = useLoading();
+
 	const setActiveTab = useActiveTabStore((state) => state.setActiveTab);
 	const currentTab = useCurrentTab();
+	const isFocused = useIsFocused();
+	const userInfo = useAuthStore((state) => state.userInfo);
+
 	const [profileInfo, setProfileInfo] = useState<PublicUserInfo | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-	const isFocused = useIsFocused();
+	const [isViewerOpen, setIsViewerOpen] = useState(false);
+
+	const { isLoading: isUploading, setIsLoading: setIsUploading } = useLoading();
 
 	const isMyProfile: boolean =
 		(userInfo && userInfo.uid === profileInfo?.uid) ?? false;
+
+	const emptyProfileImageSource = require('../assets/images/empty_profile_image.png');
+	const resolvedEmptyProfileImage = Image.resolveAssetSource(
+		emptyProfileImageSource,
+	);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -60,6 +70,10 @@ const Profile = () => {
 		setIsModalVisible(false);
 	};
 
+	const openImageViewerModal = () => {
+		setIsViewerOpen(true);
+	};
+
 	if (!profileInfo || isUploading) {
 		return <LoadingIndicator />;
 	}
@@ -76,6 +90,7 @@ const Profile = () => {
 								profileInfo={profileInfo}
 								isMyProfile={isMyProfile}
 								openEditProfileModal={openEditProfileModal}
+								openImageViewerModal={openImageViewerModal}
 							/>
 						</View>
 					}
@@ -91,6 +106,17 @@ const Profile = () => {
 					setIsUploading={setIsUploading}
 				/>
 			)}
+
+			<ImageViewerModal
+				visible={isViewerOpen}
+				images={
+					profileInfo?.photoURL
+						? [profileInfo?.photoURL]
+						: [resolvedEmptyProfileImage.uri]
+				}
+				initialIndex={0}
+				onRequestClose={() => setIsViewerOpen(false)}
+			/>
 		</>
 	);
 };

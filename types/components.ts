@@ -197,6 +197,13 @@ export type ImageCarouselProps = {
 	containerStyle?: ViewStyle;
 };
 
+export type ImageViewerModalProps = {
+	visible: boolean;
+	images: string[];
+	initialIndex?: number;
+	onRequestClose: () => void;
+};
+
 export type ItemSummaryListProps = {
 	cart?: CartItem[];
 	containerStyle?: ViewStyle;
@@ -240,6 +247,7 @@ export type ProfileProps = {
 	isMyProfile: boolean;
 	containerStyle?: StyleProp<ViewStyle>;
 	openEditProfileModal: () => void;
+	openImageViewerModal: () => void;
 };
 
 export type PostSummaryProps<C extends Collection> = {

@@ -3,7 +3,7 @@ import { FontSizes, FontWeights } from '@/constants/Typography';
 import { ProfileProps } from '@/types/components';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Button from '../ui/Button';
 import Leaf from '../ui/Icons/Leaf';
 import ImageWithFallback from '../ui/ImageWithFallback';
@@ -13,15 +13,18 @@ const Profile = ({
 	isMyProfile,
 	containerStyle,
 	openEditProfileModal,
+	openImageViewerModal,
 }: ProfileProps) => {
 	return (
 		<View style={[styles.container, containerStyle]}>
 			<View style={styles.imageContainer}>
-				<ImageWithFallback
-					uri={profileInfo?.photoURL}
-					fallbackSource={require('../../assets/images/empty_profile_image.png')}
-					style={styles.image}
-				/>
+				<Pressable onPress={openImageViewerModal}>
+					<ImageWithFallback
+						uri={profileInfo?.photoURL}
+						fallbackSource={require('../../assets/images/empty_profile_image.png')}
+						style={styles.image}
+					/>
+				</Pressable>
 			</View>
 			<View style={styles.nameContainer}>
 				<Text style={styles.displayName}>{profileInfo.displayName}</Text>
