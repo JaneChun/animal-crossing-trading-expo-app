@@ -1,9 +1,12 @@
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { usePostContext } from '@/hooks/post/usePostContext';
 import { PostSummaryProps } from '@/types/components';
 import { Collection } from '@/types/post';
 import { navigateToPost } from '@/utilities/navigationHelpers';
+import {
+	isBoardPost,
+	isCommunityPost,
+} from '@/utilities/typeGuards/postTypeGuards';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -16,8 +19,6 @@ const PostSummary = <C extends Collection>({
 	post,
 	collectionName,
 }: PostSummaryProps<C>) => {
-	const { isBoardPost, isCommunityPost } = usePostContext();
-
 	return (
 		<Pressable
 			style={styles.container}

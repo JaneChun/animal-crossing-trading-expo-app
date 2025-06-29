@@ -16,8 +16,6 @@ import Reanimated, {
 } from 'react-native-reanimated';
 
 const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
-	// const { isBoardPost, isCommunityPost } = usePostContext();
-
 	const {
 		id,
 		type,

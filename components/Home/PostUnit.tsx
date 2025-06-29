@@ -1,10 +1,13 @@
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { usePostContext } from '@/hooks/post/usePostContext';
 import { PostUnitProps } from '@/types/components';
 import { Collection } from '@/types/post';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToPost } from '@/utilities/navigationHelpers';
+import {
+	isBoardPost,
+	isCommunityPost,
+} from '@/utilities/typeGuards/postTypeGuards';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
@@ -17,8 +20,6 @@ const PostUnit = <C extends Collection>({
 	post,
 	collectionName,
 }: PostUnitProps<C>) => {
-	const { isBoardPost, isCommunityPost } = usePostContext();
-
 	return (
 		<Pressable
 			style={styles.container}

@@ -19,7 +19,6 @@ import { Colors } from '@/constants/Color';
 import { createReport } from '@/firebase/services/reportService';
 import { usePost } from '@/hooks/post/usePost';
 import { usePostComment } from '@/hooks/post/usePostComment';
-import { usePostContext } from '@/hooks/post/usePostContext';
 import { useAuthStore } from '@/stores/AuthStore';
 import { reportUserParams } from '@/types/components';
 import { PostDetailRouteProp } from '@/types/navigation';
@@ -29,6 +28,10 @@ import {
 	navigateToEditPost,
 	navigateToLogin,
 } from '@/utilities/navigationHelpers';
+import {
+	isBoardPost,
+	isCommunityPost,
+} from '@/utilities/typeGuards/postTypeGuards';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
 import React, { useRef, useState } from 'react';
@@ -50,8 +53,6 @@ const PostDetail = () => {
 	const headerHeight = useHeaderHeight();
 	const insets = useSafeAreaInsets();
 	const keyboardVerticalOffset = headerHeight + insets.top + insets.bottom + 10;
-
-	const { isBoardPost, isCommunityPost } = usePostContext();
 
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const route = useRoute<PostDetailRouteProp>();

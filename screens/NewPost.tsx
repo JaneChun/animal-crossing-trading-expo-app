@@ -17,6 +17,10 @@ import { ImageType } from '@/types/image';
 import { RootStackNavigation, type NewPostRouteProp } from '@/types/navigation';
 import { CartItem, CommunityType, Item, MarketType } from '@/types/post';
 import { handleImageUpload } from '@/utilities/handleImageUpload';
+import {
+	isBoardPost,
+	isCommunityPost,
+} from '@/utilities/typeGuards/postTypeGuards';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -27,7 +31,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AddItemModal from '../components/NewPost/AddItemModal';
 
 const NewPost = () => {
-	const { collectionName, isBoardPost, isCommunityPost } = usePostContext();
+	const { collectionName } = usePostContext();
 
 	const userInfo = useAuthStore((state) => state.userInfo);
 	const route = useRoute<NewPostRouteProp>();

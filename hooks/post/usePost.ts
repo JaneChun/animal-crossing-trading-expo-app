@@ -2,20 +2,18 @@ import { showToast } from '@/components/ui/Toast';
 import { sendReviewSystemMessage } from '@/firebase/services/reviewService';
 import { goBack } from '@/navigation/RootNavigation';
 import { Collection } from '@/types/post';
+import { isBoardPost } from '@/utilities/typeGuards/postTypeGuards';
 import { useEffect } from 'react';
 import { useMarkAsRead } from '../notification/query/mutation/useMarkAsRead';
 import { useDeletePost } from './mutation/useDeletePost';
 import { useUpdatePost } from './mutation/useUpdatePost';
 import { usePostDetail } from './query/usePostDetail';
-import { usePostContext } from './usePostContext';
 
 export const usePost = (
 	collectionName: Collection,
 	id: string,
 	notificationId: string,
 ) => {
-	const { isBoardPost } = usePostContext();
-
 	const { data: post, isLoading: isPostFetching } = usePostDetail(
 		collectionName as Collection,
 		id,
