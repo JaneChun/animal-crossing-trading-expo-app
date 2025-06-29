@@ -19,7 +19,7 @@ export const ProfileFormSchema = z.object({
 		.min(2, '섬 이름을 입력해주세요.')
 		.max(10, '섬 이름은 최대 10자까지 입력 가능합니다.')
 		.regex(
-			/^[a-zA-Z0-9가-힣]+$/,
+			/^[a-zA-Z0-9가-힣\s]+$/,
 			'섬 이름은 띄어쓰기 없이 한글, 영문, 숫자만 가능합니다.',
 		)
 		.refine((name) => !cenkor(name).filtered, {
