@@ -16,10 +16,15 @@ import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
+import {
+	handleBlockUser,
+	handleUnblockUser,
+} from '@/firebase/services/blockService';
 import { createReport } from '@/firebase/services/reportService';
 import { usePost } from '@/hooks/post/usePost';
 import { usePostComment } from '@/hooks/post/usePostComment';
 import { useAuthStore } from '@/stores/AuthStore';
+import { useBlockStore } from '@/stores/BlockStore';
 import { reportUserParams } from '@/types/components';
 import { PostDetailRouteProp } from '@/types/navigation';
 import { Collection, CommunityType, MarketType } from '@/types/post';
@@ -77,6 +82,10 @@ const PostDetail = () => {
 		isCommentsLoading,
 	} = usePostComment(collectionName as Collection, id, setShouldScroll);
 
+	// 차단
+	const blockedUsers = useBlockStore((state) => state.blockedUsers);
+	const isBlockedByMe = blockedUsers.some((uid) => uid === post?.creatorId);
+
 	// 신고
 	const [isReportModalVisible, setIsReportModalVisible] =
 		useState<boolean>(false);
@@ -125,8 +134,24 @@ const PostDetail = () => {
 						onPress: handleDeletePost,
 					},
 			  ]
-			: [
-					post && {
+			: post
+			? [
+					{
+						label: isBlockedByMe ? '차단 해제' : '차단',
+						onPress: () =>
+							isBlockedByMe
+								? handleUnblockUser({
+										userId: userInfo?.uid,
+										blockUserId: post?.creatorId,
+										blockUserDisplayName: post?.creatorDisplayName,
+								  })
+								: handleBlockUser({
+										userId: userInfo?.uid,
+										blockUserId: post?.creatorId,
+										blockUserDisplayName: post?.creatorDisplayName,
+								  }),
+					},
+					{
 						label: '신고',
 						onPress: () =>
 							openReportModal({
@@ -134,7 +159,8 @@ const PostDetail = () => {
 								reporteeId: post.creatorId,
 							}),
 					},
-			  ]),
+			  ]
+			: []),
 		{ label: '취소', onPress: () => {} },
 	].filter(Boolean) as { label: string; onPress: () => void }[];
 

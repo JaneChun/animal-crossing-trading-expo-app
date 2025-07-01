@@ -12,7 +12,10 @@ import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
-import { blockUser, unblockUser } from '@/firebase/services/blockService';
+import {
+	handleBlockUser,
+	handleUnblockUser,
+} from '@/firebase/services/blockService';
 import { createChatRoom } from '@/firebase/services/chatService';
 import { createReport } from '@/firebase/services/reportService';
 
@@ -25,19 +28,12 @@ import { useBlockStore } from '@/stores/BlockStore';
 import { Message } from '@/types/chat';
 import { ChatRoomRouteProp } from '@/types/navigation';
 import { CreateReportRequest, ReportCategory } from '@/types/report';
-import { PublicUserInfo } from '@/types/user';
 import { convertSendParamsToMessage } from '@/utilities/convertSendParamsToMessage';
 import { createIMessage } from '@/utilities/createIMessage';
 
 import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import {
-	Alert,
-	KeyboardAvoidingView,
-	StyleSheet,
-	Text,
-	View,
-} from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import {
 	SafeAreaView,
@@ -147,47 +143,6 @@ const ChatRoom = () => {
 		goBack();
 	};
 
-	const handleBlockUser = async (
-		targetUserInfo: PublicUserInfo | null | undefined,
-	) => {
-		if (!targetUserInfo || !userInfo) return;
-
-		Alert.alert(
-			'상대방을 차단할까요?',
-			`차단하면 ${targetUserInfo.displayName}님과 더 이상 메세지를 주고 받을 수 없어요.`,
-			[
-				{ text: '취소', style: 'cancel' },
-				{
-					text: '네, 차단할게요',
-					onPress: async () => {
-						await blockUser({
-							userId: userInfo.uid,
-							targetUserId: targetUserInfo.uid,
-						});
-
-						showToast(
-							'success',
-							`${targetUserInfo.displayName}님을 차단했어요.`,
-						);
-					},
-				},
-			],
-		);
-	};
-
-	const handleUnblockUser = async (
-		targetUserInfo: PublicUserInfo | null | undefined,
-	) => {
-		if (!targetUserInfo || !userInfo) return;
-
-		await unblockUser({
-			userId: userInfo.uid,
-			targetUserId: targetUserInfo.uid,
-		});
-
-		showToast('success', `${targetUserInfo.displayName}님을 차단 해제했어요.`);
-	};
-
 	const reportUser = async ({
 		category,
 		detail = '',
@@ -235,8 +190,16 @@ const ChatRoom = () => {
 									label: isBlockedByMe ? '차단 해제' : '차단',
 									onPress: () =>
 										isBlockedByMe
-											? handleUnblockUser(receiverInfo)
-											: handleBlockUser(receiverInfo),
+											? handleUnblockUser({
+													userId: userInfo?.uid,
+													blockUserId: receiverInfo?.uid,
+													blockUserDisplayName: receiverInfo?.displayName,
+											  })
+											: handleBlockUser({
+													userId: userInfo?.uid,
+													blockUserId: receiverInfo?.uid,
+													blockUserDisplayName: receiverInfo?.displayName,
+											  }),
 								},
 								{
 									label: '신고',
