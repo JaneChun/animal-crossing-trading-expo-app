@@ -311,7 +311,6 @@ export type ValidationInputProp = TextInputProps & {
 	inputStyle?: StyleProp<TextStyle>;
 	errorMessageContainerStyle?: StyleProp<ViewStyle>;
 	errorMessage?: string;
-	customPlaceHolder?: string;
 	InputComponent?: typeof TextInput | typeof BottomSheetTextInput;
 };
 

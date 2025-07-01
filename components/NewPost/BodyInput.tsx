@@ -24,7 +24,6 @@ const BodyInput = ({
 				onChangeText={setBody}
 				onBlur={onBlur}
 				placeholder='내용을 입력하세요.'
-				customPlaceHolder={`신고가 쌓이면 이용이 제한될 수 있어요\n누구나 기분 좋은 커뮤니티, 함께 지켜주세요 🍀`}
 				inputStyle={[inputStyle, styles.textarea]}
 				multiline
 				errorMessageContainerStyle={{

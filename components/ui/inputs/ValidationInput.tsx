@@ -8,7 +8,6 @@ const ValidationInput = ({
 	inputStyle,
 	errorMessageContainerStyle,
 	errorMessage,
-	customPlaceHolder,
 	InputComponent = TextInput,
 	...props
 }: ValidationInputProp) => {
@@ -26,12 +25,7 @@ const ValidationInput = ({
 					<FontAwesome6 name='circle-exclamation' color='red' size={12} />
 					<Text style={styles.errorMessage}>{errorMessage}</Text>
 				</View>
-			) : (
-				customPlaceHolder &&
-				props?.value?.length === 0 && (
-					<Text style={styles.customPlaceHolder}>{customPlaceHolder}</Text>
-				)
-			)}
+			) : null}
 		</>
 	);
 };
