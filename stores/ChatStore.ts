@@ -66,7 +66,7 @@ export const useChatSubscriptionInitializer = () => {
 				// 안읽은 알림 수 계산 & 전역 상태에 저장
 				const totalUnread = data.reduce(
 					(acc: number, chat: ChatWithReceiverInfo) => {
-						const count = chat.unreadCount?.[userInfo.uid] || 0;
+						const count = chat.unreadCount?.[getSafeUid(userInfo.uid)] || 0;
 						return acc + Number(count);
 					},
 					0,
@@ -83,3 +83,7 @@ export const useChatSubscriptionInitializer = () => {
 		return () => unsubscribe();
 	}, [userInfo?.uid]);
 };
+
+function getSafeUid(uid: string) {
+	return uid.replace(/\./g, '');
+}

@@ -183,6 +183,10 @@ export const getFirebaseCustomToken = functions.https.onCall(
 	},
 );
 
+function getSafeUid(uid: string) {
+	return uid.replace(/\./g, '');
+}
+
 export const onMessageCreated = onDocumentCreated(
 	'Chats/{chatId}/Messages/{messageId}',
 	async (event) => {
@@ -210,7 +214,8 @@ export const onMessageCreated = onDocumentCreated(
 			lastMessage: message.body,
 			lastMessageSenderId: message.senderId,
 			updatedAt: Timestamp.now(),
-			[`unreadCount.${message.receiverId}`]: FieldValue.increment(1), // 상대 유저의 unreadCount 1 증가
+			[`unreadCount.${getSafeUid(message.receiverId)}`]:
+				FieldValue.increment(1), // 상대 유저의 unreadCount 1 증가
 			visibleTo: FieldValue.arrayUnion(message.receiverId), // 메시지를 받은 유저에게 채팅방 다시 표시
 		});
 
