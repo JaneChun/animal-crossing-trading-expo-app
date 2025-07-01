@@ -13,7 +13,6 @@ const TermsOfService = () => (
 		<ScrollView contentContainerStyle={styles.contentContainer}>
 			{/* Header */}
 			<Text style={styles.mainTitle}>이용약관</Text>
-			<Text style={styles.subTitle}>최종 업데이트: 2025년 6월 28일</Text>
 
 			{/* 제1조 목적 */}
 			<Text style={styles.sectionTitle}>제1조 (목적)</Text>
@@ -67,11 +66,27 @@ const TermsOfService = () => (
 			</Text>
 
 			{/* 제5조 서비스 이용 제한 */}
-			<Text style={styles.sectionTitle}>제5조 (서비스 이용 제한)</Text>
-			<Text style={styles.paragraph}>
-				회사는 이용자가 본 약관이나 관계법령을 위반한 경우 경고·일시 정지·영구
-				이용 제한 등의 조치를 취할 수 있으며, 이의가 있는 경우
-				고객센터(janechun22@gmail.com)로 문의할 수 있습니다.
+			<Text style={styles.sectionTitle}>제5조 (서비스 이용 제한 및 제재)</Text>
+			<Text style={styles.listItem}>
+				• 회사는 이용자가 본 약관 또는 관계법령을 위반하거나, 다음 각 호의
+				행위를 한 경우 사전 통보 없이 게시물 삭제, 이용 제한(일시정지·영구정지)
+				등의 제재를 할 수 있습니다.
+			</Text>
+			<Text style={styles.nestedListItem}>
+				- 타인에 대한 비방·명예훼손·혐오 발언 등 불쾌한 콘텐츠 게시
+			</Text>
+			<Text style={styles.nestedListItem}>
+				- 음란물·폭력·차별·불법 행위를 조장하는 게시물
+			</Text>
+			<Text style={styles.nestedListItem}>- 허위·과장 광고, 스팸성 게시물</Text>
+			<Text style={styles.listItem}>
+				• 이용자 신고가 3회 이상 누적된 경우, 해당 이용자는 7일간 서비스 이용이
+				일시정지 되며, 신고가 7회 이상 누적될 경우 30일간 서비스 이용이
+				일시정지된 후 관리자 검토를 거쳐 영구정지 처분이 이루어질 수 있습니다.
+			</Text>
+			<Text style={styles.listItem}>
+				• 제재에 이의가 있는 이용자는 고객센터(janechun22@gmail.com)로 문의할 수
+				있습니다.
 			</Text>
 
 			{/* 제6조 지적재산권 및 라이선스 */}
@@ -121,6 +136,8 @@ const TermsOfService = () => (
 				우선하며, 협의가 이루어지지 않을 경우 대한민국 서울중앙지방법원을 제1심
 				관할 법원으로 합니다.
 			</Text>
+
+			<Text style={styles.footer}>최종 업데이트: 2025.07.02</Text>
 		</ScrollView>
 	</SafeAreaView>
 );
@@ -141,9 +158,10 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		marginBottom: 6,
 	},
-	subTitle: {
+	footer: {
 		fontSize: 14,
-		marginBottom: 20,
+		marginTop: 20,
+		color: '#333',
 	},
 	sectionTitle: {
 		fontSize: 16,
@@ -161,6 +179,13 @@ const styles = StyleSheet.create({
 		lineHeight: 20,
 		color: '#333',
 		paddingLeft: 12,
+		marginBottom: 4,
+	},
+	nestedListItem: {
+		fontSize: 14,
+		lineHeight: 20,
+		color: '#333',
+		paddingLeft: 24,
 		marginBottom: 4,
 	},
 	link: {

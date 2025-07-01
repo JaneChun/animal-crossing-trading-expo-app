@@ -8,7 +8,6 @@ const PrivacyPolicy = () => {
 			<ScrollView contentContainerStyle={styles.contentContainer}>
 				{/* 헤더 */}
 				<Text style={styles.mainTitle}>개인정보 처리방침</Text>
-				<Text style={styles.subTitle}>최종 업데이트: 2025년 6월 28일</Text>
 				<Text style={styles.paragraph}>
 					본 개인정보처리방침은 행정안전부 권고 『개인정보처리방침 작성
 					가이드라인(2020.12)』에 따라 작성되었습니다.
@@ -26,9 +25,7 @@ const PrivacyPolicy = () => {
 				</Text>
 				<Text style={styles.listItem}>• 게시글·댓글·채팅 작성자 식별</Text>
 				<Text style={styles.listItem}>• 고객 문의 응대 및 불만 처리</Text>
-				<Text style={styles.listItem}>
-					• 광고 수익 정산 및 맞춤형 광고 제공
-				</Text>
+				<Text style={styles.listItem}>• 맞춤형 광고 제공</Text>
 
 				{/* 2. 처리하는 개인정보 항목 */}
 				<Text style={styles.sectionTitle}>
@@ -59,30 +56,23 @@ const PrivacyPolicy = () => {
 					회사는 원칙적으로 이용자의 개인정보를 외부에 제공하지 않습니다. 다만,
 					아래의 경우에는 예외로 합니다.
 				</Text>
+				<Text style={styles.paragraph}>
+					• 카카오주식회사, 네이버주식회사, Apple Inc.(소셜 로그인 제공)
+				</Text>
+				<Text style={styles.listItem}>• 제공항목: 이메일</Text>
 				<Text style={styles.listItem}>
-					• 카카오주식회사(소셜 로그인 제공)
-					{'\n'}– 제공항목: 이메일
-					{'\n'}– 제공목적: 본인 식별 및 서비스 연동
-					{'\n'}– 보유기간: 소셜 플랫폼 정책에 따름
+					• 제공목적: 본인 식별 및 서비스 연동
+				</Text>
+				<Text style={styles.listItem}>• 보유기간: 소셜 플랫폼 정책에 따름</Text>
+
+				<Text style={styles.paragraph}>• Google Inc.(Google AdSense)</Text>
+				<Text style={styles.listItem}>
+					• 제공항목: 행태정보(익명화된 광고 지표)
 				</Text>
 				<Text style={styles.listItem}>
-					• 네이버주식회사(소셜 로그인 제공)
-					{'\n'}– 제공항목: 이메일
-					{'\n'}– 제공목적: 본인 식별 및 서비스 연동
-					{'\n'}– 보유기간: 소셜 플랫폼 정책에 따름
+					• 제공목적: 맞춤형 광고 제공 및 수익 정산
 				</Text>
-				<Text style={styles.listItem}>
-					• Apple Inc.(소셜 로그인 제공)
-					{'\n'}– 제공항목: 이메일
-					{'\n'}– 제공목적: 본인 식별 및 서비스 연동
-					{'\n'}– 보유기간: 소셜 플랫폼 정책에 따름
-				</Text>
-				<Text style={styles.listItem}>
-					• Google Inc.(Google AdSense)
-					{'\n'}– 제공항목: 행태정보(익명화된 광고 지표)
-					{'\n'}– 제공목적: 맞춤형 광고 제공 및 수익 정산
-					{'\n'}– 보유기간: Google 정책에 따름
-				</Text>
+				<Text style={styles.listItem}>• 보유기간: Google 정책에 따름</Text>
 
 				{/* 5. 처리 위탁 */}
 				<Text style={styles.sectionTitle}>제5조 (개인정보 처리 위탁)</Text>
@@ -104,10 +94,8 @@ const PrivacyPolicy = () => {
 				</Text>
 				<Text style={styles.listItem}>• 처리비용: 무료</Text>
 
-				{/* 7. 책임자 및 담당부서 */}
-				<Text style={styles.sectionTitle}>
-					제7조 (개인정보 보호책임자 및 담당부서)
-				</Text>
+				{/* 7. 책임자 */}
+				<Text style={styles.sectionTitle}>제7조 (개인정보 보호책임자)</Text>
 				<Text style={styles.paragraph}>
 					회사는 개인정보 처리에 관한 업무를 총괄하는 책임자를 지정하고
 					있습니다.
@@ -130,9 +118,12 @@ const PrivacyPolicy = () => {
 					제9조 (개인정보 처리방침 변경 및 공지)
 				</Text>
 				<Text style={styles.paragraph}>
-					본 방침은 법령·정책 변경 시 개정될 수 있으며, 변경 시 앱 공지사항 또는
-					설정 내 고지화면을 통해 최소 7일 전 안내합니다.
+					본 방침은 법령·정책 변경 시 개정될 수 있으며, 변경된 방침은 업데이트
+					배포 시점에 App Store의 업데이트 내역(릴리즈 노트)에서 확인할 수
+					있도록 안내합니다.
 				</Text>
+
+				<Text style={styles.footer}>최종 업데이트: 2025.07.02</Text>
 			</ScrollView>
 		</View>
 	);
@@ -154,9 +145,10 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		marginBottom: 6,
 	},
-	subTitle: {
+	footer: {
 		fontSize: 14,
-		marginBottom: 20,
+		marginTop: 20,
+		color: '#333',
 	},
 	sectionTitle: {
 		fontSize: 16,
