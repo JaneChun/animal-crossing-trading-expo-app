@@ -75,6 +75,7 @@ const Button = ({
 	return (
 		<TouchableOpacity
 			onPress={onPress}
+			disabled={disabled}
 			style={[
 				styles.button,
 				sizeStyles,

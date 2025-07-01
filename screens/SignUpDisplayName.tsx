@@ -4,7 +4,7 @@ import CloseButton from '@/components/ui/CloseButton';
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
-import { goBack } from '@/navigation/RootNavigation';
+import { pop } from '@/navigation/RootNavigation';
 import { SignUpDisplayNameRouteProp } from '@/types/navigation';
 import { navigateToSignUpEnd } from '@/utilities/navigationHelpers';
 import { FontAwesome } from '@expo/vector-icons';
@@ -44,7 +44,7 @@ const SignUpDisplayName = () => {
 	};
 
 	const backToProfile = () => {
-		goBack();
+		pop(2);
 	};
 
 	return (
@@ -89,6 +89,7 @@ const SignUpDisplayName = () => {
 								onPress={handleNext}
 								color='mint'
 								size='lg'
+								style={styles.button}
 							>
 								다음
 							</Button>
@@ -153,5 +154,8 @@ const styles = StyleSheet.create({
 		color: Colors.primary,
 		fontSize: FontSizes.sm,
 		marginBottom: 16,
+	},
+	button: {
+		marginTop: 'auto',
 	},
 });

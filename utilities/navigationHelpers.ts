@@ -7,7 +7,7 @@ import {
 } from '@/navigation/RootNavigation';
 import { CreateChatRoomParams, SendChatMessageParams } from '@/types/chat';
 import { Collection } from '@/types/post';
-import { OauthType } from '@/types/user';
+import { SignUpParams } from '@/types/user';
 
 // Search/
 export const navigateToSearch = () => {
@@ -57,19 +57,6 @@ export const popToPostDetail = ({
 	});
 };
 
-// Comment
-export const navigateToEditComment = ({
-	postId,
-	commentId,
-	body,
-}: {
-	postId: string;
-	commentId: string;
-	body: string;
-}) => {
-	navigate('EditComment', { postId, commentId, body });
-};
-
 // Chat/
 export const navigateToChatRoom = ({
 	chatId,
@@ -93,15 +80,15 @@ export const replaceToMyProfile = () => {
 	replace('Profile', {});
 };
 
-export const navigateToSignUp = ({
+export const navigateToAgreeToTermsAndConditions = ({
 	uid,
 	oauthType,
 	email,
-}: {
-	uid: string;
-	oauthType: OauthType;
-	email: string;
-}) => {
+}: SignUpParams) => {
+	navigate('AgreeToTermsAndConditions', { uid, oauthType, email });
+};
+
+export const navigateToSignUp = ({ uid, oauthType, email }: SignUpParams) => {
 	navigate('SignUpDisplayName', { uid, oauthType, email });
 };
 
@@ -110,10 +97,7 @@ export const navigateToSignUpEnd = ({
 	oauthType,
 	email,
 	displayName,
-}: {
-	uid: string;
-	oauthType: OauthType;
-	email: string;
+}: SignUpParams & {
 	displayName: string;
 }) => {
 	navigate('SignUpIslandName', { uid, oauthType, email, displayName });

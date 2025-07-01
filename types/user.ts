@@ -46,3 +46,9 @@ export type GetFirebaseCustomTokenResponse = {
 };
 
 export type BlockedUser = PublicUserInfo & { isBlocked: boolean };
+
+export type SignUpParams = {
+	uid: string;
+	oauthType: OauthType;
+	email: string;
+};

@@ -5,7 +5,7 @@ import { auth } from '@/fbase';
 import { LoginResult, useAuthStore } from '@/stores/AuthStore';
 import { OauthType } from '@/types/user';
 import {
-	navigateToSignUp,
+	navigateToAgreeToTermsAndConditions,
 	replaceToMyProfile,
 } from '@/utilities/navigationHelpers';
 import { StyleSheet, View } from 'react-native';
@@ -30,11 +30,12 @@ const Login = () => {
 		if (loginResult.isSuccess) {
 			// 신규 유저
 			if (loginResult.isNewUser) {
-				navigateToSignUp({
+				navigateToAgreeToTermsAndConditions({
 					uid: auth.currentUser?.uid!,
 					oauthType,
 					email: loginResult.email ?? '',
 				});
+
 				return;
 			} else {
 				// 기존 유저
@@ -56,12 +57,12 @@ const Login = () => {
 				</View>
 			</View>
 			<View style={styles.body}>
-				<SocialLoginButton
+				{/* <SocialLoginButton
 					oauthType='kakao'
 					onPress={() => handleLogin('kakao')}
 					style={{ width: '95%' }}
-					disabled
-				/>
+					// disabled
+				/> */}
 				<SocialLoginButton
 					oauthType='naver'
 					onPress={() => handleLogin('naver')}

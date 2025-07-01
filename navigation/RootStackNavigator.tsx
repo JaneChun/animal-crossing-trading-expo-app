@@ -1,6 +1,7 @@
 // RootNavigator.tsx
 import { Colors } from '@/constants/Color';
 import Account from '@/screens/Account';
+import AgreeToTermsAndConditions from '@/screens/AgreeToTermsAndConditions';
 import Block from '@/screens/Block';
 import ChatRoom from '@/screens/ChatRoom';
 import DeleteAccount from '@/screens/DeleteAccount';
@@ -55,6 +56,15 @@ const RootStackNavigator = () => {
 				name='Profile'
 				component={Profile}
 				options={commonOptions}
+			/>
+			<RootStack.Screen
+				name='AgreeToTermsAndConditions'
+				children={() => (
+					// <AuthGuard>
+					<AgreeToTermsAndConditions />
+					// </AuthGuard>
+				)}
+				options={{ ...commonOptions, headerShown: false }}
 			/>
 			<RootStack.Screen
 				name='SignUpDisplayName'

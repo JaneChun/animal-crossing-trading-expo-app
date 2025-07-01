@@ -80,7 +80,7 @@ const SignUpIslandName = () => {
 	};
 
 	const backToProfile = () => {
-		pop(2);
+		pop(3);
 	};
 
 	return (
@@ -125,6 +125,7 @@ const SignUpIslandName = () => {
 								onPress={onSubmit}
 								color='mint'
 								size='lg'
+								style={styles.button}
 							>
 								시작하기
 							</Button>
@@ -189,5 +190,8 @@ const styles = StyleSheet.create({
 		color: Colors.primary,
 		fontSize: FontSizes.sm,
 		marginBottom: 16,
+	},
+	button: {
+		marginTop: 'auto',
 	},
 });
