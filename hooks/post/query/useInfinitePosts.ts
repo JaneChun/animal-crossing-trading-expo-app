@@ -1,5 +1,6 @@
 import { db } from '@/fbase';
 import { fetchAndPopulateUsers } from '@/firebase/services/postService';
+import { useBlockStore } from '@/stores/BlockStore';
 import {
 	Collection,
 	Doc,
@@ -75,6 +76,9 @@ export const useInfinitePosts = <C extends Collection>(
 	collectionName: C,
 	filter?: Filter,
 ) => {
+	const blockedUsers = useBlockStore((s) => s.blockedUsers);
+	const blockedBy = useBlockStore((s) => s.blockedBy);
+
 	return useInfiniteQuery<
 		PaginatedPosts<C>, // fetch 함수 반환 타입
 		Error, // 에러 타입
@@ -87,6 +91,18 @@ export const useInfinitePosts = <C extends Collection>(
 			fetchPostsByCursor({ collectionName, filter, lastDoc: pageParam }),
 		initialPageParam: null,
 		getNextPageParam: (lastPage: PaginatedPosts<C>) => lastPage.lastDoc,
+		// 클라이언트 측 내가 차단한 유저, 나를 차단한 유저의 글 필터링
+		select: (infiniteData) => ({
+			pageParams: infiniteData.pageParams,
+			pages: infiniteData.pages.map((page) => ({
+				data: page.data.filter(
+					(post) =>
+						!blockedUsers.includes(post.creatorId) &&
+						!blockedBy.includes(post.creatorId),
+				),
+				lastDoc: page.lastDoc,
+			})),
+		}),
 		refetchOnMount: true,
 	});
 };
