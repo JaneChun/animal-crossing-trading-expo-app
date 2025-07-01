@@ -20,9 +20,13 @@ import {
 	TouchableWithoutFeedback,
 	View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+	SafeAreaView,
+	useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 const SignUpDisplayName = () => {
+	const insets = useSafeAreaInsets();
 	const route = useRoute<SignUpDisplayNameRouteProp>();
 	const { uid, oauthType, email } = route.params;
 
@@ -52,6 +56,7 @@ const SignUpDisplayName = () => {
 			<KeyboardAvoidingView
 				style={styles.screen}
 				behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+				keyboardVerticalOffset={insets.bottom}
 			>
 				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 					<FormProvider {...methods}>
