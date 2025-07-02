@@ -1,3 +1,4 @@
+import ReportModal from '@/components/PostDetail/ReportModal';
 import EditProfileModal from '@/components/Profile/EditProfileModal';
 import MyPosts from '@/components/Profile/MyPosts';
 import ProfileBox from '@/components/Profile/Profile';
@@ -14,6 +15,7 @@ import {
 import { getPublicUserInfo } from '@/firebase/services/userService';
 import { useCurrentTab } from '@/hooks/shared/useCurrentTab';
 import useLoading from '@/hooks/shared/useLoading';
+import { useReportUser } from '@/hooks/shared/useReportUser';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useBlockStore } from '@/stores/BlockStore';
@@ -44,6 +46,14 @@ const Profile = () => {
 	const [profileInfo, setProfileInfo] = useState<PublicUserInfo | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 	const [isViewerOpen, setIsViewerOpen] = useState(false);
+
+	// 신고
+	const {
+		isReportModalVisible,
+		openReportModal,
+		closeReportModal,
+		submitReport,
+	} = useReportUser();
 
 	const blockedUsers = useBlockStore((state) => state.blockedUsers);
 	const isBlockedByMe = blockedUsers.some((uid) => uid === profileInfo?.uid);
@@ -103,7 +113,11 @@ const Profile = () => {
 							},
 							{
 								label: '신고',
-								onPress: () => {},
+								onPress: () => {
+									openReportModal({
+										reporteeId: profileInfo.uid,
+									});
+								},
 							},
 							{ label: '취소', onPress: () => {} },
 						]}
@@ -152,6 +166,14 @@ const Profile = () => {
 					onClose={closeEditProfileModal}
 					isUploading={isUploading}
 					setIsUploading={setIsUploading}
+				/>
+			)}
+
+			{isReportModalVisible && (
+				<ReportModal
+					isVisible={isReportModalVisible}
+					onClose={closeReportModal}
+					onSubmit={submitReport}
 				/>
 			)}
 
