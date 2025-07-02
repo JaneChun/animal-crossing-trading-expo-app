@@ -272,6 +272,11 @@ export type ProfileImageInputProps = {
 	setImage: Dispatch<SetStateAction<ImagePickerAsset | null>>;
 };
 
+export type MyPostsProps = {
+	isMyProfile: boolean;
+	profileInfo: PublicUserInfo;
+};
+
 // Search/
 export type SearchResultItemProps = {
 	item: Item;

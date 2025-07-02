@@ -156,7 +156,9 @@ const Profile = () => {
 							/>
 						</View>
 					}
-					ListEmptyComponent={<MyPosts profileInfo={profileInfo} />}
+					ListEmptyComponent={
+						<MyPosts isMyProfile={isMyProfile} profileInfo={profileInfo} />
+					}
 				/>
 			</Layout>
 
