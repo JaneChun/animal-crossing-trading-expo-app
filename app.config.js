@@ -70,7 +70,8 @@ export default {
 			[
 				'expo-image-picker',
 				{
-					photosPermission: '사진 업로드를 위해 갤러리 접근 권한이 필요합니다.',
+					photosPermission:
+						'프로필 사진 및 게시글 이미지 첨부 기능을 제공하기 위해 사진 보관함 접근 권한이 필요합니다. 이 권한은 설정에서 언제든 변경할 수 있습니다.',
 				},
 			],
 			[
