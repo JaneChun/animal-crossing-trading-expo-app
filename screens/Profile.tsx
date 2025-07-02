@@ -2,20 +2,28 @@ import EditProfileModal from '@/components/Profile/EditProfileModal';
 import MyPosts from '@/components/Profile/MyPosts';
 import ProfileBox from '@/components/Profile/Profile';
 import SettingIcon from '@/components/Profile/SettingIcon';
+import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import ImageViewerModal from '@/components/ui/ImageViewerModal';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
+import { Colors } from '@/constants/Color';
+import {
+	handleBlockUser,
+	handleUnblockUser,
+} from '@/firebase/services/blockService';
 import { getPublicUserInfo } from '@/firebase/services/userService';
 import { useCurrentTab } from '@/hooks/shared/useCurrentTab';
 import useLoading from '@/hooks/shared/useLoading';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
-import { ProfileRouteProp } from '@/types/navigation';
+import { useBlockStore } from '@/stores/BlockStore';
+import { ProfileRouteProp, RootStackNavigation } from '@/types/navigation';
 import { Tab } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
 import {
 	useFocusEffect,
 	useIsFocused,
+	useNavigation,
 	useRoute,
 } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
@@ -27,6 +35,8 @@ const Profile = () => {
 	const { userId: targetUserId } = route?.params ?? {};
 
 	const setActiveTab = useActiveTabStore((state) => state.setActiveTab);
+	const stackNavigation = useNavigation<RootStackNavigation>();
+
 	const currentTab = useCurrentTab();
 	const isFocused = useIsFocused();
 	const userInfo = useAuthStore((state) => state.userInfo);
@@ -34,6 +44,9 @@ const Profile = () => {
 	const [profileInfo, setProfileInfo] = useState<PublicUserInfo | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 	const [isViewerOpen, setIsViewerOpen] = useState(false);
+
+	const blockedUsers = useBlockStore((state) => state.blockedUsers);
+	const isBlockedByMe = blockedUsers.some((uid) => uid === profileInfo?.uid);
 
 	const { isLoading: isUploading, setIsLoading: setIsUploading } = useLoading();
 
@@ -63,6 +76,41 @@ const Profile = () => {
 
 		getTargetUserInfo();
 	}, [targetUserId, userInfo]);
+
+	useEffect(() => {
+		stackNavigation.setOptions({
+			headerRight: () =>
+				profileInfo && (
+					<ActionSheetButton
+						color={Colors.font_black}
+						size={18}
+						cancelIndex={2}
+						options={[
+							{
+								label: isBlockedByMe ? '차단 해제' : '차단',
+								onPress: () =>
+									isBlockedByMe
+										? handleUnblockUser({
+												userId: userInfo?.uid,
+												blockUserId: profileInfo.uid,
+												blockUserDisplayName: profileInfo.displayName,
+										  })
+										: handleBlockUser({
+												userId: userInfo?.uid,
+												blockUserId: profileInfo.uid,
+												blockUserDisplayName: profileInfo.displayName,
+										  }),
+							},
+							{
+								label: '신고',
+								onPress: () => {},
+							},
+							{ label: '취소', onPress: () => {} },
+						]}
+					/>
+				),
+		});
+	}, [stackNavigation, profileInfo, blockedUsers, isBlockedByMe, userInfo]);
 
 	const openEditProfileModal = () => setIsModalVisible(true);
 	const closeEditProfileModal = () => {
