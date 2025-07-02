@@ -89,6 +89,7 @@ const Profile = () => {
 	useEffect(() => {
 		stackNavigation.setOptions({
 			headerRight: () =>
+				userInfo &&
 				profileInfo && (
 					<ActionSheetButton
 						color={Colors.font_black}

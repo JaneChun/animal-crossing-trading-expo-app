@@ -2,6 +2,7 @@ import { showToast } from '@/components/ui/Toast';
 import { blockUser, unblockUser } from '@/firebase/services/blockService';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useBlockStore } from '@/stores/BlockStore';
+import { navigateToLogin } from '@/utilities/navigationHelpers';
 import { useCallback } from 'react';
 import { Alert } from 'react-native';
 
@@ -18,7 +19,21 @@ export function useBlockUser({
 	const isBlockedByMe = !!(targetUserId && blockedUsers.includes(targetUserId));
 
 	const handleBlockUser = useCallback(() => {
-		if (!userInfo?.uid || !targetUserId || !targetUserDisplayName) return;
+		if (!userInfo) {
+			showToast('warn', '차단은 로그인 후 가능합니다.');
+			navigateToLogin();
+			return;
+		}
+
+		if (!targetUserId || !targetUserDisplayName) {
+			showToast('error', '차단 대상을 찾을 수 없습니다.');
+			return;
+		}
+
+		if (targetUserId === userInfo.uid) {
+			showToast('error', '본인을 차단할 수 없습니다.');
+			return;
+		}
 
 		Alert.alert(
 			'상대방을 차단할까요?',
@@ -40,7 +55,21 @@ export function useBlockUser({
 	}, [userInfo, targetUserId, targetUserDisplayName]);
 
 	const handleUnblockUser = useCallback(() => {
-		if (!userInfo?.uid || !targetUserId || !targetUserDisplayName) return;
+		if (!userInfo) {
+			showToast('warn', '차단해제는 로그인 후 가능합니다.');
+			navigateToLogin();
+			return;
+		}
+
+		if (!targetUserId || !targetUserDisplayName) {
+			showToast('error', '차단 해제 대상을 찾을 수 없습니다.');
+			return;
+		}
+
+		if (targetUserId === userInfo.uid) {
+			showToast('error', '본인을 차단 해제할 수 없습니다.');
+			return;
+		}
 
 		Alert.alert(
 			'차단을 해제할까요?',
