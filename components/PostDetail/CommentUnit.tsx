@@ -1,15 +1,11 @@
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import {
-	handleBlockUser,
-	handleUnblockUser,
-} from '@/firebase/services/blockService';
 import { generateChatId } from '@/firebase/services/chatService';
 import { useDeleteComment } from '@/hooks/comment/mutation/useDeleteComment';
 import { usePostContext } from '@/hooks/post/usePostContext';
+import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useAuthStore } from '@/stores/AuthStore';
-import { useBlockStore } from '@/stores/BlockStore';
 import { CreateChatRoomParams, SendChatMessageParams } from '@/types/chat';
 import { CommentUnitProps } from '@/types/components';
 import { Collection } from '@/types/post';
@@ -52,8 +48,10 @@ const CommentUnit = ({
 	const userInfo = useAuthStore((state) => state.userInfo);
 
 	// 차단
-	const blockedUsers = useBlockStore((state) => state.blockedUsers);
-	const isBlockedByMe = blockedUsers.some((uid) => uid === creatorId);
+	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({
+		targetUserId: creatorId,
+		targetUserDisplayName: creatorDisplayName,
+	});
 
 	const { mutate: deleteComment, isPending: isDeletingComment } =
 		useDeleteComment(collectionName as Collection, postId, id);
@@ -137,18 +135,7 @@ const CommentUnit = ({
 			: [
 					{
 						label: isBlockedByMe ? '차단 해제' : '차단',
-						onPress: () =>
-							isBlockedByMe
-								? handleUnblockUser({
-										userId: userInfo?.uid,
-										blockUserId: creatorId,
-										blockUserDisplayName: creatorDisplayName,
-								  })
-								: handleBlockUser({
-										userId: userInfo?.uid,
-										blockUserId: creatorId,
-										blockUserDisplayName: creatorDisplayName,
-								  }),
+						onPress: onToggleBlock,
 					},
 					{
 						label: '신고',

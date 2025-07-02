@@ -11,13 +11,10 @@ import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
-import {
-	handleBlockUser,
-	handleUnblockUser,
-} from '@/firebase/services/blockService';
 import { createChatRoom } from '@/firebase/services/chatService';
 
 import { useChatRoom } from '@/hooks/chat/useChatRoom';
+import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useChatPresence } from '@/hooks/shared/useChatPresence';
 import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
 import { useReportUser } from '@/hooks/shared/useReportUser';
@@ -83,9 +80,11 @@ const ChatRoom = () => {
 	} = useReportUser();
 
 	// 차단
-	const blockedUsers = useBlockStore((state) => state.blockedUsers);
+	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({
+		targetUserId: receiverInfo?.uid,
+		targetUserDisplayName: receiverInfo?.displayName,
+	});
 	const blockedBy = useBlockStore((state) => state.blockedBy);
-	const isBlockedByMe = blockedUsers.some((uid) => uid === receiverInfo?.uid);
 	const amIBlockedBy = blockedBy.some((uid) => uid === receiverInfo?.uid);
 
 	const blockMessage = isBlockedByMe
@@ -152,18 +151,7 @@ const ChatRoom = () => {
 	const headerOptions = [
 		{
 			label: isBlockedByMe ? '차단 해제' : '차단',
-			onPress: () =>
-				isBlockedByMe
-					? handleUnblockUser({
-							userId: userInfo?.uid,
-							blockUserId: receiverInfo?.uid,
-							blockUserDisplayName: receiverInfo?.displayName,
-					  })
-					: handleBlockUser({
-							userId: userInfo?.uid,
-							blockUserId: receiverInfo?.uid,
-							blockUserDisplayName: receiverInfo?.displayName,
-					  }),
+			onPress: onToggleBlock,
 		},
 		{
 			label: '신고',

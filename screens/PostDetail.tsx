@@ -15,15 +15,11 @@ import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
-import {
-	handleBlockUser,
-	handleUnblockUser,
-} from '@/firebase/services/blockService';
 import { usePost } from '@/hooks/post/usePost';
 import { usePostComment } from '@/hooks/post/usePostComment';
+import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useReportUser } from '@/hooks/shared/useReportUser';
 import { useAuthStore } from '@/stores/AuthStore';
-import { useBlockStore } from '@/stores/BlockStore';
 import { PostDetailRouteProp } from '@/types/navigation';
 import { Collection, CommunityType, MarketType } from '@/types/post';
 import { navigateToEditPost } from '@/utilities/navigationHelpers';
@@ -88,8 +84,10 @@ const PostDetail = () => {
 	} = useReportUser();
 
 	// 차단
-	const blockedUsers = useBlockStore((state) => state.blockedUsers);
-	const isBlockedByMe = blockedUsers.some((uid) => uid === post?.creatorId);
+	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({
+		targetUserId: post?.creatorId,
+		targetUserDisplayName: post?.creatorDisplayName,
+	});
 
 	const handleDeletePost = async () => {
 		Alert.alert('게시글 삭제', '정말로 삭제하겠습니까?', [
@@ -123,18 +121,7 @@ const PostDetail = () => {
 			: [
 					{
 						label: isBlockedByMe ? '차단 해제' : '차단',
-						onPress: () =>
-							isBlockedByMe
-								? handleUnblockUser({
-										userId: userInfo?.uid,
-										blockUserId: post?.creatorId,
-										blockUserDisplayName: post?.creatorDisplayName,
-								  })
-								: handleBlockUser({
-										userId: userInfo?.uid,
-										blockUserId: post?.creatorId,
-										blockUserDisplayName: post?.creatorDisplayName,
-								  }),
+						onPress: onToggleBlock,
 					},
 					{
 						label: '신고',

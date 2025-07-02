@@ -8,17 +8,13 @@ import ImageViewerModal from '@/components/ui/ImageViewerModal';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
-import {
-	handleBlockUser,
-	handleUnblockUser,
-} from '@/firebase/services/blockService';
 import { getPublicUserInfo } from '@/firebase/services/userService';
+import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useCurrentTab } from '@/hooks/shared/useCurrentTab';
 import useLoading from '@/hooks/shared/useLoading';
 import { useReportUser } from '@/hooks/shared/useReportUser';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useAuthStore } from '@/stores/AuthStore';
-import { useBlockStore } from '@/stores/BlockStore';
 import { ProfileRouteProp, RootStackNavigation } from '@/types/navigation';
 import { Tab } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
@@ -55,8 +51,11 @@ const Profile = () => {
 		submitReport,
 	} = useReportUser();
 
-	const blockedUsers = useBlockStore((state) => state.blockedUsers);
-	const isBlockedByMe = blockedUsers.some((uid) => uid === profileInfo?.uid);
+	// 차단
+	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({
+		targetUserId: profileInfo?.uid,
+		targetUserDisplayName: profileInfo?.displayName,
+	});
 
 	const { isLoading: isUploading, setIsLoading: setIsUploading } = useLoading();
 
@@ -98,18 +97,7 @@ const Profile = () => {
 						options={[
 							{
 								label: isBlockedByMe ? '차단 해제' : '차단',
-								onPress: () =>
-									isBlockedByMe
-										? handleUnblockUser({
-												userId: userInfo?.uid,
-												blockUserId: profileInfo.uid,
-												blockUserDisplayName: profileInfo.displayName,
-										  })
-										: handleBlockUser({
-												userId: userInfo?.uid,
-												blockUserId: profileInfo.uid,
-												blockUserDisplayName: profileInfo.displayName,
-										  }),
+								onPress: onToggleBlock,
 							},
 							{
 								label: '신고',
@@ -124,7 +112,7 @@ const Profile = () => {
 					/>
 				),
 		});
-	}, [stackNavigation, profileInfo, blockedUsers, isBlockedByMe, userInfo]);
+	}, [stackNavigation, profileInfo, isBlockedByMe, userInfo]);
 
 	const openEditProfileModal = () => setIsModalVisible(true);
 	const closeEditProfileModal = () => {
