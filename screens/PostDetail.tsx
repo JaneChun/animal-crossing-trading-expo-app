@@ -14,25 +14,19 @@ import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
-import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import {
 	handleBlockUser,
 	handleUnblockUser,
 } from '@/firebase/services/blockService';
-import { createReport } from '@/firebase/services/reportService';
 import { usePost } from '@/hooks/post/usePost';
 import { usePostComment } from '@/hooks/post/usePostComment';
+import { useReportUser } from '@/hooks/shared/useReportUser';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useBlockStore } from '@/stores/BlockStore';
-import { reportUserParams } from '@/types/components';
 import { PostDetailRouteProp } from '@/types/navigation';
 import { Collection, CommunityType, MarketType } from '@/types/post';
-import { CreateReportRequest } from '@/types/report';
-import {
-	navigateToEditPost,
-	navigateToLogin,
-} from '@/utilities/navigationHelpers';
+import { navigateToEditPost } from '@/utilities/navigationHelpers';
 import {
 	isBoardPost,
 	isCommunityPost,
@@ -66,11 +60,14 @@ const PostDetail = () => {
 	const flatListRef = useRef<any>(null);
 	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
 
+	// 게시글
 	const { post, deletePost, closePost, isPostLoading } = usePost(
 		collectionName as Collection,
 		id,
 		notificationId,
 	);
+
+	// 댓글
 	const {
 		comments,
 		createComment,
@@ -82,28 +79,17 @@ const PostDetail = () => {
 		isCommentsLoading,
 	} = usePostComment(collectionName as Collection, id, setShouldScroll);
 
+	// 신고
+	const {
+		isReportModalVisible,
+		openReportModal,
+		closeReportModal,
+		submitReport,
+	} = useReportUser();
+
 	// 차단
 	const blockedUsers = useBlockStore((state) => state.blockedUsers);
 	const isBlockedByMe = blockedUsers.some((uid) => uid === post?.creatorId);
-
-	// 신고
-	const [isReportModalVisible, setIsReportModalVisible] =
-		useState<boolean>(false);
-
-	const [reportTarget, setReportTarget] = useState<{
-		postId: string;
-		commentId?: string;
-		reporteeId: string;
-	} | null>(null);
-
-	const openReportModal = (params: {
-		postId: string;
-		reporteeId: string;
-		commentId?: string;
-	}) => {
-		setReportTarget(params);
-		setIsReportModalVisible(true);
-	};
 
 	const handleDeletePost = async () => {
 		Alert.alert('게시글 삭제', '정말로 삭제하겠습니까?', [
@@ -134,8 +120,7 @@ const PostDetail = () => {
 						onPress: handleDeletePost,
 					},
 			  ]
-			: post
-			? [
+			: [
 					{
 						label: isBlockedByMe ? '차단 해제' : '차단',
 						onPress: () =>
@@ -153,53 +138,16 @@ const PostDetail = () => {
 					},
 					{
 						label: '신고',
-						onPress: () =>
+						onPress: () => {
 							openReportModal({
 								postId: id,
-								reporteeId: post.creatorId,
-							}),
+								reporteeId: post!.creatorId,
+							});
+						},
 					},
-			  ]
-			: []),
-		{ label: '취소', onPress: () => {} },
+					{ label: '취소', onPress: () => {} },
+			  ]),
 	].filter(Boolean) as { label: string; onPress: () => void }[];
-
-	const reportUser = async ({ category, detail = '' }: reportUserParams) => {
-		if (!userInfo) {
-			showToast('warn', '댓글 신고는 로그인 후 가능합니다.');
-			navigateToLogin();
-			return;
-		}
-
-		if (!reportTarget) {
-			showToast('error', '신고 대상을 찾을 수 없습니다.');
-			return;
-		}
-
-		try {
-			const { postId, commentId, reporteeId } = reportTarget;
-
-			if (reporteeId === userInfo.uid) return; // 자기 자신 신고 X
-
-			const postReport: CreateReportRequest = {
-				reporterId: userInfo.uid,
-				reporteeId,
-				postId,
-				commentId,
-				category,
-				detail,
-			};
-
-			await createReport(postReport);
-
-			showToast('success', '신고가 제출되었습니다.');
-		} catch (e) {
-			showToast('error', '신고 제출 중 오류가 발생했습니다.');
-		} finally {
-			setIsReportModalVisible(false);
-			setReportTarget(null);
-		}
-	};
 
 	const scrollToBottom = () => {
 		if (shouldScroll) {
@@ -338,8 +286,8 @@ const PostDetail = () => {
 					{isReportModalVisible && (
 						<ReportModal
 							isVisible={isReportModalVisible}
-							onClose={() => setIsReportModalVisible(false)}
-							onSubmit={reportUser}
+							onClose={closeReportModal}
+							onSubmit={submitReport}
 						/>
 					)}
 				</LayoutWithHeader>

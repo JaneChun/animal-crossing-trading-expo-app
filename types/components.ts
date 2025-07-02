@@ -164,7 +164,7 @@ export type CommentsListProps = {
 	onEditClick: (params: OpenEditCommentModalParams) => void;
 };
 
-export type reportUserParams = {
+export type ReportUserParams = {
 	category: ReportCategory;
 	detail?: string;
 };

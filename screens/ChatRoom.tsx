@@ -9,7 +9,6 @@ import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
-import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import {
@@ -17,17 +16,16 @@ import {
 	handleUnblockUser,
 } from '@/firebase/services/blockService';
 import { createChatRoom } from '@/firebase/services/chatService';
-import { createReport } from '@/firebase/services/reportService';
 
 import { useChatRoom } from '@/hooks/chat/useChatRoom';
 import { useChatPresence } from '@/hooks/shared/useChatPresence';
 import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
+import { useReportUser } from '@/hooks/shared/useReportUser';
 
 import { goBack } from '@/navigation/RootNavigation';
 import { useBlockStore } from '@/stores/BlockStore';
 import { Message } from '@/types/chat';
 import { ChatRoomRouteProp } from '@/types/navigation';
-import { CreateReportRequest, ReportCategory } from '@/types/report';
 import { convertSendParamsToMessage } from '@/utilities/convertSendParamsToMessage';
 import { createIMessage } from '@/utilities/createIMessage';
 
@@ -47,9 +45,8 @@ const ChatRoom = () => {
 	const route = useRoute<ChatRoomRouteProp>();
 	const { chatId, chatStartInfo, systemMessage } = route.params;
 
+	// 메세지
 	const [localMessages, setLocalMessages] = useState<Message[]>([]);
-	const [isReportModalVisible, setIsReportModalVisible] =
-		useState<boolean>(false);
 
 	// 최초 진입 시 systemMessage가 전달되었다면 UI에만 표시 (DB에는 아직 저장되지 않음)
 	useEffect(() => {
@@ -77,6 +74,15 @@ const ChatRoom = () => {
 
 	useChatPresence(chatId);
 
+	// 신고
+	const {
+		isReportModalVisible,
+		openReportModal,
+		closeReportModal,
+		submitReport,
+	} = useReportUser();
+
+	// 차단
 	const blockedUsers = useBlockStore((state) => state.blockedUsers);
 	const blockedBy = useBlockStore((state) => state.blockedBy);
 	const isBlockedByMe = blockedUsers.some((uid) => uid === receiverInfo?.uid);
@@ -143,35 +149,33 @@ const ChatRoom = () => {
 		goBack();
 	};
 
-	const reportUser = async ({
-		category,
-		detail = '',
-	}: {
-		category: ReportCategory;
-		detail?: string;
-	}) => {
-		try {
-			if (!receiverInfo?.uid || !userInfo) return;
-
-			if (receiverInfo.uid === userInfo.uid) return;
-
-			const postReport: CreateReportRequest = {
-				reporterId: userInfo.uid,
-				reporteeId: receiverInfo.uid,
-				chatId,
-				category,
-				detail,
-			};
-
-			await createReport(postReport);
-
-			showToast('success', '신고가 제출되었습니다.');
-		} catch (e) {
-			showToast('error', '신고 제출 중 오류가 발생했습니다.');
-		} finally {
-			setIsReportModalVisible(false);
-		}
-	};
+	const headerOptions = [
+		{
+			label: isBlockedByMe ? '차단 해제' : '차단',
+			onPress: () =>
+				isBlockedByMe
+					? handleUnblockUser({
+							userId: userInfo?.uid,
+							blockUserId: receiverInfo?.uid,
+							blockUserDisplayName: receiverInfo?.displayName,
+					  })
+					: handleBlockUser({
+							userId: userInfo?.uid,
+							blockUserId: receiverInfo?.uid,
+							blockUserDisplayName: receiverInfo?.displayName,
+					  }),
+		},
+		{
+			label: '신고',
+			onPress: () =>
+				openReportModal({
+					chatId,
+					reporteeId: receiverInfo!.uid,
+				}),
+		},
+		{ label: '나가기', onPress: handleLeave },
+		{ label: '취소', onPress: () => {} },
+	];
 
 	return (
 		<>
@@ -185,29 +189,7 @@ const ChatRoom = () => {
 							color={Colors.font_black}
 							size={18}
 							destructiveButtonIndex={2}
-							options={[
-								{
-									label: isBlockedByMe ? '차단 해제' : '차단',
-									onPress: () =>
-										isBlockedByMe
-											? handleUnblockUser({
-													userId: userInfo?.uid,
-													blockUserId: receiverInfo?.uid,
-													blockUserDisplayName: receiverInfo?.displayName,
-											  })
-											: handleBlockUser({
-													userId: userInfo?.uid,
-													blockUserId: receiverInfo?.uid,
-													blockUserDisplayName: receiverInfo?.displayName,
-											  }),
-								},
-								{
-									label: '신고',
-									onPress: () => setIsReportModalVisible(true),
-								},
-								{ label: '나가기', onPress: handleLeave },
-								{ label: '취소', onPress: () => {} },
-							]}
+							options={headerOptions}
 						/>
 					}
 				>
@@ -251,8 +233,8 @@ const ChatRoom = () => {
 			{isReportModalVisible && (
 				<ReportModal
 					isVisible={isReportModalVisible}
-					onClose={() => setIsReportModalVisible(false)}
-					onSubmit={({ category, detail }) => reportUser({ category, detail })}
+					onClose={closeReportModal}
+					onSubmit={submitReport}
 				/>
 			)}
 		</>

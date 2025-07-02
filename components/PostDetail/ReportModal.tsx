@@ -5,13 +5,14 @@ import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { REPORT_CATEGORIES } from '@/constants/post';
+import { ReportUserParams } from '@/types/components';
 import Button from '../ui/Button';
 import CustomBottomSheet from '../ui/CustomBottomSheet';
 
 type ReportModalProps = {
 	isVisible: boolean;
 	onClose: () => void;
-	onSubmit: (data: { category: string; detail: string }) => void;
+	onSubmit: (data: ReportUserParams) => void;
 };
 
 const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {

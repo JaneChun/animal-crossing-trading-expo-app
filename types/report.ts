@@ -17,4 +17,11 @@ export interface Report {
 export type ReportCategoryItem = (typeof REPORT_CATEGORIES)[number];
 export type ReportCategory = (typeof REPORT_CATEGORIES)[number]['EN'];
 
+export interface ReportTarget {
+	reporteeId: string;
+	postId?: string;
+	commentId?: string;
+	chatId?: string;
+}
+
 export type CreateReportRequest = Omit<Report, 'id' | 'createdAt' | 'resolved'>;
