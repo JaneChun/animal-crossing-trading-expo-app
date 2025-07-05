@@ -220,9 +220,13 @@ export const markMessagesAsRead = async ({
 		// 2. 채팅방 정보도 업데이트 (내 unreadCount 초기화)
 		const chatRef = doc(db, `Chats/${chatId}`);
 		batch.update(chatRef, {
-			[`unreadCount.${userId}`]: 0,
+			[`unreadCount.${getSafeUid(userId)}`]: 0,
 		});
 
 		await batch.commit();
 	});
+};
+
+export const getSafeUid = (uid: string) => {
+	return uid.replace(/\./g, '');
 };

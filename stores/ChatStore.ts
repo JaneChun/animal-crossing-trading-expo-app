@@ -1,5 +1,8 @@
 import { db } from '@/fbase';
-import { fetchAndPopulateReceiverInfo } from '@/firebase/services/chatService';
+import {
+	fetchAndPopulateReceiverInfo,
+	getSafeUid,
+} from '@/firebase/services/chatService';
 import { useAuthStore } from '@/stores/AuthStore';
 import { Chat, ChatWithReceiverInfo } from '@/types/chat';
 import {
@@ -83,7 +86,3 @@ export const useChatSubscriptionInitializer = () => {
 		return () => unsubscribe();
 	}, [userInfo?.uid]);
 };
-
-function getSafeUid(uid: string) {
-	return uid.replace(/\./g, '');
-}

@@ -1,6 +1,6 @@
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { leaveChatRoom } from '@/firebase/services/chatService';
+import { getSafeUid, leaveChatRoom } from '@/firebase/services/chatService';
 import { useAuthStore } from '@/stores/AuthStore';
 import { ChatWithReceiverInfo } from '@/types/chat';
 import { elapsedTime } from '@/utilities/elapsedTime';
@@ -43,7 +43,9 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 		await leaveChatRoom({ chatId, userId: userInfo.uid });
 	};
 
-	const unreadMessageCount = userInfo ? unreadCount?.[userInfo.uid] ?? 0 : 0;
+	const unreadMessageCount = userInfo
+		? unreadCount?.[getSafeUid(userInfo.uid)] ?? 0
+		: 0;
 
 	const RightAction = (
 		prog: SharedValue<number>,
