@@ -40,6 +40,19 @@ npm run serve            # Start local Firebase emulator
 npm run deploy           # Deploy functions to Firebase
 ```
 
+### Firebase Emulator (Development)
+
+```bash
+# 에뮬레이터 시작 (Auth, Functions - Java 설치 시 Firestore 추가 가능)
+npm run emulator:start
+
+# 에뮬레이터와 함께 앱 개발 시작
+npm run dev:emulator
+
+# 에뮬레이터 중지
+Ctrl+C 또는 firebase emulators:exec --only auth,functions 'echo stopped'
+```
+
 ### EAS Build and Deploy
 
 ```bash
@@ -335,6 +348,44 @@ npm run test:coverage       # 커버리지 리포트
 - 개발자 온보딩 가이드
 
 ---
+
+## 개발 환경 설정
+
+### 로컬 개발 (Firebase Emulator)
+
+1. **에뮬레이터 환경 설정**:
+   ```bash
+   # 에뮬레이터 시작
+   npm run emulator:start
+   
+   # 새 터미널에서 앱 시작 (에뮬레이터 모드)
+   npm run dev:emulator
+   ```
+
+2. **에뮬레이터 UI 접근**: http://localhost:4000
+   - Auth: http://localhost:9099
+   - Functions: http://localhost:5001
+
+3. **Java 설치 (Firestore 에뮬레이터 사용 시 필요)**:
+   ```bash
+   # macOS
+   brew install openjdk@11
+   
+   # 환경 변수 설정
+   export JAVA_HOME=/opt/homebrew/opt/openjdk@11
+   ```
+
+### 환경 변수 관리
+
+- **프로덕션**: `.env` 파일 사용
+- **로컬 개발**: `.env.local` 파일 사용 (에뮬레이터 설정)
+- **중요**: `.env.local`은 Git에 커밋하지 않음
+
+### 보안 주의사항
+
+1. **Firebase 보안 규칙**: Console에서 로컬 파일로 이전 권장
+2. **민감한 정보**: 환경 변수로 관리, 소스코드에 하드코딩 금지
+3. **에뮬레이터**: 개발용으로만 사용, 프로덕션 데이터와 분리
 
 When working with this codebase, always consider the Korean user base and Animal Crossing context when implementing features. The app uses comprehensive error handling, loading states, and user feedback patterns throughout.
 

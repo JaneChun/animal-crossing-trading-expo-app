@@ -1,0 +1,120 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Boards
+    match /Boards/{postId} {
+    	allow read: if true; // 누구나
+      allow create: if request.auth != null; // 로그인한 유저만
+      allow update: if request.auth.uid == resource.data.creatorId; // 본인만
+      allow delete: if request.auth.uid == resource.data.creatorId; // 본인만
+    }
+    // Items
+    match /Items/{ItemId} {
+    	allow read: if true; // 누구나
+      allow create, update, delete: if false; // 불가능
+    }
+    // Communities
+    match /Communities/{postId} {
+    	allow read: if true; // 누구나
+      allow create: if request.auth != null; // 로그인한 유저만
+      allow update: if request.auth.uid == resource.data.creatorId; // 본인만
+      allow delete: if request.auth.uid == resource.data.creatorId; // 본인만
+    }
+    // Comments
+    match /{collectionName}/{postId}/Comments/{commentId} {
+    	allow read: if true; // 누구나
+      allow create: if request.auth != null; // 로그인한 유저만
+      allow update: if request.auth.uid == resource.data.creatorId; // 본인만
+      allow delete: if request.auth.uid == resource.data.creatorId; // 본인만
+    }
+    // Notifications
+    match /Notifications/{notificationId} {
+      allow read:  if request.auth.uid == resource.data.receiverId; // 수신자만
+      allow create: if request.auth != null; // 로그인한 유저만
+      allow update: if request.auth.uid == resource.data.receiverId; // 수신자만
+      allow delete: if request.auth.uid == resource.data.receiverId; // 수신자만
+    }
+    // Users
+    match /Users/{userId} {
+    	allow read: if true; // 누구나
+      allow create: if true; // 누구나
+      allow update: if request.auth.uid == userId; // 본인만
+   		allow delete: if false; // 불가능
+    }
+    // BlockedUsers
+    match /Users/{userId}/BlockedUsers/{blockedUserId} {
+      allow read, create, update, delete: if request.auth.uid == userId; // 본인만
+    }
+    // BlockedBy
+    match /Users/{userId}/BlockedBy/{blockedById} {
+    	allow read, create, update, delete: if request.auth.uid == userId; // 본인만
+    }
+    // DeletedUsers
+    match /DeletedUsers/{userId} {
+    	allow read: if request.auth.uid == userId; // 본인만
+      allow create, update, delete: if false; // 불가능
+    }
+    // Chats
+    match /Chats/{chatId} {
+    	allow read: if request.auth != null; // 로그인한 유저만
+      allow create: if request.auth != null; // 로그인한 유저만
+      allow update: if isChatParticipant() && // 채팅방 참여자만
+      	request.resource.data.diff(resource.data).changedKeys().hasOnly(['unreadCount','visibleTo']); // 배열 안의 필드만 허용
+      allow delete: if false; // 불가능
+    }
+    // Messages
+    match /Chats/{chatId}/Messages/{messageId} { 
+    	allow read: if request.auth != null; // 로그인한 유저만
+      allow create: if isSystemMessage() || isMessageParticipant(); // 시스템 메세지 또는 채팅방 참여자만
+  		allow update: if request.auth != null && // 로그인한 유저만 (요청 데이터가 isReadBy만 있으므로 참여자 확인 불가)
+      	request.resource.data.diff(resource.data).changedKeys().hasOnly(['isReadBy']); // isReadBy 필드만 허용
+      allow delete: if false; // 불가능
+    }
+    // Reviews
+    match /Reviews/{reviewId} {
+    	allow read: if request.auth != null; // 로그인한 유저만
+      allow create: if request.auth != null; // 로그인한 유저만
+      allow update: if false; // 불가능
+      allow delete: if false; // 불가능
+    }
+    // Reports
+    match /Reports/{reportId} {
+    	allow read: if request.auth.uid == resource.data.reporterId; // 신고자만
+      allow create: if request.auth != null; // 로그인한 유저만
+      allow update: if request.auth.uid == resource.data.reporterId; // 신고자만
+      allow delete: if false; // 불가능
+    }
+    // Errors
+    match /Errors/{errorId} {
+    	allow create: if true; // 누구나
+    	allow read, update, delete: if false; // 불가능
+    }
+    
+    
+    // Functions
+    function isChatParticipant() {
+      return request.auth != null && 
+      	(
+          resource.data.participants.hasAny([request.auth.uid]) ||
+          request.auth.uid == resource.data.lastMessageSenderId
+        );
+    }
+    
+    function isMessageParticipant() {
+      return request.auth != null &&
+        (
+          request.auth.uid == request.resource.data.senderId ||
+          request.auth.uid == request.resource.data.receiverId
+        );
+		}
+    
+    function isSystemMessage() {
+      return request.auth != null &&
+        (
+          request.resource.data.senderId == 'system' ||
+          request.resource.data.senderId == 'review'
+        );
+    }
+  }
+}

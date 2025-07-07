@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as crypto from 'crypto';
 import * as admin from 'firebase-admin';
-import { Timestamp } from 'firebase-admin/firestore';
+import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import * as functions from 'firebase-functions';
 import {
 	onDocumentCreated,
@@ -12,7 +12,6 @@ import jwksClient from 'jwks-rsa';
 
 admin.initializeApp();
 const db = admin.firestore();
-const { FieldValue } = admin.firestore;
 
 // Apple이 제공하는 공개키 모음(JSON Web Key Set)을 가져오는 클라이언트
 const appleClient = jwksClient({
