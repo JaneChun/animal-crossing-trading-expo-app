@@ -4,7 +4,7 @@ export default {
 	expo: {
 		name: '모동숲 마켓',
 		slug: 'animal-crossing-trading-app',
-		version: '1.0.1',
+		version: '1.0.2',
 		orientation: 'portrait',
 		icon: './assets/images/app_icon.png',
 		scheme: 'animal-crossing-trading-app',
