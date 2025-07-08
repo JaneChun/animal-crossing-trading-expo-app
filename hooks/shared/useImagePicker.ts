@@ -38,7 +38,7 @@ export const useImagePicker = (
 			mediaTypes: 'images',
 			allowsMultipleSelection: options.multiple,
 			aspect: [1, 1],
-			quality: 0,
+			quality: 0.7,
 			selectionLimit: limit,
 		});
 
