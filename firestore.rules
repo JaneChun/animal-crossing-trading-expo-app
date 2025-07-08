@@ -4,114 +4,133 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Boards
     match /Boards/{postId} {
-    	allow read: if true; // 누구나
-      allow create: if request.auth != null; // 로그인한 유저만
+      allow read: if true; // 누구나
+      allow create: if request.auth != null && 
+        request.auth.uid == request.resource.data.creatorId; // 로그인한 유저만, 본인 ID만
       allow update: if request.auth.uid == resource.data.creatorId; // 본인만
       allow delete: if request.auth.uid == resource.data.creatorId; // 본인만
     }
+    
     // Items
     match /Items/{ItemId} {
-    	allow read: if true; // 누구나
+      allow read: if true; // 누구나
       allow create, update, delete: if false; // 불가능
     }
+    
     // Communities
     match /Communities/{postId} {
-    	allow read: if true; // 누구나
-      allow create: if request.auth != null; // 로그인한 유저만
+      allow read: if true; // 누구나
+      allow create: if request.auth != null && 
+        request.auth.uid == request.resource.data.creatorId; // 로그인한 유저만, 본인 ID만
       allow update: if request.auth.uid == resource.data.creatorId; // 본인만
       allow delete: if request.auth.uid == resource.data.creatorId; // 본인만
     }
+    
     // Comments
     match /{collectionName}/{postId}/Comments/{commentId} {
-    	allow read: if true; // 누구나
-      allow create: if request.auth != null; // 로그인한 유저만
+      allow read: if true; // 누구나
+      allow create: if request.auth != null && 
+        request.auth.uid == request.resource.data.creatorId; // 로그인한 유저만, 본인 ID만
       allow update: if request.auth.uid == resource.data.creatorId; // 본인만
       allow delete: if request.auth.uid == resource.data.creatorId; // 본인만
     }
+    
     // Notifications
     match /Notifications/{notificationId} {
-      allow read:  if request.auth.uid == resource.data.receiverId; // 수신자만
-      allow create: if request.auth != null; // 로그인한 유저만
-      allow update: if request.auth.uid == resource.data.receiverId; // 수신자만
+      allow read: if request.auth.uid == resource.data.receiverId; // 수신자만
+      allow create: if request.auth != null && 
+        request.auth.uid == request.resource.data.senderId; // 로그인한 유저만, 본인이 발신자
+      allow update: if request.auth.uid == resource.data.receiverId && 
+        request.resource.data.diff(resource.data).changedKeys().hasOnly(['isRead']); // 수신자만, isRead 필드만
       allow delete: if request.auth.uid == resource.data.receiverId; // 수신자만
     }
+    
     // Users
     match /Users/{userId} {
-    	allow read: if true; // 누구나
-      allow create: if true; // 누구나
+      allow read: if true; // 누구나
+      allow create: if request.auth != null && 
+        request.auth.uid == userId; // 로그인한 유저만, 본인 계정만
       allow update: if request.auth.uid == userId; // 본인만
-   		allow delete: if false; // 불가능
+      allow delete: if false; // 불가능
     }
+    
     // BlockedUsers
     match /Users/{userId}/BlockedUsers/{blockedUserId} {
       allow read, create, update, delete: if request.auth.uid == userId; // 본인만
     }
+    
     // BlockedBy
     match /Users/{userId}/BlockedBy/{blockedById} {
-    	allow read, create, update, delete: if request.auth.uid == userId; // 본인만
+      allow read, create, update, delete: if request.auth.uid == userId; // 본인만
     }
+    
     // DeletedUsers
     match /DeletedUsers/{userId} {
-    	allow read: if request.auth.uid == userId; // 본인만
+      allow read: if request.auth.uid == userId; // 본인만
       allow create, update, delete: if false; // 불가능
     }
+    
     // Chats
     match /Chats/{chatId} {
-    	allow read: if request.auth != null; // 로그인한 유저만
-      allow create: if request.auth != null; // 로그인한 유저만
-      allow update: if isChatParticipant() && // 채팅방 참여자만
-      	request.resource.data.diff(resource.data).changedKeys().hasOnly(['unreadCount','visibleTo']); // 배열 안의 필드만 허용
+      allow read: if request.auth != null && 
+        (resource == null || (resource != null && isVisibleChat())); // 문서가 없으면 검사 X, 있으면 visibleTo 검사
+      allow create: if request.auth != null && isChatParticipant(); // 로그인한 유저만, 본인이 참여자
+      allow update: if request.auth != null && 
+        isChatParticipant() &&
+        request.resource.data.diff(resource.data).changedKeys().hasOnly(['unreadCount', 'visibleTo']); // 허용된 필드만
       allow delete: if false; // 불가능
     }
+    
     // Messages
     match /Chats/{chatId}/Messages/{messageId} { 
-    	allow read: if request.auth != null; // 로그인한 유저만
-      allow create: if isSystemMessage() || isMessageParticipant(); // 시스템 메세지 또는 채팅방 참여자만
-  		allow update: if request.auth != null && // 로그인한 유저만 (요청 데이터가 isReadBy만 있으므로 참여자 확인 불가)
-      	request.resource.data.diff(resource.data).changedKeys().hasOnly(['isReadBy']); // isReadBy 필드만 허용
+      allow read: if request.auth != null && isChatParticipantInMessage(chatId); // 채팅방 참여자만
+      allow create: if request.auth != null && 
+        (isSystemMessage() || request.auth.uid == request.resource.data.senderId); // 시스템 메세지 또는 본인이 발신자
+      allow update: if request.auth != null && 
+        request.resource.data.diff(resource.data).changedKeys().hasOnly(['isReadBy']); // isReadBy 필드만
       allow delete: if false; // 불가능
     }
+    
     // Reviews
     match /Reviews/{reviewId} {
-    	allow read: if request.auth != null; // 로그인한 유저만
-      allow create: if request.auth != null; // 로그인한 유저만
+      allow read: if request.auth != null; // 로그인한 유저만
+      allow create: if request.auth != null && 
+        request.auth.uid == request.resource.data.senderId; // 로그인한 유저만, 본인이 리뷰어
       allow update: if false; // 불가능
       allow delete: if false; // 불가능
     }
+    
     // Reports
     match /Reports/{reportId} {
-    	allow read: if request.auth.uid == resource.data.reporterId; // 신고자만
-      allow create: if request.auth != null; // 로그인한 유저만
-      allow update: if request.auth.uid == resource.data.reporterId; // 신고자만
+      allow read: if request.auth.uid == resource.data.reporterId; // 신고자만
+      allow create, update: if request.auth != null && 
+        request.auth.uid == request.resource.data.reporterId; // 로그인한 유저만, 본인이 신고자
       allow delete: if false; // 불가능
     }
+    
     // Errors
     match /Errors/{errorId} {
-    	allow create: if true; // 누구나
-    	allow read, update, delete: if false; // 불가능
+      allow create: if true; // 누구나
+      allow read, update, delete: if false; // 불가능
     }
-    
     
     // Functions
-    function isChatParticipant() {
-      return request.auth != null && 
-      	(
-          resource.data.participants.hasAny([request.auth.uid]) ||
-          request.auth.uid == resource.data.lastMessageSenderId
-        );
+    // READ 작업용 함수들 (resource.data 사용)
+    function isVisibleChat() {
+      return request.auth.uid in resource.data.visibleTo;
     }
     
-    function isMessageParticipant() {
-      return request.auth != null &&
-        (
-          request.auth.uid == request.resource.data.senderId ||
-          request.auth.uid == request.resource.data.receiverId
-        );
-		}
+    function isChatParticipantInMessage(chatId) {
+      return request.auth.uid in get(/databases/$(database)/documents/Chats/$(chatId)).data.participants;
+    }
     
+    // WRITE 작업용 함수들 (request.resource.data 사용)
+    function isChatParticipant() {
+      return request.auth.uid in request.resource.data.participants;
+    }
+
     function isSystemMessage() {
-      return request.auth != null &&
-        (
+      return (
           request.resource.data.senderId == 'system' ||
           request.resource.data.senderId == 'review'
         );

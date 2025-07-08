@@ -371,10 +371,10 @@ export const updateUserReport = onDocumentCreated(
 
 			// 최근 7일 이내, 30일 이내 해당 유저가 신고당한 횟수 조회
 			const now = Date.now();
-			const sevenDaysAgo = admin.firestore.Timestamp.fromDate(
+			const sevenDaysAgo = Timestamp.fromDate(
 				new Date(now - 7 * 24 * 60 * 60 * 1000),
 			);
-			const thirtyDaysAgo = admin.firestore.Timestamp.fromDate(
+			const thirtyDaysAgo = Timestamp.fromDate(
 				new Date(now - 30 * 24 * 60 * 60 * 1000),
 			);
 
@@ -414,7 +414,7 @@ export const updateUserReport = onDocumentCreated(
 
 			// 더 나중 값으로 갱신
 			if (newSuspendMillis > suspendMillis) {
-				suspendUntil = admin.firestore.Timestamp.fromMillis(newSuspendMillis);
+				suspendUntil = Timestamp.fromMillis(newSuspendMillis);
 			}
 
 			// 유저 도큐먼트 업데이트
