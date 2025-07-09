@@ -313,7 +313,7 @@ export const onCommentCreated = onDocumentCreated(
 		const postRef = admin.firestore().doc(`${collection}/${postId}`);
 		try {
 			await postRef.update({
-				commentCount: admin.firestore.FieldValue.increment(1),
+				commentCount: FieldValue.increment(1),
 			});
 		} catch (e) {
 			console.error(
@@ -331,7 +331,7 @@ export const onCommentDeleted = onDocumentDeleted(
 		const postRef = admin.firestore().doc(`${collection}/${postId}`);
 		try {
 			await postRef.update({
-				commentCount: admin.firestore.FieldValue.increment(-1),
+				commentCount: FieldValue.increment(-1),
 			});
 		} catch (e) {
 			console.error(
