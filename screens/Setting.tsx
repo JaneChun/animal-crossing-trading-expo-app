@@ -25,6 +25,7 @@ const Setting = () => {
 					borderRound='top'
 					showChevron
 					onPress={navigateToAccount}
+					testID='myAccountButton'
 				>
 					<Text style={styles.text}>내 계정</Text>
 				</SettingListItem>

@@ -1,0 +1,56 @@
+appId: com.janechun.animalcrossingtradingapp
+---
+# 로그아웃 테스트 (로그인 완료 후 프로필 화면에서 시작)
+
+# 프로필 탭으로 이동
+- tapOn:
+    label: '프로필 탭으로 이동'
+    text: '프로필, tab, 5 of 5'
+
+# 프로필 화면 진입 확인
+- assertVisible:
+    label: '프로필 화면 진입 확인'
+    text: '프로필'
+
+# 설정 아이콘 클릭
+- tapOn:
+    label: '설정 아이콘 클릭'
+    id: 'settingButton'
+
+# 설정 화면 진입 확인
+- assertVisible:
+    label: '설정 화면 진입 확인'
+    text: '사용자 설정'
+
+# 내 계정 버튼 클릭
+- tapOn:
+    label: '내 계정 버튼 클릭'
+    id: 'myAccountButton'
+
+# 계정 화면 진입 확인 (로그아웃 버튼 존재 확인)
+- assertVisible:
+    label: '계정 화면 진입 확인'
+    id: 'logoutButton'
+
+# 로그아웃 버튼 클릭
+- tapOn:
+    label: '로그아웃 버튼 클릭'
+    id: 'logoutButton'
+
+# 로그아웃 확인 알림창 처리 (사용자가 직접 클릭)
+- assertVisible:
+    label: '로그아웃 확인 알림창 표시 확인'
+    text: '로그아웃 하시겠습니까?'
+- waitForAnimationToEnd:
+    label: '🕐 로그아웃 확인 알림창에서 사용자가 직접 로그아웃 버튼 클릭할 때까지 30초 대기'
+    timeout: 30000
+
+# 로그아웃 토스트 메시지 확인
+- assertVisible:
+    label: '로그아웃 토스트 메시지 확인'
+    text: '로그아웃되었습니다.'
+
+# 로그인 화면으로 돌아갔는지 확인
+- assertVisible:
+    label: '로그인 화면으로 돌아갔는지 확인'
+    text: '네이버로 로그인'

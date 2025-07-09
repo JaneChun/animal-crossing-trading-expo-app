@@ -71,6 +71,7 @@ const AgreeToTermsAndConditions = () => {
 							onValueChange={setAllAgree}
 							color={allAgree ? Colors.primary : undefined}
 							style={styles.checkbox}
+							testID='allAgreeCheckbox'
 						/>
 						<Text style={styles.largeLabel}>전체 약관 동의</Text>
 					</View>

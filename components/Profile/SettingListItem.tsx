@@ -14,15 +14,18 @@ const SettingListItem = ({
 	onPress,
 	showChevron = false,
 	style = {},
+	testID = '',
 }: {
 	children: JSX.Element;
 	borderRound?: 'top' | 'bottom' | 'all';
 	onPress?: () => void;
 	showChevron?: boolean;
 	style?: StyleProp<ViewStyle>;
+	testID?: string;
 }) => {
 	return (
 		<TouchableOpacity
+			testID={testID}
 			style={[
 				styles.row,
 				borderRound === 'top' && styles.topRow,

@@ -5,7 +5,11 @@ import React from 'react';
 import { Pressable } from 'react-native';
 
 const SettingIcon = (
-	<Pressable style={{ paddingRight: 5 }} onPress={navigateToSetting}>
+	<Pressable
+		style={{ paddingRight: 5 }}
+		onPress={navigateToSetting}
+		testID='settingButton'
+	>
 		<Ionicons name='settings-outline' color={Colors.font_gray} size={24} />
 	</Pressable>
 );

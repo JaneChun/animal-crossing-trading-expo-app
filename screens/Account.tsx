@@ -88,13 +88,18 @@ const Account = () => {
 				</SettingListItem>
 			</View>
 			<View style={styles.container}>
-				<SettingListItem borderRound='top' onPress={handleLogout}>
+				<SettingListItem
+					borderRound='top'
+					onPress={handleLogout}
+					testID='logoutButton'
+				>
 					<Text style={styles.text}>로그아웃</Text>
 				</SettingListItem>
 				<SettingListItem
 					borderRound='bottom'
 					showChevron
 					onPress={handleNavigateToDeleteAccount}
+					testID='deleteAccountButton'
 				>
 					<Text style={styles.text}>탈퇴하기</Text>
 				</SettingListItem>

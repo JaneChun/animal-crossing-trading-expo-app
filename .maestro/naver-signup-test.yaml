@@ -1,0 +1,96 @@
+appId: com.janechun.animalcrossingtradingapp
+---
+# 회원가입 테스트 (로그아웃 상태에서 시작)
+
+# 로그인 탭으로 이동
+- tapOn:
+    label: '로그인 탭으로 이동'
+    text: '로그인, tab, 5 of 5'
+
+# 로그인 화면 확인
+- assertVisible:
+    label: '로그인 화면 확인'
+    text: '네이버로 로그인'
+
+# 네이버 로그인 버튼 클릭
+- tapOn:
+    label: '네이버 로그인 버튼 클릭'
+    text: '네이버로 로그인'
+
+# Alert에서 "계속" 버튼이 있으면 탭
+- tapOn:
+    label: '네이버 로그인 확인 알림에서 계속 버튼 클릭'
+    text: '계속'
+    optional: true
+
+# 네이버 로그인 처리 (외부 웹뷰에서 직접 로그인 진행)
+# 사용자가 직접 네이버 로그인을 완료할 때까지 30초 대기
+
+- waitForAnimationToEnd:
+    label: '🕐 네이버 로그인 웹뷰에서 사용자가 직접 로그인 완료할 때까지 30초 대기'
+    timeout: 30000
+
+# 신규 사용자의 경우 약관 동의 화면으로 이동
+- assertVisible:
+    label: '약관 동의 화면 진입 확인'
+    text: '모동숲 마켓\n이용약관 동의'
+
+# 전체 동의 체크박스 클릭
+- tapOn:
+    label: '전체 동의 체크박스 클릭'
+    id: 'allAgreeCheckbox'
+
+# 약관 동의 완료 후 다음 버튼 클릭
+- tapOn:
+    label: '약관 동의 완료 후 다음 버튼 클릭'
+    text: '동의하고 계속하기'
+
+# 닉네임 입력 화면으로 이동
+- assertVisible:
+    label: '닉네임 입력 화면 진입 확인'
+    text: '닉네임을 입력해주세요'
+
+# 닉네임 입력
+- tapOn:
+    label: '닉네임 입력 필드 클릭'
+    text: '닉네임을 입력해주세요.'
+- inputText:
+    label: '닉네임 입력'
+    text: '네이버유저'
+
+# 다음 버튼 클릭
+- tapOn:
+    label: '닉네임 입력 완료 후 다음 버튼 클릭'
+    text: '다음'
+
+# 섬 이름 입력 화면으로 이동
+- assertVisible:
+    label: '섬 이름 입력 화면 진입 확인'
+    text: '섬 이름을 입력해주세요'
+
+# 섬 이름 입력
+- tapOn:
+    label: '섬 이름 입력 필드 클릭'
+    text: '섬 이름을 입력해주세요.'
+- inputText:
+    label: '섬 이름 입력'
+    text: '네이버섬'
+
+# 완료 버튼 클릭
+- tapOn:
+    label: '섬 이름 입력 완료 후 완료 버튼 클릭'
+    text: '시작하기'
+
+# 회원가입 완료 후 프로필 화면으로 이동
+- waitForAnimationToEnd:
+    label: '회원가입 완료 후 프로필 화면 이동 대기'
+
+# 회원가입 토스트 메시지 확인
+- assertVisible:
+    label: '회원가입 성공 메시지 확인'
+    text: '회원가입 성공'
+
+# 프로필 화면 진입 확인
+- assertVisible:
+    label: '프로필 화면 진입 확인'
+    text: '프로필'
