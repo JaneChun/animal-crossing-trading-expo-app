@@ -1,6 +1,9 @@
 appId: com.janechun.animalcrossingtradingapp
 ---
 # 새글 작성 유효성 검사 테스트 (로그인 완료 후 마켓 탭에서 시작)
+- tapOn:
+    label: '마켓 탭으로 이동'
+    text: '마켓, tab, 1 of 5'
 - assertVisible:
     label: '마켓 탭에서 시작하는지 확인'
     text: '거래글'
