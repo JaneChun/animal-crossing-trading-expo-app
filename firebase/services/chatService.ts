@@ -169,7 +169,10 @@ export const sendMessage = async ({
 
 		const messageRef = collection(db, 'Chats', chatId, 'Messages'); // Boards/{chatId}/Messages 서브컬렉션
 
-		const cleanMessage = sanitize(message);
+		// 유저 메세지만 필터링 (시스템 메세지는 X)
+		const cleanMessage = (senderId === 'system' || senderId === 'review') 
+			? message 
+			: sanitize(message);
 
 		await addDoc(messageRef, {
 			body: cleanMessage,
