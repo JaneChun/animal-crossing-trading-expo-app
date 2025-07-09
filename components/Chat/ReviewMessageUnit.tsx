@@ -68,6 +68,7 @@ const ReviewMessageUnit = ({ message }: { message: IMessage }) => {
 						style={styles.iconContainer}
 						disabled={isReviewed}
 						onPress={() => sendReview(1)}
+						testID='goodReviewButton'
 					>
 						<FontAwesome6
 							name='smile-beam'
@@ -79,6 +80,7 @@ const ReviewMessageUnit = ({ message }: { message: IMessage }) => {
 						style={styles.iconContainer}
 						disabled={isReviewed}
 						onPress={() => sendReview(-1)}
+						testID='badReviewButton'
 					>
 						<FontAwesome6
 							name='frown-open'

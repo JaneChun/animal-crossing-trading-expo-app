@@ -27,11 +27,13 @@ const ChatInput = ({ disabled, onSubmit }: ChatInputProps) => {
 				scrollEnabled
 				enterKeyHint='send'
 				editable={!disabled}
+				testID='chatInput'
 			/>
 			<Pressable
 				style={styles.iconContainer}
 				onPress={handleSubmit}
 				disabled={disabled}
+				testID='chatSubmitButton'
 			>
 				<FontAwesome6
 					name='circle-arrow-up'

@@ -1,0 +1,47 @@
+appId: com.janechun.animalcrossingtradingapp
+---
+# 2. 댓글 확인 및 채팅하기 버튼 클릭 테스트
+
+# B 유저 댓글 작성 대기 및 채팅하기 버튼 확인 반복
+- repeat:
+    label: '🕐 B 유저가 댓글을 작성하여 채팅하기 버튼이 나타날 때까지 반복 대기'
+    while:
+      notVisible:
+        id: 'startChatButton'
+    commands:
+      # 새로고침
+      - swipe:
+          label: '마켓 목록 새로고침으로 댓글 확인'
+          start: 50%, 20%
+          end: 50%, 50%
+
+      # 작성된 게시글 '테스트 게시글' 클릭
+      - tapOn:
+          label: '테스트 게시글 클릭'
+          point: '50%, 18%'
+
+      # 채팅하기 버튼이 있는지 확인 (댓글이 있으면 버튼이 보임)
+      - runFlow:
+          when:
+            notVisible:
+              id: 'startChatButton'
+          commands:
+            # 채팅하기 버튼이 없으면 뒤로가기
+            - tapOn:
+                label: '뒤로가기 버튼 클릭'
+                point: '10%, 10%'
+            # 잠시 대기 후 다시 시도
+            - waitForAnimationToEnd:
+                timeout: 2000
+
+# 채팅하기 버튼이 보이면 반복 종료되고 게시글 상세 화면에 있음
+
+# 댓글 아래 '채팅하기' 버튼 클릭
+- tapOn:
+    label: '댓글 아래 채팅하기 버튼 클릭'
+    id: 'startChatButton'
+
+# 채팅방 진입 확인
+- assertVisible:
+    label: '채팅방 진입 확인'
+    id: 'chatInput'

@@ -202,6 +202,7 @@ const CommentUnit = ({
 								onPress={() =>
 									onChatClick({ collectionName, postId, receiverId: creatorId })
 								}
+								testID='startChatButton'
 							>
 								<Text style={styles.chatText}>채팅하기</Text>
 								<AntDesign name='arrowright' color={Colors.primary} size={14} />

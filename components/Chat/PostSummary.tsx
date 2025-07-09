@@ -23,6 +23,7 @@ const PostSummary = <C extends Collection>({
 		<Pressable
 			style={styles.container}
 			onPress={() => navigateToPost({ postId: post.id, collectionName })}
+			testID='postSummaryButton'
 		>
 			{/* 썸네일 */}
 			<View style={styles.thumbnailContainer}>
