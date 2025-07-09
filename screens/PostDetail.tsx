@@ -117,6 +117,7 @@ const PostDetail = () => {
 						label: '삭제',
 						onPress: handleDeletePost,
 					},
+					{ label: '취소', onPress: () => {} },
 			  ]
 			: [
 					{
