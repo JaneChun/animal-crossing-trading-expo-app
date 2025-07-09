@@ -73,7 +73,7 @@ service cloud.firestore {
     // Chats
     match /Chats/{chatId} {
       allow read: if request.auth != null && 
-        (resource == null || (resource != null && isVisibleChat())); // 문서가 없으면 검사 X, 있으면 visibleTo 검사
+        (resource == null || isVisibleChat()); // 문서가 없으면 검사 X, 있으면 visibleTo 검사
       allow create: if request.auth != null && isChatParticipant(); // 로그인한 유저만, 본인이 참여자
       allow update: if request.auth != null && 
         isChatParticipant() &&
@@ -120,8 +120,10 @@ service cloud.firestore {
       return request.auth.uid in resource.data.visibleTo;
     }
     
+    // 문서가 없으면 검사 X, 있으면 participants 검사
     function isChatParticipantInMessage(chatId) {
-      return request.auth.uid in get(/databases/$(database)/documents/Chats/$(chatId)).data.participants;
+      return !exists(/databases/$(database)/documents/Chats/$(chatId)) ||
+        request.auth.uid in get(/databases/$(database)/documents/Chats/$(chatId)).data.participants;
     }
     
     // WRITE 작업용 함수들 (request.resource.data 사용)
@@ -130,10 +132,8 @@ service cloud.firestore {
     }
 
     function isSystemMessage() {
-      return (
-          request.resource.data.senderId == 'system' ||
-          request.resource.data.senderId == 'review'
-        );
+      return request.resource.data.senderId == 'system' ||
+             request.resource.data.senderId == 'review';
     }
   }
 }
