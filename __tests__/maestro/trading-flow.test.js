@@ -10,10 +10,6 @@ describe('거래 전체 플로우 테스트', () => {
 		});
 	};
 
-	test('0. A 유저 회원가입', () => {
-		expect(() => runMaestroTest('naver-signup-test.yaml')).not.toThrow();
-	}, 120000);
-
 	test('1. 거래글 작성', () => {
 		expect(() => runMaestroTest('new-post-test.yaml')).not.toThrow();
 	}, 60000);

@@ -40,3 +40,8 @@ appId: com.janechun.animalcrossingtradingapp
 - assertVisible:
     label: '거래 플로우 테스트 완료 - 채팅방 화면 확인'
     id: 'goodReviewButton'
+
+# 뒤로가기
+- tapOn:
+    label: '뒤로가기 버튼 클릭'
+    point: '10%, 10%'

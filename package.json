@@ -13,7 +13,7 @@
 		"build:ios:prod": "eas build --profile production --platform ios",
 		"build:android:prod": "eas build --profile production --platform android",
 		"web": "expo start --web",
-		"test": "jest --watchAll",
+		"test": "jest --runInBand",
 		"lint": "expo lint",
 		"postinstall": "patch-package",
 		"build": "eas build --profile production --platform ios",
@@ -27,7 +27,8 @@
 		"deploy-rules:storage": "firebase deploy --only storage"
 	},
 	"jest": {
-		"preset": "jest-expo"
+		"preset": "jest-expo",
+		"testSequencer": "<rootDir>/testSequencer.js"
 	},
 	"dependencies": {
 		"@expo/react-native-action-sheet": "^4.1.0",
