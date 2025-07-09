@@ -1,0 +1,57 @@
+appId: com.janechun.animalcrossingtradingapp
+---
+# 게시글 삭제 테스트 (로그인 완료 후 마켓 탭에서 시작)
+# 전제조건: 삭제할 수 있는 기존 게시글이 존재해야 함 (내가 작성한 글)
+
+- assertVisible:
+    label: '마켓 탭에서 시작하는지 확인'
+    text: '거래글'
+
+# 게시글 클릭
+- tapOn:
+    label: '삭제할 게시글 선택'
+    point: '50%, 18%'
+- assertVisible:
+    label: '게시글 상세 화면 진입 확인'
+    text: '수정된 테스트 게시글'
+
+# 게시글 상세 화면에서 우측 상단 메뉴(점 3개) 클릭
+- tapOn:
+    label: '게시글 액션 메뉴 열기'
+    id: 'actionSheetButton'
+
+# 삭제 버튼 클릭
+- tapOn:
+    label: '게시글 삭제 버튼 클릭'
+    text: '삭제'
+
+# 삭제 확인 알림창 처리
+- assertVisible:
+    label: '삭제 확인 알림 제목 확인'
+    text: '게시글 삭제'
+- assertVisible:
+    label: '삭제 확인 메시지 확인'
+    text: '정말로 삭제하겠습니까?'
+
+# 삭제 확인 - '삭제' 버튼 클릭
+- tapOn:
+    label: '게시글 삭제 최종 확인'
+    text: '삭제'
+
+# 삭제 완료 후 자동으로 목록으로 이동하는지 확인
+- assertVisible:
+    label: '마켓 탭으로 돌아왔는지 확인'
+    text: '거래글'
+
+# 삭제 성공 메시지 확인 (Toast 메시지가 있다면)
+- assertVisible:
+    label: '삭제 성공 메시지 확인'
+    text: '게시글이 삭제되었습니다.'
+- waitForAnimationToEnd:
+    label: '애니메이션 완료 대기'
+
+# 새로고침
+- swipe:
+    label: '마켓 목록 새로고침으로 테스트 완료'
+    start: 50%, 20%
+    end: 50%, 50%

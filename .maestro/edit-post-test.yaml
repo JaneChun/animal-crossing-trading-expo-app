@@ -1,0 +1,109 @@
+appId: com.janechun.animalcrossingtradingapp
+---
+# 게시글 수정 테스트 (로그인 완료 후 마켓 탭에서 시작)
+# 전제조건: 이미 작성된 게시글이 존재해야 함
+
+- assertVisible:
+    label: '마켓 탭에서 시작하는지 확인'
+    text: '거래글'
+
+# 게시글 클릭
+- tapOn:
+    label: '수정할 게시글 선택'
+    point: '50%, 18%'
+- assertVisible:
+    label: '게시글 상세 화면 진입 확인'
+    text: '테스트 게시글'
+
+# 게시글 상세 화면에서 우측 상단 메뉴(점 3개) 클릭
+- tapOn:
+    label: '게시글 액션 메뉴 열기'
+    id: 'actionSheetButton'
+
+# 수정 버튼 클릭
+- tapOn:
+    label: '게시글 수정 버튼 클릭'
+    text: '수정'
+- assertVisible:
+    label: '수정 화면 진입 확인'
+    text: '새 글 작성'
+
+# 제목 수정
+- tapOn:
+    label: '제목 입력 필드 클릭'
+    id: 'titleInput'
+- eraseText:
+    label: '기존 제목 삭제'
+- inputText:
+    label: '새로운 제목 입력'
+    text: '수정된 테스트 게시글'
+
+# 내용 수정
+- tapOn:
+    label: '본문 입력 필드 클릭'
+    id: 'bodyInput'
+- eraseText:
+    label: '기존 본문 삭제'
+- inputText:
+    label: '새로운 본문 입력'
+    text: '내용이 수정되었습니다.'
+
+# 키보드 닫기
+- tapOn:
+    label: '화면 상단을 탭해서 키보드 닫기'
+    point: '90%, 20%'
+
+# 새로운 아이템 추가
+- tapOn:
+    label: '아이템 추가 버튼 클릭'
+    text: '아이템 추가'
+
+# 아이템 검색 및 선택
+- tapOn:
+    label: '아이템 검색창 클릭'
+    point: '50%, 25%'
+- inputText:
+    label: '새로운 아이템 검색어 입력'
+    text: '배'
+
+- tapOn:
+    label: '검색 결과에서 배 아이템 클릭'
+    point: '50%, 50%'
+
+# 모달 닫기
+- swipe:
+    label: '아이템 선택 모달 닫기'
+    start: 50%, 20%
+    end: 50%, 90%
+
+# 수정 완료 - 등록 버튼 클릭
+- tapOn:
+    label: '게시글 수정 완료 버튼 클릭'
+    text: '등록'
+- assertVisible:
+    label: '게시글 수정 성공 메시지 확인'
+    text: '게시글이 수정되었습니다.'
+- waitForAnimationToEnd:
+    label: '애니메이션 완료 대기'
+
+# 수정된 내용 확인
+- assertVisible:
+    label: '수정된 제목 확인'
+    text: '수정된 테스트 게시글'
+- assertVisible:
+    label: '수정된 내용 확인'
+    text: '내용이 수정되었습니다.'
+- assertVisible:
+    label: '새로 추가된 아이템 확인'
+    text: '배 타르트'
+
+# 뒤로 가기
+- tapOn:
+    label: '뒤로가기 버튼 클릭'
+    point: '10%, 10%'
+
+# 새로고침
+- swipe:
+    label: '마켓 목록 새로고침'
+    start: 50%, 20%
+    end: 50%, 50%

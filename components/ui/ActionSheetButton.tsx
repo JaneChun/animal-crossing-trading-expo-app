@@ -29,7 +29,11 @@ const ActionSheetButton = ({
 	};
 
 	return (
-		<TouchableOpacity style={styles.iconContainer} onPress={handlePress}>
+		<TouchableOpacity
+			style={styles.iconContainer}
+			onPress={handlePress}
+			testID='actionSheetButton'
+		>
 			<Entypo name='dots-three-vertical' size={size} color={color} />
 		</TouchableOpacity>
 	);

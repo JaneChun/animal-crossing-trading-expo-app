@@ -79,7 +79,11 @@ const PostList = ({
 			/>
 
 			{isAddPostButtonVisible && (
-				<Pressable style={styles.addPostButton} onPress={onPressAddPostButton}>
+				<Pressable
+					style={styles.addPostButton}
+					onPress={onPressAddPostButton}
+					testID='addPostButton'
+				>
 					<FontAwesome6 name='circle-plus' size={48} color={Colors.primary} />
 					<View style={styles.whiteBackground} />
 				</Pressable>

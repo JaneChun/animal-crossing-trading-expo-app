@@ -31,6 +31,7 @@ const TitleInput = ({
 					marginBottom: 8,
 				}}
 				errorMessage={errorMessage}
+				testID='titleInput'
 			/>
 		</View>
 	);

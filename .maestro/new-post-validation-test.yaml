@@ -1,0 +1,91 @@
+appId: com.janechun.animalcrossingtradingapp
+---
+# 새글 작성 유효성 검사 테스트 (로그인 완료 후 마켓 탭에서 시작)
+- assertVisible:
+    label: '마켓 탭에서 시작하는지 확인'
+    text: '거래글'
+- tapOn:
+    label: '새글 작성 화면 진입'
+    id: 'addPostButton'
+- assertVisible:
+    label: '새글 작성 페이지 로드 확인'
+    text: '새 글 작성'
+
+# 테스트 1: 둘 다 입력 X
+- tapOn:
+    label: '제목, 본문 미입력 시 유효성 검사'
+    text: '등록'
+- assertVisible:
+    label: '제목 에러 메시지 확인'
+    text: '제목을 입력해주세요.'
+- assertVisible:
+    label: '본문 에러 메시지 확인'
+    text: '본문을 입력해주세요.'
+
+# 테스트 2: 내용만 입력
+- tapOn:
+    label: '본문 입력 필드 클릭'
+    id: 'bodyInput'
+- inputText:
+    label: '본문 내용 입력'
+    text: '테스트입니다.'
+
+- tapOn:
+    label: '화면 상단을 탭해서 키보드 닫기'
+    point: '90%, 20%'
+- tapOn:
+    label: '등록 버튼 클릭'
+    text: '등록'
+- assertVisible:
+    label: '제목 에러 메시지 확인'
+    text: '제목을 입력해주세요.'
+
+- tapOn:
+    label: '본문 필드 다시 클릭'
+    id: 'bodyInput'
+- eraseText:
+    label: '본문 내용 삭제'
+
+# 테스트 3: 제목만 입력
+- tapOn:
+    label: '제목 입력 필드 클릭'
+    id: 'titleInput'
+- inputText:
+    label: '제목 입력'
+    text: '테스트 게시글'
+
+- tapOn:
+    label: '화면 상단을 탭해서 키보드 닫기'
+    point: '90%, 20%'
+- tapOn:
+    label: '등록 버튼 클릭'
+    text: '등록'
+- assertVisible:
+    label: '본문 에러 메시지 확인'
+    text: '본문을 입력해주세요.'
+
+- tapOn:
+    label: '제목 필드 다시 클릭'
+    id: 'titleInput'
+- eraseText:
+    label: '제목 내용 삭제'
+
+# 테스트 4: 제목 50자 초과 입력
+- tapOn:
+    label: '제목 입력 필드 클릭'
+    id: 'titleInput'
+- inputText:
+    label: '50자 초과 제목 입력'
+    text: '이것은 매우 긴 제목입니다. 50자를 초과하는 제목을 입력해서 에러 메시지가 나오는지 확인해보겠습니다. 정말 긴 제목이네요.'
+
+- tapOn:
+    label: '화면 상단을 탭해서 키보드 닫기'
+    point: '90%, 20%'
+- assertVisible:
+    label: '제목 길이 에러 메시지 확인'
+    text: '제목은 최대 50자까지 입력 가능합니다.'
+
+# 뒤로 가기
+- tapOn:
+    label: '테스트 완료 후 이전 화면으로 돌아가기'
+    point: '10%, 10%'
