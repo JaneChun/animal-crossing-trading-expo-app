@@ -23,6 +23,7 @@
 		"emulator:start": "firebase emulators:start",
 		"emulator:kill": "pkill -f 'firebase emulators' || true && lsof -ti:4000,4400,4401,4500,4501,8080,9099,5001,9199 | xargs kill -9 2>/dev/null || true && echo 'Firebase emulators stopped'",
 		"emulator:seed": "cd scripts && node seed-test-data.js",
+		"deploy-functions": "firebase deploy --only functions",
 		"deploy-rules:firestore": "firebase deploy --only firestore:rules",
 		"deploy-rules:storage": "firebase deploy --only storage"
 	},
