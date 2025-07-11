@@ -82,8 +82,11 @@ const firestoreRequest = async (
 		console.log(`❌ Firestore 요청 : ${requestName} 실패`, error);
 		console.log(error.code, error.message);
 
+		// 모든 Firebase 에러를 중앙에서 처리하고 사용자에게 알림 표시
 		handleError(error);
-		throw error;
+		
+		// 에러를 삼키고 null 반환 (호출자에게 에러 전파하지 않음)
+		return null;
 	}
 };
 
