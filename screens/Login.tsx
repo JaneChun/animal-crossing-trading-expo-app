@@ -2,7 +2,7 @@ import { PADDING } from '@/components/ui/layout/Layout';
 import SocialLoginButton from '@/components/ui/SocialLoginButton';
 import { showToast } from '@/components/ui/Toast';
 import { auth } from '@/fbase';
-import { LoginResult, useAuthStore } from '@/stores/AuthStore';
+import { LoginResult, useAuthStore } from '@/stores/auth';
 import { OauthType } from '@/types/user';
 import {
 	navigateToAgreeToTermsAndConditions,

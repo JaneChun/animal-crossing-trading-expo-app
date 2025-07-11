@@ -7,7 +7,7 @@ import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { pop } from '@/navigation/RootNavigation';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useAuthStore, useUserInfo } from '@/stores/auth';
 import {
 	navigateToDeleteAccount,
 	navigateToSocialAccountCheck,
@@ -16,7 +16,7 @@ import { Alert, StyleSheet, Text, View } from 'react-native';
 import SettingListItem from '../components/Profile/SettingListItem';
 
 const Account = () => {
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 	const kakaoLogout = useAuthStore((state) => state.kakaoLogout);
 	const naverLogout = useAuthStore((state) => state.naverLogout);
 	const appleLogout = useAuthStore((state) => state.appleLogout);

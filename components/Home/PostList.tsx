@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { auth } from '@/fbase';
 import { useInfinitePosts } from '@/hooks/post/query/useInfinitePosts';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { PostListProps } from '@/types/components';
 import {
 	navigateToLogin,
@@ -21,7 +21,7 @@ const PostList = ({
 	isAddPostButtonVisible = false,
 	containerStyle,
 }: PostListProps) => {
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 	const {
 		data,
 		isLoading,

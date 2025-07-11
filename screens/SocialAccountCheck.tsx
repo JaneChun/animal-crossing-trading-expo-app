@@ -5,7 +5,7 @@ import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import SocialLoginButton from '@/components/ui/SocialLoginButton';
 import { Colors } from '@/constants/Color'; // 프로젝트 컬러 상수
 import { pop } from '@/navigation/RootNavigation';
-import { LoginResult, useAuthStore } from '@/stores/AuthStore';
+import { LoginResult, useAuthStore, useUserInfo } from '@/stores/auth';
 import { OauthType } from '@/types/user';
 import { navigateToDeleteAccount } from '@/utilities/navigationHelpers';
 import React from 'react';
@@ -13,7 +13,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const SocialAccountCheck = () => {
-	const { userInfo } = useAuthStore();
+	const userInfo = useUserInfo();
 	const kakaoLogin = useAuthStore((state) => state.kakaoLogin);
 	const naverLogin = useAuthStore((state) => state.naverLogin);
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);

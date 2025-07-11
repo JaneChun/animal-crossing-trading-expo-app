@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/stores/AuthStore';
+import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
 import { useEffect } from 'react';
 import EmptyIndicator from './EmptyIndicator';
@@ -6,7 +6,8 @@ import LoadingIndicator from './loading/LoadingIndicator';
 import { showToast } from './Toast';
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
-	const { userInfo, isAuthLoading } = useAuthStore();
+	const userInfo = useUserInfo();
+	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 
 	useEffect(() => {
 		if (!isAuthLoading && !userInfo) {

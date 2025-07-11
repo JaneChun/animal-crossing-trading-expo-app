@@ -1,5 +1,5 @@
 import { showToast } from '@/components/ui/Toast';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { CreateCommentRequest, UpdateCommentRequest } from '@/types/comment';
 import { OpenEditCommentModalParams } from '@/types/components';
 import { Collection } from '@/types/post';
@@ -14,7 +14,7 @@ export const usePostComment = (
 	id: string,
 	setShouldScroll: Dispatch<SetStateAction<boolean>>,
 ) => {
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 
 	// edit comment modal state
 	const [isEditCommentModalVisible, setIsEditCommentModalVisible] =

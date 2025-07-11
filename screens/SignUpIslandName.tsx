@@ -7,7 +7,7 @@ import { FontSizes, FontWeights } from '@/constants/Typography';
 import { saveUserInfo } from '@/firebase/services/userService';
 import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
 import { pop } from '@/navigation/RootNavigation';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useAuthStore } from '@/stores/auth';
 import { SignUpIslandNameRouteProp } from '@/types/navigation';
 import { UserInfo } from '@/types/user';
 import { FontAwesome } from '@expo/vector-icons';

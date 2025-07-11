@@ -2,7 +2,7 @@ import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { blockUser, unblockUser } from '@/firebase/services/blockService';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { BlockedUser } from '@/types/user';
 import { navigateToUserProfile } from '@/utilities/navigationHelpers';
 import React from 'react';
@@ -19,7 +19,7 @@ const BlockedUserUnit = ({
 	blockedUserInfo,
 	onToggleBlock,
 }: BlockedUserUnitProps) => {
-	const { userInfo } = useAuthStore();
+	const userInfo = useUserInfo();
 	const { uid, displayName, islandName, photoURL, isBlocked } = blockedUserInfo;
 
 	const handlePress = async () => {

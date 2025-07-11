@@ -14,11 +14,11 @@ import { useSuspensionGuard } from './hooks/shared/useSuspensionGuard';
 import { navigationRef } from './navigation/RootNavigation';
 import RootStackNavigator from './navigation/RootStackNavigator';
 import ErrorBoundary from './screens/ErrorBoundary';
-import { useAuthInitializer } from './stores/AuthStore';
-import { useBlockSubscriptionInitializer } from './stores/BlockStore';
-import { useChatSubscriptionInitializer } from './stores/ChatStore';
-import { useNotificationSubscriptionInitializer } from './stores/NotificationStore';
-import { usePushNotificationInitializer } from './stores/PushNotificationStore';
+import { useAuthInitializer } from './stores/auth';
+import { useBlockSubscriptionInitializer } from './stores/block';
+import { useChatSubscriptionInitializer } from './stores/chat';
+import { useNotificationSubscriptionInitializer } from './stores/notification';
+import { usePushNotificationInitializer } from './stores/push';
 import { RootStackParamList } from './types/navigation';
 
 const prefix = Linking.createURL('/');

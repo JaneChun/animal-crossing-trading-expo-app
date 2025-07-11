@@ -3,7 +3,7 @@ import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import { PADDING } from '@/components/ui/layout/Layout';
 import { Colors } from '@/constants/Color';
 import { getPublicUserInfo } from '@/firebase/services/userService';
-import { useBlockStore } from '@/stores/BlockStore';
+import { useBlockStore } from '@/stores/block';
 import { BlockedUser } from '@/types/user';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View } from 'react-native';

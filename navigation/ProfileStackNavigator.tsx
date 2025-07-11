@@ -2,13 +2,14 @@ import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
 import Login from '@/screens/Login';
 import Profile from '@/screens/Profile';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const ProfileStack = createNativeStackNavigator();
 
 const ProfileStackNavigator = () => {
-	const { userInfo, isAuthLoading } = useAuthStore();
+	const userInfo = useUserInfo();
+	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 
 	if (isAuthLoading) {
 		return <LoadingIndicator />;

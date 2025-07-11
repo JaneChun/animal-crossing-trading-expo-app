@@ -4,7 +4,7 @@ import TabBarLabel from '@/components/Notice/TabBarLabel';
 import Layout from '@/components/ui/layout/Layout';
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { useNotificationStore } from '@/stores/NotificationStore';
+import { useNotificationStore } from '@/stores/notification';
 import { Collection } from '@/types/post';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import React from 'react';

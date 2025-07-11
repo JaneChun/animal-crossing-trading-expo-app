@@ -1,10 +1,10 @@
-import { useAuthStore } from '@/stores/AuthStore';
+import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { Timestamp } from 'firebase/firestore';
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
 
 export const useSuspensionGuard = () => {
-	const { userInfo } = useAuthStore();
+	const userInfo = useUserInfo();
 	const kakaoLogout = useAuthStore((state) => state.kakaoLogout);
 	const naverLogout = useAuthStore((state) => state.naverLogout);
 

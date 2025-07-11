@@ -1,12 +1,12 @@
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { IMessage } from 'react-native-gifted-chat';
 
 const MessageUnit = ({ message }: { message: IMessage }) => {
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 
 	const formattedDate = (
 		message.createdAt instanceof Date

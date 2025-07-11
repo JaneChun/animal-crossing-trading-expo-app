@@ -1,11 +1,11 @@
 import { db } from '@/fbase';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { useEffect } from 'react';
 import { useBlockStore } from './store';
 
 export const useBlockSubscriptionInitializer = () => {
-	const { userInfo } = useAuthStore();
+	const userInfo = useUserInfo();
 	const { setBlockedUsers, setBlockedBy, setIsLoading, clearBlocks } =
 		useBlockStore();
 

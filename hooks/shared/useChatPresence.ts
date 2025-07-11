@@ -1,5 +1,5 @@
 import { setActiveChatRoom } from '@/firebase/services/userService';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useEffect, useRef } from 'react';
 import { AppState } from 'react-native';
@@ -7,7 +7,7 @@ import { AppState } from 'react-native';
 // 유저가 채팅방에 들어올 때 / 나갈 때 활성화 채팅방 기록
 export const useChatPresence = (chatId: string) => {
 	const appState = useRef(AppState.currentState);
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 
 	useFocusEffect(
 		useCallback(() => {

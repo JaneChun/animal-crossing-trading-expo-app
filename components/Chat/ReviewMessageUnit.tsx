@@ -3,7 +3,7 @@ import {
 	createReview,
 	getReviewBySenderId,
 } from '@/firebase/services/reviewService';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { CreateReviewParams, ReviewValue } from '@/types/review';
 import { FontAwesome6 } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
@@ -14,7 +14,7 @@ const ReviewMessageUnit = ({ message }: { message: IMessage }) => {
 	const [localReview, setLocalReview] = useState<ReviewValue>(0);
 	const [isReviewed, setIsReviewed] = useState<boolean>(false);
 	const { postId, chatId } = JSON.parse(message.text);
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 
 	const senderId = userInfo?.uid;
 	const receiverId = chatId

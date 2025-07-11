@@ -1,6 +1,6 @@
 import { db } from '@/fbase';
 import { fetchAndPopulateSenderInfo } from '@/firebase/services/notificationService';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { Notification, PopulatedNotification } from '@/types/notification';
 import {
 	collection,
@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 import { useNotificationStore } from './store';
 
 export const useNotificationSubscriptionInitializer = () => {
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 	const { setNotifications, setUnreadCount, setIsLoading, clearNotifications } =
 		useNotificationStore();
 

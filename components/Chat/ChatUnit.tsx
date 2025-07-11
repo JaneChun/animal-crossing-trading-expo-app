@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { getSafeUid, leaveChatRoom } from '@/firebase/services/chatService';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { ChatWithReceiverInfo } from '@/types/chat';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToChatRoom } from '@/utilities/navigationHelpers';
@@ -24,7 +24,7 @@ import ImageWithFallback from '../ui/ImageWithFallback';
 
 const ChatUnit = (props: ChatWithReceiverInfo) => {
 	const { id, lastMessage, unreadCount, updatedAt, receiverInfo } = props;
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 
 	const deleteChat = async (id: string) => {
 		const title = receiverInfo.displayName || '채팅방 나가기';

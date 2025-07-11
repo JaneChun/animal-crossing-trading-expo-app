@@ -5,7 +5,7 @@ import { generateChatId } from '@/firebase/services/chatService';
 import { useDeleteComment } from '@/hooks/comment/mutation/useDeleteComment';
 import { usePostContext } from '@/hooks/post/usePostContext';
 import { useBlockUser } from '@/hooks/shared/useBlockUser';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { CreateChatRoomParams, SendChatMessageParams } from '@/types/chat';
 import { CommentUnitProps } from '@/types/components';
 import { Collection } from '@/types/post';
@@ -45,7 +45,7 @@ const CommentUnit = ({
 	creatorPhotoURL,
 }: CommentUnitProps) => {
 	const { collectionName } = usePostContext();
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 
 	// 차단
 	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({

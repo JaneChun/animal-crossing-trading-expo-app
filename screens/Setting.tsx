@@ -2,7 +2,7 @@ import PushNotificationToggle from '@/components/Profile/PushNotificationToggle'
 import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useAuthStore } from '@/stores/auth';
 import {
 	navigateToAccount,
 	navigateToBlock,

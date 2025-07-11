@@ -1,6 +1,6 @@
 import { db } from '@/fbase';
 import { fetchAndPopulateReceiverInfo } from '@/firebase/services/chatService';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { Chat, ChatWithReceiverInfo } from '@/types/chat';
 import {
 	collection,
@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 import { useChatStore } from './store';
 
 export const useChatSubscriptionInitializer = () => {
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 	const {
 		setChats,
 		setUnreadCount,

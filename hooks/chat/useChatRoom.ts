@@ -1,4 +1,4 @@
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { Message } from '@/types/chat';
 import { formatIMessages } from '@/utilities/formatIMessages';
 import { useEffect } from 'react';
@@ -15,7 +15,7 @@ export const useChatRoom = ({
 	chatId: string;
 	localMessages?: Message[];
 }) => {
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 
 	const { messages, isLoading: isMessagesFetching } =
 		useGetChatMessages(chatId);

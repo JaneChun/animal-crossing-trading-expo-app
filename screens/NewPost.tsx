@@ -12,7 +12,7 @@ import { usePostDetail } from '@/hooks/post/query/usePostDetail';
 import { usePostContext } from '@/hooks/post/usePostContext';
 import { usePostSubmit } from '@/hooks/post/usePostSubmit';
 import useLoading from '@/hooks/shared/useLoading';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { ImageType } from '@/types/image';
 import { RootStackNavigation, type NewPostRouteProp } from '@/types/navigation';
 import { CartItem, CommunityType, Item, MarketType } from '@/types/post';
@@ -33,7 +33,7 @@ import AddItemModal from '../components/NewPost/AddItemModal';
 const NewPost = () => {
 	const { collectionName } = usePostContext();
 
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 	const route = useRoute<NewPostRouteProp>();
 	const stackNavigation = useNavigation<RootStackNavigation>();
 

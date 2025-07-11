@@ -19,7 +19,7 @@ import { usePost } from '@/hooks/post/usePost';
 import { usePostComment } from '@/hooks/post/usePostComment';
 import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useReportUser } from '@/hooks/shared/useReportUser';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { PostDetailRouteProp } from '@/types/navigation';
 import { Collection, CommunityType, MarketType } from '@/types/post';
 import { navigateToEditPost } from '@/utilities/navigationHelpers';
@@ -49,7 +49,7 @@ const PostDetail = () => {
 	const insets = useSafeAreaInsets();
 	const keyboardVerticalOffset = headerHeight + insets.top + insets.bottom + 10;
 
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 	const route = useRoute<PostDetailRouteProp>();
 	const { id = '', collectionName = '', notificationId = '' } = route.params;
 

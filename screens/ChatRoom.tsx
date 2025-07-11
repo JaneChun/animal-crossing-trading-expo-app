@@ -20,7 +20,7 @@ import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
 import { useReportUser } from '@/hooks/shared/useReportUser';
 
 import { goBack } from '@/navigation/RootNavigation';
-import { useBlockStore } from '@/stores/BlockStore';
+import { useBlockStore } from '@/stores/block';
 import { Message } from '@/types/chat';
 import { ChatRoomRouteProp } from '@/types/navigation';
 import { convertSendParamsToMessage } from '@/utilities/convertSendParamsToMessage';

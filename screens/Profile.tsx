@@ -14,7 +14,7 @@ import { useCurrentTab } from '@/hooks/shared/useCurrentTab';
 import useLoading from '@/hooks/shared/useLoading';
 import { useReportUser } from '@/hooks/shared/useReportUser';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { ProfileRouteProp, RootStackNavigation } from '@/types/navigation';
 import { Tab } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
@@ -37,7 +37,7 @@ const Profile = () => {
 
 	const currentTab = useCurrentTab();
 	const isFocused = useIsFocused();
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 
 	const [profileInfo, setProfileInfo] = useState<PublicUserInfo | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState<boolean>(false);

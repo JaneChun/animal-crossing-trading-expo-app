@@ -9,7 +9,7 @@ import {
 	uploadObjectToStorage,
 } from '@/firebase/services/imageService';
 import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { EditProfileModalProps } from '@/types/components';
 import { UserInfo } from '@/types/user';
 import { FontAwesome } from '@expo/vector-icons';
@@ -32,7 +32,7 @@ const EditProfileModal = ({
 	isUploading,
 	setIsUploading,
 }: EditProfileModalProps) => {
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 	const setUserInfo = useAuthStore((state) => state.setUserInfo);
 
 	// form hook 가져오기

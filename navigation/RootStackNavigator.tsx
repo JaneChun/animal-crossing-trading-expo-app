@@ -15,7 +15,7 @@ import SignUpDisplayName from '@/screens/SignUpDisplayName';
 import SignUpIslandName from '@/screens/SignUpIslandName';
 import SocialAccountCheck from '@/screens/SocialAccountCheck';
 import TermsOfService from '@/screens/TermsOfService';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useAuthStore } from '@/stores/auth';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainTabNavigator from './MainTabNavigator';
 

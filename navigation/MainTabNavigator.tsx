@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Color';
-import { useAuthStore } from '@/stores/AuthStore';
-import { useChatStore } from '@/stores/ChatStore';
-import { useNotificationStore } from '@/stores/NotificationStore';
+import { useAuthStore, useUserInfo } from '@/stores/auth';
+import { useChatStore } from '@/stores/chat';
+import { useNotificationStore } from '@/stores/notification';
 import {
 	Entypo,
 	FontAwesome6,
@@ -29,7 +29,7 @@ const getTabBarIcon =
 		);
 
 const MainTabNavigator = () => {
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 	const unreadChatCount = useChatStore((state) => state.unreadCount);
 	const unreadNotificationCount = useNotificationStore(

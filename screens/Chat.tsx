@@ -2,14 +2,14 @@ import ChatUnit from '@/components/Chat/ChatUnit';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import Layout from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
-import { useAuthStore } from '@/stores/AuthStore';
-import { useChatStore } from '@/stores/ChatStore';
+import { useUserInfo } from '@/stores/auth';
+import { useChatStore } from '@/stores/chat';
 import { ChatWithReceiverInfo } from '@/types/chat';
 import React from 'react';
 import { FlatList } from 'react-native';
 
 const Chat = () => {
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 	const chats = useChatStore((state) => state.chats);
 	const isLoading = useChatStore((state) => state.isLoading);
 

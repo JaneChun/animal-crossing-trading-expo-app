@@ -5,7 +5,7 @@ import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color'; // 프로젝트 컬러 상수
 import { pop } from '@/navigation/RootNavigation';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useAuthStore, useUserInfo } from '@/stores/auth';
 import React from 'react';
 import { Alert, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -29,7 +29,8 @@ const guideList = [
 ];
 
 const DeleteAccount = () => {
-	const { userInfo, isAuthLoading } = useAuthStore();
+	const userInfo = useUserInfo();
+	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 	const kakaoDeleteAccount = useAuthStore((state) => state.kakaoDeleteAccount);
 	const naverDeleteAccount = useAuthStore((state) => state.naverDeleteAccount);
 	const appleDeleteAccount = useAuthStore((state) => state.appleDeleteAccount);

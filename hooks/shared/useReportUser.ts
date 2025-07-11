@@ -1,13 +1,13 @@
 import { showToast } from '@/components/ui/Toast';
 import { createReport } from '@/firebase/services/reportService';
-import { useAuthStore } from '@/stores/AuthStore';
+import { useUserInfo } from '@/stores/auth';
 import { ReportUserParams } from '@/types/components';
 import { CreateReportRequest, ReportTarget } from '@/types/report';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
 import { useCallback, useState } from 'react';
 
 export const useReportUser = () => {
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 	const [isReportModalVisible, setReportModalVisible] = useState(false);
 	const [reportTarget, setReportTarget] = useState<ReportTarget | null>(null);
 

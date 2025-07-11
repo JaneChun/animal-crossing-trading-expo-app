@@ -1,5 +1,5 @@
 import { useMarkAllAsRead } from '@/hooks/notification/query/mutation/useMarkAllAsRead';
-import { useNotificationStore } from '@/stores/NotificationStore';
+import { useNotificationStore } from '@/stores/notification';
 import { NoticeTabProps } from '@/types/components';
 import { PopulatedNotification } from '@/types/notification';
 import React from 'react';

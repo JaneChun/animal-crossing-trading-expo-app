@@ -1,7 +1,7 @@
 import { showToast } from '@/components/ui/Toast';
 import { blockUser, unblockUser } from '@/firebase/services/blockService';
-import { useAuthStore } from '@/stores/AuthStore';
-import { useBlockStore } from '@/stores/BlockStore';
+import { useUserInfo } from '@/stores/auth';
+import { useBlockStore } from '@/stores/block';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
 import { useCallback } from 'react';
 import { Alert } from 'react-native';
@@ -13,7 +13,7 @@ export function useBlockUser({
 	targetUserId?: string;
 	targetUserDisplayName?: string;
 }) {
-	const userInfo = useAuthStore((state) => state.userInfo);
+	const userInfo = useUserInfo();
 	const blockedUsers = useBlockStore((state) => state.blockedUsers);
 
 	const isBlockedByMe = !!(targetUserId && blockedUsers.includes(targetUserId));
