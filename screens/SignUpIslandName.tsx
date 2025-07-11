@@ -3,10 +3,6 @@ import Button from '@/components/ui/Button';
 import CloseButton from '@/components/ui/CloseButton';
 import { showToast } from '@/components/ui/Toast';
 import { Colors } from '@/constants/Color';
-import {
-	DEFAULT_USER_REPORT,
-	DEFAULT_USER_REVIEW,
-} from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { saveUserInfo } from '@/firebase/services/userService';
 import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
@@ -62,8 +58,6 @@ const SignUpIslandName = () => {
 				displayName,
 				islandName,
 				photoURL: '',
-				review: DEFAULT_USER_REVIEW,
-				report: DEFAULT_USER_REPORT,
 				oauthType,
 				createdAt: Timestamp.now(),
 				lastLogin: Timestamp.now(),

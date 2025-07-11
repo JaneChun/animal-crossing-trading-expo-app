@@ -6,8 +6,8 @@ export interface PublicUserInfo {
 	islandName?: string;
 	photoURL?: string;
 	pushToken?: string;
-	review: UserReview;
-	report: UserReport;
+	review?: UserReview;
+	report?: UserReport;
 }
 
 export type UserReview = {
