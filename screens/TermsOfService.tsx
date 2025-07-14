@@ -99,8 +99,7 @@ const TermsOfService = () => (
 				메이드 앱으로 제공됩니다.
 			</Text>
 			<Text style={styles.listItem}>
-				• 광고 수익 모델(Google AdSense)으로 발생하는 수익은 개발자에게
-				귀속됩니다.
+				• 본 서비스 내 광고 수익은 전체 커뮤니티 서비스 운영 및 개발 유지 비용을 위한 수단이며, Nintendo 콘텐츠와는 직접적으로 관련되지 않습니다.
 			</Text>
 			<Text style={styles.listItem}>
 				• 본 서비스는 Nintendo와 공식 제휴 관계가 없으며, 허가를 받지
