@@ -7,6 +7,7 @@ export const useSuspensionGuard = () => {
 	const userInfo = useUserInfo();
 	const kakaoLogout = useAuthStore((state) => state.kakaoLogout);
 	const naverLogout = useAuthStore((state) => state.naverLogout);
+	const appleLogout = useAuthStore((state) => state.appleLogout);
 
 	useEffect(() => {
 		const suspendUntil = userInfo?.report?.suspendUntil;
@@ -29,6 +30,7 @@ export const useSuspensionGuard = () => {
 
 							if (userInfo.oauthType === 'kakao') await kakaoLogout();
 							else if (userInfo.oauthType === 'naver') await naverLogout();
+							else if (userInfo.oauthType === 'apple') await appleLogout();
 						},
 					},
 				],
