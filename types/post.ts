@@ -48,6 +48,7 @@ export interface CommonPostFields {
 	creatorId: string;
 	createdAt: Timestamp;
 	commentCount: number;
+	status: 'active' | 'hidden' | 'deleted';
 }
 
 // 게시글 타입

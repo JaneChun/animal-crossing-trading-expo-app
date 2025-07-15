@@ -30,6 +30,7 @@ const getFirestoreQuery = ({
 }: FirestoreQueryParams) => {
 	let q = query(
 		collection(db, collectionName),
+		where('status', 'not-in', ['hidden', 'deleted']), // 숨김/삭제된 게시글 제외
 		orderBy('createdAt', 'desc'),
 		limit(PAGE_SIZE),
 	);
@@ -39,6 +40,7 @@ const getFirestoreQuery = ({
 		q = query(
 			collection(db, collectionName),
 			where('creatorId', '==', filter.creatorId),
+			where('status', 'not-in', ['hidden', 'deleted']),
 			orderBy('createdAt', 'desc'),
 			limit(PAGE_SIZE),
 		);

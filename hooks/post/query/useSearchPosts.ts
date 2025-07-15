@@ -25,6 +25,7 @@ export const useSearchPosts = <C extends Collection>({
 					query: keyword,
 					hitsPerPage: PAGE_SIZE,
 					page: pageParam, // 시작 페이지 번호
+					filters: 'NOT status:hidden AND NOT status:deleted', // 숨김/삭제된 게시글 제외
 				},
 			],
 		});

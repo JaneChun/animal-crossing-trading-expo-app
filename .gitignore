@@ -42,3 +42,5 @@ yarn-error.*
 config.gypi
 
 todo.ini
+
+functions/src/migration/

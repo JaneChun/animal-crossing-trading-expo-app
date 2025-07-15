@@ -49,25 +49,41 @@ export async function handleUserReport(report: ReportData): Promise<void> {
 		);
 
 		// 정지 처리 로직
-		const now = Date.now();
-		const suspendMillis = suspendUntil?.toMillis?.() || 0;
-		let newSuspendMillis = suspendMillis;
+		const now = new Date();
+		const currentSuspendDate = suspendUntil ? suspendUntil.toDate() : null;
+		let newSuspendDate: Date | null = null;
 
 		if (recent30Days >= 7) {
-			// 최근 30일 신고 7회 이상 → 30일 정지 + 관리자 플래그
-			newSuspendMillis = Math.max(
-				suspendMillis,
-				now + 30 * 24 * 60 * 60 * 1000,
+			// 최근 30일 신고 7회 이상 → 30일 정지 + 관리자 플
+			const thirtyDaysLater = new Date(
+				now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }),
 			);
+			thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
+			thirtyDaysLater.setHours(0, 0, 0, 0); // 한국 시간 00:00:00으로 설정
+
+			if (!currentSuspendDate || thirtyDaysLater > currentSuspendDate) {
+				newSuspendDate = thirtyDaysLater;
+			}
 			needsAdminReview = true;
 		} else if (recent7Days >= 3) {
 			// 최근 7일 신고 3회 이상 → 7일 정지
-			newSuspendMillis = Math.max(suspendMillis, now + 7 * 24 * 60 * 60 * 1000);
+			const sevenDaysLater = new Date(
+				now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }),
+			);
+			sevenDaysLater.setDate(sevenDaysLater.getDate() + 7);
+			sevenDaysLater.setHours(0, 0, 0, 0); // 한국 시간 00:00:00으로 설정
+
+			if (!currentSuspendDate || sevenDaysLater > currentSuspendDate) {
+				newSuspendDate = sevenDaysLater;
+			}
 		}
 
 		// 정지 기간 업데이트
-		if (newSuspendMillis > suspendMillis) {
-			suspendUntil = Timestamp.fromMillis(newSuspendMillis);
+		if (newSuspendDate !== null) {
+			suspendUntil = Timestamp.fromDate(newSuspendDate);
+
+			// 계정 정지 시 게시글 처리
+			await handleUserPostsOnSuspension(reporteeId);
 		}
 
 		// 유저 도큐먼트 업데이트
@@ -83,8 +99,78 @@ export async function handleUserReport(report: ReportData): Promise<void> {
 			{ merge: true },
 		);
 	} catch (error) {
-		console.error('유저 신고 실패:', error);
-		throw error; // 에러를 다시 throw하여 상위 함수에서 적절히 처리하도록
+		console.error('유저 신고 처리 실패:', error);
+		throw error;
+	}
+}
+
+/**
+ * 계정 정지 시 사용자의 게시글 처리
+ * @param userId - 정지된 사용자 ID
+ */
+async function handleUserPostsOnSuspension(userId: string): Promise<void> {
+	try {
+		const batch = db.batch();
+
+		// 사용자의 다른 게시글들 숨김 처리
+		const [boardPosts, communityPosts] = await Promise.all([
+			db.collection('Boards').where('creatorId', '==', userId).get(),
+			db.collection('Communities').where('creatorId', '==', userId).get(),
+		]);
+
+		boardPosts.docs.forEach((doc) => {
+			batch.update(doc.ref, { status: 'hidden' });
+		});
+
+		communityPosts.docs.forEach((doc) => {
+			batch.update(doc.ref, { status: 'hidden' });
+		});
+
+		await batch.commit();
+		console.log(`사용자 ${userId}의 게시글 숨김 처리 완료`);
+	} catch (error) {
+		console.error(`사용자 ${userId}의 게시글 숨김 처리 실패: `, error);
+		throw error;
+	}
+}
+
+/**
+ * 정지 해제 시 사용자의 숨김 게시글 복구
+ * @param userId - 정지 해제된 사용자 ID
+ */
+export async function restoreUserPostsAfterSuspension(
+	userId: string,
+): Promise<void> {
+	try {
+		const batch = db.batch();
+
+		// 숨김 상태인 게시글들 조회
+		const [hiddenBoardPosts, hiddenCommunityPosts] = await Promise.all([
+			db
+				.collection('Boards')
+				.where('creatorId', '==', userId)
+				.where('status', '==', 'hidden')
+				.get(),
+			db
+				.collection('Communities')
+				.where('creatorId', '==', userId)
+				.where('status', '==', 'hidden')
+				.get(),
+		]);
+
+		hiddenBoardPosts.docs.forEach((doc) => {
+			batch.update(doc.ref, { status: 'active' });
+		});
+
+		hiddenCommunityPosts.docs.forEach((doc) => {
+			batch.update(doc.ref, { status: 'active' });
+		});
+
+		await batch.commit();
+		console.log(`사용자 ${userId}의 게시글 복구 완료`);
+	} catch (error) {
+		console.error(`사용자 ${userId}의 게시글 복구 실패: `, error);
+		throw error;
 	}
 }
 

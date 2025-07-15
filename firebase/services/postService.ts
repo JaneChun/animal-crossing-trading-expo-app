@@ -149,6 +149,7 @@ export const createPost = async <C extends Collection>({
 				commentCount: 0,
 				chatRoomIds: [],
 				reviewPromptSent: false,
+				status: 'active',
 			},
 		});
 
