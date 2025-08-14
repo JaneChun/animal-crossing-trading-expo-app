@@ -16,6 +16,7 @@ type EditCommentModalProps = {
 	isVisible: boolean;
 	onClose: () => void;
 	onSubmit: (comment: string) => void;
+	title?: string;
 };
 
 const EditCommentModal = ({
@@ -23,6 +24,7 @@ const EditCommentModal = ({
 	isVisible,
 	onClose,
 	onSubmit,
+	title = '댓글 수정',
 }: EditCommentModalProps) => {
 	const [newCommentInput, setNewCommentInput] = useState(comment);
 
@@ -71,7 +73,7 @@ const EditCommentModal = ({
 			isVisible={isVisible}
 			onClose={onClose}
 			heightRatio={0.95}
-			title='댓글 수정'
+			title={title}
 			rightButton={submitButton}
 			leftButton={cancelButton}
 			bodyStyle={styles.bottomSheetBodyStyle}

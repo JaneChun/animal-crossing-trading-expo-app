@@ -5,15 +5,18 @@ import CommentUnit from './CommentUnit';
 const CommentsList = ({
 	postId,
 	postCreatorId,
+	postCommentCount,
 	comments,
 	chatRoomIds,
 	containerStyle,
 	onReportClick,
-	onEditClick,
+	onEditCommentClick,
+	onReplyClick,
+	onEditReplyClick,
 }: CommentsListProps) => {
 	return (
 		<View style={[styles.container, containerStyle]}>
-			<Text style={styles.commentHeader}>댓글 ({comments.length})</Text>
+			<Text style={styles.commentHeader}>댓글 ({postCommentCount})</Text>
 
 			<View>
 				{comments.map((item) => (
@@ -23,7 +26,9 @@ const CommentsList = ({
 						postCreatorId={postCreatorId}
 						chatRoomIds={chatRoomIds}
 						onReportClick={onReportClick}
-						onEditClick={onEditClick}
+						onEditCommentClick={onEditCommentClick}
+						onReplyClick={onReplyClick}
+						onEditReplyClick={onEditReplyClick}
 						{...item}
 					/>
 				))}
