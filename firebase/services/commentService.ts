@@ -1,9 +1,5 @@
 import { db } from '@/fbase';
-import {
-	Comment,
-	CreateCommentRequest,
-	UpdateCommentRequest,
-} from '@/types/comment';
+import { Comment, CreateCommentRequest, UpdateCommentRequest } from '@/types/comment';
 import { Notification } from '@/types/notification';
 import { Collection } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
@@ -25,9 +21,7 @@ import firestoreRequest from '../core/firebaseInterceptor';
 import { getDocFromFirestore } from '../core/firestoreService';
 import { getPublicUserInfos } from './userService';
 
-export const fetchAndPopulateUsers = async <T extends Comment, U>(
-	q: Query<DocumentData>,
-) => {
+export const fetchAndPopulateUsers = async <T extends Comment, U>(q: Query<DocumentData>) => {
 	return firestoreRequest('댓글 조회', async () => {
 		const querySnapshot = await getDocs(q);
 
@@ -40,16 +34,14 @@ export const fetchAndPopulateUsers = async <T extends Comment, U>(
 			return { id, ...docData } as unknown as T;
 		});
 
-		const uniqueCreatorIds: string[] = [
-			...new Set(data.map((item) => item.creatorId)),
-		] as string[];
+		const uniqueCreatorIds: string[] = [...new Set(data.map((item) => item.creatorId))] as string[];
 
-		const publicUserInfos: Record<string, PublicUserInfo> =
-			await getPublicUserInfos(uniqueCreatorIds);
+		const publicUserInfos: Record<string, PublicUserInfo> = await getPublicUserInfos(
+			uniqueCreatorIds,
+		);
 
 		const populatedData: U[] = data.map((item) => {
-			const userInfo =
-				publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);
+			const userInfo = publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);
 
 			return {
 				...item,
@@ -114,6 +106,7 @@ export const createComment = async ({
 				receiverId,
 				senderId,
 				type: collectionName,
+				actionType: 'comment', // 댓글
 				postId,
 				body: requestData.body,
 				createdAt: Timestamp.now(),
@@ -154,9 +147,26 @@ export const deleteComment = async (
 	collectionName: Collection,
 	postId: string,
 	commentId: string,
-): Promise<void> => {
+): Promise<{ replyCount: number }> => {
 	return firestoreRequest('댓글 삭제', async () => {
+		const batch = writeBatch(db);
+
+		// 1. 답글 개수 조회 및 삭제
+		const repliesRef = collection(db, collectionName, postId, 'Comments', commentId, 'Replies');
+		const repliesSnapshot = await getDocs(repliesRef);
+		const replyCount = repliesSnapshot.size;
+
+		// 모든 답글 삭제
+		repliesSnapshot.docs.forEach((replyDoc) => {
+			batch.delete(replyDoc.ref);
+		});
+
+		// 2. 댓글 삭제
 		const commentRef = doc(db, collectionName, postId, 'Comments', commentId);
-		await deleteDoc(commentRef);
+		batch.delete(commentRef);
+
+		await batch.commit();
+
+		return { replyCount };
 	});
 };

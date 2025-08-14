@@ -2,9 +2,12 @@ import { Timestamp } from 'firebase/firestore';
 import { Collection, Post } from './post';
 import { PublicUserInfo } from './user';
 
+type ActionType = 'reply' | 'comment';
+
 export interface Notification {
 	id: string;
 	type: Collection;
+	actionType?: ActionType;
 	body: string;
 	postId: string;
 	receiverId: string;

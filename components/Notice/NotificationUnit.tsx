@@ -10,15 +10,13 @@ import { FontAwesome } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import Reanimated, {
-	SharedValue,
-	useAnimatedStyle,
-} from 'react-native-reanimated';
+import Reanimated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 
 const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 	const {
 		id,
 		type,
+		actionType,
 		body,
 		postId,
 		receiverId,
@@ -32,8 +30,7 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 
 	let title = '게시글';
 	if (post?.title) {
-		title =
-			post.title.length > 8 ? `${post.title.substring(0, 8)}...` : post.title;
+		title = post.title.length > 8 ? `${post.title.substring(0, 8)}...` : post.title;
 	}
 
 	const onPressNotification = async ({
@@ -48,10 +45,7 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 	};
 
 	// Swipeable이 스와이프될 때 보여줄 삭제 버튼을 생성
-	const renderRightAction = (
-		prog: SharedValue<number>,
-		drag: SharedValue<number>,
-	) => {
+	const renderRightAction = (prog: SharedValue<number>, drag: SharedValue<number>) => {
 		// 스와이프 시 드래그한 거리(drag.value)에 따라 삭제 버튼 위치 조정
 		const animatedStyle = useAnimatedStyle(() => {
 			return {
@@ -61,10 +55,7 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 
 		return (
 			<Reanimated.View style={[styles.rightActionContainer, animatedStyle]}>
-				<Pressable
-					style={styles.rightActionButton}
-					onPress={() => deleteNotification()}
-				>
+				<Pressable style={styles.rightActionButton} onPress={() => deleteNotification()}>
 					<FontAwesome name='trash' color='white' size={24} />
 				</Pressable>
 			</Reanimated.View>
@@ -76,10 +67,7 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 	return (
 		<Swipeable friction={2} renderRightActions={renderRightAction}>
 			<Pressable
-				style={[
-					styles.container,
-					isRead ? styles.readBackground : styles.unreadBackground,
-				]}
+				style={[styles.container, isRead ? styles.readBackground : styles.unreadBackground]}
 				onPress={() => onPressNotification({ postId, collectionName })}
 			>
 				{/* 콘텐츠 */}
@@ -88,8 +76,9 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 						<Text style={styles.highlight}>
 							{senderInfo?.displayName ?? DEFAULT_USER_DISPLAY_NAME}
 						</Text>
-						님이 <Text style={styles.highlight}>{title}</Text>에 댓글을
-						남겼습니다.
+						<Text>님이 </Text>
+						<Text style={styles.highlight}>{title}</Text>
+						<Text>{`에 ${actionType === 'reply' ? '답글' : '댓글'}을 남겼습니다.`}</Text>
 					</Text>
 					<Text style={styles.body} numberOfLines={2}>
 						"{body}"

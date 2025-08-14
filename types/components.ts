@@ -25,6 +25,7 @@ import {
 	Post,
 	PostWithCreatorInfo,
 } from './post';
+import { ReplyWithCreatorInfo } from './reply';
 import { ReportCategory } from './report';
 import { OauthType, PublicUserInfo } from './user';
 
@@ -152,16 +153,30 @@ export type BodyProps = {
 export type CommentInputProps = {
 	disabled: boolean;
 	onSubmit: (input: string) => void;
+	replyMode?: {
+		isReplyMode: boolean;
+		parentDisplayName: string;
+		onCancel?: () => void;
+	};
+};
+
+type OnReplyClickParams = {
+	commentId: string;
+	parentId: string;
+	parentDisplayName: string;
 };
 
 export type CommentsListProps = {
 	postId: string;
 	postCreatorId: string;
+	postCommentCount: number;
 	comments: CommentWithCreatorInfo[];
 	chatRoomIds: string[];
 	containerStyle?: ViewStyle;
 	onReportClick: (params: OpenReportModalParams) => void;
-	onEditClick: (params: OpenEditCommentModalParams) => void;
+	onEditCommentClick: (params: OpenEditCommentModalParams) => void;
+	onReplyClick: (params: OnReplyClickParams) => void;
+	onEditReplyClick: (params: OpenEditReplyModalParams) => void;
 };
 
 export type ReportUserParams = {
@@ -179,12 +194,30 @@ export type OpenEditCommentModalParams = {
 	commentText: string;
 };
 
+export type OpenEditReplyModalParams = {
+	commentId: string;
+	replyId: string;
+	replyText: string;
+};
+
 export interface CommentUnitProps extends CommentWithCreatorInfo {
 	postId: string;
 	postCreatorId: string;
 	chatRoomIds: string[];
 	onReportClick: (params: OpenReportModalParams) => void;
-	onEditClick: (params: OpenEditCommentModalParams) => void;
+	onEditCommentClick: (params: OpenEditCommentModalParams) => void;
+	onReplyClick: (params: OnReplyClickParams) => void;
+	onEditReplyClick: (params: OpenEditReplyModalParams) => void;
+}
+
+export interface ReplyUnitProps extends ReplyWithCreatorInfo {
+	postId: string;
+	postCreatorId: string;
+	commentId: string;
+	mentionTag?: string;
+	onReportClick: (params: { commentId: string; reporteeId: string }) => void;
+	onEditClick: (params: { replyId: string; replyText: string }) => void;
+	onReplyClick: (params: OnReplyClickParams) => void;
 }
 
 export type CreatedAtProps = {

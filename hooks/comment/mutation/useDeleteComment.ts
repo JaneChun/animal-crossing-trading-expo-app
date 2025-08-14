@@ -7,7 +7,10 @@ export const useDeleteComment = (collectionName: Collection, postId: string, com
 
 	return useMutation({
 		mutationFn: () => deleteComment(collectionName, postId, commentId),
-		onSuccess: () => {
+		onSuccess: ({ replyCount }) => {
+			// 댓글 1개 + 답글 개수만큼 총 댓글 수 감소
+			const totalDecrement = 1 + replyCount;
+
 			// 1. Optimistic Update: posts 쿼리 데이터에서 commentCount 즉시 감소
 			queryClient.setQueryData<InfiniteData<PaginatedPosts<typeof collectionName>>>(
 				['posts', collectionName],
@@ -20,7 +23,7 @@ export const useDeleteComment = (collectionName: Collection, postId: string, com
 							...page,
 							data: page.data.map((post) =>
 								post.id === postId
-									? { ...post, commentCount: Math.max(0, post.commentCount - 1) }
+									? { ...post, commentCount: Math.max(0, post.commentCount - totalDecrement) }
 									: post,
 							),
 						})),
@@ -33,7 +36,7 @@ export const useDeleteComment = (collectionName: Collection, postId: string, com
 				if (!oldData) return oldData;
 				return {
 					...oldData,
-					commentCount: Math.max(0, oldData.commentCount - 1),
+					commentCount: Math.max(0, oldData.commentCount - totalDecrement),
 				};
 			});
 

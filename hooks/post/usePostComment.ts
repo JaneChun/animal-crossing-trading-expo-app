@@ -106,6 +106,6 @@ export const usePostComment = (
 		editingCommentText,
 		openEditCommentModal,
 		closeEditCommentModal,
-		isCommentsLoading: isCommentsFetching || isCommentCreating || isCommentUpdating,
+		isCommentsLoading: isCommentsFetching && !isCommentCreating && !isCommentUpdating,
 	};
 };

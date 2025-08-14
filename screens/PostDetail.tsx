@@ -1,7 +1,7 @@
 import CommunityTypeBadge from '@/components/Community/CommunityTypeBadge';
 import MarketTypeBadge from '@/components/Home/MarketTypeBadge';
 import Body from '@/components/PostDetail/Body';
-import CommentInput from '@/components/PostDetail/CommentInput';
+import CommentInput, { CommentInputRef } from '@/components/PostDetail/CommentInput';
 import CommentsList from '@/components/PostDetail/CommentsList';
 import CreatedAt from '@/components/PostDetail/CreatedAt';
 import ImageCarousel from '@/components/PostDetail/ImageCarousel';
@@ -17,31 +17,20 @@ import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
 import { usePost } from '@/hooks/post/usePost';
 import { usePostComment } from '@/hooks/post/usePostComment';
+import { usePostReply } from '@/hooks/reply/usePostReply';
 import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useReportUser } from '@/hooks/shared/useReportUser';
 import { useUserInfo } from '@/stores/auth';
 import { PostDetailRouteProp } from '@/types/navigation';
 import { Collection, CommunityType, MarketType } from '@/types/post';
 import { navigateToEditPost } from '@/utilities/navigationHelpers';
-import {
-	isBoardPost,
-	isCommunityPost,
-} from '@/utilities/typeGuards/postTypeGuards';
+import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
 import React, { useRef, useState } from 'react';
-import {
-	Alert,
-	KeyboardAvoidingView,
-	Platform,
-	StyleSheet,
-	View,
-} from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
-import {
-	SafeAreaView,
-	useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import EditCommentModal from '../components/PostDetail/EditCommentModal';
 
 const PostDetail = () => {
@@ -54,6 +43,7 @@ const PostDetail = () => {
 	const { id = '', collectionName = '', notificationId = '' } = route.params;
 
 	const flatListRef = useRef<any>(null);
+	const commentInputRef = useRef<CommentInputRef>(null);
 	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
 
 	// 게시글
@@ -75,13 +65,30 @@ const PostDetail = () => {
 		isCommentsLoading,
 	} = usePostComment(collectionName as Collection, id, setShouldScroll);
 
-	// 신고
+	// 답글
 	const {
-		isReportModalVisible,
-		openReportModal,
-		closeReportModal,
-		submitReport,
-	} = useReportUser();
+		isReplyMode,
+		parentDisplayName,
+		handleReplyClick: originalHandleReplyClick,
+		handleReplyCancel,
+		createReply,
+		updateReply,
+		isEditReplyModalVisible,
+		editingReplyText,
+		openEditReplyModal,
+		closeEditReplyModal,
+		isRepliesLoading,
+	} = usePostReply(collectionName as Collection, id);
+
+	const handleReplyClickWithFocus = (params: any) => {
+		originalHandleReplyClick(params);
+		setTimeout(() => {
+			commentInputRef.current?.focus();
+		}, 100);
+	};
+
+	// 신고
+	const { isReportModalVisible, openReportModal, closeReportModal, submitReport } = useReportUser();
 
 	// 차단
 	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({
@@ -144,7 +151,7 @@ const PostDetail = () => {
 		}
 	};
 
-	if (isPostLoading || isCommentsLoading) {
+	if (isPostLoading || isCommentsLoading || isRepliesLoading) {
 		return <LoadingIndicator />;
 	}
 
@@ -161,9 +168,7 @@ const PostDetail = () => {
 							<ActionSheetButton
 								color={Colors.font_black}
 								size={18}
-								destructiveButtonIndex={
-									isAuthor ? (showDoneOption ? 2 : 1) : undefined
-								}
+								destructiveButtonIndex={isAuthor ? (showDoneOption ? 2 : 1) : undefined}
 								options={headerOptions}
 							/>
 						) : null
@@ -191,10 +196,7 @@ const PostDetail = () => {
 										)}
 									</View>
 
-									<Title
-										title={post.title}
-										containerStyle={{ marginBottom: 4 }}
-									/>
+									<Title title={post.title} containerStyle={{ marginBottom: 4 }} />
 
 									<View style={styles.infoContainer}>
 										<UserInfo
@@ -209,26 +211,14 @@ const PostDetail = () => {
 								{/* 본문 */}
 								<View style={styles.body}>
 									{isCommunityPost(post, collectionName) && (
-										<ImageCarousel
-											images={post.images}
-											containerStyle={{ marginBottom: 16 }}
-										/>
+										<ImageCarousel images={post.images} containerStyle={{ marginBottom: 16 }} />
 									)}
-									<Body
-										body={post.body}
-										containerStyle={{ marginBottom: 24 }}
-									/>
+									<Body body={post.body} containerStyle={{ marginBottom: 24 }} />
 
 									{isBoardPost(post, collectionName) && (
 										<>
-											<ItemSummaryList
-												cart={post.cart}
-												containerStyle={{ marginBottom: 16 }}
-											/>
-											<Total
-												cart={post.cart}
-												containerStyle={{ marginBottom: 24 }}
-											/>
+											<ItemSummaryList cart={post.cart} containerStyle={{ marginBottom: 16 }} />
+											<Total cart={post.cart} containerStyle={{ marginBottom: 24 }} />
 										</>
 									)}
 								</View>
@@ -237,10 +227,9 @@ const PostDetail = () => {
 								<CommentsList
 									postId={post.id}
 									postCreatorId={post.creatorId}
+									postCommentCount={post.commentCount}
 									comments={comments}
-									chatRoomIds={
-										isBoardPost(post, collectionName) ? post.chatRoomIds : []
-									}
+									chatRoomIds={isBoardPost(post, collectionName) ? post.chatRoomIds : []}
 									onReportClick={({ commentId, reporteeId }) =>
 										openReportModal({
 											postId: post.id,
@@ -248,8 +237,12 @@ const PostDetail = () => {
 											reporteeId,
 										})
 									}
-									onEditClick={({ commentId, commentText }) =>
+									onEditCommentClick={({ commentId, commentText }) =>
 										openEditCommentModal({ commentId, commentText })
+									}
+									onReplyClick={handleReplyClickWithFocus}
+									onEditReplyClick={({ replyId, commentId, replyText }) =>
+										openEditReplyModal({ replyId, commentId, replyText })
 									}
 								/>
 							</View>
@@ -259,7 +252,20 @@ const PostDetail = () => {
 						behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 						keyboardVerticalOffset={keyboardVerticalOffset}
 					>
-						<CommentInput onSubmit={createComment} disabled={!userInfo} />
+						<CommentInput
+							ref={commentInputRef}
+							onSubmit={isReplyMode ? createReply : createComment}
+							disabled={!userInfo}
+							replyMode={
+								isReplyMode
+									? {
+											isReplyMode: true,
+											parentDisplayName: parentDisplayName!,
+											onCancel: handleReplyCancel,
+									  }
+									: undefined
+							}
+						/>
 					</KeyboardAvoidingView>
 
 					{isEditCommentModalVisible && (
@@ -268,6 +274,16 @@ const PostDetail = () => {
 							isVisible={isEditCommentModalVisible}
 							onClose={closeEditCommentModal}
 							onSubmit={updateComment}
+						/>
+					)}
+
+					{isEditReplyModalVisible && (
+						<EditCommentModal
+							comment={editingReplyText}
+							isVisible={isEditReplyModalVisible}
+							onClose={closeEditReplyModal}
+							onSubmit={updateReply}
+							title='답글 수정'
 						/>
 					)}
 
