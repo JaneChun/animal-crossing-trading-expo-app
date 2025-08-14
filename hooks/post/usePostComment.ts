@@ -16,31 +16,26 @@ export const usePostComment = (
 ) => {
 	const userInfo = useUserInfo();
 
-	// edit comment modal state
-	const [isEditCommentModalVisible, setIsEditCommentModalVisible] =
-		useState<boolean>(false);
-	const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
-	const [editingCommentText, setEditingCommentText] = useState<string>('');
-
+	// Comment mutation hooks
 	const { data: comments = [], isLoading: isCommentsFetching } = useComments(
 		collectionName as Collection,
 		id,
 	);
-	const { mutate: createComment, isPending: isCommentCreating } =
-		useCreateComment({
-			collectionName: collectionName as Collection,
-			postId: id,
-		});
-	const { mutate: updateComment, isPending: isCommentUpdating } =
-		useUpdateComment({
-			collectionName: collectionName as Collection,
-			postId: id,
-		});
+	const { mutate: createComment, isPending: isCommentCreating } = useCreateComment({
+		collectionName: collectionName as Collection,
+		postId: id,
+	});
+	const { mutate: updateComment, isPending: isCommentUpdating } = useUpdateComment({
+		collectionName: collectionName as Collection,
+		postId: id,
+	});
 
-	const openEditCommentModal = ({
-		commentId,
-		commentText,
-	}: OpenEditCommentModalParams) => {
+	// Edit comment modal state
+	const [isEditCommentModalVisible, setIsEditCommentModalVisible] = useState<boolean>(false);
+	const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+	const [editingCommentText, setEditingCommentText] = useState<string>('');
+
+	const openEditCommentModal = ({ commentId, commentText }: OpenEditCommentModalParams) => {
 		setEditingCommentId(commentId);
 		setEditingCommentText(commentText);
 		setIsEditCommentModalVisible(true);
@@ -111,7 +106,6 @@ export const usePostComment = (
 		editingCommentText,
 		openEditCommentModal,
 		closeEditCommentModal,
-		isCommentsLoading:
-			isCommentsFetching || isCommentCreating || isCommentUpdating,
+		isCommentsLoading: isCommentsFetching || isCommentCreating || isCommentUpdating,
 	};
 };

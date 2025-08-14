@@ -21,9 +21,7 @@ export const useUpdateComment = ({
 			requestData: UpdateCommentRequest;
 		}) => updateComment({ collectionName, postId, commentId, requestData }),
 		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['postDetail', collectionName, postId],
-			});
+			// 댓글 목록 갱신
 			queryClient.invalidateQueries({
 				queryKey: ['comments', collectionName, postId],
 			});
