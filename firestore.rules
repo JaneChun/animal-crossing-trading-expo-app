@@ -34,6 +34,16 @@ service cloud.firestore {
       allow update: if request.auth.uid == resource.data.creatorId; // 본인만
       allow delete: if request.auth.uid == resource.data.creatorId; // 본인만
     }
+
+    // Replies
+    match /{collectionName}/{postId}/Comments/{commentId}/Replies/{replyId} {
+      allow read: if true; // 누구나
+      allow create: if request.auth != null && 
+        request.auth.uid == request.resource.data.creatorId; // 로그인한 유저만, 본인 ID만
+      allow update: if request.auth.uid == resource.data.creatorId; // 본인만
+      allow delete: if request.auth.uid == resource.data.creatorId || // 답글 작성자
+        request.auth.uid == get(/databases/$(database)/documents/$(collectionName)/$(postId)/Comments/$(commentId)).data.creatorId; // 댓글 작성자
+    }
     
     // Notifications
     match /Notifications/{notificationId} {

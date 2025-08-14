@@ -1,8 +1,5 @@
 import * as functions from 'firebase-functions';
-import {
-	onDocumentCreated,
-	onDocumentDeleted,
-} from 'firebase-functions/v2/firestore';
+import { onDocumentCreated, onDocumentDeleted } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 
 // Auth functions
@@ -11,17 +8,13 @@ import { createFirebaseCustomToken } from './auth/customToken';
 // Notification handlers
 import { handleChatMessageCreated } from './notifications/chat';
 import { handleCommentNotification } from './notifications/comments';
+import { handleReplyNotification } from './notifications/reply';
 
 // Trigger handlers
 import { handleUserBlocked, handleUserUnblocked } from './triggers/blocking';
-import {
-	handleCommentCreated,
-	handleCommentDeleted,
-} from './triggers/comments';
-import {
-	handleUserReport,
-	restoreUserPostsAfterSuspension,
-} from './triggers/reports';
+import { handleCommentCreated, handleCommentDeleted } from './triggers/comments';
+import { handleReplyCreated, handleReplyDeleted } from './triggers/replies';
+import { handleUserReport, restoreUserPostsAfterSuspension } from './triggers/reports';
 import { handleUserReview } from './triggers/reviews';
 import { deleteUserAndArchive as deleteUserAndArchiveHandler } from './triggers/userManagement';
 
@@ -33,11 +26,9 @@ import { deleteUserAndArchive as deleteUserAndArchiveHandler } from './triggers/
  * Firebase Custom Token 생성 함수
  * 카카오, 네이버, Apple OAuth 토큰을 Firebase Custom Token으로 변환
  */
-export const getFirebaseCustomToken = functions.https.onCall(
-	async (request) => {
-		return await createFirebaseCustomToken(request.data);
-	},
-);
+export const getFirebaseCustomToken = functions.https.onCall(async (request) => {
+	return await createFirebaseCustomToken(request.data);
+});
 
 /**
  * 사용자 삭제 및 아카이브 함수
@@ -79,7 +70,14 @@ export const onNotificationCreated = onDocumentCreated(
 		if (!snapshot) return;
 
 		const notification = snapshot.data() as any;
-		await handleCommentNotification(notification, event.params.notificationId);
+
+		// actionType 필드로 구분
+		if (notification.actionType === 'reply') {
+			await handleReplyNotification(notification, event.params.notificationId);
+		} else {
+			// 기본값은 댓글 (기존 호환성 유지)
+			await handleCommentNotification(notification, event.params.notificationId);
+		}
 	},
 );
 
@@ -108,34 +106,52 @@ export const onCommentDeleted = onDocumentDeleted(
 );
 
 /**
+ * 답글 생성 시 트리거
+ * 게시글의 댓글 수 증가
+ */
+export const onReplyCreated = onDocumentCreated(
+	'{collection}/{postId}/Comments/{commentId}/Replies/{replyId}',
+	async (event) => {
+		const { collection, postId } = event.params;
+		await handleReplyCreated(collection, postId);
+	},
+);
+
+/**
+ * 답글 삭제 시 트리거
+ * 게시글의 댓글 수 감소
+ */
+export const onReplyDeleted = onDocumentDeleted(
+	'{collection}/{postId}/Comments/{commentId}/Replies/{replyId}',
+	async (event) => {
+		const { collection, postId } = event.params;
+		await handleReplyDeleted(collection, postId);
+	},
+);
+
+/**
  * 신고 생성 시 트리거
  * 사용자 신고 정보 업데이트 및 정지 처리
  */
-export const updateUserReport = onDocumentCreated(
-	'Reports/{reportId}',
-	async (event) => {
-		const snapshot = event.data;
-		if (!snapshot) return;
+export const updateUserReport = onDocumentCreated('Reports/{reportId}', async (event) => {
+	const snapshot = event.data;
+	if (!snapshot) return;
 
-		const report = snapshot.data() as any;
-		await handleUserReport(report);
-	},
-);
+	const report = snapshot.data() as any;
+	await handleUserReport(report);
+});
 
 /**
  * 리뷰 생성 시 트리거
  * 사용자 리뷰 정보 업데이트 및 뱃지 부여
  */
-export const updateUserReview = onDocumentCreated(
-	'Reviews/{reviewId}',
-	async (event) => {
-		const snapshot = event.data;
-		if (!snapshot) return;
+export const updateUserReview = onDocumentCreated('Reviews/{reviewId}', async (event) => {
+	const snapshot = event.data;
+	if (!snapshot) return;
 
-		const review = snapshot.data() as any;
-		await handleUserReview(review);
-	},
-);
+	const review = snapshot.data() as any;
+	await handleUserReview(review);
+});
 
 /**
  * 사용자 차단 시 트리거
@@ -173,42 +189,45 @@ export const onUnblockUser = onDocumentDeleted(
  * 매일 한국 시간 자정에 실행되는 스케줄러 함수
  * 정지 해제된 사용자들의 게시글 복구 처리
  */
-export const restorePostsScheduler = onSchedule({
-	schedule: '0 0 * * *',
-	timeZone: 'Asia/Seoul'
-}, async () => {
-	console.log('게시글 복구 스케줄러 시작');
+export const restorePostsScheduler = onSchedule(
+	{
+		schedule: '0 0 * * *',
+		timeZone: 'Asia/Seoul',
+	},
+	async () => {
+		console.log('게시글 복구 스케줄러 시작');
 
-	try {
-		const db = require('./utils/common').db;
-		const now = new Date();
+		try {
+			const db = require('./utils/common').db;
+			const now = new Date();
 
-		// 정지 기간이 만료된 사용자들 조회
-		const usersSnapshot = await db
-			.collection('Users')
-			.where('report.suspendUntil', '<=', now)
-			.where('report.suspendUntil', '!=', null)
-			.get();
+			// 정지 기간이 만료된 사용자들 조회
+			const usersSnapshot = await db
+				.collection('Users')
+				.where('report.suspendUntil', '<=', now)
+				.where('report.suspendUntil', '!=', null)
+				.get();
 
-		console.log(`정지 해제 대상 사용자 수: ${usersSnapshot.size}`);
+			console.log(`정지 해제 대상 사용자 수: ${usersSnapshot.size}`);
 
-		// 각 사용자의 게시글 복구 처리
-		for (const userDoc of usersSnapshot.docs) {
-			const userId = userDoc.id;
+			// 각 사용자의 게시글 복구 처리
+			for (const userDoc of usersSnapshot.docs) {
+				const userId = userDoc.id;
 
-			// 정지 해제 처리
-			await userDoc.ref.update({
-				'report.suspendUntil': null,
-			});
+				// 정지 해제 처리
+				await userDoc.ref.update({
+					'report.suspendUntil': null,
+				});
 
-			// 게시글 복구
-			await restoreUserPostsAfterSuspension(userId);
+				// 게시글 복구
+				await restoreUserPostsAfterSuspension(userId);
 
-			console.log(`사용자 ${userId} 정지 해제 및 게시글 복구 완료`);
+				console.log(`사용자 ${userId} 정지 해제 및 게시글 복구 완료`);
+			}
+
+			console.log('게시글 복구 스케줄러 완료');
+		} catch (error) {
+			console.error('게시글 복구 스케줄러 실행 중 오류:', error);
 		}
-
-		console.log('게시글 복구 스케줄러 완료');
-	} catch (error) {
-		console.error('게시글 복구 스케줄러 실행 중 오류:', error);
-	}
-});
+	},
+);
