@@ -4,7 +4,7 @@ export default {
 	expo: {
 		name: '모동숲 마켓',
 		slug: 'animal-crossing-trading-app',
-		version: '1.0.5',
+		version: '1.0.6',
 		orientation: 'portrait',
 		icon: './assets/images/app_icon.png',
 		scheme: 'animal-crossing-trading-app',
@@ -45,9 +45,7 @@ export default {
 				'expo-build-properties',
 				{
 					android: {
-						extraMavenRepos: [
-							'https://devrepo.kakao.com/nexus/content/groups/public/',
-						],
+						extraMavenRepos: ['https://devrepo.kakao.com/nexus/content/groups/public/'],
 						newArchEnabled: true,
 					},
 					ios: {

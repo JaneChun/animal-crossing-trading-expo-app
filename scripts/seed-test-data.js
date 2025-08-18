@@ -39,7 +39,7 @@ const testUsers = [
 		},
 	},
 	{
-		uid: 'user2',
+		uid: 'u_s_e_r_2',
 		email: 'test2@example.com',
 		displayName: '동숲마니아',
 		photoURL: 'https://via.placeholder.com/150',
@@ -101,17 +101,19 @@ const testBoards = [
 	},
 	{
 		id: 'board2',
+		status: 'active',
 		body: '마샬 사진 판매합니다! 500만 벨에 드려요. 정말 귀여운 마샬 사진이니까 꼭 소장하세요~ 거래는 제 섬에서 하거나 방문해서 할 수 있어요. 댓글로 연락주세요!',
 		chatRoomIds: ['chat2'],
 		commentCount: 15,
 		createdAt: new Date(Date.now() - 43200000), // 12시간 전
-		creatorId: 'user2',
+		creatorId: 'u_s_e_r_2',
 		reviewPromptSent: false,
 		title: '마샬 사진 팔아요',
 		type: 'sell',
 	},
 	{
 		id: 'board3',
+		status: 'active',
 		body: '황금 도구 레시피들 나눔합니다! 황금 삽, 황금 물뿌리개, 황금 낚싯대 레시피 있어요. 선착순으로 드릴게요! 댓글로 원하는 레시피 말씀해주세요~',
 		chatRoomIds: [],
 		commentCount: 32,
@@ -123,6 +125,7 @@ const testBoards = [
 	},
 	{
 		id: 'board4',
+		status: 'active',
 		body: '그랜드 피아노와 피아노 의자를 구하고 있어요! 음악을 정말 좋아해서 꼭 구해보고 싶었는데, 혹시 가지고 계신 분 있으면 거래해요. 벨로 사거나 다른 가구와 교환도 가능해요!',
 		chatRoomIds: [],
 		commentCount: 5,
@@ -134,11 +137,12 @@ const testBoards = [
 	},
 	{
 		id: 'board5',
+		status: 'active',
 		body: '쥬디 사진 거래 완료되었습니다! 정말 좋은 거래였어요. 다음에 또 거래하게 되면 연락드릴게요~ 감사합니다!',
 		chatRoomIds: ['chat3'],
 		commentCount: 3,
 		createdAt: new Date(Date.now() - 172800000), // 2일 전
-		creatorId: 'user2',
+		creatorId: 'u_s_e_r_2',
 		reviewPromptSent: true,
 		title: '쥬디 사진 판매 (거래완료)',
 		type: 'done',
@@ -149,6 +153,7 @@ const testBoards = [
 const testCommunities = [
 	{
 		id: 'community1',
+		status: 'active',
 		body: '저는 마샬이 최애입니다! 정말 귀엽고 성격도 좋아요. 특히 잠자는 모습이 너무 사랑스러워요 ㅠㅠ 다들 최애 주민 자랑해주세요!',
 		chatRoomIds: [],
 		commentCount: 15,
@@ -164,11 +169,12 @@ const testCommunities = [
 	},
 	{
 		id: 'community2',
+		status: 'active',
 		body: '드디어 제 섬 꾸미기가 완성되었어요! 정말 오랜 시간 공들여서 만들었는데, 어떤지 평가해주세요~ 특히 박물관 앞 정원이 제일 마음에 들어요!',
 		chatRoomIds: [],
 		commentCount: 23,
 		createdAt: new Date(Date.now() - 7200000),
-		creatorId: 'user2',
+		creatorId: 'u_s_e_r_2',
 		images: [
 			'https://via.placeholder.com/400x300/98FB98/000000?text=섬꾸미기1',
 			'https://via.placeholder.com/400x300/98FB98/000000?text=섬꾸미기2',
@@ -180,6 +186,7 @@ const testCommunities = [
 	},
 	{
 		id: 'community3',
+		status: 'active',
 		body: '오늘 처음으로 타란툴라를 잡았어요! 정말 무서웠는데 용기내서 잡았답니다 ㅎㅎ 벌레 잡기 팁 있으면 알려주세요~',
 		chatRoomIds: [],
 		commentCount: 8,
@@ -192,11 +199,12 @@ const testCommunities = [
 	},
 	{
 		id: 'community4',
+		status: 'active',
 		body: '힘드러라는 주민이 제 섬에 이사왔는데요! 할부지 같이 생기고 이름도 힘드러면서 운동광 성격인게 너무 킹받고 귀여워요.. 다들 어떤 주민이 특이한가요?',
 		chatRoomIds: [],
 		commentCount: 12,
 		createdAt: new Date(Date.now() - 14400000),
-		creatorId: 'user2',
+		creatorId: 'u_s_e_r_2',
 		images: [
 			'https://via.placeholder.com/400x300/F0E68C/000000?text=힘드러1',
 			'https://via.placeholder.com/400x300/F0E68C/000000?text=힘드러2',
@@ -209,6 +217,7 @@ const testCommunities = [
 	},
 	{
 		id: 'community5',
+		status: 'active',
 		body: '벚꽃 시즌이 끝나가는데 너무 아쉬워요 ㅠㅠ 벚꽃 꽃잎이 떨어지는 모습이 정말 예뻤는데... 다들 어떤 시즌을 가장 좋아하시나요?',
 		chatRoomIds: [],
 		commentCount: 18,
@@ -227,28 +236,28 @@ const testCommunities = [
 // 테스트 채팅방 데이터 (chat 컬렉션)
 const testChats = [
 	{
-		id: '001827.95fec4cf29524bfbb08744e92ef6050a.0427_user2',
+		id: '001827.95fec4cf29524bfbb08744e92ef6050a.0427_u_s_e_r_2',
 		lastMessage: '마샬 사진 구매하고 싶어요!',
 		lastMessageSenderId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
-		participants: ['001827.95fec4cf29524bfbb08744e92ef6050a.0427', 'user2'],
+		participants: ['001827.95fec4cf29524bfbb08744e92ef6050a.0427', 'u_s_e_r_2'],
 		unreadCount: {
 			'00182795fec4cf29524bfbb08744e92ef6050a0427': 0,
-			user2: 1,
+			u_s_e_r_2: 1,
 		},
 		updatedAt: new Date(Date.now() - 1800000), // 30분 전
-		visibleTo: ['001827.95fec4cf29524bfbb08744e92ef6050a.0427', 'user2'],
+		visibleTo: ['001827.95fec4cf29524bfbb08744e92ef6050a.0427', 'u_s_e_r_2'],
 	},
 	{
-		id: 'user2_user3',
+		id: 'u_s_e_r_2_user3',
 		lastMessage: '황금 도구 레시피 나눔 감사합니다!',
 		lastMessageSenderId: 'user3',
-		participants: ['user2', 'user3'],
+		participants: ['u_s_e_r_2', 'user3'],
 		unreadCount: {
-			user2: 2,
+			u_s_e_r_2: 2,
 			user3: 0,
 		},
 		updatedAt: new Date(Date.now() - 3600000), // 1시간 전
-		visibleTo: ['user2', 'user3'],
+		visibleTo: ['u_s_e_r_2', 'user3'],
 	},
 	{
 		id: '001827.95fec4cf29524bfbb08744e92ef6050a.0427_user3',
@@ -267,88 +276,88 @@ const testChats = [
 // 테스트 메시지 데이터 (chat/{chatId}/messages 서브컬렉션) - 실제 구조에 맞게 수정
 const testMessages = [
 	{
-		chatId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427_user2',
+		chatId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427_u_s_e_r_2',
 		messages: [
 			{
 				body: '안녕하세요! 마샬 사진 구매하고 싶어요',
 				createdAt: new Date(Date.now() - 7200000),
-				isReadBy: ['001827.95fec4cf29524bfbb08744e92ef6050a.0427', 'user2'],
-				receiverId: 'user2',
+				isReadBy: ['001827.95fec4cf29524bfbb08744e92ef6050a.0427', 'u_s_e_r_2'],
+				receiverId: 'u_s_e_r_2',
 				senderId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
 			},
 			{
 				body: '안녕하세요! 500만 벨에 드릴게요',
 				createdAt: new Date(Date.now() - 7000000),
-				isReadBy: ['001827.95fec4cf29524bfbb08744e92ef6050a.0427', 'user2'],
+				isReadBy: ['001827.95fec4cf29524bfbb08744e92ef6050a.0427', 'u_s_e_r_2'],
 				receiverId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
-				senderId: 'user2',
+				senderId: 'u_s_e_r_2',
 			},
 			{
 				body: '네! 언제 거래 가능한가요?',
 				createdAt: new Date(Date.now() - 6800000),
-				isReadBy: ['001827.95fec4cf29524bfbb08744e92ef6050a.0427', 'user2'],
-				receiverId: 'user2',
+				isReadBy: ['001827.95fec4cf29524bfbb08744e92ef6050a.0427', 'u_s_e_r_2'],
+				receiverId: 'u_s_e_r_2',
 				senderId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
 			},
 			{
 				body: '지금 바로 가능해요!',
 				createdAt: new Date(Date.now() - 6600000),
-				isReadBy: ['001827.95fec4cf29524bfbb08744e92ef6050a.0427', 'user2'],
+				isReadBy: ['001827.95fec4cf29524bfbb08744e92ef6050a.0427', 'u_s_e_r_2'],
 				receiverId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
-				senderId: 'user2',
+				senderId: 'u_s_e_r_2',
 			},
 			{
 				body: '마샬 사진 구매하고 싶어요!',
 				createdAt: new Date(Date.now() - 1800000),
 				isReadBy: ['001827.95fec4cf29524bfbb08744e92ef6050a.0427'],
-				receiverId: 'user2',
+				receiverId: 'u_s_e_r_2',
 				senderId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
 			},
 		],
 	},
 	{
-		chatId: 'user2_user3',
+		chatId: 'u_s_e_r_2_user3',
 		messages: [
 			{
 				body: '황금 도구 레시피 나눔 신청합니다!',
 				createdAt: new Date(Date.now() - 14400000),
-				isReadBy: ['user2', 'user3'],
-				receiverId: 'user2',
+				isReadBy: ['u_s_e_r_2', 'user3'],
+				receiverId: 'u_s_e_r_2',
 				senderId: 'user3',
 			},
 			{
 				body: '좋습니다! 어떤 레시피를 원하시나요?',
 				createdAt: new Date(Date.now() - 14200000),
-				isReadBy: ['user2', 'user3'],
+				isReadBy: ['u_s_e_r_2', 'user3'],
 				receiverId: 'user3',
-				senderId: 'user2',
+				senderId: 'u_s_e_r_2',
 			},
 			{
 				body: '황금 삽 레시피 부탁드려요',
 				createdAt: new Date(Date.now() - 14000000),
-				isReadBy: ['user2', 'user3'],
-				receiverId: 'user2',
+				isReadBy: ['u_s_e_r_2', 'user3'],
+				receiverId: 'u_s_e_r_2',
 				senderId: 'user3',
 			},
 			{
 				body: '네! 준비해드릴게요',
 				createdAt: new Date(Date.now() - 13800000),
-				isReadBy: ['user2', 'user3'],
+				isReadBy: ['u_s_e_r_2', 'user3'],
 				receiverId: 'user3',
-				senderId: 'user2',
+				senderId: 'u_s_e_r_2',
 			},
 			{
 				body: '감사합니다! 정말 도움이 되었어요',
 				createdAt: new Date(Date.now() - 7200000),
 				isReadBy: ['user3'],
-				receiverId: 'user2',
+				receiverId: 'u_s_e_r_2',
 				senderId: 'user3',
 			},
 			{
 				body: '황금 도구 레시피 나눔 감사합니다!',
 				createdAt: new Date(Date.now() - 3600000),
 				isReadBy: ['user3'],
-				receiverId: 'user2',
+				receiverId: 'u_s_e_r_2',
 				senderId: 'user3',
 			},
 		],
@@ -403,17 +412,20 @@ const testComments = [
 		postId: 'board1',
 		comments: [
 			{
-				body: '저요! 쥬디 사진 정말 구하고 있었어요',
+				id: 'comment1',
+				body: '저요! 벚꽃 가구 정말 구하고 있었어요',
 				createdAt: new Date(Date.now() - 21600000), // 6시간 전
-				creatorId: 'user2',
+				creatorId: 'u_s_e_r_2',
 			},
 			{
-				body: '몇 벨에 거래하실 생각이신가요?',
+				id: 'comment2',
+				body: '달 의자 있어요! 벚꽃 꽃잎 더미랑 교환 어떠세요?',
 				createdAt: new Date(Date.now() - 18000000), // 5시간 전
 				creatorId: 'user3',
 			},
 			{
-				body: '500만 벨 어떠세요?',
+				id: 'comment3',
+				body: '좋아요! 언제 거래 가능하신가요?',
 				createdAt: new Date(Date.now() - 14400000), // 4시간 전
 				creatorId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
 			},
@@ -425,29 +437,34 @@ const testComments = [
 		postId: 'board2',
 		comments: [
 			{
+				id: 'comment4',
 				body: '마샬 사진 너무 귀여워요! 구매하고 싶어요',
 				createdAt: new Date(Date.now() - 32400000), // 9시간 전
 				creatorId: 'user3',
 			},
 			{
+				id: 'comment5',
 				body: '가격 협상 가능한가요?',
 				createdAt: new Date(Date.now() - 28800000), // 8시간 전
 				creatorId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
 			},
 			{
+				id: 'comment6',
 				body: '댓글로 연락주세요!',
 				createdAt: new Date(Date.now() - 25200000), // 7시간 전
-				creatorId: 'user2',
+				creatorId: 'u_s_e_r_2',
 			},
 			{
+				id: 'comment7',
 				body: '400만 벨로 가능할까요?',
 				createdAt: new Date(Date.now() - 21600000), // 6시간 전
 				creatorId: 'user3',
 			},
 			{
+				id: 'comment8',
 				body: '450만 벨 어떠세요?',
 				createdAt: new Date(Date.now() - 18000000), // 5시간 전
-				creatorId: 'user2',
+				creatorId: 'u_s_e_r_2',
 			},
 		],
 	},
@@ -457,24 +474,28 @@ const testComments = [
 		postId: 'board3',
 		comments: [
 			{
+				id: 'comment9',
 				body: '황금 삽 레시피 주세요!',
 				createdAt: new Date(Date.now() - 7200000), // 2시간 전
-				creatorId: 'user2',
+				creatorId: 'u_s_e_r_2',
 			},
 			{
+				id: 'comment10',
 				body: '황금 물뿌리개 레시피 구하고 있었어요',
 				createdAt: new Date(Date.now() - 5400000), // 1시간 30분 전
 				creatorId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
 			},
 			{
+				id: 'comment11',
 				body: '황금 낚싯대 레시피도 남아있나요?',
 				createdAt: new Date(Date.now() - 3600000), // 1시간 전
 				creatorId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
 			},
 			{
+				id: 'comment12',
 				body: '정말 감사합니다! 나눔 최고에요',
 				createdAt: new Date(Date.now() - 1800000), // 30분 전
-				creatorId: 'user2',
+				creatorId: 'u_s_e_r_2',
 			},
 		],
 	},
@@ -484,14 +505,16 @@ const testComments = [
 		postId: 'board4',
 		comments: [
 			{
+				id: 'comment13',
 				body: '그랜드 피아노 있어요! 연락주세요',
 				createdAt: new Date(Date.now() - 1800000), // 30분 전
-				creatorId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
+				creatorId: 'u_s_e_r_2',
 			},
 			{
+				id: 'comment14',
 				body: '피아노 의자도 같이 드릴 수 있어요',
 				createdAt: new Date(Date.now() - 900000), // 15분 전
-				creatorId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
+				creatorId: 'u_s_e_r_2',
 			},
 		],
 	},
@@ -501,19 +524,22 @@ const testComments = [
 		postId: 'community1',
 		comments: [
 			{
-				body: '정말 좋은 팁이에요! 감사합니다',
-				createdAt: new Date(Date.now() - 86400000), // 1일 전
-				creatorId: 'user2',
+				id: 'comment15',
+				body: '마샬 정말 귀여워요! 저도 최애에요',
+				createdAt: new Date(Date.now() - 10800000), // 3시간 전
+				creatorId: 'u_s_e_r_2',
 			},
 			{
-				body: '저도 이 방법 써봤는데 정말 효과적이에요',
-				createdAt: new Date(Date.now() - 43200000), // 12시간 전
+				id: 'comment16',
+				body: '저는 쥬디가 최애입니다! 고양이 주민들 다 귀여워요',
+				createdAt: new Date(Date.now() - 7200000), // 2시간 전
 				creatorId: 'user3',
 			},
 			{
-				body: '덕분에 벨 많이 벌었어요!',
-				createdAt: new Date(Date.now() - 21600000), // 6시간 전
-				creatorId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
+				id: 'comment17',
+				body: '힘드러도 의외로 귀여워요 ㅋㅋ',
+				createdAt: new Date(Date.now() - 3600000), // 1시간 전
+				creatorId: 'u_s_e_r_2',
 			},
 		],
 	},
@@ -523,14 +549,174 @@ const testComments = [
 		postId: 'community2',
 		comments: [
 			{
-				body: '쥬디 정말 귀여워요! 저도 영입하고 싶어요',
-				createdAt: new Date(Date.now() - 172800000), // 2일 전
+				id: 'comment18',
+				body: '와 정말 예쁘게 꾸미셨네요! 부러워요',
+				createdAt: new Date(Date.now() - 14400000), // 4시간 전
 				creatorId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
 			},
 			{
-				body: '쥬디 캠핑장에서 만났는데 바로 영입했어요',
-				createdAt: new Date(Date.now() - 129600000), // 1.5일 전
+				id: 'comment19',
+				body: '박물관 앞 정원 정말 멋져요! 어떤 꽃들 사용하셨나요?',
+				createdAt: new Date(Date.now() - 10800000), // 3시간 전
 				creatorId: 'user3',
+			},
+		],
+	},
+];
+
+// 테스트 대댓글 데이터 (board/comment/{commentId}/replies와 community/comment/{commentId}/replies 서브컬렉션)
+const testReplies = [
+	// board1의 comment2에 대한 대댓글들
+	{
+		collection: 'Boards',
+		postId: 'board1',
+		parentId: 'comment2',
+		replies: [
+			{
+				body: '오 좋은 제안이네요! 언제 거래 가능한가요?',
+				createdAt: new Date(Date.now() - 16200000), // 4시간 30분 전
+				creatorId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
+				parentId: 'comment2',
+			},
+			{
+				body: '지금 바로 가능해요! 제 섬으로 오실래요?',
+				createdAt: new Date(Date.now() - 14400000), // 4시간 전
+				creatorId: 'user3',
+				parentId: 'comment2',
+			},
+		],
+	},
+	// board2의 comment5에 대한 대댓글들
+	{
+		collection: 'Boards',
+		postId: 'board2',
+		parentId: 'comment5',
+		replies: [
+			{
+				body: '450만 벨까지 가능해요!',
+				createdAt: new Date(Date.now() - 25200000), // 7시간 전
+				creatorId: 'u_s_e_r_2',
+				parentId: 'comment5',
+			},
+		],
+	},
+	// board2의 comment7에 대한 대댓글들
+	{
+		collection: 'Boards',
+		postId: 'board2',
+		parentId: 'comment7',
+		replies: [
+			{
+				body: '450만 벨로 하시죠! 거래 도도코드 보내드릴게요',
+				createdAt: new Date(Date.now() - 19800000), // 5시간 30분 전
+				creatorId: 'u_s_e_r_2',
+				parentId: 'comment7',
+			},
+			{
+				body: '좋아요! 감사합니다',
+				createdAt: new Date(Date.now() - 18000000), // 5시간 전
+				creatorId: 'user3',
+				parentId: 'comment7',
+			},
+		],
+	},
+	// board3의 comment9에 대한 대댓글들
+	{
+		collection: 'Boards',
+		postId: 'board3',
+		parentId: 'comment9',
+		replies: [
+			{
+				body: '네! 드릴게요~ 제 섬으로 와주세요',
+				createdAt: new Date(Date.now() - 5400000), // 1시간 30분 전
+				creatorId: 'user3',
+				parentId: 'comment9',
+			},
+			{
+				body: '감사해요! 지금 갈게요',
+				createdAt: new Date(Date.now() - 3600000), // 1시간 전
+				creatorId: 'u_s_e_r_2',
+				parentId: 'comment9',
+			},
+		],
+	},
+	// board4의 comment13에 대한 대댓글들
+	{
+		collection: 'Boards',
+		postId: 'board4',
+		parentId: 'comment13',
+		replies: [
+			{
+				body: '정말요? 몇 벨에 거래 가능한가요?',
+				createdAt: new Date(Date.now() - 1440000), // 24분 전
+				creatorId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
+				parentId: 'comment13',
+			},
+			{
+				body: '100만 벨에 드릴게요!',
+				createdAt: new Date(Date.now() - 900000), // 15분 전
+				creatorId: 'u_s_e_r_2',
+				parentId: 'comment13',
+			},
+			{
+				body: '좋아요! 거래하시죠',
+				createdAt: new Date(Date.now() - 600000), // 10분 전
+				creatorId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
+				parentId: 'comment13',
+			},
+		],
+	},
+	// community1의 comment15에 대한 대댓글들
+	{
+		collection: 'Communities',
+		postId: 'community1',
+		parentId: 'comment15',
+		replies: [
+			{
+				body: '마샬 팬 동지네요! 마샬 사진 혹시 있으신가요?',
+				createdAt: new Date(Date.now() - 9000000), // 2시간 30분 전
+				creatorId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
+				parentId: 'comment15',
+			},
+			{
+				body: '있어요! 나중에 따로 연락드릴게요 ㅎㅎ',
+				createdAt: new Date(Date.now() - 7200000), // 2시간 전
+				creatorId: 'u_s_e_r_2',
+				parentId: 'comment15',
+			},
+		],
+	},
+	// community1의 comment16에 대한 대댓글들
+	{
+		collection: 'Communities',
+		postId: 'community1',
+		parentId: 'comment16',
+		replies: [
+			{
+				body: '쥬디도 정말 귀여워요! 고양이 주민 최고죠',
+				createdAt: new Date(Date.now() - 5400000), // 1시간 30분 전
+				creatorId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
+				parentId: 'comment16',
+			},
+		],
+	},
+	// community2의 comment18에 대한 대댓글들
+	{
+		collection: 'Communities',
+		postId: 'community2',
+		parentId: 'comment18',
+		replies: [
+			{
+				body: '감사해요! 정말 오래 걸렸어요 ㅠㅠ',
+				createdAt: new Date(Date.now() - 12600000), // 3시간 30분 전
+				creatorId: 'u_s_e_r_2',
+				parentId: 'comment18',
+			},
+			{
+				body: '그래도 정말 예쁘게 나왔어요! 부러워요',
+				createdAt: new Date(Date.now() - 10800000), // 3시간 전
+				creatorId: '001827.95fec4cf29524bfbb08744e92ef6050a.0427',
+				parentId: 'comment18',
 			},
 		],
 	},
@@ -581,11 +767,7 @@ async function seedData() {
 		console.log('📨 메시지 생성 중...');
 		for (const messageGroup of testMessages) {
 			for (const message of messageGroup.messages) {
-				await db
-					.collection('Chats')
-					.doc(messageGroup.chatId)
-					.collection('Messages')
-					.add(message);
+				await db.collection('Chats').doc(messageGroup.chatId).collection('Messages').add(message);
 			}
 			console.log(
 				`✅ 메시지 생성 완료: ${messageGroup.chatId} (${messageGroup.messages.length}개)`,
@@ -601,11 +783,31 @@ async function seedData() {
 					.collection(commentGroup.collection)
 					.doc(commentGroup.postId)
 					.collection('Comments')
-					.add(comment);
+					.doc(comment.id)
+					.set(comment);
 				totalComments++;
 			}
 			console.log(
 				`✅ 댓글 생성 완료: ${commentGroup.collection}/${commentGroup.postId} (${commentGroup.comments.length}개)`,
+			);
+		}
+
+		// 7. 대댓글 생성 (boards/{postId}/comments/{commentId}/replies, communities/{postId}/comments/{commentId}/replies 서브컬렉션)
+		console.log('💬 대댓글 생성 중...');
+		let totalReplies = 0;
+		for (const replyGroup of testReplies) {
+			for (const reply of replyGroup.replies) {
+				await db
+					.collection(replyGroup.collection)
+					.doc(replyGroup.postId)
+					.collection('Comments')
+					.doc(replyGroup.parentId)
+					.collection('Replies')
+					.add(reply);
+				totalReplies++;
+			}
+			console.log(
+				`✅ 대댓글 생성 완료: ${replyGroup.collection}/${replyGroup.postId}/${replyGroup.parentId} (${replyGroup.replies.length}개)`,
 			);
 		}
 
@@ -616,8 +818,11 @@ async function seedData() {
 		console.log(`- 게시글 (boards): ${testBoards.length}개`);
 		console.log(`- 커뮤니티 (communities): ${testCommunities.length}개`);
 		console.log(`- 채팅방 (chat): ${testChats.length}개`);
-		console.log(`- 메시지: ${testMessages.reduce((total, group) => total + group.messages.length, 0)}개`);
+		console.log(
+			`- 메시지: ${testMessages.reduce((total, group) => total + group.messages.length, 0)}개`,
+		);
 		console.log(`- 댓글: ${totalComments}개`);
+		console.log(`- 대댓글: ${totalReplies}개`);
 		console.log('');
 		console.log('에뮬레이터 UI에서 확인: http://localhost:4000');
 	} catch (error) {
