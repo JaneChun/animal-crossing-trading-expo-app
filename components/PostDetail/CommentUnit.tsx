@@ -115,6 +115,12 @@ const CommentUnit = ({
 		navigateToChatRoom({
 			chatId,
 			chatStartInfo,
+			receiverInfo: {
+				uid: receiverId,
+				displayName: creatorDisplayName,
+				islandName: creatorIslandName,
+				photoURL: creatorPhotoURL,
+			},
 			...(!chatRoomIds.includes(chatId) ? { systemMessage } : {}),
 		});
 	};

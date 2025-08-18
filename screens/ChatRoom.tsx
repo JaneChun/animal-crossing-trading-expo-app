@@ -1,8 +1,4 @@
-import {
-	renderComposer,
-	renderDay,
-	renderMessage,
-} from '@/components/Chat/CustomRenderers';
+import { renderComposer, renderDay, renderMessage } from '@/components/Chat/CustomRenderers';
 import UserInfoLabel from '@/components/Chat/Message/UserInfoLabel';
 import ReportModal from '@/components/PostDetail/ReportModal';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
@@ -30,17 +26,14 @@ import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
-import {
-	SafeAreaView,
-	useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ChatRoom = () => {
 	const hasChatRoomCreated = useRef<boolean>(false);
 	const hasSystemMessageSent = useRef<boolean>(false);
 
 	const route = useRoute<ChatRoomRouteProp>();
-	const { chatId, chatStartInfo, systemMessage } = route.params;
+	const { chatId, chatStartInfo, systemMessage, receiverInfo: passedReceiverInfo } = route.params;
 
 	// 메세지
 	const [localMessages, setLocalMessages] = useState<Message[]>([]);
@@ -57,27 +50,18 @@ const ChatRoom = () => {
 		}
 	}, [chatId, systemMessage]);
 
-	const {
-		userInfo,
-		receiverInfo,
-		isLoading,
-		messages,
-		sendMessage,
-		leaveChatRoom,
-	} = useChatRoom({
+	const { userInfo, receiverInfo: fetchedReceiverInfo, isLoading, messages, sendMessage, leaveChatRoom } = useChatRoom({
 		chatId,
 		localMessages,
 	});
 
+	// 전달받은 receiverInfo를 우선 사용하고, 없으면 fetch된 정보 사용
+	const receiverInfo = passedReceiverInfo || fetchedReceiverInfo;
+
 	useChatPresence(chatId);
 
 	// 신고
-	const {
-		isReportModalVisible,
-		openReportModal,
-		closeReportModal,
-		submitReport,
-	} = useReportUser();
+	const { isReportModalVisible, openReportModal, closeReportModal, submitReport } = useReportUser();
 
 	// 차단
 	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({
@@ -105,13 +89,7 @@ const ChatRoom = () => {
 	}, [messages]);
 
 	const handleSend = async (chatInput: string) => {
-		if (
-			!userInfo?.uid ||
-			!receiverInfo?.uid ||
-			!chatInput.trim() ||
-			isBlockedByMe ||
-			amIBlockedBy
-		)
+		if (!userInfo?.uid || !receiverInfo?.uid || !chatInput.trim() || isBlockedByMe || amIBlockedBy)
 			return;
 
 		// 채팅방 생성
@@ -169,9 +147,7 @@ const ChatRoom = () => {
 		<>
 			<SafeAreaView style={styles.screen} edges={['bottom']}>
 				<LayoutWithHeader
-					headerCenterComponent={
-						receiverInfo && <UserInfoLabel userInfo={receiverInfo} />
-					}
+					headerCenterComponent={receiverInfo && <UserInfoLabel userInfo={receiverInfo} />}
 					headerRightComponent={
 						<ActionSheetButton
 							color={Colors.font_black}

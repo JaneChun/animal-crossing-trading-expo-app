@@ -18,6 +18,12 @@ export type RootStackParamList = {
 		chatId: string;
 		chatStartInfo?: CreateChatRoomParams;
 		systemMessage?: SendChatMessageParams;
+		receiverInfo?: {
+			uid: string;
+			displayName: string;
+			islandName: string;
+			photoURL?: string;
+		};
 	};
 	Profile: { userId?: string }; // 다른 유저 프로필 조회 시 userId 전달
 	AgreeToTermsAndConditions: SignUpParams;
@@ -51,11 +57,5 @@ export type PostDetailRouteProp = RouteProp<RootStackParamList, 'PostDetail'>;
 export type NewPostRouteProp = RouteProp<RootStackParamList, 'NewPost'>;
 export type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
 export type ChatRoomRouteProp = RouteProp<RootStackParamList, 'ChatRoom'>;
-export type SignUpDisplayNameRouteProp = RouteProp<
-	RootStackParamList,
-	'SignUpDisplayName'
->;
-export type SignUpIslandNameRouteProp = RouteProp<
-	RootStackParamList,
-	'SignUpIslandName'
->;
+export type SignUpDisplayNameRouteProp = RouteProp<RootStackParamList, 'SignUpDisplayName'>;
+export type SignUpIslandNameRouteProp = RouteProp<RootStackParamList, 'SignUpIslandName'>;

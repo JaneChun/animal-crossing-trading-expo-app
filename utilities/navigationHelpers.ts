@@ -62,12 +62,19 @@ export const navigateToChatRoom = ({
 	chatId,
 	chatStartInfo,
 	systemMessage,
+	receiverInfo,
 }: {
 	chatId: string;
 	chatStartInfo?: CreateChatRoomParams;
 	systemMessage?: SendChatMessageParams;
+	receiverInfo?: {
+		uid: string;
+		displayName: string;
+		islandName: string;
+		photoURL?: string;
+	};
 }) => {
-	navigate('ChatRoom', { chatId, chatStartInfo, systemMessage });
+	navigate('ChatRoom', { chatId, chatStartInfo, systemMessage, receiverInfo });
 };
 
 // Profile/
@@ -80,11 +87,7 @@ export const replaceToMyProfile = () => {
 	replace('Profile', {});
 };
 
-export const navigateToAgreeToTermsAndConditions = ({
-	uid,
-	oauthType,
-	email,
-}: SignUpParams) => {
+export const navigateToAgreeToTermsAndConditions = ({ uid, oauthType, email }: SignUpParams) => {
 	navigate('AgreeToTermsAndConditions', { uid, oauthType, email });
 };
 
