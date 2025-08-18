@@ -32,20 +32,11 @@ export const generateChatId = (user1: string, user2: string): string => {
 	return [user1, user2].sort().join('_');
 };
 
-export const getReceiverId = ({
-	chatId,
-	userId,
-}: {
-	chatId: string;
-	userId: string;
-}) => {
+export const getReceiverId = ({ chatId, userId }: { chatId: string; userId: string }) => {
 	return chatId.split('_').find((id) => id !== userId);
 };
 
-export const fetchAndPopulateReceiverInfo = async <T extends Chat, U>(
-	q: Query,
-	userId: string,
-) => {
+export const fetchAndPopulateReceiverInfo = async <T extends Chat, U>(q: Query, userId: string) => {
 	return firestoreRequest('채팅방 조회', async () => {
 		const querySnapshot = await getDocs(q);
 
@@ -65,12 +56,12 @@ export const fetchAndPopulateReceiverInfo = async <T extends Chat, U>(
 			.map((item) => item.participants.find((uid) => uid !== userId))
 			.filter(Boolean) as string[];
 
-		const publicUserInfos: Record<string, PublicUserInfo> =
-			await getPublicUserInfos(uniqueReceiverIds);
+		const publicUserInfos: Record<string, PublicUserInfo> = await getPublicUserInfos(
+			uniqueReceiverIds,
+		);
 
 		const populatedData: U[] = data.map((item) => {
-			const receiverId =
-				item.participants.find((uid) => uid !== userId) ?? null;
+			const receiverId = item.participants.find((uid) => uid !== userId) ?? null;
 
 			let receiverInfo = getDefaultUserInfo(receiverId!);
 
@@ -143,17 +134,19 @@ export const createChatRoom = async ({
 	});
 };
 
-const rejoinChatRoom = async ({
-	chatId,
-}: {
-	chatId: string;
-}): Promise<void> => {
+const rejoinChatRoom = async ({ chatId }: { chatId: string }): Promise<void> => {
 	return firestoreRequest('채팅방 재입장', async () => {
-		const users = chatId.split('_');
 		const chatRef = doc(db, 'Chats', chatId);
+		const chatDoc = await getDoc(chatRef);
+
+		if (!chatDoc.exists()) {
+			return;
+		}
+
+		const participants = chatDoc.data().participants;
 
 		await updateDoc(chatRef, {
-			visibleTo: arrayUnion(...users),
+			visibleTo: arrayUnion(...participants),
 		});
 	});
 };
@@ -170,9 +163,8 @@ export const sendMessage = async ({
 		const messageRef = collection(db, 'Chats', chatId, 'Messages'); // Boards/{chatId}/Messages 서브컬렉션
 
 		// 유저 메세지만 필터링 (시스템 메세지는 X)
-		const cleanMessage = (senderId === 'system' || senderId === 'review') 
-			? message 
-			: sanitize(message);
+		const cleanMessage =
+			senderId === 'system' || senderId === 'review' ? message : sanitize(message);
 
 		await addDoc(messageRef, {
 			body: cleanMessage,
@@ -184,10 +176,7 @@ export const sendMessage = async ({
 	});
 };
 
-export const leaveChatRoom = async ({
-	chatId,
-	userId,
-}: LeaveChatRoomParams): Promise<void> => {
+export const leaveChatRoom = async ({ chatId, userId }: LeaveChatRoomParams): Promise<void> => {
 	return firestoreRequest('채팅방 나가기', async () => {
 		const chatRef = doc(db, 'Chats', chatId);
 

@@ -1,8 +1,6 @@
 import { Colors } from '@/constants/Color';
-import {
-	createReview,
-	getReviewBySenderId,
-} from '@/firebase/services/reviewService';
+import { createReview, getReviewBySenderId } from '@/firebase/services/reviewService';
+import { useReceiverInfo } from '@/hooks/chat/query/useReceiverInfo';
 import { useUserInfo } from '@/stores/auth';
 import { CreateReviewParams, ReviewValue } from '@/types/review';
 import { FontAwesome6 } from '@expo/vector-icons';
@@ -16,10 +14,9 @@ const ReviewMessageUnit = ({ message }: { message: IMessage }) => {
 	const { postId, chatId } = JSON.parse(message.text);
 	const userInfo = useUserInfo();
 
+	const { data: receiverInfo } = useReceiverInfo(chatId);
+	const receiverId = receiverInfo?.uid;
 	const senderId = userInfo?.uid;
-	const receiverId = chatId
-		.split('_')
-		.find((id: string) => id !== userInfo?.uid);
 
 	// 리뷰한 적 있다면 불러오기
 	useEffect(() => {
