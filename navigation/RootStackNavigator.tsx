@@ -19,7 +19,6 @@ import SocialAccountCheck from '@/screens/SocialAccountCheck';
 import TermsOfService from '@/screens/TermsOfService';
 import { useAuthStore } from '@/stores/auth';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useEffect, useState } from 'react';
 import MainTabNavigator from './MainTabNavigator';
 
 const RootStack = createNativeStackNavigator();
@@ -27,22 +26,8 @@ const RootStack = createNativeStackNavigator();
 const RootStackNavigator = () => {
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 
-	// 버전 체크 훅
-	const { updateInfo, isLoading } = useVersionCheck();
-	const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
-
-	// 업데이트 모달 표시 조건
-	useEffect(() => {
-		if (!isLoading && updateInfo?.isUpdateRequired) {
-			setIsUpdateModalVisible(true);
-		}
-	}, [isLoading, updateInfo]);
-
-	const handleCloseUpdateModal = () => {
-		if (!updateInfo?.isForceUpdate) {
-			setIsUpdateModalVisible(false);
-		}
-	};
+	// 버전 체크 훅 (모달 상태 관리 포함)
+	const { updateInfo, isUpdateModalVisible, handleCloseUpdateModal } = useVersionCheck();
 
 	const commonOptions = {
 		headerShown: isAuthLoading ? false : true,

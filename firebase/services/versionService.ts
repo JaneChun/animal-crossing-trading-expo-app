@@ -40,7 +40,7 @@ const getCurrentVersion = (): string => {
 };
 
 const getStoreUrl = (config: AppVersionConfig): string => {
-	return Platform.OS === 'ios' ? config.store_urls.ios : config.store_urls.android;
+	return Platform.OS === 'ios' ? config.store_urls?.ios : config.store_urls?.android;
 };
 
 export const checkAppVersion = async (): Promise<VersionCheckResult> => {
@@ -69,7 +69,7 @@ export const checkAppVersion = async (): Promise<VersionCheckResult> => {
 		const result = {
 			isUpdateRequired,
 			isForceUpdate: config.force_update && isUpdateRequired,
-			messages: config.update_message,
+			messages: config.update_message ?? [],
 			storeUrl: getStoreUrl(config),
 		};
 
