@@ -9,19 +9,19 @@ import { Pressable, StyleSheet, Text } from 'react-native';
 import PostList from '../Home/PostList';
 import Layout, { PADDING } from '../ui/layout/Layout';
 
+const OPTIONS = [
+	{ value: 'Boards' as Collection, label: '마켓' },
+	{ value: 'Communities' as Collection, label: '커뮤니티' },
+];
+
 const MyPosts = ({ isMyProfile, profileInfo }: MyPostsProps) => {
 	const { showActionSheetWithOptions } = useActionSheet();
 	const [selectedCollection, setSelectedCollection] = useState<Collection>('Boards');
 
-	const options = [
-		{ value: 'Boards' as Collection, label: '마켓' },
-		{ value: 'Communities' as Collection, label: '커뮤니티' },
-	];
-
-	const selectedOption = options.find((option) => option.value === selectedCollection);
+	const selectedOption = OPTIONS.find((option) => option.value === selectedCollection);
 
 	const showOptionSelect = () => {
-		const actionOptions = [...options.map(({ label }) => label), '닫기'];
+		const actionOptions = [...OPTIONS.map(({ label }) => label), '닫기'];
 
 		showActionSheetWithOptions(
 			{
@@ -31,12 +31,13 @@ const MyPosts = ({ isMyProfile, profileInfo }: MyPostsProps) => {
 			(buttonIndex) => {
 				if (
 					buttonIndex === undefined ||
-					!options[buttonIndex] ||
+					!OPTIONS[buttonIndex] ||
 					buttonIndex === actionOptions.length - 1
-				)
+				) {
 					return;
+				}
 
-				setSelectedCollection(options[buttonIndex].value);
+				setSelectedCollection(OPTIONS[buttonIndex].value);
 			},
 		);
 	};
