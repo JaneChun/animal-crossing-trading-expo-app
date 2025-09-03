@@ -1,3 +1,4 @@
+import PageIndicator from '@/components/PageIndicator';
 import Button from '@/components/ui/Button';
 import { Colors } from '@/constants/Color';
 import { ONBOARDING_DATA, OnboardingStep } from '@/constants/onboardingData';
@@ -96,17 +97,7 @@ const Onboarding = () => {
 				/>
 
 				{/* 인디케이터 */}
-				<View style={styles.indicatorContainer}>
-					{ONBOARDING_DATA.map((_, index) => (
-						<View
-							key={index}
-							style={[
-								styles.indicatorDot,
-								currentStep === index ? styles.activeDot : styles.inactiveDot,
-							]}
-						/>
-					))}
-				</View>
+				<PageIndicator totalPages={ONBOARDING_DATA.length} currentIndex={currentStep} />
 
 				{/* 버튼  */}
 				<Button onPress={handleNext} color='mint' size='lg2'>
@@ -164,24 +155,6 @@ const styles = StyleSheet.create({
 		fontSize: FontSizes.md,
 		lineHeight: 24,
 		color: Colors.font_dark_gray,
-	},
-	indicatorContainer: {
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
-		paddingVertical: 32,
-		gap: 8,
-	},
-	indicatorDot: {
-		width: 8,
-		height: 8,
-		borderRadius: 4,
-	},
-	activeDot: {
-		backgroundColor: Colors.primary,
-	},
-	inactiveDot: {
-		backgroundColor: Colors.icon_gray,
 	},
 });
 

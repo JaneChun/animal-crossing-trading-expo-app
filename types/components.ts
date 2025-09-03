@@ -466,3 +466,8 @@ export type CloseButtonProps = {
 	size?: number;
 	style?: StyleProp<ViewStyle>;
 };
+
+export type PageIndicatorProps = {
+	totalPages: number;
+	currentIndex: number;
+};
