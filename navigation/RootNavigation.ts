@@ -42,6 +42,14 @@ export const replace = <RouteName extends keyof RootStackParamList>(
 	}
 };
 
+export const replaceWithoutParams = <RouteName extends keyof RootStackParamList>(
+	name: RouteName,
+) => {
+	if (navigationRef.isReady()) {
+		navigationRef.dispatch(StackActions.replace(name));
+	}
+};
+
 // 스택에 새 화면 추가
 export const push = <RouteName extends keyof RootStackParamList>(
 	name: RouteName,
