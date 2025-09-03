@@ -1,8 +1,7 @@
+import Slide from '@/components/Onboarding/Slide';
 import PageIndicator from '@/components/PageIndicator';
 import Button from '@/components/ui/Button';
-import { Colors } from '@/constants/Color';
 import { ONBOARDING_DATA, OnboardingStep } from '@/constants/onboardingData';
-import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useOnboardingStore } from '@/stores/onboarding/store';
 import { saveOnboardingStatus } from '@/stores/onboarding/utils/storage';
 import { replaceToHome } from '@/utilities/navigationHelpers';
@@ -10,11 +9,9 @@ import React, { useRef } from 'react';
 import {
 	Dimensions,
 	FlatList,
-	Image,
 	NativeScrollEvent,
 	NativeSyntheticEvent,
 	StyleSheet,
-	Text,
 	View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -58,26 +55,10 @@ const Onboarding = () => {
 		setCurrentStep(index);
 	};
 
-	const renderSlide = ({ item }: { item: OnboardingStep }) => {
-		return (
-			<View style={[styles.slide, { width: SLIDE_WIDTH }]}>
-				{/* 이미지 */}
-				<View style={styles.imageContainer}>
-					<Image source={item.image} style={styles.image} resizeMode='contain' />
-				</View>
+	const renderSlide = ({ item, index }: { item: OnboardingStep; index: number }) => {
+		const isLast = index === ONBOARDING_DATA.length - 1;
 
-				{/* 뱃지 */}
-				<View style={styles.content}>
-					<View style={styles.badgeContainer}>
-						<Text style={styles.badgeText}>모동숲 마켓 사용법</Text>
-					</View>
-
-					{/* 제목 및 설명 */}
-					<Text style={styles.title}>{item.title}</Text>
-					<Text style={styles.description}>{item.description}</Text>
-				</View>
-			</View>
-		);
+		return <Slide item={item} width={SLIDE_WIDTH} showBadge={isLast ? false : true} />;
 	};
 
 	return (
@@ -118,43 +99,6 @@ const styles = StyleSheet.create({
 	},
 	flatList: {
 		flex: 1,
-	},
-	slide: {
-		flex: 1,
-	},
-	imageContainer: {
-		flex: 1,
-	},
-	image: {
-		width: '100%',
-		height: '100%',
-	},
-	content: {
-		paddingHorizontal: 18,
-		paddingVertical: 18,
-	},
-	badgeContainer: {
-		backgroundColor: Colors.primary_background,
-		paddingVertical: 6,
-		paddingHorizontal: 12,
-		borderRadius: 50,
-		alignSelf: 'flex-start',
-		marginBottom: 12,
-	},
-	badgeText: {
-		color: Colors.primary_text,
-		fontWeight: FontWeights.semibold,
-	},
-	title: {
-		fontSize: FontSizes.xxl,
-		fontWeight: FontWeights.bold,
-		marginBottom: 16,
-		color: Colors.font_black,
-	},
-	description: {
-		fontSize: FontSizes.md,
-		lineHeight: 24,
-		color: Colors.font_dark_gray,
 	},
 });
 

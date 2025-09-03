@@ -1,4 +1,5 @@
 import { ICON_MAP } from '@/components/ui/EmptyIndicator';
+import { OnboardingStep } from '@/constants/onboardingData';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
@@ -470,4 +471,10 @@ export type CloseButtonProps = {
 export type PageIndicatorProps = {
 	totalPages: number;
 	currentIndex: number;
+};
+
+export type SlideProps = {
+	item: OnboardingStep;
+	width: number;
+	showBadge?: boolean;
 };
