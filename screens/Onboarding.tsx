@@ -73,7 +73,7 @@ const Onboarding = () => {
 					horizontal
 					pagingEnabled
 					showsHorizontalScrollIndicator={false}
-					onScroll={handleScroll}
+					onMomentumScrollEnd={handleScroll}
 					style={styles.flatList}
 				/>
 
