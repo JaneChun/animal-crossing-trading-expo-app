@@ -6,7 +6,6 @@ import { Timestamp } from 'firebase/firestore';
 import { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
 import {
 	GestureResponderEvent,
-	ImageProps,
 	StyleProp,
 	TextInput,
 	TextInputProps,
@@ -415,11 +414,13 @@ export type ActionSheetButtonProps = {
 
 export type ImagePriority = 'low' | 'normal' | 'high';
 
-export interface ImageWithFallbackProps extends Omit<ImageProps, 'source'> {
-	uri?: string;
-	fallbackSource?: number; // require() 등 로컬 이미지
+export interface ImageWithFallbackProps {
+	uri?: string; // 원격 이미지
+	localSource?: number; // 로컬 이미지
+	fallbackSource?: number;
 	style?: any;
 	priority?: ImagePriority;
+	resizeMode?: 'contain' | 'cover' | 'stretch' | 'center';
 }
 
 export type HighlightMatchProps = {
