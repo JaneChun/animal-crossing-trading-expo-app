@@ -1,36 +1,33 @@
-import { ImagePriority, ImageWithFallbackProps } from '@/types/components';
+import { ImageWithFallbackProps } from '@/types/components';
+import { useMemo } from 'react';
 import FastImage from 'react-native-fast-image';
 
 const ImageWithFallback = ({
 	uri,
 	fallbackSource,
 	style,
-	priority,
+	priority = 'normal',
 }: ImageWithFallbackProps) => {
-	const getPriority = (level: ImagePriority) => {
-		switch (level) {
-			case 'low':
-				return FastImage.priority.low;
-			case 'high':
-				return FastImage.priority.high;
-			case 'normal':
-				return FastImage.priority.normal;
-			default:
-				return FastImage.priority.normal;
-		}
-	};
+	const DEFAULT_FALLBACK = useMemo(() => require('../../assets/images/empty_image.png'), []);
+
+	const priorityLevel = useMemo(() => {
+		const priorities = {
+			low: FastImage.priority.low,
+			normal: FastImage.priority.normal,
+			high: FastImage.priority.high,
+		};
+
+		return priorities[priority] || FastImage.priority.normal;
+	}, [priority]);
 
 	return (
 		<FastImage
 			source={{
 				uri,
-				priority: priority ? getPriority(priority) : FastImage.priority.normal,
+				priority: priorityLevel,
+				cache: FastImage.cacheControl.immutable, // URL이 변경되는 경우에만 업데이트
 			}}
-			defaultSource={
-				fallbackSource
-					? fallbackSource
-					: require('../../assets/images/empty_image.png')
-			}
+			defaultSource={fallbackSource ? fallbackSource : DEFAULT_FALLBACK}
 			style={style}
 		/>
 	);
