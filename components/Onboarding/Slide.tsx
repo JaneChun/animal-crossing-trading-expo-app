@@ -2,14 +2,15 @@ import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { SlideProps } from '@/types/components';
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import ImageWithFallback from '../ui/ImageWithFallback';
 
 const Slide = ({ item, width, showBadge = true }: SlideProps) => {
 	return (
 		<View style={[styles.container, { width }]}>
 			{/* 이미지 */}
 			<View style={styles.imageContainer}>
-				<Image source={item.image} style={styles.image} resizeMode='contain' />
+				<ImageWithFallback localSource={item.image} style={styles.image} resizeMode='contain' />
 			</View>
 
 			<View style={styles.content}>

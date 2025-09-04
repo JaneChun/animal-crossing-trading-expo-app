@@ -1,6 +1,6 @@
 export interface OnboardingStep {
 	step: number;
-	image: string;
+	image: number; // 로컬 이미지
 	title: string;
 	description: string;
 	buttonText: string;
