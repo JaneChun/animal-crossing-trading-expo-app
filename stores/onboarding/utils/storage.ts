@@ -12,10 +12,10 @@ export const getOnboardingStatus = async (): Promise<boolean> => {
 	}
 };
 
-export const saveOnboardingStatus = async () => {
+export const saveOnboardingAsCompleted = async () => {
 	try {
 		await AsyncStorage.setItem(ONBOARDING_STORAGE_KEY, 'true');
 	} catch (error) {
-		console.log('AsyncStorage 온보딩 상태 저장 실패:', error);
+		console.log('AsyncStorage 온보딩 완료 상태 저장 실패:', error);
 	}
 };

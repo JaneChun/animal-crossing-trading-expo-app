@@ -3,7 +3,7 @@ import PageIndicator from '@/components/PageIndicator';
 import Button from '@/components/ui/Button';
 import { ONBOARDING_DATA, OnboardingStep } from '@/constants/onboardingData';
 import { useOnboardingStore } from '@/stores/onboarding/store';
-import { saveOnboardingStatus } from '@/stores/onboarding/utils/storage';
+import { saveOnboardingAsCompleted } from '@/stores/onboarding/utils/storage';
 import { replaceToHome } from '@/utilities/navigationHelpers';
 import React, { useRef } from 'react';
 import {
@@ -42,7 +42,7 @@ const Onboarding = () => {
 	};
 
 	const handleCompleteOnboarding = async () => {
-		await saveOnboardingStatus();
+		await saveOnboardingAsCompleted();
 		setHasCompletedOnboarding(true);
 
 		replaceToHome();
