@@ -19,6 +19,9 @@ type NavigationArgs<N extends RouteName> = Params<N> extends undefined
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
+// ===============================
+//            Common
+// ===============================
 // 지정된 화면으로 이동
 export const navigate = <N extends RouteName>(...args: NavigationArgs<N>) => {
 	const [name, params] = args;
@@ -31,11 +34,31 @@ export const navigate = <N extends RouteName>(...args: NavigationArgs<N>) => {
 	}
 };
 
+// 뒤로가기
 export const goBack = () => {
 	if (navigationRef.isReady() && navigationRef.canGoBack()) {
 		navigationRef.goBack();
 	}
 };
+
+// 새로운 상태로 초기화
+export const resetTo = <RouteName extends keyof RootStackParamList>(
+	name: RouteName,
+	params?: RootStackParamList[RouteName],
+) => {
+	if (navigationRef.isReady()) {
+		navigationRef.dispatch(
+			CommonActions.reset({
+				index: 0,
+				routes: [{ name, params }],
+			}),
+		);
+	}
+};
+
+// ===============================
+//         Stack Navigator
+// ===============================
 
 // 현재 화면 교체
 export const replace = <N extends RouteName>(...args: NavigationArgs<N>) => {
@@ -73,21 +96,6 @@ export const popTo = <N extends RouteName>(...args: NavigationArgs<N>) => {
 	}
 };
 
-// 전체 스택 초기화
-export const resetTo = <RouteName extends keyof RootStackParamList>(
-	name: RouteName,
-	params?: RootStackParamList[RouteName],
-) => {
-	if (navigationRef.isReady()) {
-		navigationRef.dispatch(
-			CommonActions.reset({
-				index: 0,
-				routes: [{ name, params }],
-			}),
-		);
-	}
-};
-
 // 스택에서 n개 pop
 export const pop = (count: number = 1) => {
 	if (navigationRef.isReady()) {
@@ -95,17 +103,19 @@ export const pop = (count: number = 1) => {
 	}
 };
 
-// 스택 최상단으로 이동
+// 스택 최상단으로 이동하고 이전 기록 모두 제거
 export const popToTop = () => {
 	if (navigationRef.isReady()) {
 		navigationRef.dispatch(StackActions.popToTop());
 	}
 };
 
+// ===============================
+//         Tab Navigator
+// ===============================
+
 // 탭 전환 (Tab.Navigator 내부에서만 동작)
-export const navigateToTab = <TabName extends keyof RootStackParamList>(
-	name: TabName,
-) => {
+export const navigateToTab = <TabName extends keyof RootStackParamList>(name: TabName) => {
 	if (navigationRef.isReady()) {
 		navigationRef.dispatch(
 			CommonActions.navigate({
@@ -116,9 +126,7 @@ export const navigateToTab = <TabName extends keyof RootStackParamList>(
 };
 
 // 탭 전환 + 내부 스크린 이동
-export const navigateToTabAndResetStack = <
-	TabName extends keyof MainTabParamList,
->(
+export const navigateToTabAndResetStack = <TabName extends keyof MainTabParamList>(
 	tabName: TabName,
 	initialRouteName: string,
 ) => {
