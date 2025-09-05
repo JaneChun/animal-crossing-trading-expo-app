@@ -17,8 +17,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const PADDING = 24;
-const SLIDE_WIDTH = SCREEN_WIDTH - PADDING * 2;
 
 const Onboarding = () => {
 	const currentStep = useOnboardingStore((state) => state.currentStep);
@@ -50,7 +48,7 @@ const Onboarding = () => {
 
 	const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
 		const offsetX = event.nativeEvent.contentOffset.x;
-		const index = Math.round(offsetX / SLIDE_WIDTH);
+		const index = Math.round(offsetX / SCREEN_WIDTH);
 
 		setCurrentStep(index);
 	};
@@ -58,12 +56,12 @@ const Onboarding = () => {
 	const renderSlide = ({ item, index }: { item: OnboardingStep; index: number }) => {
 		const isLast = index === ONBOARDING_DATA.length - 1;
 
-		return <Slide item={item} width={SLIDE_WIDTH} showBadge={isLast ? false : true} />;
+		return <Slide item={item} width={SCREEN_WIDTH} showBadge={isLast ? false : true} />;
 	};
 
 	return (
 		<SafeAreaView style={styles.screen} edges={['bottom']}>
-			<View style={[styles.container, { padding: PADDING }]}>
+			<View style={styles.container}>
 				{/* 슬라이드 가능한 콘텐츠 영역 */}
 				<FlatList
 					ref={flatListRef}
@@ -81,7 +79,7 @@ const Onboarding = () => {
 				<PageIndicator totalPages={ONBOARDING_DATA.length} currentIndex={currentStep} />
 
 				{/* 버튼  */}
-				<Button onPress={handleNext} color='mint' size='lg2'>
+				<Button onPress={handleNext} color='mint' size='lg2' style={styles.button}>
 					{currentData.buttonText}
 				</Button>
 			</View>
@@ -99,6 +97,9 @@ const styles = StyleSheet.create({
 	},
 	flatList: {
 		flex: 1,
+	},
+	button: {
+		marginHorizontal: 24,
 	},
 });
 
