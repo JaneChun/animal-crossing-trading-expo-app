@@ -4,15 +4,14 @@ import {
 	navigateWithoutParams,
 	popTo,
 	replace,
-	replaceWithoutParams,
 } from '@/navigation/RootNavigation';
 import { CreateChatRoomParams, SendChatMessageParams } from '@/types/chat';
 import { Collection } from '@/types/post';
 import { SignUpParams } from '@/types/user';
 
-// Home/
+// MainTab
 export const replaceToHome = () => {
-	replaceWithoutParams('MainTab');
+	replace('MainTab', { screen: 'HomeTab' });
 };
 
 // Search/

@@ -5,6 +5,18 @@ import {
 	StackActions,
 } from '@react-navigation/native';
 
+type RouteName = keyof RootStackParamList;
+type Params<N extends RouteName> = RootStackParamList[N];
+
+/**  
+	네비게이션 함수에 전달할 매개변수 튜플 타입
+	- Params<N>이 undefined인 경우: 해당 화면은 params가 없으므로 name만 전달
+	- Params<N>이 객체 타입인 경우: name, params 전달
+*/
+type NavigationArgs<N extends RouteName> = Params<N> extends undefined
+	? [name: N]
+	: [name: N, params: RootStackParamList[N]];
+
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
 export const navigate = <RouteName extends keyof RootStackParamList>(
@@ -33,22 +45,17 @@ export const goBack = () => {
 };
 
 // 현재 화면 교체
-export const replace = <RouteName extends keyof RootStackParamList>(
-	name: RouteName,
-	params: RootStackParamList[RouteName],
-) => {
-	if (navigationRef.isReady()) {
+export const replace = <N extends RouteName>(...args: NavigationArgs<N>): void => {
+	const [name, params] = args;
+
+	if (!navigationRef.isReady()) return;
+
+	if (params === undefined) {
+		navigationRef.dispatch(StackActions.replace(name));
+	} else {
 		navigationRef.dispatch(StackActions.replace(name, params));
 	}
-};
-
-export const replaceWithoutParams = <RouteName extends keyof RootStackParamList>(
-	name: RouteName,
-) => {
-	if (navigationRef.isReady()) {
-		navigationRef.dispatch(StackActions.replace(name));
-	}
-};
+}
 
 // 스택에 새 화면 추가
 export const push = <RouteName extends keyof RootStackParamList>(
@@ -56,7 +63,7 @@ export const push = <RouteName extends keyof RootStackParamList>(
 	params: RootStackParamList[RouteName],
 ) => {
 	if (navigationRef.isReady()) {
-		navigationRef.dispatch(StackActions.push(name, params));
+			navigationRef.dispatch(StackActions.push(name, params));
 	}
 };
 
