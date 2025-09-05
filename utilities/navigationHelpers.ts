@@ -1,10 +1,4 @@
-import {
-	navigate,
-	navigateToTabAndResetStack,
-	navigateWithoutParams,
-	popTo,
-	replace,
-} from '@/navigation/RootNavigation';
+import { navigate, navigateToTabAndResetStack, popTo, replace } from '@/navigation/RootNavigation';
 import { CreateChatRoomParams, SendChatMessageParams } from '@/types/chat';
 import { Collection } from '@/types/post';
 import { SignUpParams } from '@/types/user';
@@ -16,7 +10,7 @@ export const replaceToHome = () => {
 
 // Search/
 export const navigateToSearch = () => {
-	navigateWithoutParams('Search');
+	navigate('Search');
 };
 
 // NewPost/
@@ -112,27 +106,27 @@ export const navigateToSignUpEnd = ({
 };
 
 export const navigateToAccount = () => {
-	navigateWithoutParams('Account');
+	navigate('Account');
 };
 
 export const navigateToSocialAccountCheck = () => {
-	navigateWithoutParams('SocialAccountCheck');
+	navigate('SocialAccountCheck');
 };
 
 export const navigateToDeleteAccount = () => {
-	navigateWithoutParams('DeleteAccount');
+	navigate('DeleteAccount');
 };
 
 export const navigateToBlock = () => {
-	navigateWithoutParams('Block');
+	navigate('Block');
 };
 
 export const navigateToTermsOfService = () => {
-	navigateWithoutParams('TermsOfService');
+	navigate('TermsOfService');
 };
 
 export const navigateToPrivacyPolicy = () => {
-	navigateWithoutParams('PrivacyPolicy');
+	navigate('PrivacyPolicy');
 };
 
 // stack to tab
@@ -146,5 +140,5 @@ export const navigateToMyProfile = () => {
 };
 
 export const navigateToSetting = () => {
-	navigateWithoutParams('Setting');
+	navigate('Setting');
 };

@@ -19,22 +19,15 @@ type NavigationArgs<N extends RouteName> = Params<N> extends undefined
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
-export const navigate = <RouteName extends keyof RootStackParamList>(
-	name: RouteName,
-	params: RootStackParamList[RouteName],
-) => {
-	if (navigationRef.isReady()) {
-		navigationRef.navigate(name, params);
-	}
-};
+// 지정된 화면으로 이동
+export const navigate = <N extends RouteName>(...args: NavigationArgs<N>) => {
+	const [name, params] = args;
+	if (!navigationRef.isReady()) return;
 
-export const navigateWithoutParams = <
-	RouteName extends keyof RootStackParamList,
->(
-	name: RouteName,
-) => {
-	if (navigationRef.isReady()) {
+	if (params === undefined) {
 		navigationRef.navigate(name);
+	} else {
+		navigationRef.navigate(name, params);
 	}
 };
 
@@ -45,9 +38,8 @@ export const goBack = () => {
 };
 
 // 현재 화면 교체
-export const replace = <N extends RouteName>(...args: NavigationArgs<N>): void => {
+export const replace = <N extends RouteName>(...args: NavigationArgs<N>) => {
 	const [name, params] = args;
-
 	if (!navigationRef.isReady()) return;
 
 	if (params === undefined) {
@@ -60,7 +52,6 @@ export const replace = <N extends RouteName>(...args: NavigationArgs<N>): void =
 // 스택에 새 화면 추가
 export const push = <N extends RouteName>(...args: NavigationArgs<N>) => {
 	const [name, params] = args;
-
 	if (!navigationRef.isReady()) return;
 
 	if (params === undefined) {
@@ -73,13 +64,12 @@ export const push = <N extends RouteName>(...args: NavigationArgs<N>) => {
 // 해당 라우트까지 스택 pop
 export const popTo = <N extends RouteName>(...args: NavigationArgs<N>) => {
 	const [name, params] = args;
-
 	if (!navigationRef.isReady()) return;
 
 	if (params === undefined) {
 		navigationRef.dispatch(StackActions.popTo(name));
 	} else {
-		navigationRef.dispatch(StackActions.popTo(name, params, { merge: true }));
+		navigationRef.dispatch(StackActions.popTo(name, params, { merge: true })); // params 병합
 	}
 };
 
