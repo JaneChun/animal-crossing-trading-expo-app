@@ -70,18 +70,16 @@ export const push = <N extends RouteName>(...args: NavigationArgs<N>) => {
 	}
 };
 
-// params와 함께 popTo
-export const popTo = <RouteName extends keyof RootStackParamList>(
-	name: RouteName,
-	params?: RootStackParamList[RouteName],
-) => {
-	if (navigationRef.isReady()) {
-		navigationRef.dispatch(
-			StackActions.popTo(name), // name까지 스택 pop
-		);
+// 해당 라우트까지 스택 pop
+export const popTo = <N extends RouteName>(...args: NavigationArgs<N>) => {
+	const [name, params] = args;
 
-		// 이후에 다시 name에 params 넘겨주는 push
-		navigationRef.navigate(name, params);
+	if (!navigationRef.isReady()) return;
+
+	if (params === undefined) {
+		navigationRef.dispatch(StackActions.popTo(name));
+	} else {
+		navigationRef.dispatch(StackActions.popTo(name, params, { merge: true }));
 	}
 };
 
