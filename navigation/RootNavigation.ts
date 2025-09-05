@@ -55,15 +55,18 @@ export const replace = <N extends RouteName>(...args: NavigationArgs<N>): void =
 	} else {
 		navigationRef.dispatch(StackActions.replace(name, params));
 	}
-}
+};
 
 // 스택에 새 화면 추가
-export const push = <RouteName extends keyof RootStackParamList>(
-	name: RouteName,
-	params: RootStackParamList[RouteName],
-) => {
-	if (navigationRef.isReady()) {
-			navigationRef.dispatch(StackActions.push(name, params));
+export const push = <N extends RouteName>(...args: NavigationArgs<N>) => {
+	const [name, params] = args;
+
+	if (!navigationRef.isReady()) return;
+
+	if (params === undefined) {
+		navigationRef.dispatch(StackActions.push(name));
+	} else {
+		navigationRef.dispatch(StackActions.push(name, params));
 	}
 };
 
