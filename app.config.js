@@ -6,12 +6,12 @@ export default {
 		slug: 'animal-crossing-trading-app',
 		version: '1.0.8',
 		orientation: 'portrait',
-		icon: './assets/images/app_icon.png',
+		icon: './assets/images/app_icon.webp',
 		scheme: 'animal-crossing-trading-app',
 		userInterfaceStyle: 'automatic',
 		newArchEnabled: true,
 		splash: {
-			image: './assets/images/splash_image.png',
+			image: './assets/images/splash_image.webp',
 			resizeMode: 'contain',
 			backgroundColor: '#ffffff',
 		},
@@ -23,7 +23,7 @@ export default {
 				ITSAppUsesNonExemptEncryption: false,
 			},
 			splash: {
-				image: './assets/images/splash_image.png',
+				image: './assets/images/splash_image.webp',
 				resizeMode: 'contain',
 				backgroundColor: '#ffffff',
 			},

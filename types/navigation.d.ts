@@ -7,6 +7,7 @@ import { SignUpParams } from './user';
 
 // RootStack 네비게이션
 export type RootStackParamList = {
+	Onboarding: undefined;
 	MainTab: NavigatorScreenParams<MainTabParamList>;
 	PostDetail: {
 		id: string;

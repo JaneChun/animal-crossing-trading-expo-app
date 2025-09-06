@@ -18,6 +18,7 @@ import { useAuthInitializer } from './stores/auth';
 import { useBlockSubscriptionInitializer } from './stores/block';
 import { useChatSubscriptionInitializer } from './stores/chat';
 import { useNotificationSubscriptionInitializer } from './stores/notification';
+import { useOnboardingInitializer } from './stores/onboarding/initializer';
 import { usePushNotificationInitializer } from './stores/push';
 import { RootStackParamList } from './types/navigation';
 
@@ -42,6 +43,7 @@ export default function App() {
 	useNotificationSubscriptionInitializer();
 	useChatSubscriptionInitializer();
 	useBlockSubscriptionInitializer();
+	useOnboardingInitializer();
 	useSuspensionGuard();
 
 	const queryClient = new QueryClient({
@@ -70,10 +72,7 @@ export default function App() {
 								// 	);
 								// }}
 							>
-								<SafeAreaView
-									style={styles.screen}
-									edges={['top', 'left', 'right']}
-								>
+								<SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
 									<RootStackNavigator />
 								</SafeAreaView>
 								<Toast config={toastConfig} />

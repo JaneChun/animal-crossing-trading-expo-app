@@ -1,11 +1,11 @@
 import { ICON_MAP } from '@/components/ui/EmptyIndicator';
+import { OnboardingStep } from '@/constants/onboardingData';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
 import { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
 import {
 	GestureResponderEvent,
-	ImageProps,
 	StyleProp,
 	TextInput,
 	TextInputProps,
@@ -414,11 +414,13 @@ export type ActionSheetButtonProps = {
 
 export type ImagePriority = 'low' | 'normal' | 'high';
 
-export interface ImageWithFallbackProps extends Omit<ImageProps, 'source'> {
-	uri?: string;
-	fallbackSource?: number; // require() 등 로컬 이미지
+export interface ImageWithFallbackProps {
+	uri?: string; // 원격 이미지
+	localSource?: number; // 로컬 이미지
+	fallbackSource?: number;
 	style?: any;
 	priority?: ImagePriority;
+	resizeMode?: 'contain' | 'cover' | 'stretch' | 'center';
 }
 
 export type HighlightMatchProps = {
@@ -465,4 +467,15 @@ export type CloseButtonProps = {
 	onPress: () => void;
 	size?: number;
 	style?: StyleProp<ViewStyle>;
+};
+
+export type PageIndicatorProps = {
+	totalPages: number;
+	currentIndex: number;
+};
+
+export type SlideProps = {
+	item: OnboardingStep;
+	width: number;
+	showBadge?: boolean;
 };

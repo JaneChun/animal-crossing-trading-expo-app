@@ -8,6 +8,7 @@ import Block from '@/screens/Block';
 import ChatRoom from '@/screens/ChatRoom';
 import DeleteAccount from '@/screens/DeleteAccount';
 import NewPost from '@/screens/NewPost';
+import Onboarding from '@/screens/Onboarding';
 import PostDetail from '@/screens/PostDetail';
 import PrivacyPolicy from '@/screens/PrivacyPolicy';
 import Profile from '@/screens/Profile';
@@ -18,6 +19,7 @@ import SignUpIslandName from '@/screens/SignUpIslandName';
 import SocialAccountCheck from '@/screens/SocialAccountCheck';
 import TermsOfService from '@/screens/TermsOfService';
 import { useAuthStore } from '@/stores/auth';
+import { useOnboardingStore } from '@/stores/onboarding/store';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainTabNavigator from './MainTabNavigator';
 
@@ -26,6 +28,8 @@ const RootStack = createNativeStackNavigator();
 const RootStackNavigator = () => {
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 
+	// 온보딩 완료 여부 체크
+	const hasCompletedOnboarding = useOnboardingStore((state) => state.hasCompletedOnboarding);
 	// 버전 체크 훅 (모달 상태 관리 포함)
 	const { updateInfo, isUpdateModalVisible, handleCloseUpdateModal } = useVersionCheck();
 
@@ -38,11 +42,15 @@ const RootStackNavigator = () => {
 
 	return (
 		<>
-			<RootStack.Navigator screenOptions={{ headerShown: false }}>
+			<RootStack.Navigator
+				initialRouteName={hasCompletedOnboarding ? 'MainTab' : 'Onboarding'}
+				screenOptions={{ headerShown: false }}
+			>
 				{/* 탭바 O */}
 				<RootStack.Screen name='MainTab' component={MainTabNavigator} />
 
 				{/* 글로벌 스택 스크린 - 탭바 X */}
+				<RootStack.Screen name='Onboarding' component={Onboarding} />
 				<RootStack.Screen
 					name='PostDetail'
 					component={PostDetail}
