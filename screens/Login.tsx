@@ -50,7 +50,7 @@ const Login = () => {
 			<View style={styles.header}>
 				<View style={styles.titleContainer}>
 					<FastImage
-						source={require('../assets/images/landing.png')}
+						source={require('../assets/images/landing.webp')}
 						style={{ width: 300, height: 300 }}
 						resizeMode='contain'
 					/>

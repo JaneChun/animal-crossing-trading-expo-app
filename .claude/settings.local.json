@@ -4,5 +4,6 @@
       "Bash(npm test:*)"
     ],
     "deny": []
-  }
+  },
+  "outputStyle": "Explanatory"
 }
