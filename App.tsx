@@ -47,7 +47,12 @@ export default function App() {
 	useSuspensionGuard();
 
 	const queryClient = new QueryClient({
-		defaultOptions: { queries: { retry: 2 } },
+		defaultOptions: {
+			queries: { staleTime: 1000 * 60 * 5, gcTime: 1000 * 60 * 10, retry: 1 },
+			mutations: {
+				retry: 1,
+			},
+		},
 	});
 
 	useOnlineManager();

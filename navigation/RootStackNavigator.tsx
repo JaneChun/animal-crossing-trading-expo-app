@@ -1,4 +1,3 @@
-// RootNavigator.tsx
 import { UpdateModal } from '@/components/ui/UpdateModal';
 import { Colors } from '@/constants/Color';
 import { useVersionCheck } from '@/hooks/shared/useVersionCheck';
@@ -17,6 +16,7 @@ import Setting from '@/screens/Setting';
 import SignUpDisplayName from '@/screens/SignUpDisplayName';
 import SignUpIslandName from '@/screens/SignUpIslandName';
 import SocialAccountCheck from '@/screens/SocialAccountCheck';
+import SplashScreen from '@/screens/SplashScreen';
 import TermsOfService from '@/screens/TermsOfService';
 import { useAuthStore } from '@/stores/auth';
 import { useOnboardingStore } from '@/stores/onboarding/store';
@@ -27,18 +27,26 @@ const RootStack = createNativeStackNavigator();
 
 const RootStackNavigator = () => {
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
+	const isOnboardingLoading = useOnboardingStore((state) => state.isLoading);
+
+	const isAppInitializing = isOnboardingLoading;
 
 	// 온보딩 완료 여부 체크
 	const hasCompletedOnboarding = useOnboardingStore((state) => state.hasCompletedOnboarding);
+
 	// 버전 체크 훅 (모달 상태 관리 포함)
 	const { updateInfo, isUpdateModalVisible, handleCloseUpdateModal } = useVersionCheck();
 
 	const commonOptions = {
-		headerShown: isAuthLoading ? false : true,
+		headerShown: isAuthLoading ? false : true, // 로그인/로그아웃/탈퇴 시 로딩화면 표시할 때 상단 헤더 숨김 처리
 		title: '',
 		headerTintColor: Colors.font_black,
 		headerBackButtonDisplayMode: 'minimal' as 'minimal',
 	};
+
+	if (isAppInitializing) {
+		return <SplashScreen />;
+	}
 
 	return (
 		<>

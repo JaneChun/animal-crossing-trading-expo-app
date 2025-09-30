@@ -1,22 +1,14 @@
-import {
-	getUserInfo,
-	savePushTokenToFirestore,
-} from '@/firebase/services/userService';
+import { getUserInfo, savePushTokenToFirestore } from '@/firebase/services/userService';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect } from 'react';
 import { auth } from '../../fbase';
 import { usePushNotificationStore } from '../push';
 import { useAuthStore } from './store';
 import { initializeAllSDKs } from './utils/initialization';
-import {
-	clearUserStorage,
-	getUserFromStorage,
-	saveUserToStorage,
-} from './utils/storage';
+import { clearUserStorage, getUserFromStorage, saveUserToStorage } from './utils/storage';
 
 export const useAuthInitializer = () => {
-	const userInfo = useAuthStore.getState().userInfo;
-	const setUserInfo = useAuthStore.getState().setUserInfo;
+	const { userInfo, setUserInfo } = useAuthStore.getState();
 	const expoPushToken = usePushNotificationStore.getState().expoPushToken;
 
 	// 🔹 SDK 초기화
@@ -24,7 +16,7 @@ export const useAuthInitializer = () => {
 		initializeAllSDKs();
 	}, []);
 
-	// 🔹 Firebase Auth 상태 변경 감지
+	// 🔹 Firebase Auth 상태 변경 감지 리스너 설정
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, async (user) => {
 			// 로그아웃 상태 → 상태 및 저장소 초기화
@@ -61,7 +53,7 @@ export const useAuthInitializer = () => {
 		loadUser();
 	}, [setUserInfo]);
 
-	// 🔹푸시 토큰 저장
+	// 🔹 푸시 토큰 저장
 	useEffect(() => {
 		console.log('🔐 유저 로그인 후 푸시 토큰 저장', expoPushToken);
 		if (!userInfo || !expoPushToken) return;
