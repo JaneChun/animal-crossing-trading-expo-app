@@ -7,38 +7,26 @@ import ImageWithFallback from '../ui/ImageWithFallback';
 
 export const ITEM_HEIGHT = 53;
 
-const ItemSelectItem = ({
-	item,
-	searchInput,
-	addItemToCart,
-}: ItemSelectItemProps) => {
+const ItemSelectItem = ({ item, searchInput, addItemToCart }: ItemSelectItemProps) => {
 	return (
 		<TouchableOpacity style={styles.item} onPress={() => addItemToCart(item)}>
-			<ImageWithFallback
-				uri={item?.imageUrl}
-				style={styles.itemImage}
-				priority='high'
-			/>
-			<Text
-				numberOfLines={1}
-				ellipsizeMode='tail'
-				style={styles.itemTextContainer}
-			>
+			<ImageWithFallback uri={item?.imageUrl} style={styles.itemImage} priority='high' />
+			<Text numberOfLines={1} ellipsizeMode='tail' style={styles.itemTextContainer}>
 				{HighlightMatchText({
 					text: item.name,
 					keyword: searchInput,
 					textStyle: {},
 					highlightTextStyle: styles.highlight,
 				})}
-				<Text style={styles.itemColorText}>
-					{item.color && ` (${item.color})`}
-				</Text>
+				<Text style={styles.itemColorText}>{item.color && ` (${item.color})`}</Text>
 			</Text>
 		</TouchableOpacity>
 	);
 };
 
-export default React.memo(ItemSelectItem);
+export default React.memo(ItemSelectItem, (prevProps, nextProps) => {
+	return prevProps.item.id === nextProps.item.id && prevProps.searchInput === nextProps.searchInput;
+});
 
 const styles = StyleSheet.create({
 	item: {

@@ -17,10 +17,7 @@ import { ImageType } from '@/types/image';
 import { RootStackNavigation, type NewPostRouteProp } from '@/types/navigation';
 import { CartItem, CommunityType, Item, MarketType } from '@/types/post';
 import { handleImageUpload } from '@/utilities/handleImageUpload';
-import {
-	isBoardPost,
-	isCommunityPost,
-} from '@/utilities/typeGuards/postTypeGuards';
+import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
@@ -42,26 +39,16 @@ const NewPost = () => {
 
 	const [editingId, setEditingId] = useState<string>(route.params?.id || '');
 
-	const [isAddItemModalVisible, setIsAddItemModalVisible] =
-		useState<boolean>(false);
-	const [isEditItemModalVisible, setIsEditItemModalVisible] =
-		useState<boolean>(false);
+	const [isAddItemModalVisible, setIsAddItemModalVisible] = useState<boolean>(false);
+	const [isEditItemModalVisible, setIsEditItemModalVisible] = useState<boolean>(false);
 	const [selectedItem, setSelectedItem] = useState<CartItem | null>(null);
 
-	const { data: post, isLoading } = usePostDetail<typeof collectionName>(
-		collectionName,
-		editingId,
-	);
+	const { data: post, isLoading } = usePostDetail<typeof collectionName>(collectionName, editingId);
 
-	const { mutate: createPost, isPending: isCreating } =
-		useCreatePost(collectionName);
-	const { mutate: updatePost, isPending: isUpdating } = useUpdatePost(
-		collectionName,
-		editingId,
-	);
+	const { mutate: createPost, isPending: isCreating } = useCreatePost(collectionName);
+	const { mutate: updatePost, isPending: isUpdating } = useUpdatePost(collectionName, editingId);
 
-	const { isLoading: isSubmitting, setIsLoading: setIsSubmitting } =
-		useLoading();
+	const { isLoading: isSubmitting, setIsLoading: setIsSubmitting } = useLoading();
 
 	const scrollViewRef = useRef<ScrollView | null>(null);
 
@@ -178,37 +165,31 @@ const NewPost = () => {
 	const openAddItemModal = useCallback(() => {
 		setIsAddItemModalVisible(true);
 	}, []);
-	const closeAddItemModal = useCallback(
-		() => setIsAddItemModalVisible(false),
-		[],
-	);
-	const openEditItemModal = useCallback(
-		() => setIsEditItemModalVisible(true),
-		[],
-	);
-	const closeEditItemModal = useCallback(
-		() => setIsEditItemModalVisible(false),
-		[],
-	);
+	const closeAddItemModal = useCallback(() => setIsAddItemModalVisible(false), []);
+	const openEditItemModal = useCallback(() => setIsEditItemModalVisible(true), []);
+	const closeEditItemModal = useCallback(() => setIsEditItemModalVisible(false), []);
 
-	const addItemToCart = (item: Item) => {
-		const cart = getValues('cart') ?? [];
-		const isAlreadyAdded = cart.some((c) => c.id === item.id);
+	const addItemToCart = useCallback(
+		(item: Item) => {
+			const cart = getValues('cart') ?? [];
+			const isAlreadyAdded = cart.some((c) => c.id === item.id);
 
-		if (isAlreadyAdded) {
-			showToast('warn', '이미 추가된 아이템이에요.');
-		} else {
-			const newAddedItem: CartItem = {
-				...item,
-				quantity: 1,
-				price: 1,
-				unit: 'mileticket',
-			};
+			if (isAlreadyAdded) {
+				showToast('warn', '이미 추가된 아이템이에요.');
+			} else {
+				const newAddedItem: CartItem = {
+					...item,
+					quantity: 1,
+					price: 1,
+					unit: 'mileticket',
+				};
 
-			setValue('cart', [...cart, newAddedItem]);
-			showToast('success', `${item.name}이(가) 추가되었어요.`);
-		}
-	};
+				setValue('cart', [...cart, newAddedItem]);
+				showToast('success', `${item.name}이(가) 추가되었어요.`);
+			}
+		},
+		[getValues, setValue],
+	);
 
 	const handleEditItemPress = (item: CartItem) => {
 		setSelectedItem(item);
@@ -219,9 +200,7 @@ const NewPost = () => {
 		const cart = getValues('cart') ?? [];
 		setValue(
 			'cart',
-			cart.map((cartItem) =>
-				cartItem.id === updatedCartItem.id ? updatedCartItem : cartItem,
-			),
+			cart.map((cartItem) => (cartItem.id === updatedCartItem.id ? updatedCartItem : cartItem)),
 		);
 	};
 

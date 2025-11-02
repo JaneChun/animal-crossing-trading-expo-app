@@ -6,7 +6,7 @@ import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
 import { ItemSelectProps } from '@/types/components';
 import { Item, ItemCategory, ItemCategoryItem } from '@/types/post';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import Categories from '../ui/Categories';
@@ -14,12 +14,7 @@ import SearchInput from '../ui/inputs/SearchInput';
 import InlineLoadingIndicator from '../ui/loading/InlineLoadingIndicator';
 import ItemSelectItem, { ITEM_HEIGHT } from './ItemSelectItem';
 
-const ItemSelect = ({
-	cart,
-	addItemToCart,
-	containerStyle,
-	labelStyle,
-}: ItemSelectProps) => {
+const ItemSelect = ({ cart, addItemToCart, containerStyle, labelStyle }: ItemSelectProps) => {
 	const [category, setCategory] = useState<ItemCategory>('All');
 	const [searchInput, setSearchInput] = useState<string>('');
 	const debouncedKeyword = useDebouncedValue(searchInput, 300);
@@ -40,13 +35,33 @@ const ItemSelect = ({
 
 	const renderItemSelectItem = useCallback(
 		({ item }: { item: Item }) => (
-			<ItemSelectItem
-				item={item}
-				searchInput={searchInput}
-				addItemToCart={addItemToCart}
-			/>
+			<ItemSelectItem item={item} searchInput={searchInput} addItemToCart={addItemToCart} />
 		),
-		[searchInput],
+		[searchInput, addItemToCart],
+	);
+
+	const getItemLayout = useCallback(
+		(data: any, index: number) => ({
+			length: ITEM_HEIGHT,
+			offset: ITEM_HEIGHT * index,
+			index,
+		}),
+		[ITEM_HEIGHT],
+	);
+
+	const fetchNext = useCallback(() => {
+		if (hasNextPage && !isFetchingNextPage) {
+			fetchNextPage();
+		}
+	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+	const getListEmptyComponent = useMemo(
+		() => (
+			<View style={styles.spinnerContainer}>
+				<Text style={styles.emptyText}>검색 결과가 없습니다.</Text>
+			</View>
+		),
+		[],
 	);
 
 	return (
@@ -81,26 +96,14 @@ const ItemSelect = ({
 							keyExtractor={(item) => item.id}
 							contentContainerStyle={styles.itemList}
 							renderItem={renderItemSelectItem}
-							onEndReached={() => {
-								if (hasNextPage && !isFetchingNextPage) {
-									fetchNextPage();
-								}
-							}}
+							initialNumToRender={20}
+							maxToRenderPerBatch={20}
+							getItemLayout={getItemLayout}
+							onEndReached={fetchNext}
 							onEndReachedThreshold={0.5}
 							onRefresh={refetch}
 							refreshing={isFetching || isFetchingNextPage}
-							ListEmptyComponent={() => (
-								<View style={styles.spinnerContainer}>
-									<Text style={styles.emptyText}>검색 결과가 없습니다.</Text>
-								</View>
-							)}
-							initialNumToRender={20}
-							maxToRenderPerBatch={20}
-							getItemLayout={(data, index) => ({
-								length: ITEM_HEIGHT,
-								offset: ITEM_HEIGHT * index,
-								index,
-							})}
+							ListEmptyComponent={getListEmptyComponent}
 							keyboardShouldPersistTaps='handled'
 						/>
 					)}

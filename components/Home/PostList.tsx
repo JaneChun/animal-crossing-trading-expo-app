@@ -3,17 +3,18 @@ import { auth } from '@/fbase';
 import { useInfinitePosts } from '@/hooks/post/query/useInfinitePosts';
 import { useUserInfo } from '@/stores/auth';
 import { PostListProps } from '@/types/components';
+import { Collection, PostWithCreatorInfo } from '@/types/post';
 import {
 	navigateToLogin,
 	navigateToMyProfile,
 	navigateToNewPost,
 } from '@/utilities/navigationHelpers';
 import { FontAwesome6 } from '@expo/vector-icons';
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import LoadingIndicator from '../ui/loading/LoadingIndicator';
 import { showLongToast, showToast } from '../ui/Toast';
-import PostUnit from './PostUnit';
+import PostUnit, { POST_UNIT_HEIGHT } from './PostUnit';
 
 const PostList = ({
 	collectionName,
@@ -52,6 +53,33 @@ const PostList = ({
 		navigateToNewPost();
 	};
 
+	const renderPostUnit = useCallback(
+		({ item }: { item: PostWithCreatorInfo<Collection> }) => (
+			<PostUnit post={item} collectionName={collectionName} />
+		),
+		[collectionName],
+	);
+
+	const getItemLayout = useCallback(
+		(data: any, index: number) => ({
+			length: POST_UNIT_HEIGHT,
+			offset: POST_UNIT_HEIGHT * index,
+			index,
+		}),
+		[POST_UNIT_HEIGHT],
+	);
+
+	const fetchNext = useCallback(() => {
+		if (hasNextPage && !isFetchingNextPage) {
+			fetchNextPage();
+		}
+	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+	const getListFooterComponent = useMemo(() => {
+		if (hasNextPage) return null;
+		return <Text style={styles.endText}>마지막 글입니다.</Text>;
+	}, [hasNextPage]);
+
 	if (isLoading) {
 		return <LoadingIndicator />;
 	}
@@ -61,21 +89,16 @@ const PostList = ({
 			<FlatList
 				data={flatListData}
 				keyExtractor={({ id }) => id}
-				renderItem={({ item }) => (
-					<PostUnit post={item} collectionName={collectionName} />
-				)}
-				style={[containerStyle]}
-				onEndReached={
-					hasNextPage ? ({ distanceFromEnd }) => fetchNextPage() : undefined
-				}
+				renderItem={renderPostUnit}
+				style={containerStyle}
+				initialNumToRender={15}
+				maxToRenderPerBatch={15}
+				getItemLayout={getItemLayout}
+				onEndReached={fetchNext}
 				onEndReachedThreshold={0.5}
 				onRefresh={refetch}
 				refreshing={isFetching || isFetchingNextPage}
-				ListFooterComponent={
-					!hasNextPage ? (
-						<Text style={styles.endText}>마지막 글입니다.</Text>
-					) : null
-				}
+				ListFooterComponent={getListFooterComponent}
 			/>
 
 			{isAddPostButtonVisible && (

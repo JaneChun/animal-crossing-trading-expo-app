@@ -1,9 +1,9 @@
 import { Colors } from '@/constants/Color';
 import { useSearchPosts } from '@/hooks/post/query/useSearchPosts';
-import { Collection } from '@/types/post';
-import React from 'react';
+import { Collection, PostWithCreatorInfo } from '@/types/post';
+import React, { useCallback, useMemo } from 'react';
 import { FlatList, StyleProp, StyleSheet, Text, ViewStyle } from 'react-native';
-import PostUnit from '../Home/PostUnit';
+import PostUnit, { POST_UNIT_HEIGHT } from '../Home/PostUnit';
 import LoadingIndicator from '../ui/loading/LoadingIndicator';
 
 type SearchResultPostListProps = {
@@ -34,6 +34,33 @@ const SearchResultPostList = ({
 
 	const flatListData = data?.pages.flat() ?? [];
 
+	const renderPostUnit = useCallback(
+		({ item }: { item: PostWithCreatorInfo<Collection> }) => (
+			<PostUnit post={item} collectionName={collectionName} />
+		),
+		[collectionName],
+	);
+
+	const getItemLayout = useCallback(
+		(_data: any, index: number) => ({
+			length: POST_UNIT_HEIGHT,
+			offset: POST_UNIT_HEIGHT * index,
+			index,
+		}),
+		[],
+	);
+
+	const fetchNext = useCallback(() => {
+		if (hasNextPage && !isFetchingNextPage) {
+			fetchNextPage();
+		}
+	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+	const getListFooterComponent = useMemo(() => {
+		if (hasNextPage) return null;
+		return <Text style={styles.endText}>마지막 글입니다.</Text>;
+	}, [hasNextPage]);
+
 	if (isLoading) {
 		return <LoadingIndicator />;
 	}
@@ -43,21 +70,16 @@ const SearchResultPostList = ({
 			<FlatList
 				data={flatListData}
 				keyExtractor={({ id }) => id}
-				renderItem={({ item }) => (
-					<PostUnit post={item} collectionName={collectionName} />
-				)}
+				renderItem={renderPostUnit}
 				style={[containerStyle]}
-				onEndReached={
-					hasNextPage ? ({ distanceFromEnd }) => fetchNextPage() : undefined
-				}
+				initialNumToRender={15}
+				maxToRenderPerBatch={15}
+				getItemLayout={getItemLayout}
+				onEndReached={fetchNext}
 				onEndReachedThreshold={0.5}
 				onRefresh={refetch}
 				refreshing={isFetching || isFetchingNextPage}
-				ListFooterComponent={
-					!hasNextPage ? (
-						<Text style={styles.endText}>마지막 글입니다.</Text>
-					) : null
-				}
+				ListFooterComponent={getListFooterComponent}
 			/>
 		</>
 	);
