@@ -50,7 +50,14 @@ const ChatRoom = () => {
 		}
 	}, [chatId, systemMessage]);
 
-	const { userInfo, receiverInfo: fetchedReceiverInfo, isLoading, messages, sendMessage, leaveChatRoom } = useChatRoom({
+	const {
+		userInfo,
+		receiverInfo: fetchedReceiverInfo,
+		isLoading,
+		messages,
+		sendMessage,
+		leaveChatRoom,
+	} = useChatRoom({
 		chatId,
 		localMessages,
 	});

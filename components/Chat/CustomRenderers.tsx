@@ -2,25 +2,25 @@ import DateSeparator from '@/components/Chat/DateSeparator';
 import MessageUnit from '@/components/Chat/MessageUnit';
 import SystemMessageUnit from '@/components/Chat/SystemMessageUnit';
 import { Colors } from '@/constants/Color';
+import { ExtendedIMessage } from '@/types/chat';
+import { isReviewMessage, isSystemMessage } from '@/utilities/typeGuards/messageGuards';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
-import { IMessage } from 'react-native-gifted-chat';
 import ChatInput from './ChatInput';
 import ReviewMessageUnit from './ReviewMessageUnit';
 
-export const renderMessage = ({
-	currentMessage,
-}: {
-	currentMessage: IMessage;
-}) => {
-	if (currentMessage.user._id === 'system') {
+export const renderMessage = ({ currentMessage }: { currentMessage: ExtendedIMessage }) => {
+	// 시스템 메시지 (게시글 정보)
+	if (isSystemMessage(currentMessage)) {
 		return <SystemMessageUnit message={currentMessage} />;
 	}
 
-	if (currentMessage.user._id === 'review') {
+	// 리뷰 메시지
+	if (isReviewMessage(currentMessage)) {
 		return <ReviewMessageUnit message={currentMessage} />;
 	}
 
+	// 일반 메시지
 	return <MessageUnit message={currentMessage} />;
 };
 

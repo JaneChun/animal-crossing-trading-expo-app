@@ -1,4 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
+import { IMessage } from 'react-native-gifted-chat';
 import { Collection } from './post';
 import { PublicUserInfo } from './user';
 
@@ -24,6 +25,25 @@ export type Message = {
 	createdAt: Timestamp;
 	isReadBy: string[];
 };
+
+export type ExtendedIMessage = IMessage | SystemIMessage | ReviewIMessage;
+export interface SystemIMessage extends IMessage {
+	system: true;
+	systemPayload: SystemMessagePayload;
+}
+export interface ReviewIMessage extends IMessage {
+	review: true;
+	reviewPayload: ReviewMessagePayload;
+}
+
+export interface SystemMessagePayload {
+	postId: string;
+	collectionName: Collection;
+}
+export interface ReviewMessagePayload {
+	postId: string;
+	chatId: string;
+}
 
 // firebase/services/chatService.ts
 export interface CreateChatRoomParams {

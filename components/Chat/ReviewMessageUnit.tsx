@@ -2,16 +2,23 @@ import { Colors } from '@/constants/Color';
 import { createReview, getReviewBySenderId } from '@/firebase/services/reviewService';
 import { useReceiverInfo } from '@/hooks/chat/query/useReceiverInfo';
 import { useUserInfo } from '@/stores/auth';
+import { ReviewIMessage } from '@/types/chat';
 import { CreateReviewParams, ReviewValue } from '@/types/review';
 import { FontAwesome6 } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { IMessage } from 'react-native-gifted-chat';
 
-const ReviewMessageUnit = ({ message }: { message: IMessage }) => {
+const ReviewMessageUnit = ({ message }: { message: ReviewIMessage }) => {
 	const [localReview, setLocalReview] = useState<ReviewValue>(0);
 	const [isReviewed, setIsReviewed] = useState<boolean>(false);
-	const { postId, chatId } = JSON.parse(message.text);
+
+	const { postId, chatId } = message.reviewPayload;
+
+	if (!postId || !chatId) {
+		console.log('ReviewIMessage: postId 또는 chatId가 없습니다.');
+		return null;
+	}
+
 	const userInfo = useUserInfo();
 
 	const { data: receiverInfo } = useReceiverInfo(chatId);

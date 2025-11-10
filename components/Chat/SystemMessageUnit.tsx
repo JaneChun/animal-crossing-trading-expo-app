@@ -1,25 +1,14 @@
 import { usePostDetail } from '@/hooks/post/query/usePostDetail';
-import React, { useMemo } from 'react';
+import { SystemIMessage } from '@/types/chat';
 import { StyleSheet, View } from 'react-native';
-import { IMessage } from 'react-native-gifted-chat';
 import PostNotExist from './PostNotExist';
 import PostSummary from './PostSummary';
 import PostSummaryLoading from './PostSummaryLoading';
 
-const SystemMessageUnit = ({ message }: { message: IMessage }) => {
-	const { postId, collectionName } = useMemo(() => {
-		try {
-			const { postId, collectionName } = JSON.parse(message.text);
-			return { postId, collectionName };
-		} catch {
-			return { postId: null, collectionName: null };
-		}
-	}, [message]);
+const SystemMessageUnit = ({ message }: { message: SystemIMessage }) => {
+	const { postId, collectionName } = message.systemPayload;
 
-	const { data: post, isLoading: isPostLoading } = usePostDetail(
-		collectionName,
-		postId,
-	);
+	const { data: post, isLoading: isPostLoading } = usePostDetail(collectionName, postId);
 
 	return (
 		<View style={styles.container}>
