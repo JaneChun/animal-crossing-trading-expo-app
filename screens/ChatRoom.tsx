@@ -33,7 +33,7 @@ const ChatRoom = () => {
 	const hasSystemMessageSent = useRef<boolean>(false);
 
 	const route = useRoute<ChatRoomRouteProp>();
-	const { chatId, chatStartInfo, systemMessage, receiverInfo: passedReceiverInfo } = route.params;
+	const { chatId, chatStartInfo, receiverInfo: passedReceiverInfo, systemMessage } = route.params;
 
 	// 메세지
 	const [localMessages, setLocalMessages] = useState<Message[]>([]);

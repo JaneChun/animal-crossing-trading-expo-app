@@ -8,7 +8,7 @@ const PostNotExist = () => {
 	return (
 		<View style={styles.container}>
 			<Feather name='alert-circle' color={Colors.font_gray} size={16} />
-			<Text style={styles.invalidPostText}>삭제된 게시글입니다.</Text>
+			<Text style={styles.invalidPostText}>게시글을 찾을 수 없습니다.</Text>
 		</View>
 	);
 };

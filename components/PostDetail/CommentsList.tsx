@@ -8,6 +8,7 @@ const CommentsList = ({
 	postCommentCount,
 	comments,
 	chatRoomIds,
+	collectionName,
 	containerStyle,
 	onReportClick,
 	onEditCommentClick,
@@ -25,6 +26,7 @@ const CommentsList = ({
 						postId={postId}
 						postCreatorId={postCreatorId}
 						chatRoomIds={chatRoomIds}
+						collectionName={collectionName}
 						onReportClick={onReportClick}
 						onEditCommentClick={onEditCommentClick}
 						onReplyClick={onReplyClick}

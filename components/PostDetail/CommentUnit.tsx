@@ -3,7 +3,6 @@ import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { generateChatId } from '@/firebase/services/chatService';
 import { useDeleteComment } from '@/hooks/comment/mutation/useDeleteComment';
-import { usePostContext } from '@/hooks/post/usePostContext';
 import { useReplies } from '@/hooks/reply/query/useReplies';
 import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useUserInfo } from '@/stores/auth';
@@ -26,6 +25,7 @@ const CommentUnit = ({
 	postId,
 	postCreatorId,
 	chatRoomIds,
+	collectionName,
 	onReportClick,
 	onEditCommentClick,
 	onReplyClick,
@@ -39,12 +39,11 @@ const CommentUnit = ({
 	creatorIslandName,
 	creatorPhotoURL,
 }: CommentUnitProps) => {
-	const { collectionName } = usePostContext();
 	const userInfo = useUserInfo();
 
 	// 답글 조회
 	const { data: replies = [] } = useReplies({
-		collectionName: collectionName as Collection,
+		collectionName,
 		postId,
 		commentId: id,
 	});
@@ -57,7 +56,7 @@ const CommentUnit = ({
 
 	// 댓글 삭제
 	const { mutate: deleteComment, isPending: isDeletingComment } = useDeleteComment(
-		collectionName as Collection,
+		collectionName,
 		postId,
 		id,
 	);
@@ -219,7 +218,7 @@ const CommentUnit = ({
 								style={styles.chatButtonContainer}
 								onPress={() =>
 									onChatClick({
-										collectionName: collectionName as Collection,
+										collectionName,
 										postId,
 										receiverId: creatorId,
 									})

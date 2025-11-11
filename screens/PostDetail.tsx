@@ -230,6 +230,7 @@ const PostDetail = () => {
 									postCommentCount={post.commentCount}
 									comments={comments}
 									chatRoomIds={isBoardPost(post, collectionName) ? post.chatRoomIds : []}
+									collectionName={collectionName as Collection}
 									onReportClick={({ commentId, reporteeId }) =>
 										openReportModal({
 											postId: post.id,

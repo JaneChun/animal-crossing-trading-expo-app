@@ -172,6 +172,7 @@ export type CommentsListProps = {
 	postCommentCount: number;
 	comments: CommentWithCreatorInfo[];
 	chatRoomIds: string[];
+	collectionName: Collection;
 	containerStyle?: ViewStyle;
 	onReportClick: (params: OpenReportModalParams) => void;
 	onEditCommentClick: (params: OpenEditCommentModalParams) => void;
@@ -204,6 +205,7 @@ export interface CommentUnitProps extends CommentWithCreatorInfo {
 	postId: string;
 	postCreatorId: string;
 	chatRoomIds: string[];
+	collectionName: Collection;
 	onReportClick: (params: OpenReportModalParams) => void;
 	onEditCommentClick: (params: OpenEditCommentModalParams) => void;
 	onReplyClick: (params: OnReplyClickParams) => void;
