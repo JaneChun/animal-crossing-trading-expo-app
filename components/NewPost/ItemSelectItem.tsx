@@ -7,9 +7,13 @@ import ImageWithFallback from '../ui/ImageWithFallback';
 
 export const ITEM_HEIGHT = 53;
 
-const ItemSelectItem = ({ item, searchInput, addItemToCart }: ItemSelectItemProps) => {
+const ItemSelectItem = ({ item, searchInput, addItemToCart, index }: ItemSelectItemProps) => {
 	return (
-		<TouchableOpacity style={styles.item} onPress={() => addItemToCart(item)}>
+		<TouchableOpacity
+			style={styles.item}
+			onPress={() => addItemToCart(item)}
+			testID={index === 0 ? 'firstItemSelectItem' : `itemSelectItem-${index}`}
+		>
 			<ImageWithFallback uri={item?.imageUrl} style={styles.itemImage} priority='high' />
 			<Text numberOfLines={1} ellipsizeMode='tail' style={styles.itemTextContainer}>
 				{HighlightMatchText({

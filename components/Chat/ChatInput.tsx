@@ -33,7 +33,7 @@ const ChatInput = ({ disabled, onSubmit }: ChatInputProps) => {
 				style={styles.iconContainer}
 				onPress={handleSubmit}
 				disabled={disabled}
-				testID='chatSubmitButton'
+				testID='submitChatButton'
 			>
 				<FontAwesome6
 					name='circle-arrow-up'

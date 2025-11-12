@@ -31,6 +31,7 @@ const NameInput = ({
 				inputStyle={styles.input}
 				errorMessage={errorMessage}
 				InputComponent={InputComponent}
+				testID={`${type}Input`}
 			/>
 		</View>
 	);
