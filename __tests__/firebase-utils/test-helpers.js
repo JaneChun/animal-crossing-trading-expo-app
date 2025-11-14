@@ -13,7 +13,7 @@ const TEST_USER_A = {
 };
 
 const TEST_USER_B = {
-	uid: 'test-user-' + Date.now(),
+	uid: 'test-user',
 	displayName: '테스트유저',
 	islandName: '테스트섬',
 	email: 'test@example.com',
@@ -118,6 +118,7 @@ async function createTestPost(postData = {}) {
 			createdAt: Timestamp.now(),
 			reviewPromptSent: false,
 			status: 'active',
+			...postData,
 		};
 
 		const docRef = await db.collection('Boards').add(defaultPost);
@@ -175,14 +176,14 @@ async function checkPostExists(title) {
 
 /**
  * 리뷰 존재 여부 확인
- * @param {string} reviewerId - 리뷰 작성자 ID
+ * @param {string} senderId - 리뷰 작성자 ID
  * @returns {Promise<Object|null>} 리뷰 데이터 또는 null
  */
-async function checkReviewExists(reviewerId) {
+async function checkReviewExists(senderId) {
 	try {
 		const snapshot = await db
 			.collection('Reviews')
-			.where('reviewerId', '==', reviewerId)
+			.where('senderId', '==', senderId)
 			.limit(1)
 			.get();
 
