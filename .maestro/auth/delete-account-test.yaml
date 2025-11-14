@@ -1,12 +1,14 @@
 appId: com.janechun.animalcrossingtradingapp
 ---
-# 회원탈퇴 테스트 (로그인 상태에서 시작)
+# 회원탈퇴 테스트
+# 전제조건: 앱이 실행되어 있고 로그인 상태
 
 # 프로필 탭으로 이동
 - tapOn:
     label: '프로필 탭으로 이동'
     text: '프로필, tab, 5 of 5'
 
+# 프로필 화면 진입 확인
 - assertVisible:
     label: '프로필 화면 진입 확인'
     text: '프로필'
@@ -46,9 +48,11 @@ appId: com.janechun.animalcrossingtradingapp
     label: '재인증을 위한 네이버 로그인 버튼 클릭'
     text: '네이버로 로그인'
 
-# 네이버 재인증 처리 (외부 브라우저/앱에서 진행)
-- waitForAnimationToEnd:
-    label: '네이버 재인증 완료 대기'
+# Alert에서 "계속" 버튼이 있으면 탭
+- tapOn:
+    label: '네이버 로그인 확인 알림에서 계속 버튼 클릭'
+    text: '계속'
+    optional: true
 
 # 탈퇴 유의사항 안내 화면으로 이동
 - assertVisible:
@@ -67,7 +71,7 @@ appId: com.janechun.animalcrossingtradingapp
 
 # 탈퇴 확인 버튼 클릭
 - tapOn:
-    label: '최종 탈퇴 확인 버튼 클릭'
+    label: '"네, 탈퇴할게요" 버튼 클릭'
     text: '네, 탈퇴할게요'
 
 # 탈퇴 완료 후 로그인 화면으로 이동
@@ -81,8 +85,8 @@ appId: com.janechun.animalcrossingtradingapp
 
 # 탈퇴 완료 확인 버튼 클릭
 - tapOn:
-    label: 'OK 버튼 클릭'
-    text: 'OK'
+    label: '확인 버튼 클릭'
+    text: '확인'
 
 # 로그인 화면으로 돌아왔는지 확인
 - assertVisible:

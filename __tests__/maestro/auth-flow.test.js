@@ -1,32 +1,65 @@
-const { execSync } = require('child_process');
 const path = require('path');
+const { execSync } = require('child_process');
+const { cleanupTestUser } = require('../../scripts/cleanup-test-data');
+const { TEST_USER_A } = require('../../scripts/test-helpers');
 
 describe('인증 전체 플로우 테스트', () => {
 	const maestroPath = path.join(__dirname, '../../.maestro');
 
+	/**
+	 * Maestro 테스트 실행 헬퍼 함수
+	 * @param {string} testFile - .maestro/ 기준 상대 경로
+	 */
 	const runMaestroTest = (testFile) => {
 		return execSync(`maestro test ${maestroPath}/${testFile}`, {
 			stdio: 'inherit', // 출력을 콘솔에 표시
 		});
 	};
 
-	test('회원가입 테스트', () => {
-		expect(() => runMaestroTest('naver-signup-test.yaml')).not.toThrow();
-	}, 120000);
+	// 전체 테스트 전 초기화
+	beforeAll(async () => {
+		console.log('\n🧪 인증 플로우 테스트 시작\n');
+		try {
+			await cleanupTestUser(TEST_USER_A.uid);
+			runMaestroTest('launch-app.yaml');
+			console.log('✅ 테스트 환경 초기화 완료\n');
+		} catch (error) {
+			console.error('❌ cleanup 실패:', error.message);
+			throw error;
+		}
+	});
 
-	test('로그아웃 테스트', () => {
-		expect(() => runMaestroTest('logout-test.yaml')).not.toThrow();
-	}, 60000);
+	describe('회원가입 및 인증', () => {
+		test('네이버 회원가입', () => {
+			expect(() => runMaestroTest('auth/naver-signup-test.yaml')).not.toThrow();
+		}, 120000);
 
-	test('로그인 테스트', () => {
-		expect(() => runMaestroTest('naver-login-test.yaml')).not.toThrow();
-	}, 60000);
+		test('로그아웃', () => {
+			expect(() => runMaestroTest('auth/logout-test.yaml')).not.toThrow();
+		}, 120000);
 
-	test('프로필 수정 테스트', () => {
-		expect(() => runMaestroTest('edit-profile-test.yaml')).not.toThrow();
-	}, 60000);
+		test('네이버 로그인', () => {
+			expect(() => runMaestroTest('auth/naver-login-test.yaml')).not.toThrow();
+		}, 120000);
+	});
 
-	test('회원탈퇴 테스트', () => {
-		expect(() => runMaestroTest('delete-account-test.yaml')).not.toThrow();
-	}, 120000);
+	describe('계정 관리', () => {
+		test('프로필 수정', () => {
+			expect(() => runMaestroTest('profile/edit-profile-test.yaml')).not.toThrow();
+		}, 120000);
+
+		test('회원탈퇴', () => {
+			expect(() => runMaestroTest('auth/delete-account-test.yaml')).not.toThrow();
+		}, 120000);
+	});
+
+	// 모든 테스트 후 정리
+	afterAll(async () => {
+		try {
+			await cleanupTestUser(TEST_USER_A.uid);
+			console.log('✅ 인증 플로우 테스트 완료 및 정리 완료');
+		} catch (error) {
+			console.error('❌ 최종 cleanup 실패:', error.message);
+		}
+	});
 });
