@@ -3,12 +3,16 @@ const { TEST_USER_A } = require('../firebase-utils/test-helpers');
 const { runMaestroTest } = require('./maestro-helper');
 
 describe('인증 전체 플로우 테스트', () => {
-	// 전체 테스트 전 초기화
 	beforeAll(async () => {
 		console.log('\n🧪 인증 플로우 테스트 시작\n');
+
 		try {
+			// 1. 유저 데이터 초기화
 			await cleanupTestUser(TEST_USER_A.uid);
+
+			// 2. 앱 실행
 			runMaestroTest('launch-app.yaml');
+
 			console.log('✅ 테스트 환경 초기화 완료\n');
 		} catch (error) {
 			console.error('❌ 테스트 환경 초기화 실패:', error.message);
@@ -40,10 +44,10 @@ describe('인증 전체 플로우 테스트', () => {
 		}, 120000);
 	});
 
-	// 모든 테스트 후 정리
 	afterAll(async () => {
 		try {
 			await cleanupTestUser(TEST_USER_A.uid);
+
 			console.log('✅ 테스트 완료 및 cleanup 완료');
 		} catch (error) {
 			console.error('❌ cleanup 실패:', error.message);

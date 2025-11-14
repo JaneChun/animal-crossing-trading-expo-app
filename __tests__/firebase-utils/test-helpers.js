@@ -1,5 +1,5 @@
 const { auth, db } = require('./firebase-admin-setup');
-const { Timestamp } = require('firebase/firestore');
+const { Timestamp } = require('firebase-admin/firestore');
 
 const TEST_USER_A = {
 	uid: 'Zrc3ke0dYXcskivyQIba4ZJKpEJp5VbQ7Ms-snLbkhM',
@@ -33,7 +33,7 @@ async function createTestAuthUser(userData = TEST_USER_A) {
 		// 이미 존재하는지 확인
 		try {
 			const existingUser = await auth.getUser(userData.uid);
-			console.log(`ℹ️  Auth 유저 이미 존재: ${userData.displayName} (${userData.uid})`);
+			console.log(`Auth 유저 이미 존재함: ${userData.uid}`);
 			return existingUser;
 		} catch (error) {
 			if (error.code !== 'auth/user-not-found') {
@@ -46,13 +46,12 @@ async function createTestAuthUser(userData = TEST_USER_A) {
 			uid: userData.uid,
 			email: userData.email,
 			displayName: userData.displayName,
-			photoURL: userData.photoURL,
 		});
 
-		console.log(`✅ Auth 유저 생성 완료: ${userData.displayName} (${userData.uid})`);
+		console.log(`Auth 유저 생성 완료: ${userData.uid}`);
 		return userRecord;
 	} catch (error) {
-		console.error('❌ Auth 유저 생성 실패:', error.message);
+		console.error(`Auth 유저 ${userData.uid} 생성 실패:`, error.message);
 		throw error;
 	}
 }
@@ -76,10 +75,10 @@ async function createTestFirestoreUser(userData = TEST_USER_A) {
 		};
 
 		await db.collection('Users').doc(userData.uid).set(userDoc);
-		console.log(`✅ Firestore 유저 생성 완료: ${userData.displayName}`);
+		console.log(`Firestore 유저 생성 완료: ${userData.uid}`);
 		return userData.uid;
 	} catch (error) {
-		console.error('❌ Firestore 유저 생성 실패:', error.message);
+		console.error(`Firestore 유저 ${userData.uid} 생성 실패:`, error.message);
 		throw error;
 	}
 }
@@ -93,10 +92,10 @@ async function setupTestUser(userData = TEST_USER_A) {
 	try {
 		await createTestAuthUser(userData);
 		await createTestFirestoreUser(userData);
-		console.log(`🎉 테스트 유저 설정 완료: ${userData.displayName}`);
+		console.log(`테스트 유저 Auth, Firestore 생성 완료: ${userData.uid}`);
 		return userData;
 	} catch (error) {
-		console.error('❌ 테스트 유저 설정 실패:', error.message);
+		console.error(`테스트 유저 Auth, Firestore 생성 실패: ${userData.uid}`, error.message);
 		throw error;
 	}
 }
@@ -122,10 +121,10 @@ async function createTestPost(postData = {}) {
 		};
 
 		const docRef = await db.collection('Boards').add(defaultPost);
-		console.log(`✅ 테스트 게시글 생성 완료: ${docRef.id}`);
+		console.log(`테스트 게시글 생성 완료: ${docRef.id}`);
 		return docRef.id;
 	} catch (error) {
-		console.error('❌ 테스트 게시글 생성 실패:', error.message);
+		console.error('테스트 게시글 생성 실패:', error.message);
 		throw error;
 	}
 }
@@ -150,10 +149,10 @@ async function createTestComment(postId, commentData = {}) {
 			.collection('Comments')
 			.add(defaultComment);
 
-		console.log(`✅ 테스트 댓글 생성 완료: ${docRef.id}`);
+		console.log(`테스트 댓글 생성 완료: ${docRef.id}`);
 		return docRef.id;
 	} catch (error) {
-		console.error('❌ 테스트 댓글 생성 실패:', error.message);
+		console.error('테스트 댓글 생성 실패:', error.message);
 		throw error;
 	}
 }
@@ -169,7 +168,7 @@ async function checkPostExists(title) {
 
 		return !snapshot.empty;
 	} catch (error) {
-		console.error('❌ 게시글 확인 실패:', error.message);
+		console.error('게시글 확인 실패:', error.message);
 		return false;
 	}
 }
@@ -193,7 +192,7 @@ async function checkReviewExists(reviewerId) {
 
 		return snapshot.docs[0].data();
 	} catch (error) {
-		console.error('❌ 리뷰 확인 실패:', error.message);
+		console.error('리뷰 확인 실패:', error.message);
 		return null;
 	}
 }

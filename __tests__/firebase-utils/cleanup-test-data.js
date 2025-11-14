@@ -128,7 +128,7 @@ async function deleteAuthUser(uid) {
 		return true;
 	} catch (error) {
 		if (error.code === 'auth/user-not-found') {
-			console.log(`ℹ️  Auth 유저 없음 (이미 삭제됨): ${uid}`);
+			console.log(`Auth 유저 없음 (이미 삭제됨): ${uid}`);
 			return true; // 없는 것도 성공으로 간주
 		}
 		console.error(`Auth 유저 ${uid} 삭제 실패:`, error.message);
