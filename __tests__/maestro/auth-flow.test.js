@@ -1,21 +1,8 @@
-const path = require('path');
-const { execSync } = require('child_process');
-const { cleanupTestUser } = require('../../scripts/cleanup-test-data');
-const { TEST_USER_A } = require('../../scripts/test-helpers');
+const { cleanupTestUser } = require('../firebase-utils/cleanup-test-data');
+const { TEST_USER_A } = require('../firebase-utils/test-helpers');
+const { runMaestroTest } = require('./maestro-helper');
 
 describe('인증 전체 플로우 테스트', () => {
-	const maestroPath = path.join(__dirname, '../../.maestro');
-
-	/**
-	 * Maestro 테스트 실행 헬퍼 함수
-	 * @param {string} testFile - .maestro/ 기준 상대 경로
-	 */
-	const runMaestroTest = (testFile) => {
-		return execSync(`maestro test ${maestroPath}/${testFile}`, {
-			stdio: 'inherit', // 출력을 콘솔에 표시
-		});
-	};
-
 	// 전체 테스트 전 초기화
 	beforeAll(async () => {
 		console.log('\n🧪 인증 플로우 테스트 시작\n');
@@ -24,7 +11,7 @@ describe('인증 전체 플로우 테스트', () => {
 			runMaestroTest('launch-app.yaml');
 			console.log('✅ 테스트 환경 초기화 완료\n');
 		} catch (error) {
-			console.error('❌ cleanup 실패:', error.message);
+			console.error('❌ 테스트 환경 초기화 실패:', error.message);
 			throw error;
 		}
 	});
@@ -57,9 +44,9 @@ describe('인증 전체 플로우 테스트', () => {
 	afterAll(async () => {
 		try {
 			await cleanupTestUser(TEST_USER_A.uid);
-			console.log('✅ 인증 플로우 테스트 완료 및 정리 완료');
+			console.log('✅ 테스트 완료 및 cleanup 완료');
 		} catch (error) {
-			console.error('❌ 최종 cleanup 실패:', error.message);
+			console.error('❌ cleanup 실패:', error.message);
 		}
 	});
 });

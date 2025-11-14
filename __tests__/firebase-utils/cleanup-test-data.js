@@ -3,10 +3,10 @@ const { auth, db } = require('./firebase-admin-setup');
 async function deleteDocumentById(collectionName, id) {
 	try {
 		await db.collection(collectionName).doc(id).delete();
-		console.log(`✅ Firestore ${collectionName} 컬렉션: id=${id} 문서 삭제 완료`);
+		console.log(`Firestore ${collectionName} 컬렉션: id=${id} 문서 삭제 완료`);
 		return true;
 	} catch (error) {
-		console.error(`❌ Firestore ${collectionName} 컬렉션: id=${id} 문서 삭제 실패:`, error.message);
+		console.error(`Firestore ${collectionName} 컬렉션: id=${id} 문서 삭제 실패:`, error.message);
 		throw error;
 	}
 }
@@ -25,11 +25,11 @@ async function deleteDocumentsByField(collectionName, fieldName, fieldValue) {
 		});
 
 		await batch.commit();
-		console.log(`✅ Firestore ${collectionName} 컬렉션: ${fieldName}=${fieldValue} 문서 삭제 완료`);
+		console.log(`Firestore ${collectionName} 컬렉션: ${fieldName}=${fieldValue} 문서 삭제 완료`);
 		return snapshot.size;
 	} catch (error) {
 		console.error(
-			`❌ Firestore ${collectionName} 컬렉션: ${fieldName}=${fieldValue} 문서 삭제 실패:`,
+			`Firestore ${collectionName} 컬렉션: ${fieldName}=${fieldValue} 문서 삭제 실패:`,
 			error.message,
 		);
 		throw error;
@@ -55,7 +55,7 @@ async function deleteCollection(collectionName) {
 		await batch.commit();
 		return deletedCount;
 	} catch (error) {
-		console.error(`❌ ${collectionName} 컬렉션 삭제 실패:`, error.message);
+		console.error(`${collectionName} 컬렉션 삭제 실패:`, error.message);
 		throw error;
 	}
 }
@@ -86,7 +86,7 @@ async function deleteSubcollection(documentRef, subcollectionName) {
 		await batch.commit();
 		return deletedCount;
 	} catch (error) {
-		console.error(`❌ ${subcollectionName} 서브컬렉션 삭제 실패:`, error.message);
+		console.error(`${subcollectionName} 서브컬렉션 삭제 실패:`, error.message);
 		throw error;
 	}
 }
@@ -108,10 +108,10 @@ async function cleanupTestUser(uid) {
 		// Firebase Auth에서 삭제
 		await deleteAuthUser(uid);
 
-		console.log(`✅ 테스트 유저 Auth, Firestore 정리 완료: ${uid}`);
+		console.log(`테스트 유저 Auth, Firestore 정리 완료: ${uid}`);
 		return true;
 	} catch (error) {
-		console.error(`❌ 테스트 유저 Auth, Firestore 정리 실패: ${uid}`, error.message);
+		console.error(`테스트 유저 Auth, Firestore 정리 실패: ${uid}`, error.message);
 		throw error;
 	}
 }
@@ -124,14 +124,14 @@ async function cleanupTestUser(uid) {
 async function deleteAuthUser(uid) {
 	try {
 		await auth.deleteUser(uid);
-		console.log(`✅ Auth 유저 삭제 완료: ${uid}`);
+		console.log(`Auth 유저 삭제 완료: ${uid}`);
 		return true;
 	} catch (error) {
 		if (error.code === 'auth/user-not-found') {
 			console.log(`ℹ️  Auth 유저 없음 (이미 삭제됨): ${uid}`);
 			return true; // 없는 것도 성공으로 간주
 		}
-		console.error(`❌ Auth 유저 ${uid} 삭제 실패:`, error.message);
+		console.error(`Auth 유저 ${uid} 삭제 실패:`, error.message);
 		throw error;
 	}
 }
