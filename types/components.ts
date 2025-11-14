@@ -40,6 +40,7 @@ export type PostListProps = {
 export type PostUnitProps<C extends Collection> = {
 	post: PostWithCreatorInfo<C>;
 	collectionName: C;
+	index: number;
 };
 
 export type TypeBadgeProps<T extends MarketType | CommunityType> = {
@@ -121,6 +122,7 @@ export type ItemSelectProps = {
 export type ItemSelectItemProps = {
 	item: Item;
 	searchInput: string;
+	index: number;
 	addItemToCart: (item: Item) => void;
 };
 
@@ -345,6 +347,7 @@ export type ButtonProps = {
 	flex?: boolean;
 	style?: object;
 	disabled?: boolean;
+	testID?: string;
 };
 
 export type ValidationInputProp = TextInputProps & {

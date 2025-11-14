@@ -1,6 +1,7 @@
 appId: com.janechun.animalcrossingtradingapp
 ---
-# 로그아웃 테스트 (로그인 완료 후 프로필 화면에서 시작)
+# 로그아웃 Test (재사용 가능)
+# 전제조건: 앱이 실행되어 있고 로그인 상태
 
 # 프로필 탭으로 이동
 - tapOn:
@@ -37,13 +38,15 @@ appId: com.janechun.animalcrossingtradingapp
     label: '로그아웃 버튼 클릭'
     id: 'logoutButton'
 
-# 로그아웃 확인 알림창 처리 (사용자가 직접 클릭)
+# 로그아웃 확인 알림창 처리
 - assertVisible:
     label: '로그아웃 확인 알림창 표시 확인'
     text: '로그아웃 하시겠습니까?'
-- waitForAnimationToEnd:
-    label: '🕐 로그아웃 확인 알림창에서 사용자가 직접 로그아웃 버튼 클릭할 때까지 30초 대기'
-    timeout: 30000
+
+# Alert에서 "로그아웃" 버튼 클릭 (point로 접근)
+- tapOn:
+    label: 'Alert에서 로그아웃 버튼 클릭'
+    point: '60%, 55%'
 
 # 로그아웃 토스트 메시지 확인
 - assertVisible:

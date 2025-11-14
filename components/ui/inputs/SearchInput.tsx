@@ -31,6 +31,7 @@ const SearchInput = ({
 						onSubmit(searchInput.trim());
 					}
 				}}
+				testID='searchInput'
 			/>
 			{searchInput && (
 				<Pressable onPress={resetSearchInput}>

@@ -1,19 +1,25 @@
 appId: com.janechun.animalcrossingtradingapp
 ---
-# 새글 작성 테스트 (로그인 완료 후 마켓 탭에서 시작)
+# 게시글 작성 테스트
+
+# 마켓 탭 확인
 - tapOn:
     label: '마켓 탭으로 이동'
     text: '마켓, tab, 1 of 5'
 - assertVisible:
     text: '거래글'
     label: '마켓 탭에서 시작하는지 확인'
+
+# 새글 작성 화면 진입
 - tapOn:
     id: 'addPostButton'
     label: '새글 작성 화면 진입'
+
 - assertVisible:
     text: '새 글 작성'
     label: '새글 작성 페이지 로드 확인'
 
+# 게시글 타입 선택
 - tapOn:
     label: '게시글 타입 선택'
     text: '팔아요'
@@ -22,19 +28,21 @@ appId: com.janechun.animalcrossingtradingapp
 - tapOn:
     id: 'titleInput'
     label: '제목 입력 필드 클릭'
+
 - inputText:
     label: '게시글 제목 입력'
     text: '테스트 게시글'
 
-# 내용 입력
+# 본문 입력
 - tapOn:
     label: '본문 입력 필드 클릭'
     id: 'bodyInput'
+
 - inputText:
     label: '게시글 본문 입력'
     text: '테스트입니다.'
 
-# 키보드 닫기 (화면 상단 탭)
+# 키보드 닫기
 - tapOn:
     label: '화면 상단을 탭해서 키보드 닫기'
     point: '90%, 20%'
@@ -42,42 +50,55 @@ appId: com.janechun.animalcrossingtradingapp
 # 아이템 추가
 - tapOn:
     label: '아이템 추가 버튼 클릭'
-    text: '아이템 추가'
+    id: 'addItemButton'
 
-# 아이템 검색 및 선택
+# 아이템 검색 및 선택 (모달: point로 접근)
 - tapOn:
     label: '아이템 검색창 클릭'
+    # id: 'addItemButton'
     point: '50%, 25%'
+
 - inputText:
     label: '아이템 검색어 입력'
     text: '사과'
 
+# 첫 번째 검색 결과 선택 (모달: point로 접근)
 - tapOn:
-    label: '검색 결과에서 아이템 클릭'
+    label: '검색 결과에서 첫 번째 아이템 클릭'
+    # id: 'firstItemSelectItem'
     point: '50%, 50%'
 
-# 모달 닫기
+# 모달 닫기 (스와이프 다운)
 - swipe:
     label: '아이템 선택 모달 닫기'
-    start: 50%, 20%
-    end: 50%, 90%
+    direction: DOWN
 
 # 등록 버튼 클릭
 - tapOn:
     label: '게시글 등록 버튼 클릭'
-    text: '등록'
+    id: 'submitPostButton'
+
 - assertVisible:
     label: '게시글 작성 성공 메시지 확인'
     text: '게시글이 작성되었습니다.'
 
-# 뒤로 가기
+# 토스트 메시지가 사라질 때까지 대기
 - waitForAnimationToEnd:
-    label: '애니메이션 완료 대기'
+    label: '토스트 메시지 애니메이션 대기'
+
+# 추가 대기 (토스트 메시지 완전히 사라질 때까지)
+- runFlow:
+    when:
+      visible: '게시글이 작성되었습니다.'
+    commands:
+      - waitForAnimationToEnd
+
+# 게시글 상세 화면에서 뒤로가기
 - tapOn:
     label: '뒤로가기 버튼 클릭'
     point: '10%, 10%'
 
-# 새로고침
+# 마켓 목록 새로고침
 - swipe:
     label: '마켓 목록 새로고침'
     start: 50%, 20%

@@ -1,0 +1,47 @@
+appId: com.janechun.animalcrossingtradingapp
+---
+# 댓글 확인 및 채팅 시작 테스트
+
+# 게시글 목록 새로고침
+- swipe:
+    label: '게시글 목록 새로고침'
+    start: 50%, 20%
+    end: 50%, 50%
+
+# 작성된 게시글 '거래 테스트 게시글' 클릭
+- tapOn:
+    label: '거래 테스트 게시글 클릭'
+    point: '50%, 18%'
+
+# '채팅하기' 버튼 클릭
+- tapOn:
+    label: '채팅하기 버튼 클릭'
+    id: 'startChatButton'
+
+# 채팅방 진입 확인
+- assertVisible:
+    label: '채팅방 진입 확인'
+    id: 'chatInput'
+
+# 메시지 전송
+- tapOn:
+    label: '채팅 입력창 클릭'
+    id: 'chatInput'
+
+- inputText:
+    label: '메시지 입력'
+    text: '테스트'
+
+- tapOn:
+    label: '메시지 전송 버튼 클릭'
+    id: 'submitChatButton'
+
+# 메시지 전송 확인
+- assertVisible:
+    label: '메시지 전송 확인'
+    text: '테스트'
+
+# 키보드 닫기
+- tapOn:
+    label: '화면 상단을 탭해서 키보드 닫기'
+    point: '90%, 20%'

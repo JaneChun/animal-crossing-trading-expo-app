@@ -15,11 +15,12 @@ import MarketTypeBadge from './MarketTypeBadge';
 
 export const POST_UNIT_HEIGHT = 100;
 
-const PostUnit = <C extends Collection>({ post, collectionName }: PostUnitProps<C>) => {
+const PostUnit = <C extends Collection>({ post, collectionName, index }: PostUnitProps<C>) => {
 	return (
 		<Pressable
 			style={styles.container}
 			onPress={() => navigateToPost({ postId: post.id, collectionName })}
+			testID={index === 0 ? 'firstPostUnit' : `postUnit-${index}`}
 		>
 			<>
 				{/* 콘텐츠 */}

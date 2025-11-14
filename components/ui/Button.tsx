@@ -12,6 +12,7 @@ const Button = ({
 	flex = false,
 	style,
 	disabled,
+	testID,
 }: ButtonProps) => {
 	const getColorStyles = (color: ButtonColor) => {
 		switch (color) {
@@ -83,10 +84,9 @@ const Button = ({
 				flex && { flex: 1 },
 				style,
 			]}
+			testID={testID}
 		>
-			<Text style={[styles.text, disabled ? styles.disabledText : textStyles]}>
-				{children}
-			</Text>
+			<Text style={[styles.text, disabled ? styles.disabledText : textStyles]}>{children}</Text>
 		</TouchableOpacity>
 	);
 };

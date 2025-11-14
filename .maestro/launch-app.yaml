@@ -1,0 +1,5 @@
+appId: com.janechun.animalcrossingtradingapp
+---
+# 앱 실행
+- launchApp:
+    label: '앱 실행'

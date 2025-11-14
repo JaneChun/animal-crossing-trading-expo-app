@@ -1,15 +1,11 @@
 appId: com.janechun.animalcrossingtradingapp
 ---
-# 4. 거래완료 처리 후 리뷰 주고받기 테스트
+# 거래 완료 처리 테스트
 
-# 채팅방 내 '테스트 게시글' 클릭
-- assertVisible:
-    label: '채팅 내 테스트 게시글 버튼 확인'
-    id: 'postSummaryButton'
-
+# 채팅방 내 '거래 테스트 게시글' 클릭 (testID 미동작: point로 접근)
 - tapOn:
-    label: '테스트 게시글 클릭'
-    id: 'postSummaryButton'
+    label: '거래 테스트 게시글 클릭'
+    point: '50%, 80%'
 
 # 게시글 상단 더보기 버튼 클릭 (...)
 - tapOn:
@@ -26,22 +22,17 @@ appId: com.janechun.animalcrossingtradingapp
     label: '뒤로가기 버튼 클릭'
     point: '10%, 10%'
 
-# 후기 입력 시스템 메시지 확인
+# 리뷰 입력 시스템 메시지 확인
 - assertVisible:
-    label: '후기 입력 시스템 메시지 확인'
+    label: '리뷰 입력 시스템 메시지 확인'
     text: '상대방과의 거래는 어땠나요?'
 
-# A 유저가 B 유저에게 좋아요 후기 남기기
+# A 유저가 B 유저에게 좋아요 리뷰 남기기
 - tapOn:
-    label: 'A 유저가 B 유저에게 좋아요 후기 클릭'
+    label: 'A 유저가 B 유저에게 좋아요 리뷰 클릭'
     id: 'goodReviewButton'
 
 # 거래 플로우 테스트 완료 확인
 - assertVisible:
     label: '거래 플로우 테스트 완료 - 채팅방 화면 확인'
     id: 'goodReviewButton'
-
-# 뒤로가기
-- tapOn:
-    label: '뒤로가기 버튼 클릭'
-    point: '10%, 10%'
