@@ -15,9 +15,6 @@ describe('게시글 전체 플로우 테스트', () => {
 			// 2. 앱 실행
 			runMaestroTest('launch-app.yaml');
 
-			// 3. 네이버 로그인
-			runMaestroTest('auth/naver-login-test.yaml');
-
 			console.log('✅ 테스트 환경 초기화 완료\n');
 		} catch (error) {
 			console.error('❌ 테스트 환경 초기화 실패:', error.message);

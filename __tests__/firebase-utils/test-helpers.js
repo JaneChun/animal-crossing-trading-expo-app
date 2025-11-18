@@ -30,18 +30,6 @@ const TEST_USER_B = {
  */
 async function createTestAuthUser(userData = TEST_USER_A) {
 	try {
-		// 이미 존재하는지 확인
-		try {
-			const existingUser = await auth.getUser(userData.uid);
-			console.log(`Auth 유저 이미 존재함: ${userData.uid}`);
-			return existingUser;
-		} catch (error) {
-			if (error.code !== 'auth/user-not-found') {
-				throw error;
-			}
-		}
-
-		// 사용자 생성
 		const userRecord = await auth.createUser({
 			uid: userData.uid,
 			email: userData.email,
@@ -51,6 +39,12 @@ async function createTestAuthUser(userData = TEST_USER_A) {
 		console.log(`Auth 유저 생성 완료: ${userData.uid}`);
 		return userRecord;
 	} catch (error) {
+		// 이미 존재하는 경우 기존 유저 반환
+		if (error.code === 'auth/uid-already-exists') {
+			console.log(`Auth 유저 이미 존재함: ${userData.uid}`);
+			return await auth.getUser(userData.uid);
+		}
+
 		console.error(`Auth 유저 ${userData.uid} 생성 실패:`, error.message);
 		throw error;
 	}
@@ -161,17 +155,22 @@ async function createTestComment(postId, commentData = {}) {
 /**
  * 게시글 존재 여부 확인
  * @param {string} title - 게시글 제목
+ * @param {number} maxRetries - 재시도 횟수
+ * @param {number} delayMs - 요청 간 딜레이
  * @returns {Promise<boolean>}
  */
-async function checkPostExists(title) {
-	try {
+async function checkPostExists(title, maxRetries = 3, delayMs = 1000) {
+	for (let i = 0; i < maxRetries; i++) {
 		const snapshot = await db.collection('Boards').where('title', '==', title).limit(1).get();
 
-		return !snapshot.empty;
-	} catch (error) {
-		console.error('게시글 확인 실패:', error.message);
-		return false;
+		if (!snapshot.empty) return true;
+
+		// 재시도 전 대기
+		if (i < maxRetries - 1) {
+			await new Promise((resolve) => setTimeout(resolve, delayMs));
+		}
 	}
+	return false;
 }
 
 /**

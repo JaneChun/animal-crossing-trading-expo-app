@@ -17,7 +17,6 @@ module.exports = {
 					statements: 80,
 				},
 			},
-			verbose: true,
 		},
 		// Configuration for Maestro E2E tests
 		{
@@ -32,7 +31,6 @@ module.exports = {
 			transformIgnorePatterns: [
 				'node_modules/(?!((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|uuid|gaxios|gcp-metadata|google-auth-library)/)',
 			],
-			testTimeout: 120000,
 		},
 	],
 };
