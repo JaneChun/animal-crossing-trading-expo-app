@@ -234,7 +234,7 @@ const NewPost = () => {
 
 				<View style={styles.buttonContainer}>
 					{collectionName === 'Boards' && (
-						<Button color='white' size='lg' flex onPress={openAddItemModal}>
+						<Button color='white' size='lg' flex onPress={openAddItemModal} testID='addItemButton'>
 							아이템 추가
 						</Button>
 					)}
@@ -244,6 +244,7 @@ const NewPost = () => {
 						flex
 						disabled={Object.keys(errors).length > 0}
 						onPress={handleSubmit(onSubmit, onError)}
+					testID='submitPostButton'
 					>
 						등록
 					</Button>

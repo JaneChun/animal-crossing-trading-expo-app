@@ -1,17 +1,4 @@
-const admin = require('firebase-admin');
-const { getAuth } = require('firebase-admin/auth');
-const { getFirestore } = require('firebase-admin/firestore');
-
-// Firebase Admin SDK 초기화 (에뮬레이터용)
-process.env.FIRESTORE_EMULATOR_HOST = '127.0.0.1:8080';
-process.env.FIREBASE_AUTH_EMULATOR_HOST = '127.0.0.1:9099';
-
-admin.initializeApp({
-	projectId: 'animal-crossing-trade-expo-app',
-});
-
-const auth = getAuth();
-const db = getFirestore();
+const { auth, db } = require('./firebase-admin-setup');
 
 // 테스트 사용자 데이터
 const testUsers = [

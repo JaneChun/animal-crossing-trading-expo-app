@@ -1,10 +1,12 @@
 appId: com.janechun.animalcrossingtradingapp
 ---
-# 네이버 로그인 테스트 (앱 시작 후 로그인 화면에서 시작)
+# 네이버 로그인 테스트
+# 전제조건: 앱이 실행되어 있고 로그아웃 상태
 
-# 앱 실행
-- launchApp:
-    label: '앱 실행'
+# 로그인 화면 진입 확인
+- assertVisible:
+    label: '로그인 화면 진입 확인'
+    text: '로그인, tab, 5 of 5'
 
 # 로그인 탭으로 이동
 - tapOn:
@@ -21,14 +23,11 @@ appId: com.janechun.animalcrossingtradingapp
     label: '네이버 로그인 버튼 클릭'
     text: '네이버로 로그인'
 
-# # Alert에서 "계속" 버튼이 있으면 탭
+# Alert에서 "계속" 버튼이 있으면 탭
 - tapOn:
     label: '네이버 로그인 확인 알림에서 계속 버튼 클릭'
     text: '계속'
     optional: true
-
-# 네이버 로그인 처리 (외부 브라우저/앱에서 진행)
-# 테스트에서는 네이버 로그인 성공 후 앱으로 돌아왔다고 가정
 
 # 로그인 성공 토스트 메시지 확인
 - assertVisible:

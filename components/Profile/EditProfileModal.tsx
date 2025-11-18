@@ -159,6 +159,7 @@ const EditProfileModal = ({
 			color='white'
 			size='md2'
 			onPress={handleSubmit(onSubmit, onError)}
+			testID='submitProfileButton'
 		>
 			완료
 		</Button>

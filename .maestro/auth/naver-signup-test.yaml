@@ -1,6 +1,7 @@
 appId: com.janechun.animalcrossingtradingapp
 ---
-# 회원가입 테스트 (로그아웃 상태에서 시작)
+# 네이버 회원가입 테스트
+# 전제조건: 앱이 실행되어 있고 로그아웃 상태
 
 # 로그인 탭으로 이동
 - tapOn:
@@ -17,22 +18,23 @@ appId: com.janechun.animalcrossingtradingapp
     label: '네이버 로그인 버튼 클릭'
     text: '네이버로 로그인'
 
-# Alert에서 "계속" 버튼이 있으면 탭
+# 웹뷰에서 네이버 로그인
 - tapOn:
-    label: '네이버 로그인 확인 알림에서 계속 버튼 클릭'
+    label: '네이버 로그인 확인 Alert에서 계속 버튼 클릭'
     text: '계속'
     optional: true
+- tapOn:
+    label: '"전체 동의하기" 클릭'
+    text: '전체 동의하기'
+    optional: true
+- tapOn:
+    label: '"동의하기" 버튼 클릭'
+    text: '동의하기'
+    optional: true
 
-# 네이버 로그인 처리 (외부 웹뷰에서 직접 로그인 진행)
-# 사용자가 직접 네이버 로그인을 완료할 때까지 30초 대기
-
-- waitForAnimationToEnd:
-    label: '🕐 네이버 로그인 웹뷰에서 사용자가 직접 로그인 완료할 때까지 30초 대기'
-    timeout: 30000
-
-# 신규 사용자의 경우 약관 동의 화면으로 이동
+# 모동숲 마켓 이용약관 동의 화면으로 이동
 - assertVisible:
-    label: '약관 동의 화면 진입 확인'
+    label: '이용약관 동의 화면 진입 확인'
     text: '모동숲 마켓\n이용약관 동의'
 
 # 전체 동의 체크박스 클릭
@@ -53,7 +55,8 @@ appId: com.janechun.animalcrossingtradingapp
 # 닉네임 입력
 - tapOn:
     label: '닉네임 입력 필드 클릭'
-    text: '닉네임을 입력해주세요.'
+    id: 'displayNameInput'
+
 - inputText:
     label: '닉네임 입력'
     text: '네이버유저'
@@ -71,7 +74,8 @@ appId: com.janechun.animalcrossingtradingapp
 # 섬 이름 입력
 - tapOn:
     label: '섬 이름 입력 필드 클릭'
-    text: '섬 이름을 입력해주세요.'
+    id: 'islandNameInput'
+
 - inputText:
     label: '섬 이름 입력'
     text: '네이버섬'

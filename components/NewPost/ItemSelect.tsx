@@ -34,8 +34,13 @@ const ItemSelect = ({ cart, addItemToCart, containerStyle, labelStyle }: ItemSel
 	const items = data?.pages.flat() ?? [];
 
 	const renderItemSelectItem = useCallback(
-		({ item }: { item: Item }) => (
-			<ItemSelectItem item={item} searchInput={searchInput} addItemToCart={addItemToCart} />
+		({ item, index }: { item: Item; index: number }) => (
+			<ItemSelectItem
+				item={item}
+				searchInput={searchInput}
+				addItemToCart={addItemToCart}
+				index={index}
+			/>
 		),
 		[searchInput, addItemToCart],
 	);

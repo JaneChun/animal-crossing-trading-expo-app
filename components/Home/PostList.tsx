@@ -54,8 +54,8 @@ const PostList = ({
 	};
 
 	const renderPostUnit = useCallback(
-		({ item }: { item: PostWithCreatorInfo<Collection> }) => (
-			<PostUnit post={item} collectionName={collectionName} />
+		({ item, index }: { item: PostWithCreatorInfo<Collection>; index: number }) => (
+			<PostUnit post={item} collectionName={collectionName} index={index} />
 		),
 		[collectionName],
 	);
