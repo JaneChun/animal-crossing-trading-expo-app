@@ -14,13 +14,13 @@ import { useSuspensionGuard } from './hooks/shared/useSuspensionGuard';
 import { navigationRef } from './navigation/RootNavigation';
 import RootStackNavigator from './navigation/RootStackNavigator';
 import ErrorBoundary from './screens/ErrorBoundary';
-import { useAuthInitializer } from './stores/auth';
-import { useBlockSubscriptionInitializer } from './stores/block';
-import { useChatSubscriptionInitializer } from './stores/chat';
-import { useNotificationSubscriptionInitializer } from './stores/notification';
-import { useOnboardingInitializer } from './stores/onboarding/initializer';
-import { usePushNotificationInitializer } from './stores/push';
-import { RootStackParamList } from './types/navigation';
+import { useAuthInitializer } from '@/stores/auth';
+import { useBlockSubscriptionInitializer } from '@/stores/block';
+import { useChatSubscriptionInitializer } from '@/stores/chat';
+import { useNotificationSubscriptionInitializer } from '@/stores/notification';
+import { useOnboardingInitializer } from '@/stores/onboarding/initializer';
+import { usePushNotificationInitializer } from '@/stores/push';
+import { RootStackParamList } from '@/types/navigation';
 
 if (__DEV__) {
 	import('./src/config/reactotron').then(() => console.log('🔧 Reactotron Config Loaded'));
