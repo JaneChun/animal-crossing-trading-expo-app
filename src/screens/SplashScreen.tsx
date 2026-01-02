@@ -5,7 +5,7 @@ const SplashScreen = () => {
 	return (
 		<View style={styles.container}>
 			<FastImage
-				source={require('../assets/images/splash_image.jpg')}
+				source={require('../../assets/images/splash_image.jpg')}
 				style={styles.image}
 				resizeMode='contain'
 			/>

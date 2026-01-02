@@ -62,7 +62,7 @@ const Profile = () => {
 	const isMyProfile: boolean =
 		(userInfo && userInfo.uid === profileInfo?.uid) ?? false;
 
-	const emptyProfileImageSource = require('../assets/images/empty_profile_image.png');
+	const emptyProfileImageSource = require('../../assets/images/empty_profile_image.png');
 	const resolvedEmptyProfileImage = Image.resolveAssetSource(
 		emptyProfileImageSource,
 	);
