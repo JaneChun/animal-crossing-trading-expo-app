@@ -1,5 +1,5 @@
 import { Colors } from '@/constants/Color';
-import { auth } from '@/fbase';
+import { auth } from '@/config/firebase';
 import { useInfinitePosts } from '@/hooks/post/query/useInfinitePosts';
 import { useUserInfo } from '@/stores/auth';
 import { PostListProps } from '@/types/components';

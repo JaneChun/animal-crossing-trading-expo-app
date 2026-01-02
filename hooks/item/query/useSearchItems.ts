@@ -1,4 +1,4 @@
-import { searchClient } from '@/fbase';
+import { searchClient } from '@/config/firebase';
 import { Item, ItemCategory } from '@/types/post';
 import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
 

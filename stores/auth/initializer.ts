@@ -1,7 +1,7 @@
 import { getUserInfo, savePushTokenToFirestore } from '@/firebase/services/userService';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect } from 'react';
-import { auth } from '../../fbase';
+import { auth } from '@/config/firebase';
 import { usePushNotificationStore } from '../push';
 import { useAuthStore } from './store';
 import { initializeAllSDKs } from './utils/initialization';

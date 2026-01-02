@@ -5,7 +5,7 @@ import {
 	DEFAULT_USER_REPORT,
 	DEFAULT_USER_REVIEW,
 } from '@/constants/defaultUserInfo';
-import { db } from '@/fbase';
+import { db } from '@/config/firebase';
 import { PublicUserInfo, UserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { collection, doc, query, setDoc, where } from 'firebase/firestore';

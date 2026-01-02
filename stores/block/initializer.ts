@@ -1,4 +1,4 @@
-import { db } from '@/fbase';
+import { db } from '@/config/firebase';
 import { useUserInfo } from '@/stores/auth';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { useEffect } from 'react';

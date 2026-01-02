@@ -1,4 +1,4 @@
-import { auth, functions } from '@/fbase';
+import { auth, functions } from '@/config/firebase';
 import {
 	GetFirebaseCustomTokenParams,
 	GetFirebaseCustomTokenResponse,

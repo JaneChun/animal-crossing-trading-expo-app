@@ -1,4 +1,4 @@
-import { storage } from '@/fbase';
+import { storage } from '@/config/firebase';
 import { StorageCollection } from '@/types/image';
 import * as Crypto from 'expo-crypto';
 import { ImagePickerAsset } from 'expo-image-picker';

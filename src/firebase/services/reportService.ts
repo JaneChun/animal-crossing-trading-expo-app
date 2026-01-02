@@ -1,4 +1,4 @@
-import { db } from '@/fbase';
+import { db } from '@/config/firebase';
 import { CreateReportRequest } from '@/types/report';
 import { collection, query, Timestamp, where } from 'firebase/firestore';
 import firestoreRequest from '../core/firebaseInterceptor';

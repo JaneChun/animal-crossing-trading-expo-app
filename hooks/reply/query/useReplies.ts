@@ -1,4 +1,4 @@
-import { db } from '@/fbase';
+import { db } from '@/config/firebase';
 import { fetchAndPopulateUsers } from '@/firebase/services/replyService';
 import { Collection } from '@/types/post';
 import { Reply, ReplyWithCreatorInfo } from '@/types/reply';

@@ -1,10 +1,10 @@
 import { updateLastLogin } from '@/firebase/services/authService';
 import { getUserInfo } from '@/firebase/services/userService';
 import { UserInfo } from '@/types/user';
-import { auth } from '../../../fbase';
-import firebaseRequest from '../../../firebase/core/firebaseInterceptor';
+import { auth } from '@/config/firebase';
 import { AuthStateManager } from '../types';
 import { clearUserStorage, saveUserToStorage } from './storage';
+import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 
 // 로딩 상태 관리 wrapper
 export const executeWithLoading = async <T>(
@@ -15,7 +15,7 @@ export const executeWithLoading = async <T>(
 	stateManager.setIsAuthLoading(true);
 
 	try {
-		const result = await firebaseRequest(requestName, operation);
+		const result = await firestoreRequest(requestName, operation);
 
 		return result;
 	} finally {

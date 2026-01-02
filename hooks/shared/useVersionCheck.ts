@@ -1,6 +1,6 @@
+import { checkAppVersion, VersionCheckResult } from '@/firebase/services/versionService';
 import { useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
-import { checkAppVersion, VersionCheckResult } from '../../firebase/services/versionService';
 
 interface UseVersionCheckReturn {
 	updateInfo: VersionCheckResult | null;

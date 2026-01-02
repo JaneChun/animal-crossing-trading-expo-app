@@ -1,4 +1,4 @@
-import { db } from '@/fbase';
+import { db } from '@/config/firebase';
 import { SendChatMessageParams } from '@/types/chat';
 import { CreateReviewParams } from '@/types/review';
 import { collection, limit, query, Timestamp, where } from 'firebase/firestore';

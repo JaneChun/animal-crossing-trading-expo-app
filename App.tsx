@@ -23,7 +23,7 @@ import { usePushNotificationInitializer } from './stores/push';
 import { RootStackParamList } from './types/navigation';
 
 if (__DEV__) {
-	import('./ReactoronConfig').then(() => console.log('🔧 Reactotron Config Loaded'));
+	import('./src/config/reactotron').then(() => console.log('🔧 Reactotron Config Loaded'));
 }
 
 const prefix = Linking.createURL('/');

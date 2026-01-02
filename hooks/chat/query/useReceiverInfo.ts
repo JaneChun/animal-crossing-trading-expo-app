@@ -1,4 +1,4 @@
-import { db } from '@/fbase';
+import { db } from '@/config/firebase';
 import { getPublicUserInfo } from '@/firebase/services/userService';
 import { useUserInfo } from '@/stores/auth';
 import { useQuery } from '@tanstack/react-query';

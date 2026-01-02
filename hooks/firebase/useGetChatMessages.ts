@@ -1,4 +1,4 @@
-import { db } from '@/fbase';
+import { db } from '@/config/firebase';
 import { Message } from '@/types/chat';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { useEffect, useState } from 'react';

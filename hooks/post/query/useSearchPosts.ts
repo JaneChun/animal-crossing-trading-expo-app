@@ -1,4 +1,4 @@
-import { searchClient } from '@/fbase';
+import { searchClient } from '@/config/firebase';
 import { getPublicUserInfos } from '@/firebase/services/userService';
 import type { Collection, Post, PostWithCreatorInfo } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';

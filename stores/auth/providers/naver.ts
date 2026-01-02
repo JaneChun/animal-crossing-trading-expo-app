@@ -1,6 +1,6 @@
 import { loginWithNaver } from '@/firebase/services/authService';
 import NaverLogin from '@react-native-seoul/naver-login';
-import { auth } from '../../../fbase';
+import { auth } from '@/config/firebase';
 import { AuthStateManager, LoginResult } from '../types';
 import { BaseAuthProvider } from './base';
 

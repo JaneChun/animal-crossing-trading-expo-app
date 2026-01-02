@@ -1,5 +1,5 @@
 import { loginWithApple } from '@/firebase/services/authService';
-import { auth } from '../../../fbase';
+import { auth } from '@/config/firebase';
 import { AuthStateManager, LoginResult } from '../types';
 import { BaseAuthProvider } from './base';
 

@@ -1,4 +1,4 @@
-import { db } from '@/fbase';
+import { db } from '@/config/firebase';
 import {
 	Chat,
 	CreateChatRoomParams,

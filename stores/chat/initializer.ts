@@ -1,4 +1,4 @@
-import { db } from '@/fbase';
+import { db } from '@/config/firebase';
 import { fetchAndPopulateReceiverInfo } from '@/firebase/services/chatService';
 import { useUserInfo } from '@/stores/auth';
 import { Chat, ChatWithReceiverInfo } from '@/types/chat';

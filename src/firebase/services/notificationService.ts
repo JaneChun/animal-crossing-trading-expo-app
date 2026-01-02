@@ -1,4 +1,4 @@
-import { db } from '@/fbase';
+import { db } from '@/config/firebase';
 import { Collection, Post } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';

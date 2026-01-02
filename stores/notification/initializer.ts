@@ -1,4 +1,4 @@
-import { db } from '@/fbase';
+import { db } from '@/config/firebase';
 import { fetchAndPopulateSenderInfo } from '@/firebase/services/notificationService';
 import { useUserInfo } from '@/stores/auth';
 import { Notification, PopulatedNotification } from '@/types/notification';

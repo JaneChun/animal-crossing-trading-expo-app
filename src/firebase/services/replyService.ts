@@ -1,4 +1,4 @@
-import { db } from '@/fbase';
+import { db } from '@/config/firebase';
 import { Notification } from '@/types/notification';
 import { Collection } from '@/types/post';
 import { CreateReplyRequest, Reply, UpdateReplyRequest } from '@/types/reply';

@@ -1,5 +1,5 @@
 import { httpsCallable } from 'firebase/functions';
-import { functions } from '../../../fbase';
+import { functions } from '@/config/firebase';
 import { AuthProvider, AuthStateManager, LoginResult } from '../types';
 import {
 	clearUserSession,

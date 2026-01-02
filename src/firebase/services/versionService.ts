@@ -1,7 +1,7 @@
 import * as Application from 'expo-application';
 import { doc, getDoc, Timestamp } from 'firebase/firestore';
 import { Platform } from 'react-native';
-import { db } from '../../fbase';
+import { db } from '@/config/firebase';
 
 export interface VersionCheckResult {
 	isUpdateRequired: boolean;

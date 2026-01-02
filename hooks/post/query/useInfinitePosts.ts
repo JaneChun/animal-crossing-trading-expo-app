@@ -1,4 +1,4 @@
-import { db } from '@/fbase';
+import { db } from '@/config/firebase';
 import { fetchAndPopulateUsers } from '@/firebase/services/postService';
 import { useBlockStore } from '@/stores/block';
 import {

@@ -1,4 +1,4 @@
-import { db } from '@/fbase';
+import { db } from '@/config/firebase';
 import { fetchAndPopulateUsers } from '@/firebase/services/commentService';
 import { Comment, CommentWithCreatorInfo } from '@/types/comment';
 import { Collection } from '@/types/post';
