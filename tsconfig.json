@@ -4,13 +4,15 @@
 		"strict": true,
 		"module": "esnext",
 		"paths": {
-			"@/*": ["./*"]
+			"@/*": ["./src/*", "./*"]
 		},
 		"moduleResolution": "node"
 	},
 	"include": [
 		"**/*.ts",
 		"**/*.tsx",
+		"src/**/*.ts",
+		"src/**/*.tsx",
 		".expo/types/**/*.ts",
 		"expo-env.d.ts",
 		"declarations.d.ts"
