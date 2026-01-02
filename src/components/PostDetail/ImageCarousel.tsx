@@ -28,7 +28,7 @@ const ImageCarousel = ({ images, containerStyle }: ImageCarouselProps) => {
 								<Pressable onPress={() => handleImagePress(index)}>
 									<ImageWithFallback
 										uri={item as string}
-										fallbackSource={require('../../assets/images/image-not-found.png')}
+										fallbackSource={require('../../../assets/images/image-not-found.png')}
 										style={styles.image}
 									/>
 								</Pressable>

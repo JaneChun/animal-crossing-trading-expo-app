@@ -10,7 +10,7 @@ import {
 	navigateToTermsOfService,
 } from '@/utilities/navigationHelpers';
 import { Linking, StyleSheet, Text, View } from 'react-native';
-import SettingListItem from '../components/Profile/SettingListItem';
+import SettingListItem from '@/components/Profile/SettingListItem';
 
 const Setting = () => {
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);

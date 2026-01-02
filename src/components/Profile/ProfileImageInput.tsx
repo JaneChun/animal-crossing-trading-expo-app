@@ -50,7 +50,7 @@ const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 		>
 			<ImageWithFallback
 				uri={image?.uri}
-				fallbackSource={require('../../assets/images/empty_profile_image.png')}
+				fallbackSource={require('../../../assets/images/empty_profile_image.png')}
 				style={styles.image}
 			/>
 

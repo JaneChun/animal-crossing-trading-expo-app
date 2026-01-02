@@ -47,7 +47,7 @@ const BlockedUserUnit = ({
 			<View style={styles.header}>
 				<ImageWithFallback
 					uri={blockedUserInfo?.photoURL}
-					fallbackSource={require('../../assets/images/empty_profile_image.png')}
+					fallbackSource={require('../../../assets/images/empty_profile_image.png')}
 					style={styles.profileImage}
 				/>
 			</View>

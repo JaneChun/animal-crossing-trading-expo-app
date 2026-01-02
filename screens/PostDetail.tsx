@@ -31,7 +31,7 @@ import React, { useRef, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import EditCommentModal from '../components/PostDetail/EditCommentModal';
+import EditCommentModal from '@/components/PostDetail/EditCommentModal';
 
 const PostDetail = () => {
 	const headerHeight = useHeaderHeight();

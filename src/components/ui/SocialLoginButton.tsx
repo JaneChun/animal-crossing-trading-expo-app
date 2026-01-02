@@ -6,11 +6,11 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 const socialImages: Record<string, any> = {
-	kakao: require('../../assets/images/kakao.png'),
-	kakao_round: require('../../assets/images/kakao_round.png'),
-	naver: require('../../assets/images/naver.png'),
-	naver_round: require('../../assets/images/naver_round.png'),
-	apple: require('../../assets/images/apple.webp'),
+	kakao: require('../../../assets/images/kakao.png'),
+	kakao_round: require('../../../assets/images/kakao_round.png'),
+	naver: require('../../../assets/images/naver.png'),
+	naver_round: require('../../../assets/images/naver_round.png'),
+	apple: require('../../../assets/images/apple.webp'),
 };
 
 const SocialLoginButton = ({

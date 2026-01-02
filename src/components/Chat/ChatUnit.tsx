@@ -78,7 +78,7 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 				<View style={styles.header}>
 					<ImageWithFallback
 						uri={receiverInfo?.photoURL}
-						fallbackSource={require('../../assets/images/empty_profile_image.png')}
+						fallbackSource={require('../../../assets/images/empty_profile_image.png')}
 						style={styles.profileImage}
 					/>
 				</View>

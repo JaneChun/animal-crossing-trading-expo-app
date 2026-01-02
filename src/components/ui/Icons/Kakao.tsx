@@ -4,7 +4,7 @@ import FastImage from 'react-native-fast-image';
 const Kakao = ({ style }: { style: any }) => {
 	return (
 		<FastImage
-			source={require('../../../assets/images/kakao_round.png')}
+			source={require('../../../../assets/images/kakao_round.png')}
 			style={style}
 		/>
 	);

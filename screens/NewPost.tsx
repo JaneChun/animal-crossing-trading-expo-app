@@ -25,7 +25,7 @@ import { FormProvider } from 'react-hook-form';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AddItemModal from '../components/NewPost/AddItemModal';
+import AddItemModal from '@/components/NewPost/AddItemModal';
 
 const NewPost = () => {
 	const { collectionName } = usePostContext();

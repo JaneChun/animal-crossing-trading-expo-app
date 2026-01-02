@@ -17,7 +17,7 @@ const UserInfoLabel = ({ userInfo }: { userInfo: PublicUserInfo }) => {
 		<Pressable style={styles.header} onPress={onPressUserProfile}>
 			<ImageWithFallback
 				uri={userInfo?.photoURL}
-				fallbackSource={require('../../../assets/images/empty_profile_image.png')}
+				fallbackSource={require('../../../../assets/images/empty_profile_image.png')}
 				style={styles.profileImage}
 			/>
 

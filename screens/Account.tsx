@@ -13,7 +13,7 @@ import {
 	navigateToSocialAccountCheck,
 } from '@/utilities/navigationHelpers';
 import { Alert, StyleSheet, Text, View } from 'react-native';
-import SettingListItem from '../components/Profile/SettingListItem';
+import SettingListItem from '@/components/Profile/SettingListItem';
 
 const Account = () => {
 	const userInfo = useUserInfo();

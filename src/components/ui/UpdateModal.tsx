@@ -64,7 +64,7 @@ export const UpdateModal = ({
 				>
 					<View style={styles.content}>
 						<FastImage
-							source={require('../../assets/images/app_icon.webp')}
+							source={require('../../../assets/images/app_icon.webp')}
 							style={styles.image}
 							resizeMode='contain'
 						/>

@@ -7,7 +7,7 @@ import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
-import { toastConfig } from './components/ui/Toast';
+import { toastConfig } from '@/components/ui/Toast';
 import { useAppState } from '@/hooks/shared/useAppState';
 import { useOnlineManager } from '@/hooks/shared/useOnlineManager';
 import { useSuspensionGuard } from '@/hooks/shared/useSuspensionGuard';

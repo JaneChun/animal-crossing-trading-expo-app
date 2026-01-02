@@ -10,7 +10,7 @@ const ImageWithFallback = ({
 	priority = 'normal',
 	resizeMode = 'cover',
 }: ImageWithFallbackProps) => {
-	const DEFAULT_FALLBACK = useMemo(() => require('../../assets/images/empty_image.png'), []);
+	const DEFAULT_FALLBACK = useMemo(() => require('../../../assets/images/empty_image.png'), []);
 
 	const priorityLevel = useMemo(() => {
 		const priorities = {

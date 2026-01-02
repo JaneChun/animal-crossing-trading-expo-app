@@ -12,7 +12,7 @@ const ImagePreview = ({ uri, onDelete }: ImagePreviewProps) => {
 				</Pressable>
 				<ImageWithFallback
 					uri={uri}
-					fallbackSource={require('../../assets/images/image-not-found.png')}
+					fallbackSource={require('../../../assets/images/image-not-found.png')}
 					style={styles.imageContainer}
 				/>
 			</View>

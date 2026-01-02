@@ -108,7 +108,7 @@ const ReplyUnit = ({
 			<Pressable onPress={onPressUserProfile}>
 				<ImageWithFallback
 					uri={creatorPhotoURL}
-					fallbackSource={require('../../assets/images/empty_profile_image.png')}
+					fallbackSource={require('../../../assets/images/empty_profile_image.png')}
 					style={styles.profileImage}
 				/>
 			</Pressable>

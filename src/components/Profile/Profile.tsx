@@ -21,7 +21,7 @@ const Profile = ({
 				<Pressable onPress={openImageViewerModal}>
 					<ImageWithFallback
 						uri={profileInfo?.photoURL}
-						fallbackSource={require('../../assets/images/empty_profile_image.png')}
+						fallbackSource={require('../../../assets/images/empty_profile_image.png')}
 						style={styles.image}
 					/>
 				</Pressable>
