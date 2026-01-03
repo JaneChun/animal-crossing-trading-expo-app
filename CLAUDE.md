@@ -73,25 +73,37 @@ npm run deploy          # EAS build and submit to app stores
 ### Project Structure
 
 ```
-components/              # UI components organized by feature
-├── Block/              # User blocking components
-├── Chat/               # Chat and messaging
-├── Community/          # Community features
-├── Home/               # Home screen components
-├── NewPost/            # Post creation
-├── PostDetail/         # Post detail view
-├── Profile/            # User profile
-├── Search/             # Search functionality
-└── ui/                 # Reusable UI components
+src/                    # All application source code
+├── __tests__/          # Unit tests (Maestro E2E tests at root)
+├── components/         # UI components organized by feature
+│   ├── Block/          # User blocking components
+│   ├── Chat/           # Chat and messaging
+│   ├── Community/      # Community features
+│   ├── Home/           # Home screen components
+│   ├── NewPost/        # Post creation
+│   ├── PostDetail/     # Post detail view
+│   ├── Profile/        # User profile
+│   ├── Search/         # Search functionality
+│   └── ui/             # Reusable UI components
+├── screens/            # Screen components
+├── navigation/         # Navigation setup
+├── hooks/              # Custom hooks organized by feature
+├── stores/             # Zustand state stores
+├── firebase/           # Firebase services
+│   ├── core/           # Core Firebase utilities
+│   └── services/       # Firebase service layer
+├── types/              # TypeScript definitions
+├── utilities/          # Helper functions
+├── constants/          # App constants and configuration
+├── config/             # App configuration
+│   ├── firebase.ts     # Firebase initialization (formerly fbase.js)
+│   └── reactotron.ts   # Reactotron dev configuration
+└── declarations.d.ts   # Module declarations
 
-screens/                # Screen components
-navigation/             # Navigation setup
-hooks/                  # Custom hooks organized by feature
-stores/                 # Zustand state stores
-firebase/               # Firebase services
+__tests__/maestro/      # Maestro E2E tests (root level)
 functions/              # Firebase Cloud Functions
-types/                  # TypeScript definitions
-utilities/              # Helper functions
+assets/                 # Static assets (images, fonts, etc.)
+App.tsx                 # Root app component (Expo entry point)
 ```
 
 ### Key Features & Patterns
@@ -143,7 +155,7 @@ utilities/              # Helper functions
 
 ### Firebase Architecture
 
-#### Services (`firebase/services/`)
+#### Services (`src/firebase/services/`)
 
 - **authService**: Social login implementations
 - **userService**: User profile management
@@ -229,7 +241,7 @@ utilities/              # Helper functions
 #### 단위 테스트 (Unit Tests)
 
 ```
-__tests__/
+src/__tests__/
 ├── components/
 │   ├── ui/              # 재사용 가능한 UI 컴포넌트 테스트
 │   ├── Chat/            # 채팅 컴포넌트 테스트
