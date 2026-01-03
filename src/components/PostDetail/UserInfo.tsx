@@ -4,7 +4,7 @@ import { FontSizes, FontWeights } from '@/constants/Typography';
 import { UserInfoProps } from '@/types/components';
 import { navigateToUserProfile } from '@/utilities/navigationHelpers';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Leaf from '../ui/Icons/Leaf';
+import Leaf from '@/components/ui/Icons/Leaf';
 
 const UserInfo = ({
 	userId,

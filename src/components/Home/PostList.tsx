@@ -12,8 +12,8 @@ import {
 import { FontAwesome6 } from '@expo/vector-icons';
 import React, { useCallback, useMemo } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import LoadingIndicator from '../ui/loading/LoadingIndicator';
-import { showLongToast, showToast } from '../ui/Toast';
+import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
+import { showLongToast, showToast } from '@/components/ui/Toast';
 import PostUnit, { POST_UNIT_HEIGHT } from './PostUnit';
 
 const PostList = ({

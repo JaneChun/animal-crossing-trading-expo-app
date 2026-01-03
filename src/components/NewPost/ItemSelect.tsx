@@ -9,9 +9,9 @@ import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import Categories from '../ui/Categories';
-import SearchInput from '../ui/inputs/SearchInput';
-import InlineLoadingIndicator from '../ui/loading/InlineLoadingIndicator';
+import Categories from '@/components/ui/Categories';
+import SearchInput from '@/components/ui/inputs/SearchInput';
+import InlineLoadingIndicator from '@/components/ui/loading/InlineLoadingIndicator';
 import ItemSelectItem, { ITEM_HEIGHT } from './ItemSelectItem';
 
 const ItemSelect = ({ cart, addItemToCart, containerStyle, labelStyle }: ItemSelectProps) => {

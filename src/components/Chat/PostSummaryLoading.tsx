@@ -1,7 +1,7 @@
 import { Colors } from '@/constants/Color';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import ThreeDotsLoadingIndicator from '../ui/loading/ThreeDotsLoadingIndicator';
+import ThreeDotsLoadingIndicator from '@/components/ui/loading/ThreeDotsLoadingIndicator';
 
 const PostSummaryLoading = () => {
 	return (

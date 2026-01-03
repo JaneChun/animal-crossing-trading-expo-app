@@ -7,8 +7,8 @@ import { BlockedUser } from '@/types/user';
 import { navigateToUserProfile } from '@/utilities/navigationHelpers';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Button from '../ui/Button';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import Button from '@/components/ui/Button';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
 
 type BlockedUserUnitProps = {
 	blockedUserInfo: BlockedUser;

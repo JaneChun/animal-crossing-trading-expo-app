@@ -6,10 +6,10 @@ import { CartItem } from '@/types/post';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Total from '../PostDetail/Total';
-import CustomBottomSheet from '../ui/CustomBottomSheet';
-import DropdownInput from '../ui/inputs/DropdownInput';
-import NumberInput from '../ui/inputs/NumberInput';
+import Total from '@/components/PostDetail/Total';
+import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
+import DropdownInput from '@/components/ui/inputs/DropdownInput';
+import NumberInput from '@/components/ui/inputs/NumberInput';
 
 const EditItemModal = ({
 	item,

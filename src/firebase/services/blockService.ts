@@ -1,6 +1,6 @@
 import { db } from '@/config/firebase';
 import { deleteDoc, doc, setDoc, Timestamp } from 'firebase/firestore';
-import firestoreRequest from '../core/firebaseInterceptor';
+import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 
 export const blockUser = async ({
 	userId,

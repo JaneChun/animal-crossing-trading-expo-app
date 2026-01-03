@@ -5,9 +5,9 @@ import { ImagePickerAsset } from 'expo-image-picker';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import AddImageButton from '../ui/AddImageButton';
-import ImagePreview from '../ui/ImagePreview';
-import { showToast } from '../ui/Toast';
+import AddImageButton from '@/components/ui/AddImageButton';
+import ImagePreview from '@/components/ui/ImagePreview';
+import { showToast } from '@/components/ui/Toast';
 
 const ImageInput = ({
 	images,

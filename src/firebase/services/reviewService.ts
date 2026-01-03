@@ -2,8 +2,8 @@ import { db } from '@/config/firebase';
 import { SendChatMessageParams } from '@/types/chat';
 import { CreateReviewParams } from '@/types/review';
 import { collection, limit, query, Timestamp, where } from 'firebase/firestore';
-import firestoreRequest from '../core/firebaseInterceptor';
-import { addDocToFirestore, queryDocs } from '../core/firestoreService';
+import firestoreRequest from '@/firebase/core/firebaseInterceptor';
+import { addDocToFirestore, queryDocs } from '@/firebase/core/firestoreService';
 import { sendMessage } from './chatService';
 
 export const createReview = async (

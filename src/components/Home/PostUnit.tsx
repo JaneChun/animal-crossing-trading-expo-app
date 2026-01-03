@@ -8,9 +8,9 @@ import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGua
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import CommunityTypeBadge from '../Community/CommunityTypeBadge';
-import ItemThumbnail from '../ui/ItemThumbnail';
-import Thumbnail from '../ui/Thumbnail';
+import CommunityTypeBadge from '@/components/Community/CommunityTypeBadge';
+import ItemThumbnail from '@/components/ui/ItemThumbnail';
+import Thumbnail from '@/components/ui/Thumbnail';
 import MarketTypeBadge from './MarketTypeBadge';
 
 export const POST_UNIT_HEIGHT = 100;

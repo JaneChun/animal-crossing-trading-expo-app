@@ -3,8 +3,8 @@ import { FontSizes, FontWeights } from '@/constants/Typography';
 import { SearchResultItemProps } from '@/types/components';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import HighlightMatchText from '../ui/HighlightMatchText';
-import Thumbnail from '../ui/Thumbnail';
+import HighlightMatchText from '@/components/ui/HighlightMatchText';
+import Thumbnail from '@/components/ui/Thumbnail';
 
 const SearchResultItem = ({ item, searchInput }: SearchResultItemProps) => {
 	return (

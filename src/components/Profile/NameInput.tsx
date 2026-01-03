@@ -4,7 +4,7 @@ import { ProfileFormValues } from '@/hooks/form/Profile/profileFormSchema';
 import { NameInputProp } from '@/types/components';
 import { useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
-import ValidationInput from '../ui/inputs/ValidationInput';
+import ValidationInput from '@/components/ui/inputs/ValidationInput';
 
 const NameInput = ({
 	type,

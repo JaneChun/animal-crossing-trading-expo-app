@@ -3,7 +3,7 @@ import { FontSizes, FontWeights } from '@/constants/Typography';
 import { SlideProps } from '@/types/components';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
 
 const Slide = ({ item, width, showBadge = true }: SlideProps) => {
 	return (

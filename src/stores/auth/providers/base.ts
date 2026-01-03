@@ -1,12 +1,12 @@
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '@/config/firebase';
-import { AuthProvider, AuthStateManager, LoginResult } from '../types';
+import { AuthProvider, AuthStateManager, LoginResult } from '@/types';
 import {
 	clearUserSession,
 	executeWithLoading,
 	handleSuccessfulLogin,
 	signOutFromFirebase,
-} from '../utils/session';
+} from '@/stores/auth/utils/session';
 
 /**
  * 모든 소셜 로그인 provider들이 상속받는 기본 클래스

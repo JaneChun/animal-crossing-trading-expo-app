@@ -3,8 +3,8 @@ import { ImageCarouselProps } from '@/types/components';
 import React, { useState } from 'react';
 import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
-import ImageViewerModal from '../ui/ImageViewerModal';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import ImageViewerModal from '@/components/ui/ImageViewerModal';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
 
 const { width } = Dimensions.get('window');
 

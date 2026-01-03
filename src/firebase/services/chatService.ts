@@ -25,7 +25,7 @@ import {
 	where,
 	writeBatch,
 } from 'firebase/firestore';
-import firestoreRequest from '../core/firebaseInterceptor';
+import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import { getPublicUserInfos } from './userService';
 
 export const generateChatId = (user1: string, user2: string): string => {

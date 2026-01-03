@@ -20,10 +20,10 @@ import React, { useEffect } from 'react';
 import { Controller, FormProvider } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import Button from '../ui/Button';
-import CustomBottomSheet from '../ui/CustomBottomSheet';
-import { PADDING } from '../ui/layout/Layout';
-import LoadingIndicator from '../ui/loading/LoadingIndicator';
+import Button from '@/components/ui/Button';
+import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
+import { PADDING } from '@/components/ui/layout/Layout';
+import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import NameInput from './NameInput';
 
 const EditProfileModal = ({

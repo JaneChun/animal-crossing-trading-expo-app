@@ -6,8 +6,8 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
-import PostList from '../Home/PostList';
-import Layout, { PADDING } from '../ui/layout/Layout';
+import PostList from '@/components/Home/PostList';
+import Layout, { PADDING } from '@/components/ui/layout/Layout';
 
 const OPTIONS = [
 	{ value: 'Boards' as Collection, label: '마켓' },

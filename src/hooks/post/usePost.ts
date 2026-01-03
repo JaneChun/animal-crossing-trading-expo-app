@@ -4,7 +4,7 @@ import { goBack } from '@/navigation/RootNavigation';
 import { Collection } from '@/types/post';
 import { isBoardPost } from '@/utilities/typeGuards/postTypeGuards';
 import { useEffect } from 'react';
-import { useMarkAsRead } from '../notification/query/mutation/useMarkAsRead';
+import { useMarkAsRead } from '@/hooks/notification/query/mutation/useMarkAsRead';
 import { useDeletePost } from './mutation/useDeletePost';
 import { useUpdatePost } from './mutation/useUpdatePost';
 import { usePostDetail } from './query/usePostDetail';

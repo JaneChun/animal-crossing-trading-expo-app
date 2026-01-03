@@ -3,8 +3,8 @@ import { useSearchPosts } from '@/hooks/post/query/useSearchPosts';
 import { Collection, PostWithCreatorInfo } from '@/types/post';
 import React, { useCallback, useMemo } from 'react';
 import { FlatList, StyleProp, StyleSheet, Text, ViewStyle } from 'react-native';
-import PostUnit, { POST_UNIT_HEIGHT } from '../Home/PostUnit';
-import LoadingIndicator from '../ui/loading/LoadingIndicator';
+import PostUnit, { POST_UNIT_HEIGHT } from '@/components/Home/PostUnit';
+import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 
 type SearchResultPostListProps = {
 	collectionName: Collection;

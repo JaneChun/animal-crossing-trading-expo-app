@@ -3,11 +3,11 @@ import { Collection, Post } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { doc, getDocs, Query, writeBatch } from 'firebase/firestore';
-import firestoreRequest from '../core/firebaseInterceptor';
+import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import {
 	deleteDocFromFirestore,
 	updateDocToFirestore,
-} from '../core/firestoreService';
+} from '@/firebase/core/firestoreService';
 import { getPosts } from './postService';
 import { getPublicUserInfos } from './userService';
 

@@ -2,7 +2,7 @@ import { Colors } from '@/constants/Color';
 import { BadgeProps, TypeBadgeProps } from '@/types/components';
 import { CommunityType } from '@/types/post';
 import React from 'react';
-import Badge from '../ui/Badge';
+import Badge from '@/components/ui/Badge';
 
 const CommunityTypeBadge = ({
 	type,

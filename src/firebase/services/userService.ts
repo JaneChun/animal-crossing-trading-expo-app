@@ -9,12 +9,12 @@ import { db } from '@/config/firebase';
 import { PublicUserInfo, UserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { collection, doc, query, setDoc, where } from 'firebase/firestore';
-import firestoreRequest from '../core/firebaseInterceptor';
+import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import {
 	getDocFromFirestore,
 	queryDocs,
 	updateDocToFirestore,
-} from '../core/firestoreService';
+} from '@/firebase/core/firestoreService';
 
 export const getUserInfo = async (uid: string): Promise<UserInfo | null> => {
 	return firestoreRequest('나의 정보 조회', async () => {

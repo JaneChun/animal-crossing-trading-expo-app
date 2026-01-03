@@ -20,7 +20,7 @@ import Reanimated, {
 	SharedValue,
 	useAnimatedStyle,
 } from 'react-native-reanimated';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
 
 const ChatUnit = (props: ChatWithReceiverInfo) => {
 	const { id, lastMessage, unreadCount, updatedAt, receiverInfo } = props;

@@ -4,9 +4,9 @@ import { ProfileProps } from '@/types/components';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Button from '../ui/Button';
-import Leaf from '../ui/Icons/Leaf';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import Button from '@/components/ui/Button';
+import Leaf from '@/components/ui/Icons/Leaf';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
 
 const Profile = ({
 	profileInfo,

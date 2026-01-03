@@ -1,12 +1,12 @@
 import { db } from '@/config/firebase';
 import { CreateReportRequest } from '@/types/report';
 import { collection, query, Timestamp, where } from 'firebase/firestore';
-import firestoreRequest from '../core/firebaseInterceptor';
+import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import {
 	addDocToFirestore,
 	queryDocs,
 	updateDocToFirestore,
-} from '../core/firestoreService';
+} from '@/firebase/core/firestoreService';
 
 export const createReport = async (requestData: CreateReportRequest) => {
 	return firestoreRequest('유저 신고', async () => {

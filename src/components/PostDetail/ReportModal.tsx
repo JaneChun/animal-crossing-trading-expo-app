@@ -6,8 +6,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { REPORT_CATEGORIES } from '@/constants/post';
 import { ReportUserParams } from '@/types/components';
-import Button from '../ui/Button';
-import CustomBottomSheet from '../ui/CustomBottomSheet';
+import Button from '@/components/ui/Button';
+import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 
 type ReportModalProps = {
 	isVisible: boolean;

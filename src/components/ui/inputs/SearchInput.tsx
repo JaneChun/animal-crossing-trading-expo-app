@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import { Pressable } from 'react-native-gesture-handler';
-import SearchIcon from '../../Search/SearchIcon';
+import SearchIcon from '@/components/Search/SearchIcon';
 
 const SearchInput = ({
 	searchInput,

@@ -1,6 +1,6 @@
 import { ItemListProps } from '@/types/components';
 import { Text, TouchableOpacity, View } from 'react-native';
-import Total from '../PostDetail/Total';
+import Total from '@/components/PostDetail/Total';
 import EditableItem from './EditableItem.';
 
 const ItemList = ({

@@ -2,7 +2,7 @@ import { useUserInfo } from '@/stores/auth';
 import { Message } from '@/types/chat';
 import { formatIMessages } from '@/utilities/formatIMessages';
 import { useEffect } from 'react';
-import { useGetChatMessages } from '../firebase/useGetChatMessages';
+import { useGetChatMessages } from '@/hooks/firebase/useGetChatMessages';
 import { useLeaveChatRoom } from './mutation/useLeaveChatRoom';
 import { useMarkMessagesAsRead } from './mutation/useMarkMessagesAsRead';
 import { useSendMessage } from './mutation/useSendMessage';

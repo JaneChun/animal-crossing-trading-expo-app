@@ -9,7 +9,7 @@ import {
 	ref,
 	uploadBytes,
 } from 'firebase/storage';
-import firestoreRequest from '../core/firebaseInterceptor';
+import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 
 export const uploadObjectToStorage = async ({
 	images,

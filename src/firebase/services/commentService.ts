@@ -17,8 +17,8 @@ import {
 	writeBatch,
 } from 'firebase/firestore';
 import { Alert } from 'react-native';
-import firestoreRequest from '../core/firebaseInterceptor';
-import { getDocFromFirestore } from '../core/firestoreService';
+import firestoreRequest from '@/firebase/core/firebaseInterceptor';
+import { getDocFromFirestore } from '@/firebase/core/firestoreService';
 import { getPublicUserInfos } from './userService';
 
 export const fetchAndPopulateUsers = async <T extends Comment, U>(q: Query<DocumentData>) => {

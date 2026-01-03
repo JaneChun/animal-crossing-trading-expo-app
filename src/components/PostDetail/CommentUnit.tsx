@@ -16,9 +16,9 @@ import { navigateToChatRoom, navigateToUserProfile } from '@/utilities/navigatio
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import React from 'react';
 import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ActionSheetButton from '../ui/ActionSheetButton';
-import ImageWithFallback from '../ui/ImageWithFallback';
-import { showToast } from '../ui/Toast';
+import ActionSheetButton from '@/components/ui/ActionSheetButton';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import { showToast } from '@/components/ui/Toast';
 import ReplyUnit from './ReplyUnit';
 
 const CommentUnit = ({

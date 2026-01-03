@@ -2,7 +2,7 @@ import { BodyInputProps } from '@/types/components';
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
-import ValidationInput from '../ui/inputs/ValidationInput';
+import ValidationInput from '@/components/ui/inputs/ValidationInput';
 
 const BodyInput = ({
 	body,

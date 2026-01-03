@@ -4,8 +4,8 @@ import { CurrencyOption } from '@/types/post';
 import { Entypo } from '@expo/vector-icons';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Bell from '../ui/Icons/Bell';
-import MileTicket from '../ui/Icons/MileTicket';
+import Bell from '@/components/ui/Icons/Bell';
+import MileTicket from '@/components/ui/Icons/MileTicket';
 
 const Total = ({ cart = [], containerStyle }: TotalProps) => {
 	const { totalBell, totalMileTicket } = cart.reduce(

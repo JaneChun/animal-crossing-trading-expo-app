@@ -1,7 +1,7 @@
 import { loginWithKakao } from '@/firebase/services/authService';
 import { isLogined, logout } from '@react-native-kakao/user';
 import { auth } from '@/config/firebase';
-import { AuthStateManager, LoginResult } from '../types';
+import { AuthStateManager, LoginResult } from '@/types';
 import { BaseAuthProvider } from './base';
 
 export class KakaoAuthProvider extends BaseAuthProvider {

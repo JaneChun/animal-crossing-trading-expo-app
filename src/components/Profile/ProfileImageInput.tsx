@@ -5,7 +5,7 @@ import { isLocalImage } from '@/utilities/typeGuards/imageGuards';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo } from '@expo/vector-icons';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
 
 const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 	const { pickImage } = useImagePicker({ multiple: false });

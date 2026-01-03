@@ -5,7 +5,7 @@ import { CommentInputProps } from '@/types/components';
 import { AntDesign, FontAwesome6 } from '@expo/vector-icons';
 import { forwardRef, memo, useImperativeHandle, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { showToast } from '../ui/Toast';
+import { showToast } from '@/components/ui/Toast';
 
 export interface CommentInputRef {
 	focus: () => void;

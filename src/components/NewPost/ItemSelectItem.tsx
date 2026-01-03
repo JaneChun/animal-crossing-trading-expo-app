@@ -2,8 +2,8 @@ import { Colors } from '@/constants/Color';
 import { ItemSelectItemProps } from '@/types/components';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import HighlightMatchText from '../ui/HighlightMatchText';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import HighlightMatchText from '@/components/ui/HighlightMatchText';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
 
 export const ITEM_HEIGHT = 53;
 

@@ -7,9 +7,9 @@ import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import Button from '../ui/Button';
-import { PADDING } from '../ui/layout/Layout';
-import { showToast } from '../ui/Toast';
+import Button from '@/components/ui/Button';
+import { PADDING } from '@/components/ui/layout/Layout';
+import { showToast } from '@/components/ui/Toast';
 
 type EditCommentModalProps = {
 	comment: string;

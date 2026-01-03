@@ -16,8 +16,8 @@ import {
 	updateDoc,
 	writeBatch,
 } from 'firebase/firestore';
-import firestoreRequest from '../core/firebaseInterceptor';
-import { getDocFromFirestore } from '../core/firestoreService';
+import firestoreRequest from '@/firebase/core/firebaseInterceptor';
+import { getDocFromFirestore } from '@/firebase/core/firestoreService';
 import { getPublicUserInfos } from './userService';
 
 export const fetchAndPopulateUsers = async <T extends Reply, U>(q: Query<DocumentData>) => {

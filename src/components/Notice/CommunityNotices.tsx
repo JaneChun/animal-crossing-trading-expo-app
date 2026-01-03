@@ -5,8 +5,8 @@ import { PopulatedNotification } from '@/types/notification';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import EmptyIndicator from '../ui/EmptyIndicator';
-import LoadingIndicator from '../ui/loading/LoadingIndicator';
+import EmptyIndicator from '@/components/ui/EmptyIndicator';
+import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import NotificationUnit from './NotificationUnit';
 import ReadAllButton from './ReadAllButton';
 

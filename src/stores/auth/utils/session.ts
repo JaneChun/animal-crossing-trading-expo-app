@@ -2,7 +2,7 @@ import { updateLastLogin } from '@/firebase/services/authService';
 import { getUserInfo } from '@/firebase/services/userService';
 import { UserInfo } from '@/types/user';
 import { auth } from '@/config/firebase';
-import { AuthStateManager } from '../types';
+import { AuthStateManager } from '@/types';
 import { clearUserStorage, saveUserToStorage } from './storage';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 

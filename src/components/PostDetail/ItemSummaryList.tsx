@@ -1,6 +1,6 @@
 import { ItemSummaryListProps } from '@/types/components';
 import { FlatList } from 'react-native-gesture-handler';
-import EditableItem from '../NewPost/EditableItem.';
+import EditableItem from '@/components/NewPost/EditableItem.';
 
 const ItemSummaryList = ({ cart, containerStyle }: ItemSummaryListProps) => {
 	return (

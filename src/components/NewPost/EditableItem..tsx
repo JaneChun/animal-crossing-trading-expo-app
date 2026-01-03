@@ -10,9 +10,9 @@ import {
 	View,
 	ViewStyle,
 } from 'react-native';
-import Bell from '../ui/Icons/Bell';
-import MileTicket from '../ui/Icons/MileTicket';
-import ImageWithFallback from '../ui/ImageWithFallback';
+import Bell from '@/components/ui/Icons/Bell';
+import MileTicket from '@/components/ui/Icons/MileTicket';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
 
 const EditableItem = ({
 	item,

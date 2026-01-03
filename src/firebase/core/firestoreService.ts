@@ -11,7 +11,7 @@ import {
 	setDoc,
 	updateDoc,
 } from 'firebase/firestore';
-import { deleteObjectFromStorage } from '../services/imageService';
+import { deleteObjectFromStorage } from '@/firebase/services/imageService';
 
 export const getDocFromFirestore = async ({
 	collection,

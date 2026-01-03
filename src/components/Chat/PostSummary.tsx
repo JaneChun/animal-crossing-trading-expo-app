@@ -10,10 +10,10 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import CommunityTypeBadge from '../Community/CommunityTypeBadge';
-import MarketTypeBadge from '../Home/MarketTypeBadge';
-import ItemThumbnail from '../ui/ItemThumbnail';
-import Thumbnail from '../ui/Thumbnail';
+import CommunityTypeBadge from '@/components/Community/CommunityTypeBadge';
+import MarketTypeBadge from '@/components/Home/MarketTypeBadge';
+import ItemThumbnail from '@/components/ui/ItemThumbnail';
+import Thumbnail from '@/components/ui/Thumbnail';
 
 const PostSummary = <C extends Collection>({
 	post,
