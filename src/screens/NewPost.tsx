@@ -28,10 +28,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AddItemModal from '@/components/NewPost/AddItemModal';
 
 const NewPost = () => {
-	const { collectionName } = usePostContext();
+	const route = useRoute<NewPostRouteProp>();
+	const { collectionName: contextCollectionName } = usePostContext();
+	// usePostContext의 collectionName보다 라우트 파라미터의 collectionName을 우선적으로 사용
+	const collectionName = route.params?.collectionName || contextCollectionName;
 
 	const userInfo = useUserInfo();
-	const route = useRoute<NewPostRouteProp>();
 	const stackNavigation = useNavigation<RootStackNavigation>();
 
 	const insets = useSafeAreaInsets();

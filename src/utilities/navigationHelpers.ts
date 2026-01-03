@@ -14,15 +14,23 @@ export const navigateToSearch = () => {
 };
 
 // NewPost/
-export const navigateToNewPost = () => {
+export const navigateToNewPost = (collectionName: Collection) => {
 	navigate('NewPost', {
 		id: undefined,
+		collectionName,
 	});
 };
 
-export const navigateToEditPost = ({ postId }: { postId: string }) => {
+export const navigateToEditPost = ({
+	postId,
+	collectionName,
+}: {
+	postId: string;
+	collectionName: Collection;
+}) => {
 	navigate('NewPost', {
 		id: postId,
+		collectionName,
 	});
 };
 
