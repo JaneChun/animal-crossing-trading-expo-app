@@ -1,5 +1,5 @@
-const { cleanupTestUser } = require('../firebase-utils/cleanup-test-data');
-const { TEST_USER_A } = require('../firebase-utils/test-helpers');
+const { cleanupTestUser } = require('@/__tests__/firebase-utils/cleanup-test-data');
+const { TEST_USER_A } = require('@/__tests__/firebase-utils/test-helpers');
 const { runMaestroTest } = require('./maestro-helper');
 
 describe('인증 전체 플로우 테스트', () => {

@@ -25,6 +25,9 @@ module.exports = {
 			rootDir: '.', // Sets the root for this project to the project root
 			testMatch: ['<rootDir>/__tests__/maestro/**/*.test.js'],
 			moduleFileExtensions: ['js', 'json'],
+			moduleNameMapper: {
+				'^@/(.*)$': '<rootDir>/src/$1',
+			},
 			transform: {
 				'^.+.js$': 'babel-jest',
 			},
