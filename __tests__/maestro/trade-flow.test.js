@@ -2,17 +2,18 @@ const {
 	setupTestUser,
 	createTestPost,
 	createTestComment,
-	checkReviewExists,
 	TEST_USER_A,
 	TEST_USER_B,
-} = require('../firebase-utils/test-helpers');
+} = require('@/__tests__/firebase-utils/test-helpers');
 const {
 	cleanupTestUser,
 	deleteDocumentsByField,
 	deleteSubcollection,
-} = require('../firebase-utils/cleanup-test-data');
+} = require('@/__tests__/firebase-utils/cleanup-test-data');
 const { runMaestroTest } = require('./maestro-helper');
-const { db } = require('../firebase-utils/firebase-admin-setup');
+const { db } = require('@/__tests__/firebase-utils/firebase-admin-setup');
+
+let testPostId; // 테스트 게시글 ID 저장
 
 describe('거래 전체 플로우 테스트', () => {
 	beforeAll(async () => {

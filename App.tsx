@@ -7,23 +7,23 @@ import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
-import { toastConfig } from './components/ui/Toast';
-import { useAppState } from './hooks/shared/useAppState';
-import { useOnlineManager } from './hooks/shared/useOnlineManager';
-import { useSuspensionGuard } from './hooks/shared/useSuspensionGuard';
-import { navigationRef } from './navigation/RootNavigation';
-import RootStackNavigator from './navigation/RootStackNavigator';
-import ErrorBoundary from './screens/ErrorBoundary';
-import { useAuthInitializer } from './stores/auth';
-import { useBlockSubscriptionInitializer } from './stores/block';
-import { useChatSubscriptionInitializer } from './stores/chat';
-import { useNotificationSubscriptionInitializer } from './stores/notification';
-import { useOnboardingInitializer } from './stores/onboarding/initializer';
-import { usePushNotificationInitializer } from './stores/push';
-import { RootStackParamList } from './types/navigation';
+import { toastConfig } from '@/components/ui/Toast';
+import { useAppState } from '@/hooks/shared/useAppState';
+import { useOnlineManager } from '@/hooks/shared/useOnlineManager';
+import { useSuspensionGuard } from '@/hooks/shared/useSuspensionGuard';
+import { navigationRef } from '@/navigation/RootNavigation';
+import RootStackNavigator from '@/navigation/RootStackNavigator';
+import ErrorBoundary from '@/screens/ErrorBoundary';
+import { useAuthInitializer } from '@/stores/auth';
+import { useBlockSubscriptionInitializer } from '@/stores/block';
+import { useChatSubscriptionInitializer } from '@/stores/chat';
+import { useNotificationSubscriptionInitializer } from '@/stores/notification';
+import { useOnboardingInitializer } from '@/stores/onboarding/initializer';
+import { usePushNotificationInitializer } from '@/stores/push';
+import { RootStackParamList } from '@/types/navigation';
 
 if (__DEV__) {
-	import('./ReactoronConfig').then(() => console.log('🔧 Reactotron Config Loaded'));
+	import('./src/config/reactotron').then(() => console.log('🔧 Reactotron Config Loaded'));
 }
 
 const prefix = Linking.createURL('/');
