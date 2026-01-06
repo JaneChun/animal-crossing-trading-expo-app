@@ -1,9 +1,12 @@
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback } from 'react';
 
-// 화면 포커스 시 새로고침
-// 어떤 상황에서는 React Native 화면이 다시 포커싱될 때 쿼리를 새로고침하고 싶을 수 있습니다.
-// 이 커스텀 훅은 화면이 다시 포커싱될 때 제공된 리프레시 함수를 호출합니다.
+/**
+	 * 화면 포커스 시 쿼리 자동 새로고침
+	 * - 첫 마운트 시에는 실행되지 않음
+	 * - 탭 전환, 네비게이션 복귀 시 실행
+	 * @param refetch - React Query refetch 함수
+*/
 export const useRefreshOnFocus = <T>(refetch: () => Promise<T>) => {
 	const firstTimeRef = React.useRef(true);
 

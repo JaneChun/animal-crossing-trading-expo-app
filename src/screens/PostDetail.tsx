@@ -118,7 +118,7 @@ const PostDetail = () => {
 					},
 					{
 						label: '수정',
-						onPress: () => navigateToEditPost({ postId: id }),
+						onPress: () => navigateToEditPost({ postId: id, collectionName: collectionName as Collection }),
 					},
 					{
 						label: '삭제',

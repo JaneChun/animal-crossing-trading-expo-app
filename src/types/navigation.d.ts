@@ -14,7 +14,7 @@ export type RootStackParamList = {
 		collectionName: Collection;
 		notificationId?: string; // 알림탭에서 이동 시 알림 처리 위해 전달
 	};
-	NewPost: { id?: string }; // 글 수정 시 id 전달
+	NewPost: { id?: string, collectionName?: Collection }; // 글 수정 시 id, collectionName 전달
 	ChatRoom: {
 		chatId: string;
 		chatStartInfo?: CreateChatRoomParams;

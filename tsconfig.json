@@ -4,8 +4,11 @@
 		"strict": true,
 		"module": "esnext",
 		"paths": {
-			"@/*": ["./src/*"]
+			"@/*": [
+				"./src/*"
+			]
 		},
+		"baseUrl": ".",
 		"moduleResolution": "node"
 	},
 	"include": [

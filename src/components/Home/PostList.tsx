@@ -15,6 +15,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showLongToast, showToast } from '@/components/ui/Toast';
 import PostUnit, { POST_UNIT_HEIGHT } from './PostUnit';
+import { useRefreshOnFocus } from '@/hooks/shared/useRefreshOnFocus';
 
 const PostList = ({
 	collectionName,
@@ -35,6 +36,8 @@ const PostList = ({
 		status,
 	} = useInfinitePosts(collectionName, filter);
 
+	useRefreshOnFocus(refetch);
+
 	const flatListData = data?.pages.flatMap((page) => page.data) ?? [];
 
 	const onPressAddPostButton = () => {
@@ -50,7 +53,7 @@ const PostList = ({
 			return;
 		}
 
-		navigateToNewPost();
+		navigateToNewPost(collectionName);
 	};
 
 	const renderPostUnit = useCallback(
