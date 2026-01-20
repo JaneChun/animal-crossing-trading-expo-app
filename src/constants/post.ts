@@ -77,5 +77,55 @@ export const REPORT_CATEGORIES = [
 	{ KR: '기타', EN: 'other' },
 ];
 
+export const VILLAGER_SPECIES = [
+	{ KR: '전체', EN: 'All' },
+	{ KR: '고양이', EN: 'Cat' },
+	{ KR: '곰', EN: 'Bear' },
+	{ KR: '꼬마곰', EN: 'Bear cub' },
+	{ KR: '개', EN: 'Dog' },
+	{ KR: '개구리', EN: 'Frog' },
+	{ KR: '개미핥기', EN: 'Anteater' },
+	{ KR: '늑대', EN: 'Wolf' },
+	{ KR: '다람쥐', EN: 'Squirrel' },
+	{ KR: '닭', EN: 'Chicken' },
+	{ KR: '독수리', EN: 'Eagle' },
+	{ KR: '돼지', EN: 'Pig' },
+	{ KR: '말', EN: 'Horse' },
+	{ KR: '문어', EN: 'Octopus' },
+	{ KR: '사슴', EN: 'Deer' },
+	{ KR: '사자', EN: 'Lion' },
+	{ KR: '새', EN: 'Bird' },
+	{ KR: '쥐', EN: 'Mouse' },
+	{ KR: '악어', EN: 'Alligator' },
+	{ KR: '양', EN: 'Sheep' },
+	{ KR: '염소', EN: 'Goat' },
+	{ KR: '오리', EN: 'Duck' },
+	{ KR: '원숭이', EN: 'Monkey' },
+	{ KR: '소', EN: 'Cow' },
+	{ KR: '코끼리', EN: 'Elephant' },
+	{ KR: '코알라', EN: 'Koala' },
+	{ KR: '코뿔소', EN: 'Rhinoceros' },
+	{ KR: '타조', EN: 'Ostrich' },
+	{ KR: '토끼', EN: 'Rabbit' },
+	{ KR: '펭귄', EN: 'Penguin' },
+	{ KR: '하마', EN: 'Hippo' },
+	{ KR: '햄스터', EN: 'Hamster' },
+	{ KR: '호랑이', EN: 'Tiger' },
+	{ KR: '캥거루', EN: 'Kangaroo' },
+	{ KR: '고릴라', EN: 'Gorilla' },
+] as const;
+
+export const VILLAGER_PERSONALITIES = [
+	{ KR: '먹보', EN: 'Lazy' },
+	{ KR: '운동광', EN: 'Jock' },
+	{ KR: '무뚝뚝', EN: 'Cranky' },
+	{ KR: '느끼함', EN: 'Smug' },
+	{ KR: '친절함', EN: 'Normal' },
+	{ KR: '아이돌', EN: 'Peppy' },
+	{ KR: '성숙함', EN: 'Snooty' },
+	{ KR: '단순활발', EN: 'Big sister' },
+] as const;
+
 export const MAX_COMMENT_LENGTH = 1000;
 export const MAX_IMAGES = 10;
+export const MAX_VILLAGERS = 10;

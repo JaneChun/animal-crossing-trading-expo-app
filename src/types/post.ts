@@ -1,3 +1,5 @@
+import { DocumentData, QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
+
 import {
 	COMMUNITY_TYPES,
 	CURRENCY_OPTIONS,
@@ -5,11 +7,7 @@ import {
 	MARKET_TYPES,
 	TAB_COLLECTION_CONFIG,
 } from '@/constants/post';
-import {
-	DocumentData,
-	QueryDocumentSnapshot,
-	Timestamp,
-} from 'firebase/firestore';
+import { Villager } from '@/types/villager';
 
 export type Collection = 'Boards' | 'Communities';
 
@@ -17,8 +15,7 @@ export type Collection = 'Boards' | 'Communities';
 export type Tab = keyof typeof TAB_COLLECTION_CONFIG;
 
 // 특정 탭(Tab)에서 사용할 컬렉션 이름 타입을 유추하는 조건부 타입 (CollectionFromTab<'Home'> → 'Boards')
-export type CollectionFromTab<T extends Tab> =
-	(typeof TAB_COLLECTION_CONFIG)[T]['collection'];
+export type CollectionFromTab<T extends Tab> = (typeof TAB_COLLECTION_CONFIG)[T]['collection'];
 
 // 마켓글 타입
 export type MarketTypeItem = (typeof MARKET_TYPES)[number];
@@ -61,6 +58,7 @@ type MarketPost = CommonPostFields & {
 type CommunityPost = CommonPostFields & {
 	type: CommunityType;
 	images: string[];
+	villagers?: Villager[]; // 분양/입양 게시글용 주민 목록
 };
 
 export type PostMap = {
@@ -70,8 +68,7 @@ export type PostMap = {
 
 // 컬렉션 기반으로 게시글 타입 분기
 export type Post<C extends Collection> = PostMap[C];
-export type PostWithCreatorInfo<C extends Collection> = PostMap[C] &
-	CreatorInfo;
+export type PostWithCreatorInfo<C extends Collection> = PostMap[C] & CreatorInfo;
 
 // Firestore용 PostDoc
 export type PostDoc<C extends Collection> = Post<C> & {
@@ -104,9 +101,7 @@ export type CreatePostRequest<C extends Collection> = Omit<
 	'id' | 'creatorId' | 'createdAt' | 'commentCount'
 >;
 
-export type UpdatePostRequest<C extends Collection> = Partial<
-	CreatePostRequest<C>
->;
+export type UpdatePostRequest<C extends Collection> = Partial<CreatePostRequest<C>>;
 
 // hooks/query/useInfinitePosts.ts
 export type Doc = QueryDocumentSnapshot<DocumentData> | null;
