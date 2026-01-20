@@ -15,12 +15,10 @@ export const COMMUNITY_TYPES = [
 	{ KR: '무 주식', EN: 'turnip' },
 	{ KR: '꿈번지', EN: 'dream' },
 	{ KR: '마이디자인', EN: 'design' },
+	{ KR: '알바', EN: 'parttime' },
 ] as const;
 
-export const CATEGORIES: CategoryItem[] = [
-	{ KR: '전체', EN: 'all' },
-	...COMMUNITY_TYPES,
-];
+export const CATEGORIES: CategoryItem[] = [{ KR: '전체', EN: 'all' }, ...COMMUNITY_TYPES];
 
 export const CURRENCY_OPTIONS = [
 	{ KR: '마일 티켓', EN: 'mileticket' },

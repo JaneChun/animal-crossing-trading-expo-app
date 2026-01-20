@@ -19,6 +19,8 @@ export const Colors = {
 	// button
 	red_text: '#CD5067',
 	red_background: '#F6DBE0',
+	orange_text: '#e47a41',
+	orange_background: '#ffdfc9',
 	yellow_text: '#DAA520',
 	yellow_background: '#FAF3E0',
 	green_background: '#d6f3db',
