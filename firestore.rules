@@ -21,6 +21,12 @@ service cloud.firestore {
       allow read: if true; // 누구나
       allow create, update, delete: if false; // 불가능
     }
+
+    // Villagers
+    match /Villagers/{VillagerId} {
+      allow read: if true; // 누구나
+      allow create, update, delete: if false; // 불가능
+    }
     
     // Communities
     match /Communities/{postId} {
