@@ -1,33 +1,17 @@
-import { Collection, CommonPostFields, Post, PostDoc } from '@/types/post';
+import { Collection, Post, PostDoc } from '@/types/post';
 
-export const toPost = <C extends Collection>(
-	collectionName: C,
-	doc: PostDoc<C>,
-): Post<C> => {
-	const commonFields: CommonPostFields = {
-		id: doc.id,
-		title: doc.title,
-		body: doc.body,
-		creatorId: doc.creatorId,
-		createdAt: doc.createdAt,
-		commentCount: doc.commentCount,
-	};
+export const toPost = <C extends Collection>(collectionName: C, doc: PostDoc<C>): Post<C> => {
+	// updatedAt은 PostDoc에만 있고 Post에는 없으므로 제외
+	const { updatedAt: _updatedAt, ...rest } = doc;
 
-	if (collectionName === 'Boards') {
-		const boardDoc = doc as PostDoc<'Boards'>;
+	if (collectionName === 'Communities') {
+		const communityPost = rest as unknown as Post<'Communities'>;
+
 		return {
-			...commonFields,
-			type: boardDoc.type,
-			cart: boardDoc.cart,
-			chatRoomIds: boardDoc.chatRoomIds,
-			reviewPromptSent: boardDoc.reviewPromptSent,
+			...communityPost,
+			villagers: communityPost.villagers ?? [], // villagers 기본값 처리 (기존 데이터 호환성)
 		} as Post<C>;
 	}
 
-	const communityDoc = doc as PostDoc<'Communities'>;
-	return {
-		...commonFields,
-		type: communityDoc.type,
-		images: communityDoc.images,
-	} as Post<C>;
+	return rest as Post<C>;
 };

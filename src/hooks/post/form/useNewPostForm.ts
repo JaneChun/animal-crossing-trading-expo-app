@@ -1,6 +1,8 @@
-import { Collection } from '@/types/post';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+
+import { Collection } from '@/types/post';
+
 import { NewPostFormSchema, NewPostFormValues } from './newPostFormSchema';
 
 export const useNewPostForm = (collectionName: Collection) => {
@@ -18,7 +20,7 @@ export const useNewPostForm = (collectionName: Collection) => {
 						cart: [],
 						images: undefined,
 						originalImageUrls: undefined,
-				  }
+					}
 				: {
 						collectionName: 'Communities',
 						type: 'general',
@@ -27,7 +29,8 @@ export const useNewPostForm = (collectionName: Collection) => {
 						cart: undefined,
 						images: [],
 						originalImageUrls: [],
-				  },
+						villagers: [],
+					},
 	});
 
 	return methods;

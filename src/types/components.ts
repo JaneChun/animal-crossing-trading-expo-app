@@ -1,5 +1,3 @@
-import { ICON_MAP } from '@/components/ui/EmptyIndicator';
-import { OnboardingStep } from '@/constants/onboardingData';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
@@ -13,6 +11,10 @@ import {
 	ViewStyle,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+
+import { ICON_MAP } from '@/components/ui/EmptyIndicator';
+import { OnboardingStep } from '@/constants/onboardingData';
+
 import { CommentWithCreatorInfo } from './comment';
 import { PopulatedNotification } from './notification';
 import {
@@ -28,6 +30,7 @@ import {
 import { ReplyWithCreatorInfo } from './reply';
 import { ReportCategory } from './report';
 import { OauthType, PublicUserInfo } from './user';
+import { Villager } from './villager';
 
 // Home/
 export type PostListProps = {
@@ -67,6 +70,9 @@ export interface PostFormProps {
 	scrollViewRef: RefObject<ScrollView>;
 	handleEditItemPress: (item: CartItem) => void;
 	deleteItemFromCart: (deleteCartItemId: string) => void;
+	deleteVillager: (villagerId: string) => void;
+	openAddVillagerModal: () => void;
+	selectedVillagers: Villager[]; // UI 표시용 주민 데이터
 }
 export type TypeSelectProps = {
 	type: MarketType;
@@ -142,6 +148,33 @@ export type EditItemModalProps = {
 export type AddItemModalProps = {
 	cart: CartItem[];
 	addItemToCart: (item: Item) => void;
+	isVisible: boolean;
+	onClose: () => void;
+};
+
+export type VillagerSelectProps = {
+	addVillager: (villager: Villager) => void;
+	containerStyle?: StyleProp<ViewStyle>;
+	labelStyle?: StyleProp<TextStyle>;
+};
+
+export type VillagerSelectItemProps = {
+	villager: Villager;
+	searchInput: string;
+	index: number;
+	addVillager: (villager: Villager) => void;
+};
+
+export type VillagerListProps = {
+	villagers: Villager[];
+	deleteVillager: (villagerId: string) => void;
+	openAddVillagerModal: () => void;
+	containerStyle?: StyleProp<ViewStyle>;
+	labelStyle?: StyleProp<TextStyle>;
+};
+
+export type AddVillagerModalProps = {
+	addVillager: (villager: Villager) => void;
 	isVisible: boolean;
 	onClose: () => void;
 };

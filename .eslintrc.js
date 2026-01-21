@@ -18,6 +18,7 @@ module.exports = {
 	},
 	plugins: ['unused-imports', 'import', 'react-hooks', '@typescript-eslint'],
 	rules: {
+		'react/prop-types': 'off',
 		'unused-imports/no-unused-imports': 'error', // 사용하지 않는 import 삭제
 		'unused-imports/no-unused-vars': [
 			'warn',

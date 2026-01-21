@@ -1,6 +1,7 @@
-import { COMMUNITY_TYPES, MARKET_TYPES } from '@/constants/post';
-import { CommunityType, MarketType } from '@/types/post';
 import * as z from 'zod';
+
+import { COMMUNITY_TYPES, CURRENCY_OPTIONS, MAX_VILLAGERS, MARKET_TYPES } from '@/constants/post';
+import { CommunityType, CurrencyOption, MarketType } from '@/types/post';
 
 const CommonFields = {
 	title: z
@@ -21,40 +22,37 @@ const CartItemSchema = z.object({
 	name: z.string(),
 	quantity: z.number(),
 	price: z.number(),
-	unit: z.string().default('mileticket'),
+	unit: z
+		.enum(CURRENCY_OPTIONS.map((item) => item.EN) as [CurrencyOption, ...CurrencyOption[]])
+		.default('mileticket'),
 });
 
 const ImageTypeSchema = z.object({
 	uri: z.string(),
 });
 
-// 🏠 마켓 폼
+// 🏠 마켓 폼 스키마
 const MarketFormSchema = z.object({
 	collectionName: z.literal('Boards'),
-	type: z.enum(
-		MARKET_TYPES.map((item) => item.EN) as [MarketType, ...MarketType[]],
-	),
+	type: z.enum(MARKET_TYPES.map((item) => item.EN) as [MarketType, ...MarketType[]]),
 	cart: z.array(CartItemSchema),
 	images: z.optional(z.never()), // 금지
 	originalImageUrls: z.optional(z.never()), // 금지
 	...CommonFields,
 });
 
-// 📝 커뮤니티 폼
+// 📝 커뮤니티 폼 스키마
 const CommunityFormSchema = z.object({
 	collectionName: z.literal('Communities'),
-	type: z.enum(
-		COMMUNITY_TYPES.map((item) => item.EN) as [
-			CommunityType,
-			...CommunityType[],
-		],
-	),
+	type: z.enum(COMMUNITY_TYPES.map((item) => item.EN) as [CommunityType, ...CommunityType[]]),
 	images: z.array(ImageTypeSchema),
 	originalImageUrls: z.array(z.string()).optional(),
+	villagers: z.array(z.string()).max(MAX_VILLAGERS).default([]),
 	cart: z.optional(z.never()), // 금지
 	...CommonFields,
 });
 
+// collectionName에 따라 분기
 export const NewPostFormSchema = z.discriminatedUnion('collectionName', [
 	MarketFormSchema,
 	CommunityFormSchema,

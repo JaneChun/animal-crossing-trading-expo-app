@@ -7,7 +7,6 @@ import {
 	MARKET_TYPES,
 	TAB_COLLECTION_CONFIG,
 } from '@/constants/post';
-import { Villager } from '@/types/villager';
 
 export type Collection = 'Boards' | 'Communities';
 
@@ -58,7 +57,7 @@ type MarketPost = CommonPostFields & {
 type CommunityPost = CommonPostFields & {
 	type: CommunityType;
 	images: string[];
-	villagers?: Villager[]; // 분양/입양 게시글용 주민 목록
+	villagers: string[];
 };
 
 export type PostMap = {
@@ -96,9 +95,16 @@ export interface CartItem extends Item {
 }
 
 // firebase/services/postService.ts
+// 게시글 생성 시 자동 설정되는 필드 제외
 export type CreatePostRequest<C extends Collection> = Omit<
 	PostMap[C],
-	'id' | 'creatorId' | 'createdAt' | 'commentCount'
+	| 'id'
+	| 'creatorId'
+	| 'createdAt'
+	| 'commentCount'
+	| 'chatRoomIds'
+	| 'reviewPromptSent'
+	| 'status'
 >;
 
 export type UpdatePostRequest<C extends Collection> = Partial<CreatePostRequest<C>>;

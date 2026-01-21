@@ -22,16 +22,26 @@ const fetchVillagers = async (species?: VillagerSpecies): Promise<Villager[]> =>
 	return villagersData.map((doc) => doc as Villager);
 };
 
+type UseVillagersOptions = {
+	enabled?: boolean;
+};
+
 /**
  * 주민 목록을 가져오는 React Query 훅
  * @param species - 필터링할 종 ('All'이면 전체)
  * @param keyword - 검색 키워드 (클라이언트 사이드 필터링)
+ * @param options - React Query 옵션 (enabled 등)
  */
-export const useVillagers = (species?: VillagerSpecies, keyword?: string) => {
+export const useVillagers = (
+	species?: VillagerSpecies,
+	keyword?: string,
+	options: UseVillagersOptions = { enabled: true },
+) => {
 	return useQuery<Villager[], Error>({
 		queryKey: ['villagers', species],
 		queryFn: () => fetchVillagers(species),
 		staleTime: Infinity,
+		enabled: options.enabled,
 		select: (data) => {
 			// 키워드가 있으면 클라이언트 사이드에서 필터링
 			if (keyword && keyword.trim()) {
