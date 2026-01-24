@@ -173,6 +173,17 @@ export type VillagerListProps = {
 	labelStyle?: StyleProp<TextStyle>;
 };
 
+export type VillagerSummaryListProps = {
+	type: CommunityType;
+	villagers: Villager[];
+	containerStyle?: ViewStyle;
+};
+
+export type VillagerItemProps = {
+	villager: Villager;
+	containerStyle?: StyleProp<ViewStyle>;
+};
+
 export type AddVillagerModalProps = {
 	addVillager: (villager: Villager) => void;
 	isVisible: boolean;

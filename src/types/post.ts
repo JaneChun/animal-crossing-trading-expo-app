@@ -103,11 +103,14 @@ export type CreatePostRequest<C extends Collection> = Omit<
 	| 'createdAt'
 	| 'commentCount'
 	| 'chatRoomIds'
-	| 'reviewPromptSent'
+	| 'reviewPromptSent' // 서버에서 false로 초기화
 	| 'status'
 >;
 
-export type UpdatePostRequest<C extends Collection> = Partial<CreatePostRequest<C>>;
+// CreatePostRequest에서 'reviewPromptSent' 속성 포함 (거래 완료 시 true로 업데이트)
+export type UpdatePostRequest<C extends Collection> = Partial<
+	Omit<PostMap[C], 'id' | 'creatorId' | 'createdAt' | 'commentCount' | 'chatRoomIds' | 'status'>
+>;
 
 // hooks/query/useInfinitePosts.ts
 export type Doc = QueryDocumentSnapshot<DocumentData> | null;

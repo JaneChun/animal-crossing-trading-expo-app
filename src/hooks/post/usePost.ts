@@ -1,19 +1,17 @@
+import { useEffect } from 'react';
+
 import { showToast } from '@/components/ui/Toast';
 import { sendReviewSystemMessage } from '@/firebase/services/reviewService';
+import { useMarkAsRead } from '@/hooks/notification/query/mutation/useMarkAsRead';
 import { goBack } from '@/navigation/RootNavigation';
 import { Collection } from '@/types/post';
 import { isBoardPost } from '@/utilities/typeGuards/postTypeGuards';
-import { useEffect } from 'react';
-import { useMarkAsRead } from '@/hooks/notification/query/mutation/useMarkAsRead';
+
 import { useDeletePost } from './mutation/useDeletePost';
 import { useUpdatePost } from './mutation/useUpdatePost';
 import { usePostDetail } from './query/usePostDetail';
 
-export const usePost = (
-	collectionName: Collection,
-	id: string,
-	notificationId: string,
-) => {
+export const usePost = (collectionName: Collection, id: string, notificationId: string) => {
 	const { data: post, isLoading: isPostFetching } = usePostDetail(
 		collectionName as Collection,
 		id,
