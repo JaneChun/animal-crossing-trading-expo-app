@@ -40,7 +40,7 @@ export const useVillagers = (
 	return useQuery<Villager[], Error>({
 		queryKey: ['villagers', species],
 		queryFn: () => fetchVillagers(species),
-		staleTime: Infinity,
+		staleTime: 24 * 60 * 60 * 1000, // 24시간
 		enabled: options.enabled,
 		select: (data) => {
 			// 키워드가 있으면 클라이언트 사이드에서 필터링
