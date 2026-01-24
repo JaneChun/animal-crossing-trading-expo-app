@@ -3,7 +3,7 @@ import { UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 
 import { showToast } from '@/components/ui/Toast';
 import { MAX_VILLAGERS } from '@/constants/post';
-import { useVillagers } from '@/hooks/villager/query/useVillagers';
+import { useVillagersByIds } from '@/hooks/villager/query/useVillagersByIds';
 import { Villager } from '@/types/villager';
 
 import { NewPostFormValues } from './newPostFormSchema';
@@ -31,20 +31,14 @@ export const useVillagerState = (
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [selectedVillagers, setSelectedVillagers] = useState<Villager[]>([]);
 
-	// 편집 모드에서만 전체 주민 목록 조회
-	const { data: allVillagers = [] } = useVillagers('All', '', {
-		enabled: existingVillagerIds.length > 0,
-	});
+	// 편집 모드: 기존 주민 ID로 Villager 객체 조회
+	const existingVillagers = useVillagersByIds(existingVillagerIds);
 
 	// 편집 모드 초기화: 기존 주민 데이터 로딩
 	useEffect(() => {
-		if (allVillagers.length === 0) return;
-
-		const existingVillagers = allVillagers.filter((v) => existingVillagerIds.includes(v.id));
-
+		if (existingVillagers.length === 0) return;
 		setSelectedVillagers(existingVillagers);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [allVillagers.length, existingVillagerIds]);
+	}, [existingVillagers]);
 
 	// 모달 핸들러
 	const openModal = useCallback(() => setIsModalVisible(true), []);
