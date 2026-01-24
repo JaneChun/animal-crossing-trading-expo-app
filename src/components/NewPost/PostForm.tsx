@@ -112,17 +112,6 @@ const PostForm = ({
 				)}
 			/>
 
-			{/* 분양/입양용 주민 목록 */}
-			{isCommunity && (currentType === 'giveaway' || currentType === 'adopt') && (
-				<VillagerList
-					villagers={selectedVillagers}
-					deleteVillager={deleteVillager}
-					openAddVillagerModal={openAddVillagerModal}
-					containerStyle={styles.inputContainer}
-					labelStyle={styles.label}
-				/>
-			)}
-
 			{/* 커뮤니티용 이미지 업로드 */}
 			{isCommunity && (
 				<Controller
@@ -132,13 +121,24 @@ const PostForm = ({
 						<ImageInput
 							images={value}
 							setImages={onChange}
-							containerStyle={{
-								...styles.inputContainer,
-								borderBottomWidth: 0,
-							}}
+							containerStyle={styles.inputContainer}
 							labelStyle={styles.label}
 						/>
 					)}
+				/>
+			)}
+
+			{/* 분양/입양용 주민 목록 */}
+			{isCommunity && (currentType === 'giveaway' || currentType === 'adopt') && (
+				<VillagerList
+					villagers={selectedVillagers}
+					deleteVillager={deleteVillager}
+					openAddVillagerModal={openAddVillagerModal}
+					containerStyle={{
+						...styles.inputContainer,
+						borderBottomWidth: 0,
+					}}
+					labelStyle={styles.label}
 				/>
 			)}
 
