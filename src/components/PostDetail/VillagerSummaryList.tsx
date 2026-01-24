@@ -7,8 +7,7 @@ import { VillagerSummaryListProps } from '@/types/components';
 import { Villager } from '@/types/villager';
 
 import VillagerItem from './VillagerItem';
-
-const movingBoxIcon = require('../../../assets/images/moving_box.png');
+import movingBoxIcon from '../../../assets/images/moving_box.png';
 
 const VillagerSummaryList = ({ type, villagers, containerStyle }: VillagerSummaryListProps) => {
 	if (villagers.length === 0) return null;
@@ -18,8 +17,10 @@ const VillagerSummaryList = ({ type, villagers, containerStyle }: VillagerSummar
 	return (
 		<View style={containerStyle}>
 			<View style={styles.labelContainer}>
-				<Text style={styles.label}>{type === 'adopt' ? '입양할 주민' : '분양할 주민'}</Text>
 				<FastImage source={movingBoxIcon} style={styles.boxIcon} />
+				<Text style={styles.label}>
+					{type === 'adopt' ? '입양하고 싶어요' : '분양 보내요'}
+				</Text>
 			</View>
 
 			<FlatList
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
 	boxIcon: {
 		width: 30,
 		height: 30,
-		marginLeft: 2,
+		marginRight: 2,
 	},
 	columnWrapper: {
 		gap: 12,
