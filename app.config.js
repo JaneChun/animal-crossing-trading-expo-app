@@ -27,6 +27,7 @@ export default {
 				resizeMode: 'contain',
 				backgroundColor: '#ffffff',
 			},
+			"googleServicesFile": process.env.GOOGLE_SERVICE_INFO_PLIST,
 		},
 		android: {
 			adaptiveIcon: {
@@ -41,6 +42,7 @@ export default {
 			favicon: './assets/images/favicon.png',
 		},
 		plugins: [
+			'@react-native-firebase/app',
 			[
 				'expo-build-properties',
 				{
@@ -50,6 +52,7 @@ export default {
 					},
 					ios: {
 						newArchEnabled: true,
+						useFrameworks: 'static',
 					},
 				},
 			],
