@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 
 import { showToast } from '@/components/ui/Toast';
@@ -30,15 +30,19 @@ export const useVillagerState = (
 ): UseVillagerStateReturn => {
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [selectedVillagers, setSelectedVillagers] = useState<Villager[]>([]);
+	const isInitialized = useRef(false);
 
 	// 편집 모드: 기존 주민 ID로 Villager 객체 조회
 	const existingVillagers = useVillagersByIds(existingVillagerIds);
 
-	// 편집 모드 초기화: 기존 주민 데이터 로딩
+	// 편집 모드 초기화: 기존 주민 데이터를 selectedVillagers에 1회만 세팅
+	// - isInitialized ref로 초기화 완료 여부를 명시적으로 추적하여 재실행 방지
+	// - 의존성에 배열 대신 length(원시값)를 사용하여 참조 변경으로 인한 불필요한 재실행 방지
 	useEffect(() => {
-		if (existingVillagers.length === 0) return;
+		if (isInitialized.current || existingVillagers.length === 0) return;
 		setSelectedVillagers(existingVillagers);
-	}, [existingVillagers]);
+		isInitialized.current = true;
+	}, [existingVillagers.length]);
 
 	// 모달 핸들러
 	const openModal = useCallback(() => setIsModalVisible(true), []);
