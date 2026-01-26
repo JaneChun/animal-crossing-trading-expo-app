@@ -1,13 +1,11 @@
+import React from 'react';
+
+import Badge from '@/components/ui/Badge';
 import { Colors } from '@/constants/Color';
 import { BadgeProps, TypeBadgeProps } from '@/types/components';
 import { CommunityType } from '@/types/post';
-import React from 'react';
-import Badge from '@/components/ui/Badge';
 
-const CommunityTypeBadge = ({
-	type,
-	containerStyle,
-}: TypeBadgeProps<CommunityType>) => {
+const CommunityTypeBadge = ({ type, containerStyle }: TypeBadgeProps<CommunityType>) => {
 	const communityTypeBadgeMap: Record<CommunityType, BadgeProps> = {
 		general: {
 			text: '자유',
@@ -48,6 +46,11 @@ const CommunityTypeBadge = ({
 			text: '마이디자인',
 			textColor: Colors.red_text,
 			bgColor: Colors.red_background,
+		},
+		parttime: {
+			text: '알바',
+			textColor: Colors.orange_text,
+			bgColor: Colors.orange_background,
 		},
 	};
 

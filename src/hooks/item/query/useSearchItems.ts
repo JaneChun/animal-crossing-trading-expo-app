@@ -1,6 +1,6 @@
 import { searchClient } from '@/config/firebase';
 import { Item, ItemCategory } from '@/types/post';
-import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 const PAGE_SIZE = 20;
 
@@ -18,7 +18,7 @@ const searchItemsByCursor = async ({
 }): Promise<Item[]> => {
 	const { category = '', keyword = '' } = filter;
 
-	const { results } = await searchClient.search({
+	const { results } = await searchClient.searchForHits<Item>({
 		requests: [
 			{
 				indexName: 'Items',
@@ -31,8 +31,8 @@ const searchItemsByCursor = async ({
 	});
 
 	return results[0].hits.map((hit) => ({
-		id: hit.objectID,
 		...hit,
+		id: hit.objectID,
 	}));
 };
 
@@ -40,7 +40,7 @@ export const useSearchItems = (category?: ItemCategory, keyword?: string) => {
 	return useInfiniteQuery<
 		Item[],
 		Error,
-		InfiniteData<Item[]>,
+		Item[],
 		[string, ItemCategory | undefined, string | undefined]
 	>({
 		queryKey: ['items', category, keyword],
@@ -52,5 +52,6 @@ export const useSearchItems = (category?: ItemCategory, keyword?: string) => {
 		initialPageParam: 0,
 		getNextPageParam: (lastPage, allPages) =>
 			lastPage.length === PAGE_SIZE ? allPages.length : undefined,
+		select: (data) => data.pages.flat(),
 	});
 };

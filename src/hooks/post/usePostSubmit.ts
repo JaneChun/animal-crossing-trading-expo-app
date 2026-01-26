@@ -36,12 +36,14 @@ export const usePostSubmit = <C extends Collection>({
 			return {
 				...base,
 				cart,
-			} as CreatePostRequest<C>;
+			} as unknown as CreatePostRequest<C>;
 		} else {
+			const { villagers } = form as CreatePostRequest<'Communities'>;
 			return {
 				...base,
 				images: imageUrls,
-			} as CreatePostRequest<C>;
+				villagers: villagers ?? [],
+			} as unknown as CreatePostRequest<C>;
 		}
 	};
 
@@ -59,24 +61,22 @@ export const usePostSubmit = <C extends Collection>({
 		};
 
 		if (collectionName === 'Boards') {
-			const { cart } = form as CreatePostRequest<'Boards'>;
+			const { cart } = form as UpdatePostRequest<'Boards'>;
 			return {
 				...base,
 				cart,
-			} as CreatePostRequest<C>;
+			} as unknown as UpdatePostRequest<C>;
 		} else {
+			const { villagers } = form as UpdatePostRequest<'Communities'>;
 			return {
 				...base,
 				images: imageUrls,
-			} as CreatePostRequest<C>;
+				villagers: villagers ?? [],
+			} as unknown as UpdatePostRequest<C>;
 		}
 	};
 
-	const createPostFlow = async ({
-		imageUrls,
-		form,
-		userId,
-	}: createPostFlowParams<C>) => {
+	const createPostFlow = async ({ imageUrls, form, userId }: createPostFlowParams<C>) => {
 		const requestData: CreatePostRequest<C> = buildCreatePostRequest({
 			collectionName,
 			imageUrls,
@@ -98,10 +98,7 @@ export const usePostSubmit = <C extends Collection>({
 		);
 	};
 
-	const updatePostFlow = async ({
-		imageUrls,
-		form,
-	}: updatePostFlowParams<C>) => {
+	const updatePostFlow = async ({ imageUrls, form }: updatePostFlowParams<C>) => {
 		const data: UpdatePostRequest<C> = buildUpdatePostRequest({
 			collectionName,
 			imageUrls,

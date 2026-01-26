@@ -20,18 +20,12 @@ const ItemSelect = ({ cart, addItemToCart, containerStyle, labelStyle }: ItemSel
 	const debouncedKeyword = useDebouncedValue(searchInput, 300);
 
 	const {
-		data,
+		data: items = [],
 		isLoading,
-		error,
 		hasNextPage,
 		fetchNextPage,
 		isFetchingNextPage,
-		refetch,
-		isFetching,
-		status,
 	} = useSearchItems(category, debouncedKeyword);
-
-	const items = data?.pages.flat() ?? [];
 
 	const renderItemSelectItem = useCallback(
 		({ item, index }: { item: Item; index: number }) => (
@@ -51,7 +45,7 @@ const ItemSelect = ({ cart, addItemToCart, containerStyle, labelStyle }: ItemSel
 			offset: ITEM_HEIGHT * index,
 			index,
 		}),
-		[ITEM_HEIGHT],
+		[],
 	);
 
 	const fetchNext = useCallback(() => {
@@ -106,8 +100,6 @@ const ItemSelect = ({ cart, addItemToCart, containerStyle, labelStyle }: ItemSel
 							getItemLayout={getItemLayout}
 							onEndReached={fetchNext}
 							onEndReachedThreshold={0.5}
-							onRefresh={refetch}
-							refreshing={isFetching || isFetchingNextPage}
 							ListEmptyComponent={getListEmptyComponent}
 							keyboardShouldPersistTaps='handled'
 						/>

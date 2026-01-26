@@ -1,68 +1,91 @@
+import { useHeaderHeight } from '@react-navigation/elements';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { FieldErrors, FormProvider } from 'react-hook-form';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import AddItemModal from '@/components/NewPost/AddItemModal';
+import AddVillagerModal from '@/components/NewPost/AddVillagerModal';
 import EditItemModal from '@/components/NewPost/EditItemModal';
 import PostForm from '@/components/NewPost/PostForm';
 import Button from '@/components/ui/Button';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
-import { showToast } from '@/components/ui/Toast';
 import { NewPostFormValues } from '@/hooks/post/form/newPostFormSchema';
+import { useCartState } from '@/hooks/post/form/useCartState';
 import { useNewPostForm } from '@/hooks/post/form/useNewPostForm';
+import { useVillagerState } from '@/hooks/post/form/useVillagerState';
 import { useCreatePost } from '@/hooks/post/mutation/useCreatePost';
 import { useUpdatePost } from '@/hooks/post/mutation/useUpdatePost';
 import { usePostDetail } from '@/hooks/post/query/usePostDetail';
-import { usePostContext } from '@/hooks/post/usePostContext';
 import { usePostSubmit } from '@/hooks/post/usePostSubmit';
 import useLoading from '@/hooks/shared/useLoading';
 import { useUserInfo } from '@/stores/auth';
 import { ImageType } from '@/types/image';
 import { RootStackNavigation, type NewPostRouteProp } from '@/types/navigation';
-import { CartItem, CommunityType, Item, MarketType } from '@/types/post';
+import { CommunityType, MarketType } from '@/types/post';
 import { handleImageUpload } from '@/utilities/handleImageUpload';
 import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
-import { useHeaderHeight } from '@react-navigation/elements';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FormProvider } from 'react-hook-form';
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import AddItemModal from '@/components/NewPost/AddItemModal';
 
 const NewPost = () => {
-	const route = useRoute<NewPostRouteProp>();
-	const { collectionName: contextCollectionName } = usePostContext();
-	// usePostContext의 collectionName보다 라우트 파라미터의 collectionName을 우선적으로 사용
-	const collectionName = route.params?.collectionName || contextCollectionName;
-
-	const userInfo = useUserInfo();
+	// ─────────────────────────────────────────────────────────────
+	// Navigation & Layout
+	// ─────────────────────────────────────────────────────────────
 	const stackNavigation = useNavigation<RootStackNavigation>();
-
+	const route = useRoute<NewPostRouteProp>();
+	const collectionName = route.params?.collectionName ?? 'Boards';
 	const insets = useSafeAreaInsets();
 	const headerHeight = useHeaderHeight();
 
+	// ─────────────────────────────────────────────────────────────
+	// Auth
+	// ─────────────────────────────────────────────────────────────
+	const userInfo = useUserInfo();
+
+	// ─────────────────────────────────────────────────────────────
+	// Local State
+	// ─────────────────────────────────────────────────────────────
 	const [editingId, setEditingId] = useState<string>(route.params?.id || '');
-
-	const [isAddItemModalVisible, setIsAddItemModalVisible] = useState<boolean>(false);
-	const [isEditItemModalVisible, setIsEditItemModalVisible] = useState<boolean>(false);
-	const [selectedItem, setSelectedItem] = useState<CartItem | null>(null);
-
-	const { data: post, isLoading } = usePostDetail<typeof collectionName>(collectionName, editingId);
-
-	const { mutate: createPost, isPending: isCreating } = useCreatePost(collectionName);
-	const { mutate: updatePost, isPending: isUpdating } = useUpdatePost(collectionName, editingId);
-
-	const { isLoading: isSubmitting, setIsLoading: setIsSubmitting } = useLoading();
-
 	const scrollViewRef = useRef<ScrollView | null>(null);
 
+	// ─────────────────────────────────────────────────────────────
+	// Data Query
+	// ─────────────────────────────────────────────────────────────
+	const { data: post, isLoading } = usePostDetail<typeof collectionName>(
+		collectionName,
+		editingId,
+	);
+
+	// ─────────────────────────────────────────────────────────────
+	// Form & State Management
+	// ─────────────────────────────────────────────────────────────
 	const methods = useNewPostForm(collectionName);
 	const {
 		getValues,
 		setValue,
-		watch,
 		reset,
 		handleSubmit,
 		formState: { errors },
 	} = methods;
+
+	const existingVillagerIds = useMemo(() => {
+		if (!post) return [];
+		if (post.type !== 'adopt' && post.type !== 'giveaway') return [];
+
+		return post.villagers ?? [];
+	}, [post]);
+
+	const cartState = useCartState(getValues, setValue);
+	const villagerState = useVillagerState(getValues, setValue, existingVillagerIds);
+
+	// ─────────────────────────────────────────────────────────────
+	// Mutations & Submit
+	// ─────────────────────────────────────────────────────────────
+	const { mutate: createPost, isPending: isCreating } = useCreatePost(collectionName);
+	const { mutate: updatePost, isPending: isUpdating } = useUpdatePost(collectionName, editingId);
+	const { isLoading: isSubmitting, setIsLoading: setIsSubmitting } = useLoading();
 
 	const resetAll = () => {
 		reset();
@@ -76,16 +99,19 @@ const NewPost = () => {
 		updatePost,
 	});
 
-	// 수정글 로딩 시 초기값 채우기
+	// ─────────────────────────────────────────────────────────────
+	// Effects
+	// ─────────────────────────────────────────────────────────────
+	// 수정글 로딩 시 editingId 설정
 	useEffect(() => {
 		if (route.params?.id) setEditingId(route.params.id);
 	}, [route.params?.id]);
 
+	// 수정글 데이터로 폼 초기화
 	useEffect(() => {
 		if (!post) return;
 
 		setValue('collectionName', collectionName);
-
 		setValue('type', post.type);
 		setValue('title', post.title);
 		setValue('body', post.body);
@@ -98,18 +124,22 @@ const NewPost = () => {
 			setValue('originalImageUrls', post.images);
 			setValue(
 				'images',
-				post.images.map((url) => ({ uri: url } as ImageType)),
+				post.images.map((url): ImageType => ({ uri: url })),
 			);
+			setValue('villagers', post.villagers);
 		}
-	}, [post, collectionName]);
+	}, [post, collectionName, setValue]);
 
-	// 로딩 페이지에서 헤더 숨기기
+	// 제출(로딩) 중 헤더 숨기기
 	useEffect(() => {
 		if (isSubmitting || isCreating || isUpdating) {
 			stackNavigation.setOptions({ headerShown: false });
 		}
 	}, [isSubmitting, isCreating, isUpdating]);
 
+	// ─────────────────────────────────────────────────────────────
+	// Handlers
+	// ─────────────────────────────────────────────────────────────
 	const onSubmit = async (formData: NewPostFormValues) => {
 		setIsSubmitting(true);
 
@@ -128,13 +158,14 @@ const NewPost = () => {
 							title: formData.title,
 							body: formData.body,
 							cart: formData.cart ?? [],
-					  }
+						}
 					: {
 							type: formData.type as CommunityType,
 							title: formData.title,
 							body: formData.body,
 							images: imageUrls,
-					  };
+							villagers: formData.villagers ?? [],
+						};
 
 			if (editingId) {
 				await updatePostFlow({
@@ -153,9 +184,8 @@ const NewPost = () => {
 		}
 	};
 
-	const onError = (errors: any) => {
+	const onError = (errors: FieldErrors<NewPostFormValues>) => {
 		console.log('🧨 Zod Errors', JSON.stringify(errors, null, 2));
-
 		scrollToTop();
 	};
 
@@ -164,56 +194,9 @@ const NewPost = () => {
 		scrollViewRef.current?.scrollTo(0);
 	};
 
-	const openAddItemModal = useCallback(() => {
-		setIsAddItemModalVisible(true);
-	}, []);
-	const closeAddItemModal = useCallback(() => setIsAddItemModalVisible(false), []);
-	const openEditItemModal = useCallback(() => setIsEditItemModalVisible(true), []);
-	const closeEditItemModal = useCallback(() => setIsEditItemModalVisible(false), []);
-
-	const addItemToCart = useCallback(
-		(item: Item) => {
-			const cart = getValues('cart') ?? [];
-			const isAlreadyAdded = cart.some((c) => c.id === item.id);
-
-			if (isAlreadyAdded) {
-				showToast('warn', '이미 추가된 아이템이에요.');
-			} else {
-				const newAddedItem: CartItem = {
-					...item,
-					quantity: 1,
-					price: 1,
-					unit: 'mileticket',
-				};
-
-				setValue('cart', [...cart, newAddedItem]);
-				showToast('success', `${item.name}이(가) 추가되었어요.`);
-			}
-		},
-		[getValues, setValue],
-	);
-
-	const handleEditItemPress = (item: CartItem) => {
-		setSelectedItem(item);
-		openEditItemModal();
-	};
-
-	const updateItemFromCart = (updatedCartItem: CartItem) => {
-		const cart = getValues('cart') ?? [];
-		setValue(
-			'cart',
-			cart.map((cartItem) => (cartItem.id === updatedCartItem.id ? updatedCartItem : cartItem)),
-		);
-	};
-
-	const deleteItemFromCart = (deleteCartItemId: string) => {
-		const cart = getValues('cart') ?? [];
-		setValue(
-			'cart',
-			cart.filter((cartItem) => cartItem.id !== deleteCartItemId),
-		);
-	};
-
+	// ─────────────────────────────────────────────────────────────
+	// Render
+	// ─────────────────────────────────────────────────────────────
 	if (isSubmitting || isCreating || isUpdating || (editingId && isLoading)) {
 		return <LoadingIndicator />;
 	}
@@ -229,24 +212,33 @@ const NewPost = () => {
 					<PostForm
 						collectionName={collectionName}
 						scrollViewRef={scrollViewRef}
-						handleEditItemPress={handleEditItemPress}
-						deleteItemFromCart={deleteItemFromCart}
+						handleEditItemPress={cartState.openEditModal}
+						deleteItemFromCart={cartState.deleteItem}
+						deleteVillager={villagerState.deleteVillager}
+						openAddVillagerModal={villagerState.openModal}
+						selectedVillagers={villagerState.selectedVillagers}
 					/>
 				</KeyboardAvoidingView>
 
 				<View style={styles.buttonContainer}>
 					{collectionName === 'Boards' && (
-						<Button color='white' size='lg' flex onPress={openAddItemModal} testID='addItemButton'>
+						<Button
+							color="white"
+							size="lg"
+							flex
+							onPress={cartState.openAddModal}
+							testID="addItemButton"
+						>
 							아이템 추가
 						</Button>
 					)}
 					<Button
-						color='mint'
-						size='lg2'
+						color="mint"
+						size="lg2"
 						flex
 						disabled={Object.keys(errors).length > 0}
 						onPress={handleSubmit(onSubmit, onError)}
-					testID='submitPostButton'
+						testID="submitPostButton"
 					>
 						등록
 					</Button>
@@ -255,16 +247,22 @@ const NewPost = () => {
 
 			<AddItemModal
 				cart={getValues('cart') ?? []}
-				addItemToCart={addItemToCart}
-				isVisible={isAddItemModalVisible}
-				onClose={closeAddItemModal}
+				addItemToCart={cartState.addItem}
+				isVisible={cartState.isAddModalVisible}
+				onClose={cartState.closeAddModal}
 			/>
 
 			<EditItemModal
-				item={selectedItem}
-				updateItemFromCart={updateItemFromCart}
-				isVisible={isEditItemModalVisible}
-				onClose={closeEditItemModal}
+				item={cartState.selectedItem}
+				updateItemFromCart={cartState.updateItem}
+				isVisible={cartState.isEditModalVisible}
+				onClose={cartState.closeEditModal}
+			/>
+
+			<AddVillagerModal
+				addVillager={villagerState.addVillager}
+				isVisible={villagerState.isModalVisible}
+				onClose={villagerState.closeModal}
 			/>
 		</FormProvider>
 	);

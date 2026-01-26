@@ -1,19 +1,16 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { CategoriesProps } from '@/types/components';
-import {
-	Category,
-	CategoryItem,
-	ItemCategory,
-	ItemCategoryItem,
-} from '@/types/post';
 import { Entypo } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { Colors } from '@/constants/Color';
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { CategoriesProps } from '@/types/components';
+import { Category, CategoryItem, ItemCategory, ItemCategoryItem } from '@/types/post';
+import { VillagerSpecies, VillagerSpeciesItem } from '@/types/villager';
+
 const Categories = <
-	T extends Category | ItemCategory,
-	U extends CategoryItem | ItemCategoryItem,
+	T extends Category | ItemCategory | VillagerSpecies,
+	U extends CategoryItem | ItemCategoryItem | VillagerSpeciesItem,
 >({
 	categories,
 	category,
@@ -29,10 +26,7 @@ const Categories = <
 			onPress={() => setCategory(item.EN as T)}
 		>
 			<Text
-				style={[
-					styles.categoryText,
-					category === item.EN && styles.categoryTextSelected,
-				]}
+				style={[styles.categoryText, category === item.EN && styles.categoryTextSelected]}
 			>
 				{item.KR}
 			</Text>

@@ -1,15 +1,24 @@
+import { useHeaderHeight } from '@react-navigation/elements';
+import { useRoute } from '@react-navigation/native';
+import React, { useRef, useState } from 'react';
+import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import CommunityTypeBadge from '@/components/Community/CommunityTypeBadge';
 import MarketTypeBadge from '@/components/Home/MarketTypeBadge';
 import Body from '@/components/PostDetail/Body';
 import CommentInput, { CommentInputRef } from '@/components/PostDetail/CommentInput';
 import CommentsList from '@/components/PostDetail/CommentsList';
 import CreatedAt from '@/components/PostDetail/CreatedAt';
+import EditCommentModal from '@/components/PostDetail/EditCommentModal';
 import ImageCarousel from '@/components/PostDetail/ImageCarousel';
 import ItemSummaryList from '@/components/PostDetail/ItemSummaryList';
 import ReportModal from '@/components/PostDetail/ReportModal';
 import Title from '@/components/PostDetail/Title';
 import Total from '@/components/PostDetail/Total';
 import UserInfo from '@/components/PostDetail/UserInfo';
+import VillagerSummaryList from '@/components/PostDetail/VillagerSummaryList';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
@@ -20,18 +29,12 @@ import { usePostComment } from '@/hooks/post/usePostComment';
 import { usePostReply } from '@/hooks/reply/usePostReply';
 import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useReportUser } from '@/hooks/shared/useReportUser';
+import { useVillagersByIds } from '@/hooks/villager/query/useVillagersByIds';
 import { useUserInfo } from '@/stores/auth';
 import { PostDetailRouteProp } from '@/types/navigation';
 import { Collection, CommunityType, MarketType } from '@/types/post';
 import { navigateToEditPost } from '@/utilities/navigationHelpers';
 import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
-import { useHeaderHeight } from '@react-navigation/elements';
-import { useRoute } from '@react-navigation/native';
-import React, { useRef, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
-import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import EditCommentModal from '@/components/PostDetail/EditCommentModal';
 
 const PostDetail = () => {
 	const headerHeight = useHeaderHeight();
@@ -88,13 +91,19 @@ const PostDetail = () => {
 	};
 
 	// 신고
-	const { isReportModalVisible, openReportModal, closeReportModal, submitReport } = useReportUser();
+	const { isReportModalVisible, openReportModal, closeReportModal, submitReport } =
+		useReportUser();
 
 	// 차단
 	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({
 		targetUserId: post?.creatorId,
 		targetUserDisplayName: post?.creatorDisplayName,
 	});
+
+	// 주민 정보 (CommunityPost만 해당)
+	const villagerIds =
+		post && isCommunityPost(post, collectionName as Collection) ? post.villagers : [];
+	const villagers = useVillagersByIds(villagerIds);
 
 	const handleDeletePost = async () => {
 		Alert.alert('게시글 삭제', '정말로 삭제하겠습니까?', [
@@ -118,14 +127,18 @@ const PostDetail = () => {
 					},
 					{
 						label: '수정',
-						onPress: () => navigateToEditPost({ postId: id, collectionName: collectionName as Collection }),
+						onPress: () =>
+							navigateToEditPost({
+								postId: id,
+								collectionName: collectionName as Collection,
+							}),
 					},
 					{
 						label: '삭제',
 						onPress: handleDeletePost,
 					},
 					{ label: '취소', onPress: () => {} },
-			  ]
+				]
 			: [
 					{
 						label: isBlockedByMe ? '차단 해제' : '차단',
@@ -141,7 +154,7 @@ const PostDetail = () => {
 						},
 					},
 					{ label: '취소', onPress: () => {} },
-			  ]),
+				]),
 	].filter(Boolean) as { label: string; onPress: () => void }[];
 
 	const scrollToBottom = () => {
@@ -156,7 +169,7 @@ const PostDetail = () => {
 	}
 
 	if (!post || !collectionName) {
-		return <EmptyIndicator message='게시글을 찾을 수 없습니다.' />;
+		return <EmptyIndicator message="게시글을 찾을 수 없습니다." />;
 	}
 
 	return (
@@ -168,7 +181,9 @@ const PostDetail = () => {
 							<ActionSheetButton
 								color={Colors.font_black}
 								size={18}
-								destructiveButtonIndex={isAuthor ? (showDoneOption ? 2 : 1) : undefined}
+								destructiveButtonIndex={
+									isAuthor ? (showDoneOption ? 2 : 1) : undefined
+								}
 								options={headerOptions}
 							/>
 						) : null
@@ -178,7 +193,7 @@ const PostDetail = () => {
 						ref={flatListRef}
 						data={[]}
 						renderItem={null}
-						keyboardShouldPersistTaps='handled'
+						keyboardShouldPersistTaps="handled"
 						contentContainerStyle={{ flexGrow: 1 }}
 						onContentSizeChange={scrollToBottom}
 						enableAutomaticScroll={false}
@@ -196,7 +211,10 @@ const PostDetail = () => {
 										)}
 									</View>
 
-									<Title title={post.title} containerStyle={{ marginBottom: 4 }} />
+									<Title
+										title={post.title}
+										containerStyle={{ marginBottom: 4 }}
+									/>
 
 									<View style={styles.infoContainer}>
 										<UserInfo
@@ -210,15 +228,37 @@ const PostDetail = () => {
 
 								{/* 본문 */}
 								<View style={styles.body}>
-									{isCommunityPost(post, collectionName) && (
-										<ImageCarousel images={post.images} containerStyle={{ marginBottom: 16 }} />
-									)}
 									<Body body={post.body} containerStyle={{ marginBottom: 24 }} />
+
+									{isCommunityPost(post, collectionName) && (
+										<>
+											{post.images.length > 0 && (
+												<ImageCarousel
+													images={post.images}
+													containerStyle={{ marginBottom: 24 }}
+												/>
+											)}
+
+											{post.villagers.length > 0 && (
+												<VillagerSummaryList
+													type={post.type}
+													villagers={villagers}
+													containerStyle={{ marginBottom: 16 }}
+												/>
+											)}
+										</>
+									)}
 
 									{isBoardPost(post, collectionName) && (
 										<>
-											<ItemSummaryList cart={post.cart} containerStyle={{ marginBottom: 16 }} />
-											<Total cart={post.cart} containerStyle={{ marginBottom: 24 }} />
+											<ItemSummaryList
+												cart={post.cart}
+												containerStyle={{ marginBottom: 16 }}
+											/>
+											<Total
+												cart={post.cart}
+												containerStyle={{ marginBottom: 24 }}
+											/>
 										</>
 									)}
 								</View>
@@ -229,7 +269,9 @@ const PostDetail = () => {
 									postCreatorId={post.creatorId}
 									postCommentCount={post.commentCount}
 									comments={comments}
-									chatRoomIds={isBoardPost(post, collectionName) ? post.chatRoomIds : []}
+									chatRoomIds={
+										isBoardPost(post, collectionName) ? post.chatRoomIds : []
+									}
 									collectionName={collectionName as Collection}
 									onReportClick={({ commentId, reporteeId }) =>
 										openReportModal({
@@ -263,7 +305,7 @@ const PostDetail = () => {
 											isReplyMode: true,
 											parentDisplayName: parentDisplayName!,
 											onCancel: handleReplyCancel,
-									  }
+										}
 									: undefined
 							}
 						/>
@@ -284,7 +326,7 @@ const PostDetail = () => {
 							isVisible={isEditReplyModalVisible}
 							onClose={closeEditReplyModal}
 							onSubmit={updateReply}
-							title='답글 수정'
+							title="답글 수정"
 						/>
 					)}
 

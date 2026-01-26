@@ -1,3 +1,5 @@
+import { DocumentData, QueryDocumentSnapshot, Timestamp } from 'firebase/firestore';
+
 import {
 	COMMUNITY_TYPES,
 	CURRENCY_OPTIONS,
@@ -5,11 +7,6 @@ import {
 	MARKET_TYPES,
 	TAB_COLLECTION_CONFIG,
 } from '@/constants/post';
-import {
-	DocumentData,
-	QueryDocumentSnapshot,
-	Timestamp,
-} from 'firebase/firestore';
 
 export type Collection = 'Boards' | 'Communities';
 
@@ -17,8 +14,7 @@ export type Collection = 'Boards' | 'Communities';
 export type Tab = keyof typeof TAB_COLLECTION_CONFIG;
 
 // 특정 탭(Tab)에서 사용할 컬렉션 이름 타입을 유추하는 조건부 타입 (CollectionFromTab<'Home'> → 'Boards')
-export type CollectionFromTab<T extends Tab> =
-	(typeof TAB_COLLECTION_CONFIG)[T]['collection'];
+export type CollectionFromTab<T extends Tab> = (typeof TAB_COLLECTION_CONFIG)[T]['collection'];
 
 // 마켓글 타입
 export type MarketTypeItem = (typeof MARKET_TYPES)[number];
@@ -61,6 +57,7 @@ type MarketPost = CommonPostFields & {
 type CommunityPost = CommonPostFields & {
 	type: CommunityType;
 	images: string[];
+	villagers: string[];
 };
 
 export type PostMap = {
@@ -70,8 +67,7 @@ export type PostMap = {
 
 // 컬렉션 기반으로 게시글 타입 분기
 export type Post<C extends Collection> = PostMap[C];
-export type PostWithCreatorInfo<C extends Collection> = PostMap[C] &
-	CreatorInfo;
+export type PostWithCreatorInfo<C extends Collection> = PostMap[C] & CreatorInfo;
 
 // Firestore용 PostDoc
 export type PostDoc<C extends Collection> = Post<C> & {
@@ -99,13 +95,21 @@ export interface CartItem extends Item {
 }
 
 // firebase/services/postService.ts
+// 게시글 생성 시 자동 설정되는 필드 제외
 export type CreatePostRequest<C extends Collection> = Omit<
 	PostMap[C],
-	'id' | 'creatorId' | 'createdAt' | 'commentCount'
+	| 'id'
+	| 'creatorId'
+	| 'createdAt'
+	| 'commentCount'
+	| 'chatRoomIds'
+	| 'reviewPromptSent' // 서버에서 false로 초기화
+	| 'status'
 >;
 
+// CreatePostRequest에서 'reviewPromptSent' 속성 포함 (거래 완료 시 true로 업데이트)
 export type UpdatePostRequest<C extends Collection> = Partial<
-	CreatePostRequest<C>
+	Omit<PostMap[C], 'id' | 'creatorId' | 'createdAt' | 'commentCount' | 'chatRoomIds' | 'status'>
 >;
 
 // hooks/query/useInfinitePosts.ts
