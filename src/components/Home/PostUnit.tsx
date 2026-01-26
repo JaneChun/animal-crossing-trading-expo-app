@@ -10,7 +10,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import CommunityTypeBadge from '@/components/Community/CommunityTypeBadge';
 import ItemThumbnail from '@/components/ui/ItemThumbnail';
-import Thumbnail from '@/components/ui/Thumbnail';
+import CommunityThumbnail from './CommunityThumbnail';
 import MarketTypeBadge from './MarketTypeBadge';
 
 export const POST_UNIT_HEIGHT = 100;
@@ -44,9 +44,10 @@ const PostUnit = <C extends Collection>({ post, collectionName, index }: PostUni
 								previewImage={post.cart?.[0]?.imageUrl}
 								itemLength={post.cart?.length}
 							/>
-							// <Thumbnail previewImage={post.cart?.[0]?.imageUrl} />
 						)}
-						{isCommunityPost(post, collectionName) && <Thumbnail previewImage={post.images?.[0]} />}
+						{isCommunityPost(post, collectionName) && (
+							<CommunityThumbnail images={post.images} villagers={post.villagers} />
+						)}
 					</View>
 				</View>
 
