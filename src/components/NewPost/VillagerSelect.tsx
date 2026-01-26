@@ -10,11 +10,11 @@ import { Colors } from '@/constants/Color';
 import { VILLAGER_SPECIES } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
-import { useVillagers } from '@/hooks/villager/query/useVillagers';
 import { VillagerSelectProps } from '@/types/components';
 import { Villager, VillagerSpecies, VillagerSpeciesItem } from '@/types/villager';
 
 import VillagerSelectItem from './VillagerSelectItem';
+import { useSearchVillagers } from '@/hooks/villager/query/useSearchVillagers';
 
 const PADDING_BOTTOM = 40;
 
@@ -24,11 +24,12 @@ const VillagerSelect = ({ addVillager, containerStyle }: VillagerSelectProps) =>
 	const debouncedKeyword = useDebouncedValue(searchInput, 300);
 
 	const {
-		data: villagerList = [],
+		data: villagers = [],
 		isLoading,
-		refetch,
-		isFetching,
-	} = useVillagers(species, debouncedKeyword);
+		hasNextPage,
+		fetchNextPage,
+		isFetchingNextPage,
+	} = useSearchVillagers(species, debouncedKeyword);
 
 	const renderVillagerItem = useCallback(
 		({ item, index }: { item: Villager; index: number }) => (
@@ -41,6 +42,12 @@ const VillagerSelect = ({ addVillager, containerStyle }: VillagerSelectProps) =>
 		),
 		[searchInput, addVillager],
 	);
+
+	const fetchNext = useCallback(() => {
+		if (hasNextPage && !isFetchingNextPage) {
+			fetchNextPage();
+		}
+	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
 	const getListEmptyComponent = useMemo(
 		() => (
@@ -78,17 +85,17 @@ const VillagerSelect = ({ addVillager, containerStyle }: VillagerSelectProps) =>
 					<InlineLoadingIndicator />
 				) : (
 					<FlatList
-						data={villagerList}
+						data={villagers}
 						keyExtractor={(item) => item.id}
 						contentContainerStyle={styles.contentContainer}
 						columnWrapperStyle={styles.columnWrapper}
+						numColumns={3}
 						scrollIndicatorInsets={{ bottom: PADDING_BOTTOM }}
 						renderItem={renderVillagerItem}
-						numColumns={3}
-						initialNumToRender={20}
-						maxToRenderPerBatch={20}
-						onRefresh={refetch}
-						refreshing={isFetching}
+						initialNumToRender={30}
+						maxToRenderPerBatch={30}
+						onEndReached={fetchNext}
+						onEndReachedThreshold={0.5}
 						ListEmptyComponent={getListEmptyComponent}
 						keyboardShouldPersistTaps="handled"
 					/>
