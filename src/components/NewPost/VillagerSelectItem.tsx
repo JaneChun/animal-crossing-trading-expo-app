@@ -50,8 +50,7 @@ const styles = StyleSheet.create({
 		width: '31%',
 		aspectRatio: '1/1',
 		alignItems: 'center',
-		paddingVertical: 12,
-		paddingHorizontal: 8,
+		padding: 8,
 		backgroundColor: Colors.base,
 		borderRadius: 12,
 	},
@@ -61,7 +60,7 @@ const styles = StyleSheet.create({
 	image: {
 		width: 60,
 		height: 60,
-		borderRadius: 30,
+		borderRadius: 8,
 	},
 	nameContainer: {
 		fontSize: 16,
