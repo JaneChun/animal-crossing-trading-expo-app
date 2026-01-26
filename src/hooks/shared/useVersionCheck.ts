@@ -21,9 +21,9 @@ export const useVersionCheck = (): UseVersionCheckReturn => {
 	const appState = useRef(AppState.currentState);
 	const wasModalVisibleWhenBackgrounded = useRef(false);
 
-	const performVersionCheck = async () => {
+	const performVersionCheck = async ({ showLoading = true } = {}) => {
 		try {
-			setIsLoading(true);
+			if (showLoading) setIsLoading(true);
 			setError(null);
 
 			const result = await checkAppVersion();
@@ -31,12 +31,12 @@ export const useVersionCheck = (): UseVersionCheckReturn => {
 		} catch (err) {
 			setError(err instanceof Error ? err.message : '버전 체크에 실패했습니다.');
 		} finally {
-			setIsLoading(false);
+			if (showLoading) setIsLoading(false);
 		}
 	};
 
 	useEffect(() => {
-		performVersionCheck();
+		performVersionCheck({ showLoading: true });
 	}, []);
 
 	// 업데이트 모달 표시 조건
@@ -64,7 +64,7 @@ export const useVersionCheck = (): UseVersionCheckReturn => {
 			if (prev === 'background' && nextState === 'active') {
 				// 모달이 표시된 상태에서 백그라운드로 갔다가 돌아온 경우에만 재체크
 				if (wasModalVisibleWhenBackgrounded.current) {
-					await performVersionCheck();
+					await performVersionCheck({ showLoading: false });
 					wasModalVisibleWhenBackgrounded.current = false;
 				}
 			}
