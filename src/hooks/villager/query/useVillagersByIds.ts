@@ -11,7 +11,15 @@ const fetchVillagersByIds = async (villagerIds: string[]): Promise<Villager[]> =
 
 	const villagers = await queryDocs<Villager>(q);
 
-	return villagers;
+	// Firestore in 쿼리는 document ID 순으로 반환하므로, 원본 순서로 재정렬
+	const villagerMap = new Map(villagers.map((v) => [v.id, v]));
+	const sorted = villagerIds.reduce<Villager[]>((acc, id) => {
+		const villager = villagerMap.get(id);
+		if (villager) acc.push(villager);
+		return acc;
+	}, []);
+
+	return sorted;
 };
 
 /**
