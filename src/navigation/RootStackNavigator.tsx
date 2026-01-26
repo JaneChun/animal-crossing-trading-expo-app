@@ -29,13 +29,18 @@ const RootStackNavigator = () => {
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 	const isOnboardingLoading = useOnboardingStore((state) => state.isLoading);
 
-	const isAppInitializing = isOnboardingLoading;
-
 	// 온보딩 완료 여부 체크
 	const hasCompletedOnboarding = useOnboardingStore((state) => state.hasCompletedOnboarding);
 
 	// 버전 체크 훅 (모달 상태 관리 포함)
-	const { updateInfo, isUpdateModalVisible, handleCloseUpdateModal } = useVersionCheck();
+	const {
+		updateInfo,
+		isLoading: isVersionCheckLoading,
+		isUpdateModalVisible,
+		handleCloseUpdateModal,
+	} = useVersionCheck();
+
+	const isAppInitializing = isOnboardingLoading || isVersionCheckLoading;
 
 	const commonOptions = {
 		headerShown: isAuthLoading ? false : true, // 로그인/로그아웃/탈퇴 시 로딩화면 표시할 때 상단 헤더 숨김 처리
@@ -55,18 +60,18 @@ const RootStackNavigator = () => {
 				screenOptions={{ headerShown: false }}
 			>
 				{/* 탭바 O */}
-				<RootStack.Screen name='MainTab' component={MainTabNavigator} />
+				<RootStack.Screen name="MainTab" component={MainTabNavigator} />
 
 				{/* 글로벌 스택 스크린 - 탭바 X */}
-				<RootStack.Screen name='Onboarding' component={Onboarding} />
+				<RootStack.Screen name="Onboarding" component={Onboarding} />
 				<RootStack.Screen
-					name='PostDetail'
+					name="PostDetail"
 					component={PostDetail}
 					options={{ ...commonOptions, headerShown: false }}
 				/>
 
 				<RootStack.Screen
-					name='NewPost'
+					name="NewPost"
 					children={() => (
 						// <AuthGuard>
 						<NewPost />
@@ -74,9 +79,9 @@ const RootStackNavigator = () => {
 					)}
 					options={{ ...commonOptions, title: '새 글 작성' }}
 				/>
-				<RootStack.Screen name='Profile' component={Profile} options={commonOptions} />
+				<RootStack.Screen name="Profile" component={Profile} options={commonOptions} />
 				<RootStack.Screen
-					name='AgreeToTermsAndConditions'
+					name="AgreeToTermsAndConditions"
 					children={() => (
 						// <AuthGuard>
 						<AgreeToTermsAndConditions />
@@ -85,17 +90,17 @@ const RootStackNavigator = () => {
 					options={{ ...commonOptions, headerShown: false }}
 				/>
 				<RootStack.Screen
-					name='SignUpDisplayName'
+					name="SignUpDisplayName"
 					component={SignUpDisplayName}
 					options={{ ...commonOptions, headerShown: false }}
 				/>
 				<RootStack.Screen
-					name='SignUpIslandName'
+					name="SignUpIslandName"
 					component={SignUpIslandName}
 					options={{ ...commonOptions, headerShown: false }}
 				/>
 				<RootStack.Screen
-					name='ChatRoom'
+					name="ChatRoom"
 					children={() => (
 						// <AuthGuard>
 						<ChatRoom />
@@ -104,7 +109,7 @@ const RootStackNavigator = () => {
 					options={{ ...commonOptions, headerShown: false }}
 				/>
 				<RootStack.Screen
-					name='Setting'
+					name="Setting"
 					children={() => (
 						// <AuthGuard>
 						<Setting />
@@ -113,7 +118,7 @@ const RootStackNavigator = () => {
 					options={{ ...commonOptions, title: '설정' }}
 				/>
 				<RootStack.Screen
-					name='Account'
+					name="Account"
 					children={() => (
 						// <AuthGuard>
 						<Account />
@@ -122,7 +127,7 @@ const RootStackNavigator = () => {
 					options={{ ...commonOptions, title: '내 계정' }}
 				/>
 				<RootStack.Screen
-					name='SocialAccountCheck'
+					name="SocialAccountCheck"
 					children={() => (
 						// <AuthGuard>
 						<SocialAccountCheck />
@@ -131,7 +136,7 @@ const RootStackNavigator = () => {
 					options={{ ...commonOptions, headerShown: false }}
 				/>
 				<RootStack.Screen
-					name='DeleteAccount'
+					name="DeleteAccount"
 					children={() => (
 						// <AuthGuard>
 						<DeleteAccount />
@@ -140,7 +145,7 @@ const RootStackNavigator = () => {
 					options={{ ...commonOptions, headerShown: false }}
 				/>
 				<RootStack.Screen
-					name='Block'
+					name="Block"
 					children={() => (
 						// <AuthGuard>
 						<Block />
@@ -149,7 +154,7 @@ const RootStackNavigator = () => {
 					options={{ ...commonOptions, title: '차단 사용자 관리' }}
 				/>
 				<RootStack.Screen
-					name='TermsOfService'
+					name="TermsOfService"
 					children={() => (
 						// <AuthGuard>
 						<TermsOfService />
@@ -158,7 +163,7 @@ const RootStackNavigator = () => {
 					options={{ ...commonOptions, title: '이용약관' }}
 				/>
 				<RootStack.Screen
-					name='PrivacyPolicy'
+					name="PrivacyPolicy"
 					children={() => (
 						// <AuthGuard>
 						<PrivacyPolicy />
@@ -167,15 +172,17 @@ const RootStackNavigator = () => {
 					options={{ ...commonOptions, title: '개인정보 처리방침' }}
 				/>
 				<RootStack.Screen
-					name='Search'
+					name="Search"
 					component={Search}
 					options={{ ...commonOptions, headerShown: false }}
 				/>
 			</RootStack.Navigator>
 
-			{/* 업데이트 바텀시트 - 모든 화면에서 접근 가능 */}
 			<UpdateModal
-				isVisible={isUpdateModalVisible}
+				// 강제 업데이트인 경우 표시 or 선택적 업데이트인 경우 온보딩 완료한 경우에만 표시
+				isVisible={
+					isUpdateModalVisible && (updateInfo?.isForceUpdate || hasCompletedOnboarding)
+				}
 				isForceUpdate={updateInfo?.isForceUpdate || false}
 				messages={updateInfo?.messages || []}
 				storeUrl={updateInfo?.storeUrl}
