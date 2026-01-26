@@ -1,7 +1,7 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { FormProvider } from 'react-hook-form';
+import { FieldErrors, FormProvider } from 'react-hook-form';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -184,7 +184,7 @@ const NewPost = () => {
 		}
 	};
 
-	const onError = (errors: any) => {
+	const onError = (errors: FieldErrors<NewPostFormValues>) => {
 		console.log('🧨 Zod Errors', JSON.stringify(errors, null, 2));
 		scrollToTop();
 	};
