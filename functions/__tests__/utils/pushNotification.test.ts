@@ -3,13 +3,10 @@
  * 푸시 알림 관련 유틸리티 함수들을 테스트합니다
  */
 
-// axios 요청을 Mock으로 대체
-jest.mock('axios', () => ({
-	post: jest.fn(),
-	get: jest.fn(),
-	put: jest.fn(),
-	delete: jest.fn(),
-}));
+import { createMockAxios } from '../helpers';
+
+// axios 요청을 Mock으로 대체 - 공통 헬퍼 활용
+jest.mock('axios', () => createMockAxios());
 
 import axios from 'axios';
 import {
@@ -21,14 +18,6 @@ import {
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('notification 유틸리티 함수 테스트', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-
-		// console.warn, console.error 무시
-		jest.spyOn(console, 'warn').mockImplementation(() => {});
-		jest.spyOn(console, 'error').mockImplementation(() => {});
-	});
-
 	describe('sendPushNotification 함수', () => {
 		it('올바른 페이로드로 Expo API를 호출해야 한다', async () => {
 			mockedAxios.post.mockResolvedValue({ data: { status: 'ok' } });

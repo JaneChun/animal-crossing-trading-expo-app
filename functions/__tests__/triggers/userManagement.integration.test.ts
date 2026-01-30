@@ -5,22 +5,11 @@
  * Firestore 로직과 에러 처리에 집중한 제한적 통합 테스트
  */
 
-// 에뮬레이터 연결 설정
-process.env.FIRESTORE_EMULATOR_HOST = '127.0.0.1:8080';
-
-import { initializeApp } from 'firebase-admin/app';
-import { getFirestore, Timestamp } from 'firebase-admin/firestore';
 import * as functions from 'firebase-functions';
+import { createTestApp } from '../helpers/emulator';
 
-// 테스트용 Firebase 앱 인스턴스 생성
-const testApp = initializeApp(
-	{
-		projectId: 'animal-crossing-trade-expo-app',
-	},
-	'usermanagement-integration-test',
-);
-
-const db = getFirestore(testApp);
+// 테스트용 Firebase 앱 인스턴스 생성 - 공통 헬퍼 활용
+const { db, Timestamp } = createTestApp('usermanagement-integration-test');
 
 // common.ts Mock - userManagement.ts가 테스트용 DB를 사용하도록 함
 jest.mock('../../src/utils/common', () => ({

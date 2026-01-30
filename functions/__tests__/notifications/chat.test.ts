@@ -3,20 +3,16 @@
  * 채팅 알림 처리 함수를 테스트합니다
  */
 
-// Firebase Functions Mock 설정 - HttpsError 생성을 위한 Mock
-const MockHttpsError = jest
-	.fn()
-	.mockImplementation((code, message, details) => {
-		// 실제 Error 객체를 기반으로 Https에러를 시뮬레이션
-		const error = new Error(message);
-		error.name = 'HttpsError';
-		(error as any).code = code;
-		(error as any).details = details;
-		// instanceof 검사를 위해 constructor 설정
-		Object.setPrototypeOf(error, MockHttpsError.prototype);
-		return error;
-	});
+// Note: mocks.ts에서 직접 import하여 emulator.ts의 firebase-admin 의존성 문제 방지
+import {
+	createMockHttpsError,
+	createMockTruncateText,
+	createMockPushNotification,
+	createMockFieldValue,
+} from '../helpers/mocks';
 
+// Firebase Functions Mock 설정 - 공통 헬퍼 활용
+const MockHttpsError = createMockHttpsError();
 jest.mock('firebase-functions', () => ({
 	https: {
 		HttpsError: MockHttpsError,
@@ -37,7 +33,7 @@ const mockCollection = jest.fn().mockReturnValue({
 
 // 유틸리티 함수들 Mock 설정
 const mockGetSafeUid = jest.fn();
-const mockTruncateText = jest.fn();
+const mockTruncateText = createMockTruncateText();
 
 jest.mock('../../src/utils/common', () => ({
 	db: {
@@ -48,15 +44,14 @@ jest.mock('../../src/utils/common', () => ({
 	truncateText: mockTruncateText,
 }));
 
-// Push notification Mock 설정
-const mockSendPushNotification = jest.fn();
+// Push notification Mock 설정 - 공통 헬퍼 활용
+const { mockSendPushNotification } = createMockPushNotification();
 jest.mock('../../src/utils/pushNotification', () => ({
 	sendPushNotification: mockSendPushNotification,
 }));
 
-// Firebase FieldValue Mock 설정
-const mockIncrement = jest.fn();
-const mockArrayUnion = jest.fn();
+// Firebase FieldValue Mock 설정 - 공통 헬퍼 활용
+const { mockIncrement, mockArrayUnion } = createMockFieldValue();
 const mockTimestamp = { seconds: 1640995200, nanoseconds: 0 };
 jest.mock('firebase-admin/firestore', () => ({
 	FieldValue: {
@@ -79,19 +74,10 @@ describe('채팅 알림 처리 테스트', () => {
 	};
 
 	beforeEach(() => {
-		jest.clearAllMocks();
-
-		// console.warn, console.error 무시
-		jest.spyOn(console, 'warn').mockImplementation(() => {});
-		jest.spyOn(console, 'error').mockImplementation(() => {});
-
 		// 기본 Mock 설정
 		mockGetSafeUid.mockImplementation((uid) => uid.replace(/\./g, ''));
-		mockTruncateText.mockImplementation((text, maxLength) =>
-			text.length <= maxLength ? text : text.substring(0, maxLength) + '...',
-		);
-		mockIncrement.mockReturnValue('INCREMENT_PLACEHOLDER');
-		mockArrayUnion.mockReturnValue('ARRAY_UNION_PLACEHOLDER');
+		mockIncrement.mockReturnValue('INCREMENT_PLACEHOLDER' as any);
+		mockArrayUnion.mockReturnValue('ARRAY_UNION_PLACEHOLDER' as any);
 	});
 
 	describe('handleChatMessageCreated 함수', () => {

@@ -3,31 +3,10 @@
  * Firebase 관련 공통 유틸리티 함수들을 테스트합니다
  */
 
-// Firebase Admin SDK 전체를 Mock으로 대체
-jest.mock('firebase-admin', () => {
-	return {
-		initializeApp: jest.fn(),
+import { createMockFirebaseAdmin } from '../helpers';
 
-		// apps 배열 (초기화 상태 확인용)
-		apps: { length: 1 },
-
-		// Authentication 관련 Mock
-		auth: jest.fn(() => ({
-			createCustomToken: jest.fn(),
-			deleteUser: jest.fn(),
-		})),
-
-		// Firestore 관련 Mock
-		firestore: jest.fn(() => ({
-			collection: jest.fn().mockReturnThis(),
-			doc: jest.fn().mockReturnThis(), // 체이닝을 위해 자기 자신 반환
-			get: jest.fn(), // get 메서드
-			set: jest.fn(),
-			update: jest.fn(),
-			delete: jest.fn(),
-		})),
-	};
-});
+// Firebase Admin SDK 전체를 Mock으로 대체 - 공통 헬퍼 활용
+jest.mock('firebase-admin', () => createMockFirebaseAdmin());
 
 import {
 	db,
@@ -37,14 +16,6 @@ import {
 } from '../../src/utils/common';
 
 describe('common 유틸리티 함수 테스트', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-
-		// console.warn, console.error 무시
-		jest.spyOn(console, 'warn').mockImplementation(() => {});
-		jest.spyOn(console, 'error').mockImplementation(() => {});
-	});
-
 	describe('getSafeUid 함수', () => {
 		it('점(.)이 포함된 UID를 안전한 형태로 변환해야 한다', () => {
 			// Apple 로그인 시 provider ID에 점이 포함될 수 있음

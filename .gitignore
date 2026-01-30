@@ -45,6 +45,10 @@ google-services.json
 # config.gypi
 config.gypi
 
+# test
+functions/coverage/
+functions/lib/
+
 todo.ini
 
 functions/src/migration/

@@ -3,20 +3,10 @@
  * Firebase Custom Token 생성 함수를 테스트합니다
  */
 
-// Firebase Functions Mock 설정 - HttpsError 생성을 위한 Mock
-const MockHttpsError = jest
-	.fn()
-	.mockImplementation((code, message, details) => {
-		// 실제 Error 객체를 기반으로 Https에러를 시뮬레이션
-		const error = new Error(message);
-		error.name = 'HttpsError';
-		(error as any).code = code;
-		(error as any).details = details;
-		// instanceof 검사를 위해 constructor 설정
-		Object.setPrototypeOf(error, MockHttpsError.prototype);
-		return error;
-	});
+import { createMockHttpsError } from '../helpers';
 
+// Firebase Functions Mock 설정 - 공통 헬퍼 활용
+const MockHttpsError = createMockHttpsError();
 jest.mock('firebase-functions', () => ({
 	https: {
 		HttpsError: MockHttpsError,
@@ -61,14 +51,6 @@ const mockIsUserRestrictedFromRejoining =
 	>;
 
 describe('Custom Token 생성 테스트', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-
-		// console.warn, console.error 무시
-		jest.spyOn(console, 'warn').mockImplementation(() => {});
-		jest.spyOn(console, 'error').mockImplementation(() => {});
-	});
-
 	describe('createFirebaseCustomToken 함수', () => {
 		describe('성공 케이스', () => {
 			it('Kakao OAuth로 Custom Token을 성공적으로 생성해야 한다', async () => {
