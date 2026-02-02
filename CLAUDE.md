@@ -21,8 +21,8 @@ npm run android          # Run on Android emulator
 ```bash
 npm run build:ios:dev    # Build development iOS
 npm run build:android:dev  # Build development Android
-npm run build:ios:prod   # Build production iOS
-npm run build:android:prod # Build production Android
+npm run build:ios        # Build production iOS
+npm run build:android    # Build production Android
 ```
 
 ### Testing and Linting
@@ -37,7 +37,8 @@ npm run lint             # Run ESLint
 ```bash
 cd functions
 npm run serve            # Start local Firebase emulator
-npm run deploy           # Deploy functions to Firebase
+npm run deploy           # Deploy functions to Firebase (within functions/)
+npm run deploy:functions # Deploy functions from project root
 ```
 
 ### Firebase Emulator (Development)
@@ -50,13 +51,16 @@ npm run emulator:start
 npm run dev:emulator
 
 # 에뮬레이터 중지
-Ctrl+C 또는 firebase emulators:exec --only auth,functions 'echo stopped'
+npm run emulator:stop
 ```
 
-### EAS Build and Deploy
+### Deploy
 
 ```bash
-npm run deploy          # EAS build and submit to app stores
+npm run deploy:app              # Submit latest iOS build to App Store
+npm run deploy:functions        # Deploy Firebase Cloud Functions
+npm run deploy:rules:firestore  # Deploy Firestore security rules
+npm run deploy:rules:storage    # Deploy Storage security rules
 ```
 
 ## Architecture Overview
