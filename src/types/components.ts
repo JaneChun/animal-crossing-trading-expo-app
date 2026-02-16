@@ -378,6 +378,8 @@ export type SearchInputProps = {
 export type ChatInputProps = {
 	disabled: boolean;
 	onSubmit: (input: string) => void;
+	onImagePress: () => void;
+	isUploading?: boolean;
 };
 
 // ui/
