@@ -1,8 +1,10 @@
 import DateSeparator from '@/components/Chat/DateSeparator';
+import ImageMessageUnit from '@/components/Chat/ImageMessageUnit';
 import MessageUnit from '@/components/Chat/MessageUnit';
 import SystemMessageUnit from '@/components/Chat/SystemMessageUnit';
 import { Colors } from '@/constants/Color';
 import { ExtendedIMessage } from '@/types/chat';
+import { ChatInputProps } from '@/types/components';
 import { isReviewMessage, isSystemMessage } from '@/utilities/typeGuards/messageGuards';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
@@ -18,6 +20,11 @@ export const renderMessage = ({ currentMessage }: { currentMessage: ExtendedIMes
 	// 리뷰 메시지
 	if (isReviewMessage(currentMessage)) {
 		return <ReviewMessageUnit message={currentMessage} />;
+	}
+
+	// 이미지 메시지
+	if (currentMessage.image) {
+		return <ImageMessageUnit message={currentMessage} />;
 	}
 
 	// 일반 메시지
@@ -55,16 +62,27 @@ export const renderDay = (props: any) => {
 export const renderComposer = ({
 	disabled,
 	onSend,
+	onImagePress,
+	isUploading,
 }: {
 	disabled: boolean;
 	onSend: (text: string) => void;
+	onImagePress: () => void;
+	isUploading?: boolean;
 }) => {
-	return <ChatInput disabled={disabled} onSubmit={onSend} />;
+	return (
+		<ChatInput
+			disabled={disabled}
+			onSubmit={onSend}
+			onImagePress={onImagePress}
+			isUploading={isUploading}
+		/>
+	);
 };
 
 export const renderScrollToBottomComponent = () => (
 	<View style={styles.downButtonContainer}>
-		<FontAwesome5 name='chevron-down' size={20} style={styles.downIcon} />
+		<FontAwesome5 name="chevron-down" size={20} style={styles.downIcon} />
 	</View>
 );
 
