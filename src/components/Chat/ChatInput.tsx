@@ -3,9 +3,9 @@ import { FontSizes } from '@/constants/Typography';
 import { ChatInputProps } from '@/types/components';
 import { FontAwesome6 } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from 'react-native';
 
-const ChatInput = ({ disabled, onSubmit }: ChatInputProps) => {
+const ChatInput = ({ disabled, onSubmit, onImagePress, isUploading }: ChatInputProps) => {
 	const [chatInput, setChatInput] = useState('');
 
 	const handleSubmit = () => {
@@ -17,6 +17,23 @@ const ChatInput = ({ disabled, onSubmit }: ChatInputProps) => {
 
 	return (
 		<View style={styles.inputContainer}>
+			{isUploading ? (
+				<View style={styles.imageButtonContainer}>
+					<ActivityIndicator size="small" color={Colors.primary} />
+				</View>
+			) : (
+				<Pressable
+					style={[
+						styles.imageButtonContainer,
+						{ backgroundColor: disabled ? Colors.icon_gray : Colors.primary },
+					]}
+					onPress={onImagePress}
+					disabled={disabled}
+					testID="chatImageButton"
+				>
+					<FontAwesome6 name="paperclip" size={18} color="white" />
+				</Pressable>
+			)}
 			<TextInput
 				style={styles.inputText}
 				value={chatInput}
@@ -25,18 +42,18 @@ const ChatInput = ({ disabled, onSubmit }: ChatInputProps) => {
 				placeholderTextColor={Colors.font_gray}
 				multiline
 				scrollEnabled
-				enterKeyHint='send'
+				enterKeyHint="send"
 				editable={!disabled}
-				testID='chatInput'
+				testID="chatInput"
 			/>
 			<Pressable
 				style={styles.iconContainer}
 				onPress={handleSubmit}
 				disabled={disabled}
-				testID='submitChatButton'
+				testID="submitChatButton"
 			>
 				<FontAwesome6
-					name='circle-arrow-up'
+					name="circle-arrow-up"
 					size={28}
 					color={disabled ? Colors.icon_gray : Colors.primary}
 				/>
@@ -67,6 +84,14 @@ const styles = StyleSheet.create({
 		color: Colors.font_gray,
 		minHeight: 42,
 		maxHeight: 90,
+	},
+	imageButtonContainer: {
+		marginLeft: 16,
+		width: 32,
+		height: 32,
+		borderRadius: 16,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	iconContainer: {
 		marginRight: 16,
