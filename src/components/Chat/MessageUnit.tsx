@@ -9,33 +9,34 @@ const MessageUnit = ({ message }: { message: IMessage }) => {
 	const userInfo = useUserInfo();
 
 	const formattedDate = (
-		message.createdAt instanceof Date
-			? message.createdAt
-			: new Date(message.createdAt)
+		message.createdAt instanceof Date ? message.createdAt : new Date(message.createdAt)
 	).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
 
-	// 일반 메시지 (내가 보낸 거 vs 받은 거)
-	return message.user._id === userInfo?.uid ? (
-		<View style={[styles.messageContainer, { alignSelf: 'flex-end' }]}>
-			<View style={styles.infoContainer}>
-				{!message.received && <Text style={styles.infoText}>안읽음</Text>}
-				<Text style={[styles.infoText]}>{formattedDate}</Text>
+	const isMine = message.user._id === userInfo?.uid;
+
+	return (
+		<View style={[styles.messageContainer, { alignSelf: isMine ? 'flex-end' : 'flex-start' }]}>
+			{isMine && (
+				<View style={styles.infoContainer}>
+					{!message.received && <Text style={styles.infoText}>안읽음</Text>}
+					<Text style={styles.infoText}>{formattedDate}</Text>
+				</View>
+			)}
+
+			<View
+				style={[styles.messageBubble, isMine ? styles.sentBubble : styles.receivedBubble]}
+			>
+				<Text
+					style={[
+						styles.messageText,
+						isMine ? styles.sentTextColor : styles.receivedTextColor,
+					]}
+				>
+					{message.text}
+				</Text>
 			</View>
 
-			<View style={[styles.messageBubble, styles.sentBubble]}>
-				<Text style={[styles.messageText, styles.sentTextColor]}>
-					{message.text}
-				</Text>
-			</View>
-		</View>
-	) : (
-		<View style={[styles.messageContainer, { alignSelf: 'flex-start' }]}>
-			<View style={[styles.messageBubble, styles.receivedBubble]}>
-				<Text style={[styles.messageText, styles.receivedTextColor]}>
-					{message.text}
-				</Text>
-			</View>
-			<Text style={styles.infoText}>{formattedDate}</Text>
+			{!isMine && <Text style={styles.infoText}>{formattedDate}</Text>}
 		</View>
 	);
 };

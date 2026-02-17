@@ -4,8 +4,8 @@ import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useUserInfo } from '@/stores/auth';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Image } from 'expo-image';
 import { IMessage } from 'react-native-gifted-chat';
+import ImageWithFallback from '../ui/ImageWithFallback';
 
 const ImageMessageUnit = ({ message }: { message: IMessage }) => {
 	const userInfo = useUserInfo();
@@ -39,11 +39,9 @@ const ImageMessageUnit = ({ message }: { message: IMessage }) => {
 					style={isMine ? styles.sentMargin : styles.receivedMargin}
 					testID='chatImageBubble'
 				>
-					<Image
-						source={{ uri: message.image }}
+					<ImageWithFallback
+						uri={message.image}
 						style={styles.image}
-						contentFit='cover'
-						transition={200}
 					/>
 				</Pressable>
 
@@ -52,7 +50,7 @@ const ImageMessageUnit = ({ message }: { message: IMessage }) => {
 
 			<ImageViewerModal
 				visible={isViewerVisible}
-				images={[message.image!]}
+				images={message.image ? [message.image] : []}
 				onRequestClose={() => setIsViewerVisible(false)}
 			/>
 		</>
@@ -70,7 +68,7 @@ const styles = StyleSheet.create({
 	},
 	image: {
 		width: 200,
-		height: 200,
+		aspectRatio: 4/3,
 		borderRadius: 16,
 	},
 	sentMargin: {
