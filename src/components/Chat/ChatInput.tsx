@@ -5,7 +5,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
-const ChatInput = ({ disabled, onSubmit }: ChatInputProps) => {
+const ChatInput = ({ disabled, onSubmit, onImagePress }: ChatInputProps) => {
 	const [chatInput, setChatInput] = useState('');
 
 	const handleSubmit = () => {
@@ -17,6 +17,20 @@ const ChatInput = ({ disabled, onSubmit }: ChatInputProps) => {
 
 	return (
 		<View style={styles.inputContainer}>
+			{/* 이미지 추가 버튼 */}
+			<Pressable
+				style={[
+					styles.imageButtonContainer,
+					{ backgroundColor: disabled ? Colors.icon_gray : Colors.primary },
+				]}
+				onPress={onImagePress}
+				disabled={disabled}
+				testID="chatImageButton"
+			>
+				<FontAwesome6 name="paperclip" size={18} color="white" />
+			</Pressable>
+
+			{/* 텍스트 인풋 */}
 			<TextInput
 				style={styles.inputText}
 				value={chatInput}
@@ -25,18 +39,20 @@ const ChatInput = ({ disabled, onSubmit }: ChatInputProps) => {
 				placeholderTextColor={Colors.font_gray}
 				multiline
 				scrollEnabled
-				enterKeyHint='send'
+				enterKeyHint="send"
 				editable={!disabled}
-				testID='chatInput'
+				testID="chatInput"
 			/>
+			
+			{/* 전송 버튼 */}
 			<Pressable
 				style={styles.iconContainer}
 				onPress={handleSubmit}
 				disabled={disabled}
-				testID='submitChatButton'
+				testID="submitChatButton"
 			>
 				<FontAwesome6
-					name='circle-arrow-up'
+					name="circle-arrow-up"
 					size={28}
 					color={disabled ? Colors.icon_gray : Colors.primary}
 				/>
@@ -67,6 +83,14 @@ const styles = StyleSheet.create({
 		color: Colors.font_gray,
 		minHeight: 42,
 		maxHeight: 90,
+	},
+	imageButtonContainer: {
+		marginLeft: 16,
+		width: 32,
+		height: 32,
+		borderRadius: 16,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 	iconContainer: {
 		marginRight: 16,

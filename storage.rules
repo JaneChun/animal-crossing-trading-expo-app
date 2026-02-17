@@ -12,5 +12,11 @@ service firebase.storage {
       allow read: if true; // 누구나
       allow create, update, delete: if request.auth != null; // 로그인한 유저만
     }
+
+    // Chat images
+    match /Chats/{fileName} {
+      allow read: if request.auth != null; // 로그인한 유저만
+      allow create: if request.auth != null; // 로그인한 유저만
+    }
   }
 }

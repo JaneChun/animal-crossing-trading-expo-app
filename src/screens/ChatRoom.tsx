@@ -1,4 +1,5 @@
 import { renderComposer, renderDay, renderMessage } from '@/components/Chat/CustomRenderers';
+import ImageConfirmModal from '@/components/Chat/ImageConfirmModal';
 import UserInfoLabel from '@/components/Chat/Message/UserInfoLabel';
 import ReportModal from '@/components/PostDetail/ReportModal';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
@@ -10,8 +11,10 @@ import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { createChatRoom } from '@/firebase/services/chatService';
 
 import { useChatRoom } from '@/hooks/chat/useChatRoom';
+import { useSendImageMessage } from '@/hooks/chat/mutation/useSendImageMessage';
 import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useChatPresence } from '@/hooks/shared/useChatPresence';
+import { useImagePicker } from '@/hooks/shared/useImagePicker';
 import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
 import { useReportUser } from '@/hooks/shared/useReportUser';
 
@@ -21,6 +24,7 @@ import { Message } from '@/types/chat';
 import { ChatRoomRouteProp } from '@/types/navigation';
 import { convertSendParamsToMessage } from '@/utilities/convertSendParamsToMessage';
 import { createIMessage } from '@/utilities/createIMessage';
+import { ImagePickerAsset } from 'expo-image-picker';
 
 import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
@@ -37,6 +41,8 @@ const ChatRoom = () => {
 
 	// 메세지
 	const [localMessages, setLocalMessages] = useState<Message[]>([]);
+	// 이미지 전송 전 미리보기
+	const [confirmImage, setConfirmImage] = useState<ImagePickerAsset | null>(null);
 
 	// 최초 진입 시 systemMessage가 전달되었다면 UI에만 표시 (DB에는 아직 저장되지 않음)
 	useEffect(() => {
@@ -65,10 +71,15 @@ const ChatRoom = () => {
 	// 전달받은 receiverInfo를 우선 사용하고, 없으면 fetch된 정보 사용
 	const receiverInfo = passedReceiverInfo || fetchedReceiverInfo;
 
+	// 이미지 전송
+	const { pickImage } = useImagePicker({ multiple: false });
+	const { mutate: sendImageMessage } = useSendImageMessage();
+
 	useChatPresence(chatId);
 
 	// 신고
-	const { isReportModalVisible, openReportModal, closeReportModal, submitReport } = useReportUser();
+	const { isReportModalVisible, openReportModal, closeReportModal, submitReport } =
+		useReportUser();
 
 	// 차단
 	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({
@@ -81,8 +92,8 @@ const ChatRoom = () => {
 	const blockMessage = isBlockedByMe
 		? '내가 차단한 사용자입니다.'
 		: amIBlockedBy
-		? '상대방이 나를 차단하여 메시지를 보낼 수 없습니다.'
-		: '';
+			? '상대방이 나를 차단하여 메시지를 보낼 수 없습니다.'
+			: '';
 
 	const insets = useSafeAreaInsets();
 	const keyboardHeight = useKeyboardHeight();
@@ -95,9 +106,9 @@ const ChatRoom = () => {
 		}
 	}, [messages]);
 
-	const handleSend = async (chatInput: string) => {
-		if (!userInfo?.uid || !receiverInfo?.uid || !chatInput.trim() || isBlockedByMe || amIBlockedBy)
-			return;
+	const handleSend = async (chatInput: string, image?: ImagePickerAsset) => {
+		if (!userInfo?.uid || !receiverInfo?.uid || isBlockedByMe || amIBlockedBy) return;
+		if (!chatInput.trim() && !image) return;
 
 		// 채팅방 생성
 		if (chatStartInfo && !hasChatRoomCreated.current) {
@@ -109,14 +120,25 @@ const ChatRoom = () => {
 
 		// 시스템 메세지 전송
 		if (systemMessage && !hasSystemMessageSent.current) {
-			sendMessage(systemMessage); // systemMessage를 DB에 저장 후
-			setLocalMessages([]); // localMessages 초기화
+			sendMessage(systemMessage);
+			setLocalMessages([]);
 
 			hasSystemMessageSent.current = true;
 		}
 
-		// 유저 메세지 전송
-		const newMessage: IMessage = createIMessage(userInfo.uid, chatInput);
+		// 이미지 메세지 전송
+		if (image) {
+			sendImageMessage({
+				chatId,
+				senderId: userInfo.uid,
+				receiverId: receiverInfo.uid,
+				image,
+			});
+			return;
+		}
+
+		// 텍스트 메세지 전송
+		const newMessage: IMessage = createIMessage({ senderId: userInfo.uid, text: chatInput });
 
 		sendMessage({
 			chatId,
@@ -124,6 +146,22 @@ const ChatRoom = () => {
 			receiverId: receiverInfo.uid,
 			message: newMessage.text,
 		});
+	};
+
+	const handleImagePress = async () => {
+		if (!userInfo?.uid || !receiverInfo?.uid || isBlockedByMe || amIBlockedBy) return;
+
+		const images = await pickImage(1);
+		if (!images || images.length === 0) return;
+
+		setConfirmImage(images[0]);
+	};
+
+	const handleImageSendConfirm = async () => {
+		if (!confirmImage) return;
+		
+		await handleSend('', confirmImage);
+		setConfirmImage(null);
 	};
 
 	const handleLeave = async () => {
@@ -154,7 +192,9 @@ const ChatRoom = () => {
 		<>
 			<SafeAreaView style={styles.screen} edges={['bottom']}>
 				<LayoutWithHeader
-					headerCenterComponent={receiverInfo && <UserInfoLabel userInfo={receiverInfo} />}
+					headerCenterComponent={
+						receiverInfo && <UserInfoLabel userInfo={receiverInfo} />
+					}
 					headerRightComponent={
 						<ActionSheetButton
 							color={Colors.font_black}
@@ -167,7 +207,7 @@ const ChatRoom = () => {
 					{isLoading ? (
 						<LoadingIndicator />
 					) : !chatId || !receiverInfo ? (
-						<EmptyIndicator message='채팅방을 찾을 수 없습니다.' />
+						<EmptyIndicator message="채팅방을 찾을 수 없습니다." />
 					) : (
 						<KeyboardAvoidingView style={{ flex: 1 }}>
 							{blockMessage && (
@@ -189,10 +229,12 @@ const ChatRoom = () => {
 								renderComposer={() =>
 									renderComposer({
 										disabled:
-											receiverInfo?.displayName === DEFAULT_USER_DISPLAY_NAME ||
+											receiverInfo?.displayName ===
+												DEFAULT_USER_DISPLAY_NAME ||
 											isBlockedByMe ||
 											amIBlockedBy,
 										onSend: handleSend,
+										onImagePress: handleImagePress,
 									})
 								}
 							/>
@@ -200,6 +242,13 @@ const ChatRoom = () => {
 					)}
 				</LayoutWithHeader>
 			</SafeAreaView>
+
+			<ImageConfirmModal
+				visible={!!confirmImage}
+				image={confirmImage}
+				onSend={handleImageSendConfirm}
+				onClose={() => setConfirmImage(null)}
+			/>
 
 			{isReportModalVisible && (
 				<ReportModal

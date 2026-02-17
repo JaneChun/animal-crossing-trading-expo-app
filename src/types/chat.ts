@@ -24,6 +24,7 @@ export type Message = {
 	receiverId: string;
 	createdAt: Timestamp;
 	isReadBy: string[];
+	imageUrl?: string;
 };
 
 export type ExtendedIMessage = IMessage | SystemIMessage | ReviewIMessage;
@@ -68,4 +69,5 @@ export interface SendChatMessageParams {
 	senderId: string;
 	receiverId: string;
 	message: string;
+	imageUrl?: string;
 }
