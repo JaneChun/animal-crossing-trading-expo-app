@@ -58,5 +58,14 @@ const compressImage = async (image: ImagePickerAsset): Promise<ImagePickerAsset>
 };
 
 export const compressImages = async (images: ImagePickerAsset[]): Promise<ImagePickerAsset[]> => {
-	return Promise.all(images.map(compressImage));
+	const CONCURRENT_LIMIT = 3;
+	const results: ImagePickerAsset[] = [];
+
+	for (let i = 0; i < images.length; i += CONCURRENT_LIMIT) {
+		const batch = images.slice(i, i + CONCURRENT_LIMIT);
+		const compressed = await Promise.all(batch.map(compressImage));
+		results.push(...compressed);
+	}
+
+	return results;
 };
