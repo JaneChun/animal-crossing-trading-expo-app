@@ -63,19 +63,16 @@ export const renderComposer = ({
 	disabled,
 	onSend,
 	onImagePress,
-	isUploading,
 }: {
 	disabled: boolean;
 	onSend: (text: string) => void;
 	onImagePress: () => void;
-	isUploading?: boolean;
 }) => {
 	return (
 		<ChatInput
 			disabled={disabled}
 			onSubmit={onSend}
 			onImagePress={onImagePress}
-			isUploading={isUploading}
 		/>
 	);
 };
