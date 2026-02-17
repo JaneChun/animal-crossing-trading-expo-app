@@ -73,7 +73,7 @@ const ChatRoom = () => {
 
 	// 이미지 전송
 	const { pickImage } = useImagePicker({ multiple: false });
-	const { mutate: sendImageMessage, isPending: isUploading } = useSendImageMessage();
+	const { mutate: sendImageMessage } = useSendImageMessage();
 
 	useChatPresence(chatId);
 
@@ -159,7 +159,7 @@ const ChatRoom = () => {
 
 	const handleImageSendConfirm = async () => {
 		if (!confirmImage) return;
-
+		
 		setConfirmImage(null);
 		await handleSend('', confirmImage);
 	};
@@ -235,7 +235,6 @@ const ChatRoom = () => {
 											amIBlockedBy,
 										onSend: handleSend,
 										onImagePress: handleImagePress,
-										isUploading,
 									})
 								}
 							/>

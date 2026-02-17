@@ -31,7 +31,12 @@ const ImageConfirmModal = ({ visible, image, onSend, onClose }: ImageConfirmModa
 						<FontAwesome6 name="chevron-left" size={24} color="white" />
 					</Pressable>
 					<Pressable style={styles.sendButton} onPress={onSend} testID="sendImageButton">
-						<FontAwesome6 name="circle-arrow-up" size={36} color={Colors.primary} />
+						<FontAwesome6
+							name="circle-arrow-up"
+							size={36}
+							color={Colors.primary}
+							style={styles.arrowIcon}
+						/>
 					</Pressable>
 				</View>
 			</View>
@@ -60,7 +65,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		paddingHorizontal: 20,
-		paddingTop: 16,
+		paddingTop:16,
 	},
 	sendButton: {
 		backgroundColor: 'white',
@@ -69,5 +74,8 @@ const styles = StyleSheet.create({
 		borderRadius: 18,
 		justifyContent: 'center',
 		alignItems: 'center',
+	},
+	arrowIcon: {
+		position: 'absolute',
 	},
 });

@@ -3,9 +3,9 @@ import { FontSizes } from '@/constants/Typography';
 import { ChatInputProps } from '@/types/components';
 import { FontAwesome6 } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
-const ChatInput = ({ disabled, onSubmit, onImagePress, isUploading }: ChatInputProps) => {
+const ChatInput = ({ disabled, onSubmit, onImagePress }: ChatInputProps) => {
 	const [chatInput, setChatInput] = useState('');
 
 	const handleSubmit = () => {
@@ -17,23 +17,20 @@ const ChatInput = ({ disabled, onSubmit, onImagePress, isUploading }: ChatInputP
 
 	return (
 		<View style={styles.inputContainer}>
-			{isUploading ? (
-				<View style={styles.imageButtonContainer}>
-					<ActivityIndicator size="small" color={Colors.primary} />
-				</View>
-			) : (
-				<Pressable
-					style={[
-						styles.imageButtonContainer,
-						{ backgroundColor: disabled ? Colors.icon_gray : Colors.primary },
-					]}
-					onPress={onImagePress}
-					disabled={disabled}
-					testID="chatImageButton"
-				>
-					<FontAwesome6 name="paperclip" size={18} color="white" />
-				</Pressable>
-			)}
+			{/* 이미지 추가 버튼 */}
+			<Pressable
+				style={[
+					styles.imageButtonContainer,
+					{ backgroundColor: disabled ? Colors.icon_gray : Colors.primary },
+				]}
+				onPress={onImagePress}
+				disabled={disabled}
+				testID="chatImageButton"
+			>
+				<FontAwesome6 name="paperclip" size={18} color="white" />
+			</Pressable>
+
+			{/* 텍스트 인풋 */}
 			<TextInput
 				style={styles.inputText}
 				value={chatInput}
@@ -46,6 +43,8 @@ const ChatInput = ({ disabled, onSubmit, onImagePress, isUploading }: ChatInputP
 				editable={!disabled}
 				testID="chatInput"
 			/>
+			
+			{/* 전송 버튼 */}
 			<Pressable
 				style={styles.iconContainer}
 				onPress={handleSubmit}
