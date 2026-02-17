@@ -1,14 +1,9 @@
 import { storage } from '@/config/firebase';
 import { StorageCollection } from '@/types/image';
+import { compressImages } from '@/utilities/compressImage';
 import * as Crypto from 'expo-crypto';
 import { ImagePickerAsset } from 'expo-image-picker';
-import {
-	deleteObject,
-	getDownloadURL,
-	getMetadata,
-	ref,
-	uploadBytes,
-} from 'firebase/storage';
+import { deleteObject, getDownloadURL, getMetadata, ref, uploadBytes } from 'firebase/storage';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 
 export const uploadObjectToStorage = async ({
@@ -19,16 +14,21 @@ export const uploadObjectToStorage = async ({
 	directory: StorageCollection;
 }): Promise<string[]> => {
 	return firestoreRequest('Storage 이미지 업로드', async () => {
-		const uploadPromises = images.map(async (image) => {
+		const compressedImages = await compressImages(images);
+
+		const uploadPromises = compressedImages.map(async (image) => {
 			const fileName = `${Date.now()}_${Crypto.randomUUID()}_${
-				image.fileName || 'image.jpg'
+				image.fileName || 'image.webp'
 			}`;
 			const storageRef = ref(storage, `${directory}/${fileName}`);
 
 			const response = await fetch(image.uri); // 이미지 URL을 fetch하여 Blob 변환
 			const blob = await response.blob(); // Blob(바이너리) 형태로 변환
 
-			await uploadBytes(storageRef, blob); // Firebase Storage에 Blob 파일 업로드
+			// Firebase Storage에 Blob 파일 업로드
+			await uploadBytes(storageRef, blob, {
+				contentType: image.mimeType || 'image/webp',
+			});
 
 			return getDownloadURL(storageRef); // 업로드 후 다운로드 URL 반환
 		});
@@ -39,9 +39,7 @@ export const uploadObjectToStorage = async ({
 	});
 };
 
-export const deleteObjectFromStorage = async (
-	imageUrl: string,
-): Promise<void> => {
+export const deleteObjectFromStorage = async (imageUrl: string): Promise<void> => {
 	return firestoreRequest('Storage 이미지 삭제', async () => {
 		const imageRef = ref(storage, imageUrl);
 		await deleteObject(imageRef);

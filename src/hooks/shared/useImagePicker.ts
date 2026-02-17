@@ -6,9 +6,7 @@ import {
 	useMediaLibraryPermissions,
 } from 'expo-image-picker';
 
-export const useImagePicker = (
-	options: UseImagePickerOptions = { multiple: false },
-) => {
+export const useImagePicker = (options: UseImagePickerOptions = { multiple: false }) => {
 	const [, requestPermission, getPermission] = useMediaLibraryPermissions();
 
 	const verifyPermissions = async (): Promise<boolean> => {
@@ -31,14 +29,15 @@ export const useImagePicker = (
 			selectionLimit != null // selectionLimit이 있으면 selectionLimit
 				? selectionLimit
 				: options.multiple // 없으면 multiple 모드시 10장, 아니면 1장
-				? 10
-				: 1;
+					? 10
+					: 1;
 
 		const result = await launchImageLibraryAsync({
 			mediaTypes: 'images',
 			allowsMultipleSelection: options.multiple,
 			aspect: [1, 1],
-			quality: 0.7,
+			quality: 1,
+			orderedSelection: true,
 			selectionLimit: limit,
 		});
 
