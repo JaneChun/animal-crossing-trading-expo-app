@@ -17,7 +17,7 @@ interface ChatMessage {
 async function updateChatRoom(chatId: string, message: ChatMessage): Promise<void> {
 	const chatRef = db.collection('Chats').doc(chatId);
 
-	const lastMessage = message.imageUrl ? '사진' : message.body;
+	const lastMessage = message.imageUrl ? '사진을 보냈습니다.' : message.body;
 
 	try {
 		await chatRef.update({
@@ -56,7 +56,7 @@ async function sendChatNotification(chatId: string, message: ChatMessage): Promi
 	if (receiverInfo?.activeChatRoomId === chatId) return;
 
 	const notificationBody = message.imageUrl
-		? `${senderInfo?.displayName}: 사진`
+		? `${senderInfo?.displayName}: 사진을 보냈습니다.`
 		: `${senderInfo?.displayName}: ${truncateText(body, 50)}`;
 
 	await sendPushNotification({
