@@ -4,6 +4,12 @@ import { ImagePickerAsset } from 'expo-image-picker';
 const MAX_DIMENSION = 1200;
 const COMPRESS_QUALITY = 0.7;
 
+const getWebPFileName = (originalFileName?: string | null): string => {
+	if (!originalFileName) return 'image.webp';
+	const nameWithoutExt = originalFileName.replace(/\.[^.]+$/, '');
+	return `${nameWithoutExt || 'image'}.webp`;
+};
+
 const getResizeDimensions = (
 	width: number,
 	height: number,
@@ -42,7 +48,7 @@ const compressImage = async (image: ImagePickerAsset): Promise<ImagePickerAsset>
 			uri: result.uri,
 			width: result.width,
 			height: result.height,
-			fileName: image.fileName?.replace(/\.[^.]+$/, '.webp') || 'image.webp',
+			fileName: getWebPFileName(image.fileName),
 			mimeType: 'image/webp',
 		};
 	} catch (error) {

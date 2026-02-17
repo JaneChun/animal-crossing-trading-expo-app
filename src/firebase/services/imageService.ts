@@ -17,9 +17,7 @@ export const uploadObjectToStorage = async ({
 		const compressedImages = await compressImages(images);
 
 		const uploadPromises = compressedImages.map(async (image) => {
-			const fileName = `${Date.now()}_${Crypto.randomUUID()}_${
-				image.fileName || 'image.webp'
-			}`;
+			const fileName = `${Date.now()}_${Crypto.randomUUID()}_${image.fileName}`;
 			const storageRef = ref(storage, `${directory}/${fileName}`);
 
 			const response = await fetch(image.uri); // 이미지 URL을 fetch하여 Blob 변환
