@@ -160,8 +160,8 @@ const ChatRoom = () => {
 	const handleImageSendConfirm = async () => {
 		if (!confirmImage) return;
 		
-		setConfirmImage(null);
 		await handleSend('', confirmImage);
+		setConfirmImage(null);
 	};
 
 	const handleLeave = async () => {
