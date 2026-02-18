@@ -1,6 +1,7 @@
 import { db } from '@/config/firebase';
 import {
 	Chat,
+	ChatWithReceiverInfo,
 	CreateChatRoomParams,
 	LeaveChatRoomParams,
 	MarkMessageAsReadParams,
@@ -17,7 +18,6 @@ import {
 	doc,
 	getDoc,
 	getDocs,
-	Query,
 	query,
 	setDoc,
 	Timestamp,
@@ -36,53 +36,38 @@ export const getReceiverId = ({ chatId, userId }: { chatId: string; userId: stri
 	return chatId.split('_').find((id) => id !== userId);
 };
 
-export const fetchAndPopulateReceiverInfo = async <T extends Chat, U>(q: Query, userId: string) => {
-	return firestoreRequest('채팅방 조회', async () => {
-		const querySnapshot = await getDocs(q);
+export const populateReceiverInfo = async (
+	chats: Chat[],
+	userId: string,
+): Promise<ChatWithReceiverInfo[]> => {
+	if (chats.length === 0) return [];
 
-		if (querySnapshot.empty) return { data: [] };
+	const uniqueReceiverIds: string[] = chats
+		.map((item) => item.participants.find((uid) => uid !== userId))
+		.filter(Boolean) as string[];
 
-		const data: T[] = querySnapshot.docs.map((doc) => {
-			const docData = doc.data();
-			const id = doc.id;
+	const publicUserInfos: Record<string, PublicUserInfo> =
+		await getPublicUserInfos(uniqueReceiverIds);
 
-			return {
-				id,
-				...docData,
-			} as unknown as T;
-		});
+	return chats.map((item) => {
+		const receiverId = item.participants.find((uid) => uid !== userId) ?? null;
 
-		const uniqueReceiverIds: string[] = data
-			.map((item) => item.participants.find((uid) => uid !== userId))
-			.filter(Boolean) as string[];
+		let receiverInfo = getDefaultUserInfo(receiverId!);
 
-		const publicUserInfos: Record<string, PublicUserInfo> =
-			await getPublicUserInfos(uniqueReceiverIds);
-
-		const populatedData: U[] = data.map((item) => {
-			const receiverId = item.participants.find((uid) => uid !== userId) ?? null;
-
-			let receiverInfo = getDefaultUserInfo(receiverId!);
-
-			if (receiverId && publicUserInfos[receiverId]) {
-				receiverInfo = publicUserInfos[receiverId];
-			}
-
-			return {
-				...item,
-				receiverInfo: {
-					uid: receiverId,
-					displayName: receiverInfo.displayName,
-					islandName: receiverInfo.islandName,
-					photoURL: receiverInfo.photoURL,
-				},
-			} as U;
-		});
+		if (receiverId && publicUserInfos[receiverId]) {
+			receiverInfo = publicUserInfos[receiverId];
+		}
 
 		return {
-			data: populatedData,
+			...item,
+			receiverInfo: {
+				uid: receiverId,
+				displayName: receiverInfo.displayName,
+				islandName: receiverInfo.islandName,
+				photoURL: receiverInfo.photoURL,
+			},
 		};
-	});
+	}) as ChatWithReceiverInfo[];
 };
 
 export const createChatRoom = async ({

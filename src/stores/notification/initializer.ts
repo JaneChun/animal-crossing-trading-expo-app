@@ -1,15 +1,8 @@
 import { db } from '@/config/firebase';
-import { fetchAndPopulateSenderInfo } from '@/firebase/services/notificationService';
+import { populateSenderInfo } from '@/firebase/services/notificationService';
 import { useUserInfo } from '@/stores/auth';
-import { Notification, PopulatedNotification } from '@/types/notification';
-import {
-	collection,
-	onSnapshot,
-	orderBy,
-	Query,
-	query,
-	where,
-} from 'firebase/firestore';
+import { Notification } from '@/types/notification';
+import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { useEffect } from 'react';
 import { useNotificationStore } from './store';
 
@@ -25,7 +18,7 @@ export const useNotificationSubscriptionInitializer = () => {
 			return;
 		}
 
-		const q: Query = query(
+		const q = query(
 			collection(db, 'Notifications'),
 			where('receiverId', '==', userInfo.uid), // 내가 수신한 알림
 			orderBy('createdAt', 'desc'), // 최신순 정렬
@@ -33,21 +26,22 @@ export const useNotificationSubscriptionInitializer = () => {
 
 		const unsubscribe = onSnapshot(
 			q,
-			async () => {
+			async (snapshot) => {
 				setIsLoading(true);
 
 				try {
-					const { data = [] } = await fetchAndPopulateSenderInfo<
-						Notification,
-						PopulatedNotification
-					>(q);
+					const notifications: Notification[] = snapshot.docs.map((doc) => ({
+						id: doc.id,
+						...doc.data(),
+					})) as Notification[];
 
-					setNotifications(data);
+					const populatedNotifications = await populateSenderInfo(notifications);
+
+					setNotifications(populatedNotifications);
 
 					// 안읽은 알림 수 계산 & 전역 상태에 저장
-					const totalUnread = data.reduce(
-						(acc: number, { isRead }: { isRead: boolean }) =>
-							!isRead ? acc + 1 : acc,
+					const totalUnread = populatedNotifications.reduce(
+						(acc: number, { isRead }: { isRead: boolean }) => (!isRead ? acc + 1 : acc),
 						0,
 					);
 					setUnreadCount(totalUnread);
@@ -64,11 +58,5 @@ export const useNotificationSubscriptionInitializer = () => {
 		);
 
 		return () => unsubscribe();
-	}, [
-		userInfo,
-		setNotifications,
-		setUnreadCount,
-		setIsLoading,
-		clearNotifications,
-	]);
+	}, [userInfo, setNotifications, setUnreadCount, setIsLoading, clearNotifications]);
 };
