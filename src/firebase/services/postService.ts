@@ -1,11 +1,5 @@
 import { db } from '@/config/firebase';
-import {
-	Collection,
-	CreatePostRequest,
-	Post,
-	PostDoc,
-	UpdatePostRequest,
-} from '@/types/post';
+import { Collection, CreatePostRequest, Post, PostDoc, UpdatePostRequest } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { sanitize } from '@/utilities/sanitize';
@@ -29,11 +23,7 @@ import {
 } from '@/firebase/core/firestoreService';
 import { chunkArray, getPublicUserInfos } from './userService';
 
-export const fetchAndPopulateUsers = async <
-	C extends Collection,
-	T extends Post<C>,
-	U,
->(
+export const fetchAndPopulateUsers = async <C extends Collection, T extends Post<C>, U>(
 	q: Query<DocumentData>,
 ) => {
 	return firestoreRequest('컬렉션 데이터 조회', async () => {
@@ -48,16 +38,13 @@ export const fetchAndPopulateUsers = async <
 			return { id, ...docData } as T;
 		});
 
-		const uniqueCreatorIds: string[] = [
-			...new Set(data.map((item) => item.creatorId)),
-		];
+		const uniqueCreatorIds: string[] = [...new Set(data.map((item) => item.creatorId))];
 
 		const publicUserInfos: Record<string, PublicUserInfo> =
 			await getPublicUserInfos(uniqueCreatorIds);
 
 		const populatedData: U[] = data.map((item) => {
-			const userInfo =
-				publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);
+			const userInfo = publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);
 
 			return {
 				...item,
@@ -90,9 +77,7 @@ export const getPost = async <C extends Collection>(
 	});
 };
 
-export const getPosts = async (
-	postIds: string[],
-): Promise<Record<string, Post<Collection>>> => {
+export const getPosts = async (postIds: string[]): Promise<Record<string, Post<Collection>>> => {
 	return firestoreRequest('게시글 목록 조회', async () => {
 		if (postIds.length === 0) return {};
 
@@ -135,26 +120,30 @@ export const createPost = async <C extends Collection>({
 	requestData: CreatePostRequest<C>;
 	userId: string;
 }): Promise<string> => {
-	return firestoreRequest('게시글 생성', async () => {
-		const cleanData: CreatePostRequest<C> = { ...requestData };
-		cleanData.title = sanitize(cleanData.title);
-		cleanData.body = sanitize(cleanData.body);
+	return firestoreRequest(
+		'게시글 생성',
+		async () => {
+			const cleanData: CreatePostRequest<C> = { ...requestData };
+			cleanData.title = sanitize(cleanData.title);
+			cleanData.body = sanitize(cleanData.body);
 
-		const createdId = await addDocToFirestore({
-			directory: collectionName,
-			requestData: {
-				...cleanData,
-				creatorId: userId,
-				createdAt: Timestamp.now(),
-				commentCount: 0,
-				chatRoomIds: [],
-				reviewPromptSent: false,
-				status: 'active',
-			},
-		});
+			const createdId = await addDocToFirestore({
+				directory: collectionName,
+				requestData: {
+					...cleanData,
+					creatorId: userId,
+					createdAt: Timestamp.now(),
+					commentCount: 0,
+					chatRoomIds: [],
+					reviewPromptSent: false,
+					status: 'active',
+				},
+			});
 
-		return createdId;
-	});
+			return createdId;
+		},
+		{ throwOnError: true },
+	);
 };
 
 export const updatePost = async <C extends Collection>({
@@ -166,30 +155,35 @@ export const updatePost = async <C extends Collection>({
 	postId: string;
 	requestData: UpdatePostRequest<C>;
 }): Promise<void> => {
-	return firestoreRequest('게시글 수정', async () => {
-		const existingPost = await getPost(collectionName, postId);
-		if (!existingPost) throw new Error('게시글을 찾을 수 없습니다.');
+	return firestoreRequest(
+		'게시글 수정',
+		async () => {
+			const cleanData: Partial<UpdatePostRequest<C>> = { ...requestData };
+			if (cleanData?.title) cleanData.title = sanitize(cleanData.title);
+			if (cleanData?.body) cleanData.body = sanitize(cleanData.body);
 
-		const cleanData: Partial<UpdatePostRequest<C>> = { ...requestData };
-		if (cleanData?.title) cleanData.title = sanitize(cleanData.title);
-		if (cleanData?.body) cleanData.body = sanitize(cleanData.body);
-
-		await updateDocToFirestore({
-			collection: collectionName,
-			id: postId,
-			requestData: {
-				...cleanData,
-				updatedAt: Timestamp.now(),
-			},
-		});
-	});
+			await updateDocToFirestore({
+				collection: collectionName,
+				id: postId,
+				requestData: {
+					...cleanData,
+					updatedAt: Timestamp.now(),
+				},
+			});
+		},
+		{ throwOnError: true },
+	);
 };
 
 export const deletePost = async <C extends Collection>(
 	collectionName: C,
 	postId: string,
 ): Promise<void> => {
-	return firestoreRequest('게시글 삭제', async () => {
-		await deleteDocFromFirestore({ id: postId, collection: collectionName });
-	});
+	return firestoreRequest(
+		'게시글 삭제',
+		async () => {
+			await deleteDocFromFirestore({ id: postId, collection: collectionName });
+		},
+		{ throwOnError: true },
+	);
 };

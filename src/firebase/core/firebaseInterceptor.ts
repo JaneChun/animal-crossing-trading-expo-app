@@ -72,7 +72,16 @@ const handleError = (error: any): void => {
 	Alert.alert(ERROR_MESSAGES.UNKNOWN.title, ERROR_MESSAGES.UNKNOWN.getMessage(errorCode));
 };
 
-const firestoreRequest = async (requestName: string, operation: () => Promise<any>) => {
+type FirestoreRequestOptions = {
+	// true이면 Alert 없이 에러를 호출자에게 전파 (mutation에서 onError toast 처리용)
+	throwOnError?: boolean;
+};
+
+const firestoreRequest = async (
+	requestName: string,
+	operation: () => Promise<any>,
+	options?: FirestoreRequestOptions,
+) => {
 	try {
 		const result = await operation();
 		if (__DEV__) {
@@ -87,10 +96,12 @@ const firestoreRequest = async (requestName: string, operation: () => Promise<an
 		console.log(`❌ Firestore 요청 : ${requestName} 실패`, error);
 		console.log(error.code, error.message);
 
-		// 모든 Firebase 에러를 중앙에서 처리하고 사용자에게 알림 표시
-		handleError(error);
+		if (options?.throwOnError) {
+			throw error;
+		}
 
-		// 에러를 삼키고 null 반환 (호출자에게 에러 전파하지 않음)
+		// 기본 동작: Alert 표시 후 null 반환 (에러 삼킴)
+		handleError(error);
 		return null;
 	}
 };
