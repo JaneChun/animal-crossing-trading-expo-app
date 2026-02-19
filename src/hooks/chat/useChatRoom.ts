@@ -11,9 +11,7 @@ import {
 } from './mutation/useMarkMessagesAsRead';
 import { useSendMessage } from './mutation/useSendMessage';
 import { useReceiverInfo } from './query/useReceiverInfo';
-
-const REALTIME_MESSAGE_LIMIT = 20;
-const LOAD_MORE_PAGE_SIZE = 50;
+import { REALTIME_MESSAGE_LIMIT, LOAD_MORE_PAGE_SIZE } from '@/constants/chat';
 
 export const useChatRoom = ({
 	chatId,

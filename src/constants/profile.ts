@@ -1,0 +1,1 @@
+export const PUBLIC_USER_INFO_STALE_TIME = 30 * 60 * 1000;

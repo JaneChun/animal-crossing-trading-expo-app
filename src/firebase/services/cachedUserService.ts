@@ -2,7 +2,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { getPublicUserInfos } from './userService';
-import { PUBLIC_USER_INFO_STALE_TIME } from '@/hooks/shared/useCachedPublicUserInfo';
+import { PUBLIC_USER_INFO_STALE_TIME } from '@/constants/profile';
 
 export const publicUserInfoQueryKey = (userId: string) => ['publicUserInfo', userId];
 
