@@ -54,7 +54,7 @@ export const markNotificationAsRead = async (notificationId: string): Promise<vo
 };
 
 export const markAllNotificationAsRead = async (notificationIds: string[]): Promise<void> => {
-	return firestoreRequest('알림 읽음 처리', async () => {
+	return firestoreRequest('전체 알림 읽음 처리', async () => {
 		const batch = writeBatch(db);
 
 		notificationIds.forEach((notificationId) => {
@@ -68,7 +68,7 @@ export const markAllNotificationAsRead = async (notificationIds: string[]): Prom
 };
 
 export const deleteNotification = async (notificationId: string): Promise<void> => {
-	return firestoreRequest('알림 읽음 처리', async () => {
+	return firestoreRequest('알림 삭제 처리', async () => {
 		await deleteDocFromFirestore({
 			id: notificationId,
 			collection: 'Notifications',
