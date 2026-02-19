@@ -43,13 +43,6 @@ const linking: LinkingOptions<RootStackParamList> = {
 	},
 };
 
-export default function App() {
-	useAuthInitializer();
-	usePushNotificationInitializer();
-	useBlockSubscriptionInitializer();
-	useOnboardingInitializer();
-	useSuspensionGuard();
-
 	const queryClient = new QueryClient({
 		defaultOptions: {
 			queries: { staleTime: 1000 * 60 * 5, gcTime: 1000 * 60 * 10, retry: 1 },
@@ -58,6 +51,13 @@ export default function App() {
 			},
 		},
 	});
+
+export default function App() {
+	useAuthInitializer();
+	usePushNotificationInitializer();
+	useBlockSubscriptionInitializer();
+	useOnboardingInitializer();
+	useSuspensionGuard();
 
 	useOnlineManager();
 	useAppState();
