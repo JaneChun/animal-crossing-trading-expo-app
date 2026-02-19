@@ -1,11 +1,14 @@
 import { useUserInfo } from '@/stores/auth';
 import { Message } from '@/types/chat';
 import { formatIMessages } from '@/utilities/formatIMessages';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useRealtimeMessages } from './firebase/useRealtimeMessages';
 import { useLoadMoreMessages } from './firebase/useLoadMoreMessages';
 import { useLeaveChatRoom } from './mutation/useLeaveChatRoom';
-import { useMarkMessagesAsRead } from './mutation/useMarkMessagesAsRead';
+import {
+	useMarkAllUnreadAsRead,
+	useMarkMessagesAsReadByIds,
+} from './mutation/useMarkMessagesAsRead';
 import { useSendMessage } from './mutation/useSendMessage';
 import { useReceiverInfo } from './query/useReceiverInfo';
 
@@ -34,12 +37,28 @@ export const useChatRoom = ({
 
 	const { mutate: sendMessage } = useSendMessage();
 	const { mutate: leaveChatRoom } = useLeaveChatRoom({ chatId });
-	const { mutate: markMessagesAsRead } = useMarkMessagesAsRead();
+	const { mutate: markAllUnreadAsRead } = useMarkAllUnreadAsRead();
+	const { mutate: markMessagesAsReadByIds } = useMarkMessagesAsReadByIds();
 
-	// 유저가 채팅방에 들어올 때, 입장한 이후에도 새 메시지가 올 때 markMessagesAsRead 실행
+	// 마지막으로 초기 읽음 처리를 완료한 chatId 추적
+	const lastReadChatIdRef = useRef<string | null>(null);
+
+	// 초기 진입: getDocs로 전체 안읽은 메시지 읽음 처리
+	// 이후 새 메시지: snapshot 데이터에서 안읽은 메시지 ID만 추출하여 읽음 처리
 	useEffect(() => {
-		if (chatId && userInfo) {
-			markMessagesAsRead({ chatId, userId: userInfo.uid });
+		if (!chatId || !userInfo || realtimeMessages.length === 0) return;
+
+		if (lastReadChatIdRef.current !== chatId) {
+			markAllUnreadAsRead({ chatId, userId: userInfo.uid });
+			lastReadChatIdRef.current = chatId;
+		} else {
+			const unreadMessageIds = realtimeMessages
+				.filter((message) => !message.isReadBy.includes(userInfo.uid))
+				.map(({ id }) => id);
+
+			if (unreadMessageIds.length === 0) return;
+
+			markMessagesAsReadByIds({ chatId, userId: userInfo.uid, unreadMessageIds });
 		}
 	}, [chatId, userInfo, realtimeMessages]);
 

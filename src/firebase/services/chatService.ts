@@ -178,18 +178,25 @@ export const leaveChatRoom = async ({ chatId, userId }: LeaveChatRoomParams): Pr
 	});
 };
 
-export const markMessagesAsRead = async ({
+// 초기 진입 시: getDocs로 전체 안읽은 메시지 읽음 처리
+export const markAllUnreadMessagesAsRead = async ({
 	chatId,
 	userId,
-}: MarkMessageAsReadParams): Promise<void> => {
-	return firestoreRequest('메세지 읽음 처리', async () => {
+}: {
+	chatId: string;
+	userId: string;
+}): Promise<void> => {
+	return firestoreRequest('전체 안읽은 메세지 읽음 처리', async () => {
 		const messagesRef = collection(db, `Chats/${chatId}/Messages`);
-
-		// 0. 안 읽은 메시지만 가져오기
 		const q = query(messagesRef, where('isReadBy', 'not-in', [userId]));
 		const querySnapshot = await getDocs(q);
 
-		if (querySnapshot.empty) return;
+		// 안읽은 메시지가 없으면 unreadCount만 초기화 (count drift 방지)
+		const chatRef = doc(db, `Chats/${chatId}`);
+		if (querySnapshot.empty) {
+			await updateDoc(chatRef, { [`unreadCount.${getSafeUid(userId)}`]: 0 });
+			return;
+		}
 
 		const batch = writeBatch(db);
 
@@ -197,11 +204,37 @@ export const markMessagesAsRead = async ({
 		querySnapshot.docs.forEach((messageDoc) => {
 			const messageRef = doc(db, `Chats/${chatId}/Messages/${messageDoc.id}`);
 			batch.update(messageRef, {
-				isReadBy: arrayUnion(userId), // 내가 읽었다고 추가
+				isReadBy: arrayUnion(userId),
 			});
 		});
 
 		// 2. 채팅방 정보도 업데이트 (내 unreadCount 초기화)
+		batch.update(chatRef, {
+			[`unreadCount.${getSafeUid(userId)}`]: 0,
+		});
+
+		await batch.commit();
+	});
+};
+
+// 이후 새 메시지: getDocs 없이 ID 기반 읽음 처리
+export const markMessagesAsReadByIds = async ({
+	chatId,
+	userId,
+	unreadMessageIds,
+}: MarkMessageAsReadParams): Promise<void> => {
+	return firestoreRequest('메세지 읽음 처리', async () => {
+		if (unreadMessageIds.length === 0) return;
+
+		const batch = writeBatch(db);
+
+		unreadMessageIds.forEach((messageId) => {
+			const messageRef = doc(db, `Chats/${chatId}/Messages/${messageId}`);
+			batch.update(messageRef, {
+				isReadBy: arrayUnion(userId),
+			});
+		});
+
 		const chatRef = doc(db, `Chats/${chatId}`);
 		batch.update(chatRef, {
 			[`unreadCount.${getSafeUid(userId)}`]: 0,

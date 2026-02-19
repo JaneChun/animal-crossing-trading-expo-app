@@ -62,6 +62,7 @@ export interface LeaveChatRoomParams {
 export interface MarkMessageAsReadParams {
 	chatId: string;
 	userId: string;
+	unreadMessageIds: string[];
 }
 
 export interface SendChatMessageParams {
