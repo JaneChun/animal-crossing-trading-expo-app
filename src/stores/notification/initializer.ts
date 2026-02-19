@@ -4,10 +4,12 @@ import { useUserInfo } from '@/stores/auth';
 import { Notification } from '@/types/notification';
 import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNotificationStore } from './store';
 
 export const useNotificationSubscriptionInitializer = () => {
 	const userInfo = useUserInfo();
+	const queryClient = useQueryClient();
 	const { setNotifications, setUnreadCount, setIsLoading, clearNotifications } =
 		useNotificationStore();
 
@@ -35,7 +37,10 @@ export const useNotificationSubscriptionInitializer = () => {
 						...doc.data(),
 					})) as Notification[];
 
-					const populatedNotifications = await populateSenderInfo(notifications);
+					const populatedNotifications = await populateSenderInfo({
+						notifications,
+						queryClient,
+					});
 
 					setNotifications(populatedNotifications);
 

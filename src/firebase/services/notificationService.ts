@@ -5,11 +5,16 @@ import { doc, writeBatch } from 'firebase/firestore';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import { deleteDocFromFirestore, updateDocToFirestore } from '@/firebase/core/firestoreService';
 import { getPosts } from './postService';
-import { getPublicUserInfos } from './userService';
+import { getCachedPublicUserInfos } from './cachedUserService';
+import { QueryClient } from '@tanstack/react-query';
 
-export const populateSenderInfo = async (
-	notifications: Notification[],
-): Promise<PopulatedNotification[]> => {
+export const populateSenderInfo = async ({
+	notifications,
+	queryClient,
+}: {
+	notifications: Notification[];
+	queryClient: QueryClient;
+}): Promise<PopulatedNotification[]> => {
 	if (notifications.length === 0) return [];
 
 	const postIds = [...new Set(notifications.map((i) => i.postId))];
@@ -18,7 +23,7 @@ export const populateSenderInfo = async (
 	// 게시글 정보, 유저 정보 불러와서 매칭
 	const [postDetails, publicUserInfos] = await Promise.all([
 		getPosts(postIds),
-		getPublicUserInfos(senderIds),
+		getCachedPublicUserInfos({ userIds: senderIds, queryClient }),
 	]);
 
 	const populatedData = notifications.map((item) => {
