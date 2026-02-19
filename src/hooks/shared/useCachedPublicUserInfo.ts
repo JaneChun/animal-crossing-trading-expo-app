@@ -12,7 +12,8 @@ export const useCachedPublicUserInfo = (
 	return useQuery<PublicUserInfo>({
 		queryKey: publicUserInfoQueryKey(userId!),
 		queryFn: () => getPublicUserInfo(userId!),
-		enabled: options?.enabled ? options.enabled : !!userId,
+		// options.enabled가 명시적으로 false면 false 사용
+		enabled: options?.enabled !== undefined ? options.enabled : !!userId,
 		staleTime: PUBLIC_USER_INFO_STALE_TIME,
 		...options,
 	});
