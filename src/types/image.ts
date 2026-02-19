@@ -1,6 +1,6 @@
 import { ImagePickerAsset } from 'expo-image-picker';
 
-export type StorageCollection = 'Boards' | 'Communities' | 'Users';
+export type StorageCollection = 'Boards' | 'Communities' | 'Users' | 'Chats';
 
 export interface UploadedImage {
 	uri: string;

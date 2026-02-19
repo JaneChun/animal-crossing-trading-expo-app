@@ -49,6 +49,14 @@ export const formatIMessages = (messages: Message[], receiverUid?: string): Exte
 				};
 			}
 
+			// 이미지 메시지
+			if (msg.imageUrl) {
+				return {
+					...baseIMessage,
+					image: msg.imageUrl,
+				};
+			}
+
 			// 일반 메시지
 			return baseIMessage;
 		})

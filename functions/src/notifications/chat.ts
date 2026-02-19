@@ -6,6 +6,7 @@ interface ChatMessage {
 	receiverId: string;
 	senderId: string;
 	body: string;
+	imageUrl?: string;
 }
 
 /**
@@ -13,19 +14,17 @@ interface ChatMessage {
  * @param chatId - 채팅방 ID
  * @param message - 메시지 데이터
  */
-async function updateChatRoom(
-	chatId: string,
-	message: ChatMessage,
-): Promise<void> {
+async function updateChatRoom(chatId: string, message: ChatMessage): Promise<void> {
 	const chatRef = db.collection('Chats').doc(chatId);
+
+	const lastMessage = message.imageUrl ? '사진을 보냈습니다.' : message.body;
 
 	try {
 		await chatRef.update({
-			lastMessage: message.body,
+			lastMessage,
 			lastMessageSenderId: message.senderId,
 			updatedAt: Timestamp.now(),
-			[`unreadCount.${getSafeUid(message.receiverId)}`]:
-				FieldValue.increment(1),
+			[`unreadCount.${getSafeUid(message.receiverId)}`]: FieldValue.increment(1),
 			visibleTo: FieldValue.arrayUnion(message.receiverId),
 		});
 	} catch (error) {
@@ -38,10 +37,7 @@ async function updateChatRoom(
  * @param chatId - 채팅방 ID
  * @param message - 메시지 데이터
  */
-async function sendChatNotification(
-	chatId: string,
-	message: ChatMessage,
-): Promise<void> {
+async function sendChatNotification(chatId: string, message: ChatMessage): Promise<void> {
 	const { receiverId, senderId, body } = message;
 
 	// 사용자 정보 조회
@@ -59,10 +55,14 @@ async function sendChatNotification(
 	// 유저가 채팅방에 들어와있는 경우 채팅 알림 발생 X
 	if (receiverInfo?.activeChatRoomId === chatId) return;
 
+	const notificationBody = message.imageUrl
+		? `${senderInfo?.displayName}: 사진을 보냈습니다.`
+		: `${senderInfo?.displayName}: ${truncateText(body, 50)}`;
+
 	await sendPushNotification({
 		to: expoPushToken,
 		title: '💬 새로운 채팅 메세지가 왔어구리!',
-		body: `${senderInfo?.displayName}: ${truncateText(body, 50)}`,
+		body: notificationBody,
 		data: {
 			url: `animal-crossing-trading-app://chat/${chatId}`,
 		},
@@ -81,22 +81,18 @@ export async function handleChatMessageCreated(
 	const { receiverId, senderId, body } = message;
 
 	// 시스템, 리뷰 작성 메세지는 제외
-	if (
-		senderId === 'system' ||
-		senderId === 'review' ||
-		!senderId ||
-		!receiverId ||
-		!body
-	) {
+	if (senderId === 'system' || senderId === 'review' || !senderId || !receiverId) {
+		return;
+	}
+
+	// 텍스트도 이미지도 없으면 무시
+	if (!body && !message.imageUrl) {
 		return;
 	}
 
 	try {
 		// 채팅방 정보 업데이트와 푸시 알림을 병렬로 처리
-		await Promise.all([
-			updateChatRoom(chatId, message),
-			sendChatNotification(chatId, message),
-		]);
+		await Promise.all([updateChatRoom(chatId, message), sendChatNotification(chatId, message)]);
 	} catch (error) {
 		console.error('채팅 알림 처리 중 오류가 발생했습니다:', error);
 	}

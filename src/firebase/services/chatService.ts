@@ -56,9 +56,8 @@ export const fetchAndPopulateReceiverInfo = async <T extends Chat, U>(q: Query, 
 			.map((item) => item.participants.find((uid) => uid !== userId))
 			.filter(Boolean) as string[];
 
-		const publicUserInfos: Record<string, PublicUserInfo> = await getPublicUserInfos(
-			uniqueReceiverIds,
-		);
+		const publicUserInfos: Record<string, PublicUserInfo> =
+			await getPublicUserInfos(uniqueReceiverIds);
 
 		const populatedData: U[] = data.map((item) => {
 			const receiverId = item.participants.find((uid) => uid !== userId) ?? null;
@@ -156,23 +155,31 @@ export const sendMessage = async ({
 	senderId,
 	receiverId,
 	message,
+	imageUrl,
 }: SendChatMessageParams): Promise<void> => {
 	return firestoreRequest('메세지 전송', async () => {
-		if (!chatId || !senderId || !receiverId || !message.trim()) return;
+		if (!chatId || !senderId || !receiverId) return;
+		if (!message.trim() && !imageUrl) return;
 
-		const messageRef = collection(db, 'Chats', chatId, 'Messages'); // Boards/{chatId}/Messages 서브컬렉션
+		const messageRef = collection(db, 'Chats', chatId, 'Messages');
 
 		// 유저 메세지만 필터링 (시스템 메세지는 X)
 		const cleanMessage =
 			senderId === 'system' || senderId === 'review' ? message : sanitize(message);
 
-		await addDoc(messageRef, {
+		const messageData: Record<string, unknown> = {
 			body: cleanMessage,
 			senderId,
 			receiverId,
 			createdAt: Timestamp.now(),
 			isReadBy: [senderId],
-		});
+		};
+
+		if (imageUrl) {
+			messageData.imageUrl = imageUrl;
+		}
+
+		await addDoc(messageRef, messageData);
 	});
 };
 
