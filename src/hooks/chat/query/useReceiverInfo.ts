@@ -34,7 +34,7 @@ export const useReceiverInfo = (chatId: string) => {
 		data: receiverInfo,
 		isLoading: isLoadingReceiverInfo,
 		...rest
-	} = useCachedPublicUserInfo(receiverId, { enabled: !!receiverId });
+	} = useCachedPublicUserInfo(receiverId);
 
 	return {
 		data: receiverInfo,

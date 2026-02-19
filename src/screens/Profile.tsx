@@ -38,8 +38,7 @@ const Profile = () => {
 
 	// 다른 유저 프로필 조회 (targetUserId가 있을 때만)
 	const { data: targetUserProfile, isLoading: isLoadingProfile } = useCachedPublicUserInfo(
-		targetUserId,
-		{ enabled: !!targetUserId },
+		targetUserId
 	);
 
 	// targetUserId가 있으면 targetUserProfile 사용, 없으면 userInfo 사용 (내 프로필)
