@@ -7,7 +7,6 @@ import {
 	MarkMessageAsReadParams,
 	SendChatMessageParams,
 } from '@/types/chat';
-import { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { sanitize } from '@/utilities/sanitize';
 import {
@@ -26,7 +25,8 @@ import {
 	writeBatch,
 } from 'firebase/firestore';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
-import { getPublicUserInfos } from './userService';
+import { QueryClient } from '@tanstack/react-query';
+import { getCachedPublicUserInfos } from './cachedUserService';
 
 export const generateChatId = (user1: string, user2: string): string => {
 	return [user1, user2].sort().join('_');
@@ -36,18 +36,25 @@ export const getReceiverId = ({ chatId, userId }: { chatId: string; userId: stri
 	return chatId.split('_').find((id) => id !== userId);
 };
 
-export const populateReceiverInfo = async (
-	chats: Chat[],
-	userId: string,
-): Promise<ChatWithReceiverInfo[]> => {
+export const populateReceiverInfo = async ({
+	chats,
+	userId,
+	queryClient,
+}: {
+	chats: Chat[];
+	userId: string;
+	queryClient: QueryClient;
+}): Promise<ChatWithReceiverInfo[]> => {
 	if (chats.length === 0) return [];
 
 	const uniqueReceiverIds: string[] = chats
 		.map((item) => item.participants.find((uid) => uid !== userId))
 		.filter(Boolean) as string[];
 
-	const publicUserInfos: Record<string, PublicUserInfo> =
-		await getPublicUserInfos(uniqueReceiverIds);
+	const publicUserInfos = await getCachedPublicUserInfos({
+		userIds: uniqueReceiverIds,
+		queryClient,
+	});
 
 	return chats.map((item) => {
 		const receiverId = item.participants.find((uid) => uid !== userId) ?? null;

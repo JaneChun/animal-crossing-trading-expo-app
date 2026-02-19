@@ -4,10 +4,12 @@ import { useUserInfo } from '@/stores/auth';
 import { Chat } from '@/types/chat';
 import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useChatStore } from './store';
 
 export const useChatSubscriptionInitializer = () => {
 	const userInfo = useUserInfo();
+	const queryClient = useQueryClient();
 	const { setChats, setUnreadCount, setIsLoading, updateUnreadCount, clearChats } =
 		useChatStore();
 
@@ -35,7 +37,11 @@ export const useChatSubscriptionInitializer = () => {
 						...doc.data(),
 					})) as Chat[];
 
-					const populatedChats = await populateReceiverInfo(chats, userInfo.uid);
+					const populatedChats = await populateReceiverInfo({
+						chats,
+						userId: userInfo.uid,
+						queryClient,
+					});
 
 					setChats(populatedChats);
 					updateUnreadCount(userInfo.uid);
