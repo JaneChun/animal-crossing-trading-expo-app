@@ -53,7 +53,7 @@ export const sendReviewSystemMessage = async ({
 	chatRoomIds: string[];
 }) => {
 	await Promise.all(
-		chatRoomIds.map((chatId: string) => {
+		chatRoomIds.map(async (chatId: string) => {
 			try {
 				const reviewMessage: SendChatMessageParams = {
 					chatId,
@@ -61,8 +61,7 @@ export const sendReviewSystemMessage = async ({
 					receiverId: 'review',
 					message: JSON.stringify({ postId, chatId }),
 				};
-
-				return sendMessage(reviewMessage);
+				await sendMessage(reviewMessage);
 			} catch (e) {
 				console.log(`⚠️ 리뷰 시스템 메시지 전송 실패 (${chatId})`, e);
 			}

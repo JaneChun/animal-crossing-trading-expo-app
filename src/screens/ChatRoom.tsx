@@ -8,9 +8,9 @@ import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
-import { createChatRoom } from '@/firebase/services/chatService';
 
 import { useChatRoom } from '@/hooks/chat/useChatRoom';
+import { useCreateChatRoom } from '@/hooks/chat/mutation/useCreateChatRoom';
 import { useSendImageMessage } from '@/hooks/chat/mutation/useSendImageMessage';
 import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useChatPresence } from '@/hooks/shared/useChatPresence';
@@ -74,6 +74,9 @@ const ChatRoom = () => {
 	// 전달받은 receiverInfo를 우선 사용하고, 없으면 fetch된 정보 사용
 	const receiverInfo = passedReceiverInfo || fetchedReceiverInfo;
 
+	// 채팅방 생성
+	const { mutateAsync: createChatRoomAsync } = useCreateChatRoom();
+
 	// 이미지 전송
 	const { pickImage } = useImagePicker({ multiple: false });
 	const { mutate: sendImageMessage } = useSendImageMessage();
@@ -117,7 +120,7 @@ const ChatRoom = () => {
 
 		// 채팅방 생성
 		if (chatStartInfo && !hasChatRoomCreated.current) {
-			const createdChatId = await createChatRoom(chatStartInfo);
+			const createdChatId = await createChatRoomAsync(chatStartInfo);
 			if (!createdChatId) return;
 
 			hasChatRoomCreated.current = true;

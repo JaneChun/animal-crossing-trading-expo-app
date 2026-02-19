@@ -63,7 +63,7 @@ export const usePost = (collectionName: Collection, id: string, notificationId: 
 			},
 			{
 				onSuccess: () => {
-					showToast('success', '거래 완료 처리되었습니다.');
+					// showToast('success', '거래 완료 처리되었습니다.');
 				},
 				onError: () => {
 					showToast('error', '거래 완료 처리 중 오류가 발생했습니다.');
