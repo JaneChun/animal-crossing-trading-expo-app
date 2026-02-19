@@ -58,7 +58,7 @@ export const useChatRoom = ({
 
 			markMessagesAsReadByIds({ chatId, userId: userInfo.uid, unreadMessageIds });
 		}
-	}, [chatId, userInfo, realtimeMessages]);
+	}, [chatId, userInfo, realtimeMessages, markAllUnreadAsRead, markMessagesAsReadByIds]);
 
 	// 이전 메시지 로드 핸들러
 	const onLoadMore = useCallback(() => {
