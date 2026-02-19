@@ -53,7 +53,7 @@ export const useRealtimeMessages = (chatId: string, count: number) => {
 		);
 
 		return () => unsubscribe();
-	}, [chatId]);
+	}, [chatId, count]);
 
 	return { messages, isLoading, oldestTimestampRef };
 };
