@@ -3,21 +3,10 @@
  * Firebase 에뮬레이터를 사용하여 실제 신고 시스템 전체 플로우를 검증합니다
  */
 
-// 에뮬레이터 연결 설정
-process.env.FIRESTORE_EMULATOR_HOST = '127.0.0.1:8080';
+import { createTestApp } from '../helpers/emulator';
 
-import { initializeApp } from 'firebase-admin/app';
-import { getFirestore, Timestamp } from 'firebase-admin/firestore';
-
-// 테스트용 Firebase 앱 인스턴스 생성
-const testApp = initializeApp(
-	{
-		projectId: 'animal-crossing-trade-expo-app',
-	},
-	'reports-integration-test',
-);
-
-const db = getFirestore(testApp);
+// 테스트용 Firebase 앱 인스턴스 생성 - 공통 헬퍼 활용
+const { db, Timestamp } = createTestApp('reports-integration-test');
 
 // common.ts Mock - reports.ts가 테스트용 DB를 사용하도록 함
 jest.mock('../../src/utils/common', () => ({
@@ -211,10 +200,11 @@ describe('사용자 신고 처리 통합 테스트', () => {
 
 				const suspendDuration = suspendUntil.toMillis() - now.toMillis();
 				const sevenDaysInMillis = 7 * 24 * 60 * 60 * 1000;
+				const oneDayInMillis = 24 * 60 * 60 * 1000;
 
-				// 7일 정지인지 확인 (±1분 오차 허용)
-				expect(suspendDuration).toBeGreaterThan(sevenDaysInMillis - 60000);
-				expect(suspendDuration).toBeLessThan(sevenDaysInMillis + 60000);
+				// 7일 정지인지 확인 (setHours(0,0,0,0)으로 자정 기준 설정되므로 최대 24시간 차이 가능)
+				expect(suspendDuration).toBeGreaterThan(sevenDaysInMillis - oneDayInMillis);
+				expect(suspendDuration).toBeLessThanOrEqual(sevenDaysInMillis);
 
 				expect(userData?.report.recent30Days).toBe(3);
 				expect(userData?.report.needsAdminReview).toBeUndefined();
@@ -331,10 +321,11 @@ describe('사용자 신고 처리 통합 테스트', () => {
 
 				const suspendDuration = suspendUntil.toMillis() - now.toMillis();
 				const thirtyDaysInMillis = 30 * 24 * 60 * 60 * 1000;
+				const oneDayInMillis = 24 * 60 * 60 * 1000;
 
-				// 30일 정지인지 확인 (±1분 오차 허용)
-				expect(suspendDuration).toBeGreaterThan(thirtyDaysInMillis - 60000);
-				expect(suspendDuration).toBeLessThan(thirtyDaysInMillis + 60000);
+				// 30일 정지인지 확인 (setHours(0,0,0,0)으로 자정 기준 설정되므로 최대 24시간 차이 가능)
+				expect(suspendDuration).toBeGreaterThan(thirtyDaysInMillis - oneDayInMillis);
+				expect(suspendDuration).toBeLessThanOrEqual(thirtyDaysInMillis);
 
 				// 관리자 검토 플래그 확인
 				expect(userData?.report.needsAdminReview).toBe(true);
@@ -399,9 +390,11 @@ describe('사용자 신고 처리 통합 테스트', () => {
 				const suspendUntil = userData?.report.suspendUntil;
 				const suspendDuration = suspendUntil.toMillis() - now.toMillis();
 				const thirtyDaysInMillis = 30 * 24 * 60 * 60 * 1000;
+				const oneDayInMillis = 24 * 60 * 60 * 1000;
 
-				expect(suspendDuration).toBeGreaterThan(thirtyDaysInMillis - 60000);
-				expect(suspendDuration).toBeLessThan(thirtyDaysInMillis + 60000);
+				// 30일 정지인지 확인 (setHours(0,0,0,0)으로 자정 기준 설정되므로 최대 24시간 차이 가능)
+				expect(suspendDuration).toBeGreaterThan(thirtyDaysInMillis - oneDayInMillis);
+				expect(suspendDuration).toBeLessThanOrEqual(thirtyDaysInMillis);
 
 				// 관리자 검토 플래그도 설정되어야 함
 				expect(userData?.report.needsAdminReview).toBe(true);

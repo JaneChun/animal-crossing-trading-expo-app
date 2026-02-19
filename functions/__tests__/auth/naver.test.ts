@@ -3,28 +3,13 @@
  * 네이버 OAuth 로그인 처리 함수를 테스트합니다
  */
 
-// axios Mock 설정 - 실제 네이버 API 호출 대신 가짜 응답 반환
-jest.mock('axios', () => ({
-	get: jest.fn(),
-	post: jest.fn(),
-	put: jest.fn(),
-	delete: jest.fn(),
-}));
+import { createMockAxios, createMockHttpsError } from '../helpers';
 
-// Firebase Functions Mock 설정 - HttpsError 생성을 위한 Mock
-const MockHttpsError = jest
-	.fn()
-	.mockImplementation((code, message, details) => {
-		// 실제 Error 객체를 기반으로 Https에러를 시뮬레이션
-		const error = new Error(message);
-		error.name = 'HttpsError';
-		(error as any).code = code;
-		(error as any).details = details;
-		// instanceof 검사를 위해 constructor 설정
-		Object.setPrototypeOf(error, MockHttpsError.prototype);
-		return error;
-	});
+// axios Mock 설정 - 공통 헬퍼 활용
+jest.mock('axios', () => createMockAxios());
 
+// Firebase Functions Mock 설정 - 공통 헬퍼 활용
+const MockHttpsError = createMockHttpsError();
 jest.mock('firebase-functions', () => ({
 	https: {
 		HttpsError: MockHttpsError,
@@ -39,14 +24,6 @@ import { handleNaverLogin } from '../../src/auth/naver';
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('Naver 로그인 처리 테스트', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-
-		// console.warn, console.error 무시
-		jest.spyOn(console, 'warn').mockImplementation(() => {});
-		jest.spyOn(console, 'error').mockImplementation(() => {});
-	});
-
 	describe('handleNaverLogin 함수', () => {
 		describe('성공 케이스', () => {
 			it('유효한 액세스 토큰으로 사용자 정보를 성공적으로 조회해야 한다', async () => {

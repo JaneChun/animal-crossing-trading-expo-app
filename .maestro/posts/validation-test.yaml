@@ -18,6 +18,8 @@ appId: com.janechun.animalcrossingtradingapp
 - tapOn:
     label: '제목, 본문 미입력 시 유효성 검사'
     text: '등록'
+- waitForAnimationToEnd:
+    label: '유효성 검사 후 스크롤 애니메이션 대기'
 - assertVisible:
     label: '제목 에러 메시지 확인'
     text: '제목을 입력해주세요.'
@@ -26,6 +28,11 @@ appId: com.janechun.animalcrossingtradingapp
     text: '본문을 입력해주세요.'
 
 # 테스트 2: 내용만 입력
+- scrollUntilVisible:
+    label: '본문 입력 필드가 보일 때까지 스크롤'
+    element:
+      id: 'bodyInput'
+    direction: DOWN
 - tapOn:
     label: '본문 입력 필드 클릭'
     id: 'bodyInput'
@@ -39,10 +46,17 @@ appId: com.janechun.animalcrossingtradingapp
 - tapOn:
     label: '등록 버튼 클릭'
     text: '등록'
+- waitForAnimationToEnd:
+    label: '유효성 검사 후 스크롤 애니메이션 대기'
 - assertVisible:
     label: '제목 에러 메시지 확인'
     text: '제목을 입력해주세요.'
 
+- scrollUntilVisible:
+    label: '본문 필드가 보일 때까지 스크롤'
+    element:
+      id: 'bodyInput'
+    direction: DOWN
 - tapOn:
     label: '본문 필드 다시 클릭'
     id: 'bodyInput'
@@ -50,6 +64,11 @@ appId: com.janechun.animalcrossingtradingapp
     label: '본문 내용 삭제'
 
 # 테스트 3: 제목만 입력
+- scrollUntilVisible:
+    label: '제목 입력 필드가 보일 때까지 스크롤'
+    element:
+      id: 'titleInput'
+    direction: UP
 - tapOn:
     label: '제목 입력 필드 클릭'
     id: 'titleInput'
@@ -63,10 +82,17 @@ appId: com.janechun.animalcrossingtradingapp
 - tapOn:
     label: '등록 버튼 클릭'
     text: '등록'
+- waitForAnimationToEnd:
+    label: '유효성 검사 후 스크롤 애니메이션 대기'
 - assertVisible:
     label: '본문 에러 메시지 확인'
     text: '본문을 입력해주세요.'
 
+- scrollUntilVisible:
+    label: '제목 필드가 보일 때까지 스크롤'
+    element:
+      id: 'titleInput'
+    direction: UP
 - tapOn:
     label: '제목 필드 다시 클릭'
     id: 'titleInput'

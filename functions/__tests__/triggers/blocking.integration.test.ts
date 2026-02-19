@@ -4,21 +4,10 @@
  * Firebase 에뮬레이터를 사용하여 실제 차단 시스템 전체 플로우를 검증합니다
  */
 
-// 에뮬레이터 연결 설정
-process.env.FIRESTORE_EMULATOR_HOST = '127.0.0.1:8080';
+import { createTestApp } from '../helpers/emulator';
 
-import { initializeApp } from 'firebase-admin/app';
-import { getFirestore, Timestamp } from 'firebase-admin/firestore';
-
-// 테스트용 Firebase 앱 인스턴스 생성
-const testApp = initializeApp(
-	{
-		projectId: 'animal-crossing-trade-expo-app',
-	},
-	'blocking-integration-test',
-);
-
-const db = getFirestore(testApp);
+// 테스트용 Firebase 앱 인스턴스 생성 - 공통 헬퍼 활용
+const { db, Timestamp } = createTestApp('blocking-integration-test');
 
 // common.ts Mock - blocking.ts가 테스트용 DB를 사용하도록 함
 jest.mock('../../src/utils/common', () => ({

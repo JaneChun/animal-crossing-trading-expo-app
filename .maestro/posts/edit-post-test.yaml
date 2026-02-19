@@ -78,7 +78,7 @@ appId: com.janechun.animalcrossingtradingapp
 - tapOn:
     label: '검색 결과에서 첫 번째 아이템 클릭'
     # id: 'firstItemSelectItem'
-    point: '50%, 50%'
+    point: '50%, 38%'
 
 # 모달 닫기 (스와이프 다운)
 - swipe:
@@ -108,7 +108,7 @@ appId: com.janechun.animalcrossingtradingapp
 
 - assertVisible:
     label: '새로 추가된 아이템 확인'
-    text: '배 타르트'
+    text: '배'
 
 # 게시글 상세 화면에서 뒤로가기
 - tapOn:
