@@ -12,9 +12,7 @@ const ImageMessageUnit = ({ message }: { message: IMessage }) => {
 	const [isViewerVisible, setIsViewerVisible] = useState(false);
 
 	const formattedDate = (
-		message.createdAt instanceof Date
-			? message.createdAt
-			: new Date(message.createdAt)
+		message.createdAt instanceof Date ? message.createdAt : new Date(message.createdAt)
 	).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
 
 	const isMine = message.user._id === userInfo?.uid;
@@ -22,10 +20,7 @@ const ImageMessageUnit = ({ message }: { message: IMessage }) => {
 	return (
 		<>
 			<View
-				style={[
-					styles.messageContainer,
-					{ alignSelf: isMine ? 'flex-end' : 'flex-start' },
-				]}
+				style={[styles.messageContainer, { alignSelf: isMine ? 'flex-end' : 'flex-start' }]}
 			>
 				{isMine && (
 					<View style={styles.infoContainer}>
@@ -37,22 +32,21 @@ const ImageMessageUnit = ({ message }: { message: IMessage }) => {
 				<Pressable
 					onPress={() => setIsViewerVisible(true)}
 					style={isMine ? styles.sentMargin : styles.receivedMargin}
-					testID='chatImageBubble'
+					testID="chatImageBubble"
 				>
-					<ImageWithFallback
-						uri={message.image}
-						style={styles.image}
-					/>
+					<ImageWithFallback uri={message.image} style={styles.image} />
 				</Pressable>
 
 				{!isMine && <Text style={styles.infoText}>{formattedDate}</Text>}
 			</View>
 
-			<ImageViewerModal
-				visible={isViewerVisible}
-				images={message.image ? [message.image] : []}
-				onRequestClose={() => setIsViewerVisible(false)}
-			/>
+			{isViewerVisible && (
+				<ImageViewerModal
+					visible={isViewerVisible}
+					images={message.image ? [message.image] : []}
+					onRequestClose={() => setIsViewerVisible(false)}
+				/>
+			)}
 		</>
 	);
 };
@@ -68,7 +62,7 @@ const styles = StyleSheet.create({
 	},
 	image: {
 		width: 200,
-		aspectRatio: 4/3,
+		aspectRatio: 4 / 3,
 		borderRadius: 16,
 	},
 	sentMargin: {

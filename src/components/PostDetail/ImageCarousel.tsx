@@ -53,12 +53,14 @@ const ImageCarousel = ({ images, containerStyle }: ImageCarouselProps) => {
 					animatedTension={10}
 				/>
 
-				<ImageViewerModal
-					visible={isViewerOpen}
-					images={images}
-					initialIndex={activeIndex}
-					onRequestClose={() => setIsViewerOpen(false)}
-				/>
+				{isViewerOpen && (
+					<ImageViewerModal
+						visible={isViewerOpen}
+						images={images}
+						initialIndex={activeIndex}
+						onRequestClose={() => setIsViewerOpen(false)}
+					/>
+				)}
 			</View>
 		</View>
 	);

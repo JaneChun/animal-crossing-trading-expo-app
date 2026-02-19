@@ -1,5 +1,5 @@
 import { ImageViewerModalProps } from '@/types/components';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Gallery, { RenderItemInfo } from 'react-native-awesome-gallery';
@@ -16,43 +16,29 @@ const ImageViewerModal = ({
 }: ImageViewerModalProps) => {
 	const insets = useSafeAreaInsets();
 	const [currentIndex, setCurrentIndex] = useState(initialIndex);
-	const isMountedRef = useRef(true);
 
-	useEffect(() => {
-		isMountedRef.current = true;
-		
-		return () => {
-			isMountedRef.current = false; // 언마운트 시: false로 설정
-		};
+	const renderItem = useCallback(({ item, setImageDimensions }: RenderItemInfo<string>) => {
+		Image.getSize(
+			item,
+			(width, height) => {
+				setImageDimensions({ width, height });
+			},
+			() => {
+				setImageDimensions({ width: FALLBACK_WIDTH, height: FALLBACK_HEIGHT });
+			},
+		);
+
+		return (
+			<Image
+				source={{ uri: item }}
+				style={StyleSheet.absoluteFillObject}
+				resizeMode="contain"
+			/>
+		);
 	}, []);
 
-	useEffect(() => {
-		setCurrentIndex(initialIndex);
-	}, [initialIndex]);
-
-	const renderItem = useCallback(
-		({ item, setImageDimensions }: RenderItemInfo<string>) => {
-			Image.getSize(
-				item,
-				(width, height) => {
-					if (isMountedRef.current) {
-						setImageDimensions({ width, height });
-					}
-				},
-				() => {
-					if (isMountedRef.current) {
-						setImageDimensions({ width: FALLBACK_WIDTH, height: FALLBACK_HEIGHT });
-					}
-				},
-			);
-
-			return <Image source={{ uri: item }} style={StyleSheet.absoluteFillObject} resizeMode='contain' />;
-		},
-		[],
-	);
-
 	return (
-		<Modal visible={visible} transparent animationType='fade' onRequestClose={onRequestClose}>
+		<Modal visible={visible} transparent animationType="fade" onRequestClose={onRequestClose}>
 			<View style={styles.container}>
 				<Gallery
 					data={images}
@@ -68,7 +54,7 @@ const ImageViewerModal = ({
 					onPress={onRequestClose}
 					hitSlop={8}
 				>
-					<Ionicons name='close-outline' color='white' size={32} />
+					<Ionicons name="close-outline" color="white" size={32} />
 				</Pressable>
 
 				{images.length > 1 && (
