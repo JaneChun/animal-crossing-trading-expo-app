@@ -8,22 +8,16 @@ import ImageViewerModal from '@/components/ui/ImageViewerModal';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
-import { getPublicUserInfo } from '@/firebase/services/userService';
 import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useCurrentTab } from '@/hooks/shared/useCurrentTab';
 import useLoading from '@/hooks/shared/useLoading';
+import { useCachedPublicUserInfo } from '@/hooks/shared/useCachedPublicUserInfo';
 import { useReportUser } from '@/hooks/shared/useReportUser';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useUserInfo } from '@/stores/auth';
 import { ProfileRouteProp, RootStackNavigation } from '@/types/navigation';
 import { Tab } from '@/types/post';
-import { PublicUserInfo } from '@/types/user';
-import {
-	useFocusEffect,
-	useIsFocused,
-	useNavigation,
-	useRoute,
-} from '@react-navigation/native';
+import { useFocusEffect, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
 import { Image, Keyboard, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -39,17 +33,21 @@ const Profile = () => {
 	const isFocused = useIsFocused();
 	const userInfo = useUserInfo();
 
-	const [profileInfo, setProfileInfo] = useState<PublicUserInfo | null>(null);
 	const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 	const [isViewerOpen, setIsViewerOpen] = useState(false);
 
+	// 다른 유저 프로필 조회 (targetUserId가 있을 때만)
+	const { data: targetUserProfile, isLoading: isLoadingProfile } = useCachedPublicUserInfo(
+		targetUserId,
+		{ enabled: !!targetUserId },
+	);
+
+	// targetUserId가 있으면 targetUserProfile 사용, 없으면 userInfo 사용 (내 프로필)
+	const profileInfo = targetUserId ? targetUserProfile : userInfo;
+
 	// 신고
-	const {
-		isReportModalVisible,
-		openReportModal,
-		closeReportModal,
-		submitReport,
-	} = useReportUser();
+	const { isReportModalVisible, openReportModal, closeReportModal, submitReport } =
+		useReportUser();
 
 	// 차단
 	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({
@@ -59,32 +57,16 @@ const Profile = () => {
 
 	const { isLoading: isUploading, setIsLoading: setIsUploading } = useLoading();
 
-	const isMyProfile: boolean =
-		(userInfo && userInfo.uid === profileInfo?.uid) ?? false;
+	const isMyProfile: boolean = (userInfo && userInfo.uid === profileInfo?.uid) ?? false;
 
 	const emptyProfileImageSource = require('../../assets/images/empty_profile_image.png');
-	const resolvedEmptyProfileImage = Image.resolveAssetSource(
-		emptyProfileImageSource,
-	);
+	const resolvedEmptyProfileImage = Image.resolveAssetSource(emptyProfileImageSource);
 
 	useFocusEffect(
 		useCallback(() => {
 			if (isFocused) setActiveTab(currentTab as Tab);
 		}, [isFocused, setActiveTab, currentTab]),
 	);
-
-	useEffect(() => {
-		const getTargetUserInfo = async () => {
-			if (targetUserId) {
-				const targetUserInfo = await getPublicUserInfo(targetUserId);
-				setProfileInfo(targetUserInfo);
-			} else {
-				setProfileInfo(userInfo);
-			}
-		};
-
-		getTargetUserInfo();
-	}, [targetUserId, userInfo]);
 
 	useEffect(() => {
 		stackNavigation.setOptions({
@@ -125,13 +107,13 @@ const Profile = () => {
 		setIsViewerOpen(true);
 	};
 
-	if (!profileInfo || isUploading) {
+	if (!profileInfo || isUploading || (targetUserId && isLoadingProfile)) {
 		return <LoadingIndicator />;
 	}
 
 	return (
 		<>
-			<Layout title='프로필' headerRightComponent={isMyProfile && SettingIcon}>
+			<Layout title="프로필" headerRightComponent={isMyProfile && SettingIcon}>
 				<FlatList
 					data={[]}
 					renderItem={null}
