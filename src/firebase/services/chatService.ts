@@ -1,12 +1,12 @@
 import { db } from '@/config/firebase';
 import {
 	Chat,
+	ChatWithReceiverInfo,
 	CreateChatRoomParams,
 	LeaveChatRoomParams,
 	MarkMessageAsReadParams,
 	SendChatMessageParams,
 } from '@/types/chat';
-import { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { sanitize } from '@/utilities/sanitize';
 import {
@@ -17,7 +17,6 @@ import {
 	doc,
 	getDoc,
 	getDocs,
-	Query,
 	query,
 	setDoc,
 	Timestamp,
@@ -26,63 +25,52 @@ import {
 	writeBatch,
 } from 'firebase/firestore';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
-import { getPublicUserInfos } from './userService';
+import { QueryClient } from '@tanstack/react-query';
+import { getCachedPublicUserInfos } from './cachedUserService';
 
 export const generateChatId = (user1: string, user2: string): string => {
 	return [user1, user2].sort().join('_');
 };
 
-export const getReceiverId = ({ chatId, userId }: { chatId: string; userId: string }) => {
-	return chatId.split('_').find((id) => id !== userId);
-};
+export const populateReceiverInfo = async ({
+	chats,
+	userId,
+	queryClient,
+}: {
+	chats: Chat[];
+	userId: string;
+	queryClient: QueryClient;
+}): Promise<ChatWithReceiverInfo[]> => {
+	if (chats.length === 0) return [];
 
-export const fetchAndPopulateReceiverInfo = async <T extends Chat, U>(q: Query, userId: string) => {
-	return firestoreRequest('채팅방 조회', async () => {
-		const querySnapshot = await getDocs(q);
+	const uniqueReceiverIds: string[] = chats
+		.map((item) => item.participants.find((uid) => uid !== userId))
+		.filter(Boolean) as string[];
 
-		if (querySnapshot.empty) return { data: [] };
+	const publicUserInfos = await getCachedPublicUserInfos({
+		userIds: uniqueReceiverIds,
+		queryClient,
+	});
 
-		const data: T[] = querySnapshot.docs.map((doc) => {
-			const docData = doc.data();
-			const id = doc.id;
+	return chats.map((item) => {
+		const receiverId = item.participants.find((uid) => uid !== userId) ?? null;
 
-			return {
-				id,
-				...docData,
-			} as unknown as T;
-		});
+		let receiverInfo = getDefaultUserInfo(receiverId!);
 
-		const uniqueReceiverIds: string[] = data
-			.map((item) => item.participants.find((uid) => uid !== userId))
-			.filter(Boolean) as string[];
-
-		const publicUserInfos: Record<string, PublicUserInfo> =
-			await getPublicUserInfos(uniqueReceiverIds);
-
-		const populatedData: U[] = data.map((item) => {
-			const receiverId = item.participants.find((uid) => uid !== userId) ?? null;
-
-			let receiverInfo = getDefaultUserInfo(receiverId!);
-
-			if (receiverId && publicUserInfos[receiverId]) {
-				receiverInfo = publicUserInfos[receiverId];
-			}
-
-			return {
-				...item,
-				receiverInfo: {
-					uid: receiverId,
-					displayName: receiverInfo.displayName,
-					islandName: receiverInfo.islandName,
-					photoURL: receiverInfo.photoURL,
-				},
-			} as U;
-		});
+		if (receiverId && publicUserInfos[receiverId]) {
+			receiverInfo = publicUserInfos[receiverId];
+		}
 
 		return {
-			data: populatedData,
+			...item,
+			receiverInfo: {
+				uid: receiverId,
+				displayName: receiverInfo.displayName,
+				islandName: receiverInfo.islandName,
+				photoURL: receiverInfo.photoURL,
+			},
 		};
-	});
+	}) as ChatWithReceiverInfo[];
 };
 
 export const createChatRoom = async ({
@@ -193,18 +181,25 @@ export const leaveChatRoom = async ({ chatId, userId }: LeaveChatRoomParams): Pr
 	});
 };
 
-export const markMessagesAsRead = async ({
+// 초기 진입 시: getDocs로 전체 안읽은 메시지 읽음 처리
+export const markAllUnreadMessagesAsRead = async ({
 	chatId,
 	userId,
-}: MarkMessageAsReadParams): Promise<void> => {
-	return firestoreRequest('메세지 읽음 처리', async () => {
+}: {
+	chatId: string;
+	userId: string;
+}): Promise<void> => {
+	return firestoreRequest('전체 안읽은 메세지 읽음 처리', async () => {
 		const messagesRef = collection(db, `Chats/${chatId}/Messages`);
-
-		// 0. 안 읽은 메시지만 가져오기
 		const q = query(messagesRef, where('isReadBy', 'not-in', [userId]));
 		const querySnapshot = await getDocs(q);
 
-		if (querySnapshot.empty) return;
+		// 안읽은 메시지가 없으면 unreadCount만 초기화 (count drift 방지)
+		const chatRef = doc(db, `Chats/${chatId}`);
+		if (querySnapshot.empty) {
+			await updateDoc(chatRef, { [`unreadCount.${getSafeUid(userId)}`]: 0 });
+			return;
+		}
 
 		const batch = writeBatch(db);
 
@@ -212,11 +207,37 @@ export const markMessagesAsRead = async ({
 		querySnapshot.docs.forEach((messageDoc) => {
 			const messageRef = doc(db, `Chats/${chatId}/Messages/${messageDoc.id}`);
 			batch.update(messageRef, {
-				isReadBy: arrayUnion(userId), // 내가 읽었다고 추가
+				isReadBy: arrayUnion(userId),
 			});
 		});
 
 		// 2. 채팅방 정보도 업데이트 (내 unreadCount 초기화)
+		batch.update(chatRef, {
+			[`unreadCount.${getSafeUid(userId)}`]: 0,
+		});
+
+		await batch.commit();
+	});
+};
+
+// 이후 새 메시지: getDocs 없이 ID 기반 읽음 처리
+export const markMessagesAsReadByIds = async ({
+	chatId,
+	userId,
+	unreadMessageIds,
+}: MarkMessageAsReadParams): Promise<void> => {
+	return firestoreRequest('메세지 읽음 처리', async () => {
+		if (unreadMessageIds.length === 0) return;
+
+		const batch = writeBatch(db);
+
+		unreadMessageIds.forEach((messageId) => {
+			const messageRef = doc(db, `Chats/${chatId}/Messages/${messageId}`);
+			batch.update(messageRef, {
+				isReadBy: arrayUnion(userId),
+			});
+		});
+
 		const chatRef = doc(db, `Chats/${chatId}`);
 		batch.update(chatRef, {
 			[`unreadCount.${getSafeUid(userId)}`]: 0,

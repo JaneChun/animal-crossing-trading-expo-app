@@ -43,18 +43,6 @@ const linking: LinkingOptions<RootStackParamList> = {
 	},
 };
 
-export default function App() {
-	useAuthInitializer();
-	usePushNotificationInitializer();
-	useNotificationSubscriptionInitializer();
-	useChatSubscriptionInitializer();
-	useBlockSubscriptionInitializer();
-	useOnboardingInitializer();
-	useSuspensionGuard();
-
-	// 이전 화면 이름을 저장하는 ref (for Analytics)
-	const prevRouteNameRef = useRef<string | undefined>();
-
 	const queryClient = new QueryClient({
 		defaultOptions: {
 			queries: { staleTime: 1000 * 60 * 5, gcTime: 1000 * 60 * 10, retry: 1 },
@@ -64,41 +52,63 @@ export default function App() {
 		},
 	});
 
+export default function App() {
+	useAuthInitializer();
+	usePushNotificationInitializer();
+	useBlockSubscriptionInitializer();
+	useOnboardingInitializer();
+	useSuspensionGuard();
+
 	useOnlineManager();
 	useAppState();
 
 	return (
 		// <StrictMode>
 		<QueryClientProvider client={queryClient}>
-			<ErrorBoundary>
-				<ActionSheetProvider>
-					<GestureHandlerRootView style={styles.flex}>
-						<SafeAreaProvider>
-							<NavigationContainer
-								ref={navigationRef}
-								linking={linking}
-								onReady={() => {
-									prevRouteNameRef.current = navigationRef.getCurrentRoute()?.name;
-								}}
-								onStateChange={() => {
-									const currentRouteName = navigationRef.getCurrentRoute()?.name;
-									if (prevRouteNameRef.current !== currentRouteName && currentRouteName) {
-										logScreenView(currentRouteName).catch(() => {}); // Analytics 실패 무시
-									}
-									prevRouteNameRef.current = currentRouteName;
-								}}
-							>
-								<SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
-									<RootStackNavigator />
-								</SafeAreaView>
-								<Toast config={toastConfig} />
-							</NavigationContainer>
-						</SafeAreaProvider>
-					</GestureHandlerRootView>
-				</ActionSheetProvider>
-			</ErrorBoundary>
+			<AppContent />
 		</QueryClientProvider>
 		// </StrictMode>
+	);
+}
+
+function AppContent() {
+	useNotificationSubscriptionInitializer();
+	useChatSubscriptionInitializer();
+	
+	// 이전 화면 이름을 저장하는 ref (for Analytics)
+	const prevRouteNameRef = useRef<string | undefined>();
+
+	return (
+		<ErrorBoundary>
+			<ActionSheetProvider>
+				<GestureHandlerRootView style={styles.flex}>
+					<SafeAreaProvider>
+						<NavigationContainer
+							ref={navigationRef}
+							linking={linking}
+							onReady={() => {
+								prevRouteNameRef.current = navigationRef.getCurrentRoute()?.name;
+							}}
+							onStateChange={() => {
+								const currentRouteName = navigationRef.getCurrentRoute()?.name;
+								if (
+									prevRouteNameRef.current !== currentRouteName &&
+									currentRouteName
+								) {
+									logScreenView(currentRouteName).catch(() => {}); // Analytics 실패 무시
+								}
+								prevRouteNameRef.current = currentRouteName;
+							}}
+						>
+							<SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
+								<RootStackNavigator />
+							</SafeAreaView>
+							<Toast config={toastConfig} />
+						</NavigationContainer>
+					</SafeAreaProvider>
+				</GestureHandlerRootView>
+			</ActionSheetProvider>
+		</ErrorBoundary>
 	);
 }
 

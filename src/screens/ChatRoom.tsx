@@ -63,6 +63,9 @@ const ChatRoom = () => {
 		messages,
 		sendMessage,
 		leaveChatRoom,
+		canLoadMore,
+		isLoadingMore,
+		onLoadMore,
 	} = useChatRoom({
 		chatId,
 		localMessages,
@@ -99,12 +102,14 @@ const ChatRoom = () => {
 	const keyboardHeight = useKeyboardHeight();
 	const giftedChatRef = useRef<any>(null);
 
-	// 새 메세지 올 때 아래로 스크롤
+	// 새 메시지가 도착했을 때만 맨 아래로 스크롤 (과거 메시지 로드 시에는 스크롤 위치 유지)
+	// messages는 desc 순서(최신이 [0])이므로, 최신 메시지 ID가 바뀔 때만 실행
+	const latestMessageId = messages[0]?._id;
 	useEffect(() => {
 		if (giftedChatRef.current) {
 			giftedChatRef.current.scrollToOffset?.({ offset: 0, animated: true });
 		}
-	}, [messages]);
+	}, [latestMessageId]);
 
 	const handleSend = async (chatInput: string, image?: ImagePickerAsset) => {
 		if (!userInfo?.uid || !receiverInfo?.uid || isBlockedByMe || amIBlockedBy) return;
@@ -159,7 +164,7 @@ const ChatRoom = () => {
 
 	const handleImageSendConfirm = async () => {
 		if (!confirmImage) return;
-		
+
 		await handleSend('', confirmImage);
 		setConfirmImage(null);
 	};
@@ -224,6 +229,11 @@ const ChatRoom = () => {
 									paddingTop: keyboardHeight, // 키보드 올라왔을 때 키보드 높이만큼 잘리는 컨텐츠 방지
 								}}
 								bottomOffset={-insets.bottom} // 키보드 올라왔을 때 아래로 insets.bottom만큼 이동
+								infiniteScroll
+								loadEarlier={canLoadMore}
+								onLoadEarlier={onLoadMore}
+								isLoadingEarlier={isLoadingMore}
+								renderLoadEarlier={() => null}
 								renderMessage={renderMessage}
 								renderDay={renderDay}
 								renderComposer={() =>

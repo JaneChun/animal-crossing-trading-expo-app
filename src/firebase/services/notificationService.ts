@@ -1,71 +1,47 @@
 import { db } from '@/config/firebase';
-import { Collection, Post } from '@/types/post';
-import { PublicUserInfo } from '@/types/user';
+import { Notification, PopulatedNotification } from '@/types/notification';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
-import { doc, getDocs, Query, writeBatch } from 'firebase/firestore';
+import { doc, writeBatch } from 'firebase/firestore';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
-import {
-	deleteDocFromFirestore,
-	updateDocToFirestore,
-} from '@/firebase/core/firestoreService';
+import { deleteDocFromFirestore, updateDocToFirestore } from '@/firebase/core/firestoreService';
 import { getPosts } from './postService';
-import { getPublicUserInfos } from './userService';
+import { getCachedPublicUserInfos } from './cachedUserService';
+import { QueryClient } from '@tanstack/react-query';
 
-export const fetchAndPopulateSenderInfo = async <
-	T extends { postId: string; senderId: string },
-	U extends T & {
-		postInfo: Post<Collection>;
-		senderInfo: PublicUserInfo;
-	},
->(
-	q: Query,
-): Promise<{ data: U[] }> => {
-	return firestoreRequest('알림 조회', async () => {
-		const querySnapshot = await getDocs(q);
+export const populateSenderInfo = async ({
+	notifications,
+	queryClient,
+}: {
+	notifications: Notification[];
+	queryClient: QueryClient;
+}): Promise<PopulatedNotification[]> => {
+	if (notifications.length === 0) return [];
 
-		if (querySnapshot.empty) return { data: [] };
+	const postIds = [...new Set(notifications.map((i) => i.postId))];
+	const senderIds = [...new Set(notifications.map((i) => i.senderId))];
 
-		const data: T[] = querySnapshot.docs.map((doc) => {
-			const docData = doc.data();
-			const id = doc.id;
+	// 게시글 정보, 유저 정보 불러와서 매칭
+	const [postDetails, publicUserInfos] = await Promise.all([
+		getPosts(postIds),
+		getCachedPublicUserInfos({ userIds: senderIds, queryClient }),
+	]);
 
-			return {
-				id,
-				...docData,
-			} as unknown as T;
-		});
+	const populatedData = notifications.map((item) => {
+		const postInfo = postDetails[item.postId] ?? undefined;
+		const senderInfo = publicUserInfos[item.senderId] ?? getDefaultUserInfo(item.senderId);
 
-		const postIds = [...new Set(data.map((i) => i.postId))];
-		const senderIds = [...new Set(data.map((i) => i.senderId))];
-
-		// 게시글 정보, 유저 정보 불러와서 매칭
-		const [postDetails, publicUserInfos] = await Promise.all([
-			getPosts(postIds),
-			getPublicUserInfos(senderIds),
-		]);
-
-		const populatedData = data.map((item) => {
-			const postInfo = postDetails[item.postId] ?? undefined;
-			const senderInfo =
-				publicUserInfos[item.senderId] ?? getDefaultUserInfo(item.senderId);
-
-			return {
-				...item,
-				postInfo,
-				senderInfo,
-			};
-		});
-
-		// 삭제된 게시글은 필터링
 		return {
-			data: populatedData.filter((n) => n.postInfo !== undefined) as U[],
+			...item,
+			postInfo,
+			senderInfo,
 		};
 	});
+
+	// 삭제된 게시글은 필터링
+	return populatedData.filter((n) => n.postInfo !== undefined);
 };
 
-export const markNotificationAsRead = async (
-	notificationId: string,
-): Promise<void> => {
+export const markNotificationAsRead = async (notificationId: string): Promise<void> => {
 	return firestoreRequest('알림 읽음 처리', async () => {
 		await updateDocToFirestore({
 			id: notificationId,
@@ -77,10 +53,8 @@ export const markNotificationAsRead = async (
 	});
 };
 
-export const markAllNotificationAsRead = async (
-	notificationIds: string[],
-): Promise<void> => {
-	return firestoreRequest('알림 읽음 처리', async () => {
+export const markAllNotificationAsRead = async (notificationIds: string[]): Promise<void> => {
+	return firestoreRequest('전체 알림 읽음 처리', async () => {
 		const batch = writeBatch(db);
 
 		notificationIds.forEach((notificationId) => {
@@ -93,10 +67,8 @@ export const markAllNotificationAsRead = async (
 	});
 };
 
-export const deleteNotification = async (
-	notificationId: string,
-): Promise<void> => {
-	return firestoreRequest('알림 읽음 처리', async () => {
+export const deleteNotification = async (notificationId: string): Promise<void> => {
+	return firestoreRequest('알림 삭제 처리', async () => {
 		await deleteDocFromFirestore({
 			id: notificationId,
 			collection: 'Notifications',

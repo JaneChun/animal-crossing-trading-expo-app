@@ -45,17 +45,31 @@ export const usePost = (collectionName: Collection, id: string, notificationId: 
 	const closePost = async () => {
 		if (!post || !collectionName || !isBoardPost(post, collectionName)) return;
 
-		if (!post.reviewPromptSent) {
-			await sendReviewSystemMessage({
-				postId: post.id,
-				chatRoomIds: post.chatRoomIds,
-			});
+		try {
+			if (!post.reviewPromptSent) {
+				await sendReviewSystemMessage({
+					postId: post.id,
+					chatRoomIds: post.chatRoomIds,
+				});
+			}
+		} catch (error) {
+			console.log('리뷰 시스템 메시지 전송 실패', error);
 		}
 
-		updatePost({
-			type: 'done',
-			reviewPromptSent: true,
-		});
+		updatePost(
+			{
+				type: 'done',
+				reviewPromptSent: true,
+			},
+			{
+				onSuccess: () => {
+					showToast('success', '거래 완료 처리되었습니다.');
+				},
+				onError: () => {
+					showToast('error', '거래 완료 처리 중 오류가 발생했습니다.');
+				},
+			},
+		);
 	};
 
 	return {
