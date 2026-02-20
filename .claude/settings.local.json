@@ -4,7 +4,8 @@
       "Bash(npm test:*)",
       "Bash(git log:*)",
       "Bash(mv:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "WebSearch"
     ],
     "deny": []
   },

@@ -2,6 +2,53 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Project Context
+
+### 프로젝트 소개
+- **앱 이름**: 모동숲 마켓 (Animal Crossing Trading Market)
+- **상태**: iOS App Store 출시 중 (v1.5.0) | Android 출시 예정
+- **개발자**: 프론트엔드 개발자 1인 개발 (1-2년 개발)
+- **사용자**: 한국 모여봐요 동물의 숲 플레이어 50-500명
+
+### 왜 만들었나
+한국 동물의 숲 커뮤니티에 전용 거래 플랫폼이 없었음. 기존에는 네이버 카페를 사용했으나, 전용 앱 + 내장 아이템 DB + 실시간 채팅이 차별점.
+
+### 디자인 철학
+- **UX/UI**: 당근마켓 스타일 (깔끔, 미니멀, 기능적)
+- **비주얼 테마**: 동물의 숲 게임 감성 (귀여운, 따뜻한 디자인)
+
+### 현재 목표 (우선순위)
+1. 사용자 확대
+2. 코드 품질 개선 (리팩토링, 테스트)
+3. 신규 기능 추가
+4. Android 지원
+
+### 계획된 신규 기능
+- Skeleton UI (로딩 상태 개선)
+- 끌어올리기 (당근마켓 스타일 게시글 범프)
+- 읽은 글 표시 (네이버카페/커뮤니티앱 스타일)
+- 텍스트 복사 기능 (채팅/댓글/게시글)
+- 하이퍼링크 표시
+- 아이템 평균 판매가/구매가 표시
+- 나눔 카테고리 추가
+- 마이페이지 개선 (여권 올리기, 주민목록)
+- 아이템/주민 데이터 상세 보기
+- 최근 검색어 저장
+
+### 주요 제약사항
+- **Firebase 비용**: 사용자 증가에 따른 비용 관리 필요
+- **테스트 부재**: 인프라는 준비되어 있으나 테스트 미작성
+- **TypeScript 타입 안정성**: 일부 영역에서 타입 정의 부족
+- **1인 개발**: 제한된 개발 시간
+
+### 수익화
+- 광고 기반 수익화 계획 (아직 미구현)
+
+### 장기 비전
+- 한국 동물의 숲 거래 앱 1위
+
+---
+
 ## Project Overview
 
 This is "모동숲 마켓" (Animal Crossing Trading Market) - a React Native mobile app built with Expo that serves as a trading marketplace for Animal Crossing: New Horizons items for Korean users. The app features real-time chat, social authentication, push notifications, and comprehensive trading functionality.
