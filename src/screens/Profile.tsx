@@ -37,9 +37,8 @@ const Profile = () => {
 	const [isViewerOpen, setIsViewerOpen] = useState(false);
 
 	// 다른 유저 프로필 조회 (targetUserId가 있을 때만)
-	const { data: targetUserProfile, isLoading: isLoadingProfile } = useCachedPublicUserInfo(
-		targetUserId
-	);
+	const { data: targetUserProfile, isLoading: isLoadingProfile } =
+		useCachedPublicUserInfo(targetUserId);
 
 	// targetUserId가 있으면 targetUserProfile 사용, 없으면 userInfo 사용 (내 프로필)
 	const profileInfo = targetUserId ? targetUserProfile : userInfo;
@@ -149,16 +148,18 @@ const Profile = () => {
 				/>
 			)}
 
-			<ImageViewerModal
-				visible={isViewerOpen}
-				images={
-					profileInfo?.photoURL
-						? [profileInfo?.photoURL]
-						: [resolvedEmptyProfileImage.uri]
-				}
-				initialIndex={0}
-				onRequestClose={() => setIsViewerOpen(false)}
-			/>
+			{isViewerOpen && (
+				<ImageViewerModal
+					visible={isViewerOpen}
+					images={
+						profileInfo?.photoURL
+							? [profileInfo?.photoURL]
+							: [resolvedEmptyProfileImage.uri]
+					}
+					initialIndex={0}
+					onRequestClose={() => setIsViewerOpen(false)}
+				/>
+			)}
 		</>
 	);
 };
