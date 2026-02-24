@@ -1,0 +1,1 @@
+export { useAdMobInitializer } from './initializer';
