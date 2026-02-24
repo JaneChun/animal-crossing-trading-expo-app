@@ -83,6 +83,7 @@ export default {
 				},
 			],
 			['expo-apple-authentication'],
+			['expo-tracking-transparency'],
 			[
 				'react-native-google-mobile-ads',
 				{
