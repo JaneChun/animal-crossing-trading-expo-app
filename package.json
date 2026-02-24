@@ -81,6 +81,7 @@
     "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-gifted-chat": "^2.8.1",
+    "react-native-google-mobile-ads": "^14.11.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-keyboard-controller": "^1.17.3",
     "react-native-pager-view": "6.5.1",
