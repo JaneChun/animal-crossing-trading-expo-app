@@ -1,0 +1,73 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+	InterstitialAd,
+	AdEventType,
+} from 'react-native-google-mobile-ads';
+import { AD_UNIT_IDS } from '@/constants/ads';
+
+export const useInterstitialAd = () => {
+	const [isLoaded, setIsLoaded] = useState(false);
+	const adRef = useRef<InterstitialAd | null>(null);
+
+	const loadAd = useCallback(() => {
+		// 전면 광고 요청 생성
+		const ad = InterstitialAd.createForAdRequest(AD_UNIT_IDS.INTERSTITIAL);
+
+		// Admob 서버에서 광고 데이터를 받아오면 LOADED 이벤트 발생
+		const unsubscribeLoaded = ad.addAdEventListener(AdEventType.LOADED, () => {
+			setIsLoaded(true);
+		});
+
+		// 사용자가 광고를 닫았을 때 CLOSED 이벤트 발생
+		const unsubscribeClosed = ad.addAdEventListener(AdEventType.CLOSED, () => {
+			setIsLoaded(false);
+			loadAd(); // 재귀 호출로 다음 광고를 미리 로드 (preloading 패턴)
+		});
+
+		// 네트워크 오류, 광고 재고 없음 등 광고 로드 실패 시 앱이 크래시되지 않도록 조용히 처리
+		const unsubscribeError = ad.addAdEventListener(AdEventType.ERROR, (error) => {
+			if (__DEV__) console.warn('Interstitial ad error:', error);
+			setIsLoaded(false);
+		});
+
+		ad.load();
+		adRef.current = ad;
+
+		// 컴포넌트 언마운트 시 이벤트 리스너 정리
+		return () => {
+			unsubscribeLoaded();
+			unsubscribeClosed();
+			unsubscribeError();
+		};
+	}, []);
+
+	// 컴포넌트가 마운트될 때 광고를 로드하고, 언마운트될 때 이벤트 리스너 정리
+	useEffect(() => {
+		const cleanup = loadAd();
+		return cleanup;
+	}, [loadAd]);
+
+	const showAd = useCallback((): Promise<void> => {
+		return new Promise((resolve) => {
+			// 광고가 준비되지 않았거나 참조가 없는 경우 즉시 resolve
+			if (!adRef.current || !isLoaded) {
+				resolve();
+				return;
+			}
+
+			// 사용자가 광고를 닫았을 때 CLOSED 이벤트 발생
+			const unsubscribeClosed = adRef.current.addAdEventListener(
+				AdEventType.CLOSED,
+				() => {
+					unsubscribeClosed(); // 리스너 정리
+					resolve(); // resolve 호출
+				},
+			);
+
+			// 전면 광고 표시
+			adRef.current.show();
+		});
+	}, [isLoaded]);
+
+	return { isLoaded, showAd };
+};
