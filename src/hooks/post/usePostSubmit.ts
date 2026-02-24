@@ -88,8 +88,8 @@ export const usePostSubmit = <C extends Collection>({
 			{ requestData, userId },
 			{
 				onSuccess: async (id: string) => {
-					resetAll();
 					await showAdIfReady();
+					resetAll();
 					popToPostDetail({ postId: id, collectionName });
 					showToast('success', '게시글이 작성되었습니다.');
 				},
@@ -108,8 +108,8 @@ export const usePostSubmit = <C extends Collection>({
 		});
 		updatePost(data, {
 			onSuccess: async () => {
-				resetAll();
 				await showAdIfReady();
+				resetAll();
 				goBack();
 				showToast('success', '게시글이 수정되었습니다.');
 			},
