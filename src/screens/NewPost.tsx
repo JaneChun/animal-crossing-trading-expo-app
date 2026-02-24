@@ -26,6 +26,7 @@ import { useUserInfo } from '@/stores/auth';
 import { ImageType } from '@/types/image';
 import { RootStackNavigation, type NewPostRouteProp } from '@/types/navigation';
 import { CommunityType, MarketType } from '@/types/post';
+import { showToast } from '@/components/ui/Toast';
 import { handleImageUpload } from '@/utilities/handleImageUpload';
 import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
 
@@ -179,6 +180,10 @@ const NewPost = () => {
 					userId: userInfo!.uid,
 				});
 			}
+		} catch (error) {
+			// 게시글 작성/수정 에러는 createPostFlow, updatePostFlow 내부의 onError 콜백에서 처리됨.
+			// 여기서는 handleImageUpload에서 발생한 이미지 업로드 에러만 catch됨.
+			showToast('error', '이미지 업로드 중 오류가 발생했습니다.');
 		} finally {
 			setIsSubmitting(false);
 		}

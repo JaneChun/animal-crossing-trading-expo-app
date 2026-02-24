@@ -1,13 +1,13 @@
 import { storage } from '@/config/firebase';
 import { StorageCollection } from '@/types/image';
-import { compressImages } from '@/utilities/compressImage';
+import { compressImage } from '@/utilities/compressImage';
 import * as Crypto from 'expo-crypto';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { deleteObject, getDownloadURL, getMetadata, ref, uploadBytes } from 'firebase/storage';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 
 const UPLOAD_TIMEOUT_MS = 30_000;
-const UPLOAD_CONCURRENT_LIMIT = 2;
+const PIPELINE_CONCURRENT_LIMIT = 3;
 
 // Promise에 시간 제한을 적용하는 wrapper 함수
 const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
@@ -17,7 +17,7 @@ const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
 	});
 };
 
-const uploadSingleImage = async (
+const uploadImage = async (
 	image: ImagePickerAsset,
 	directory: StorageCollection,
 ): Promise<string> => {
@@ -29,10 +29,18 @@ const uploadSingleImage = async (
 
 	// Firebase Storage에 Blob 파일 업로드
 	await uploadBytes(storageRef, blob, {
-		contentType: image.mimeType || 'image/webp',
+		contentType: image.mimeType || 'image/jpeg',
 	});
 
 	return getDownloadURL(storageRef); // 업로드 후 다운로드 URL 반환
+};
+
+const compressAndUpload = async (
+	image: ImagePickerAsset,
+	directory: StorageCollection,
+): Promise<string> => {
+	const compressed = await compressImage(image);
+	return withTimeout(uploadImage(compressed, directory), UPLOAD_TIMEOUT_MS);
 };
 
 export const uploadObjectToStorage = async ({
@@ -42,22 +50,28 @@ export const uploadObjectToStorage = async ({
 	images: ImagePickerAsset[];
 	directory: StorageCollection;
 }): Promise<string[]> => {
-	return firestoreRequest('Storage 이미지 업로드', async () => {
-		const compressedImages = await compressImages(images);
-		const downloadURLs: string[] = [];
+	return firestoreRequest(
+		'Storage 이미지 업로드',
+		async () => {
+			const downloadURLs: string[] = [];
 
-		for (let i = 0; i < compressedImages.length; i += UPLOAD_CONCURRENT_LIMIT) {
-			const batch = compressedImages.slice(i, i + UPLOAD_CONCURRENT_LIMIT);
-			const urls = await Promise.all(
-				batch.map((image) =>
-					withTimeout(uploadSingleImage(image, directory), UPLOAD_TIMEOUT_MS),
-				),
-			);
-			downloadURLs.push(...urls);
-		}
+			try {
+				for (let i = 0; i < images.length; i += PIPELINE_CONCURRENT_LIMIT) {
+					const batch = images.slice(i, i + PIPELINE_CONCURRENT_LIMIT);
+					const urls = await Promise.all(
+						batch.map((image) => compressAndUpload(image, directory)),
+					);
+					downloadURLs.push(...urls);
+				}
 
-		return downloadURLs;
-	});
+				return downloadURLs;
+			} catch (error) {
+				await Promise.all(downloadURLs.map((url) => deleteObjectFromStorage(url)));
+				throw error;
+			}
+		},
+		{ throwOnError: true },
+	);
 };
 
 export const deleteObjectFromStorage = async (imageUrl: string): Promise<void> => {
