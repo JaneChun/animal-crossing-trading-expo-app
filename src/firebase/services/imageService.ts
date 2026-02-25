@@ -48,7 +48,7 @@ const uploadImage = async (
 			const response = await fetch(image.uri);
 			const blob = await response.blob();
 
-			const fileName = `${Date.now()}_${Crypto.randomUUID()}_${image.fileName}`;
+			const fileName = `${Date.now()}_${Crypto.randomUUID()}_${image.fileName ?? 'image.jpeg'}`;
 			const storageRef = ref(storage, `${directory}/${fileName}`);
 
 			await withTimeout(
