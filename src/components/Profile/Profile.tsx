@@ -1,12 +1,12 @@
 import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { ProfileProps } from '@/types/components';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
+import { ProfileProps } from '@/types/components';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import Button from '@/components/ui/Button';
-import Leaf from '@/components/ui/Icons/Leaf';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import Island from '../ui/Icons/Island';
 
 const Profile = ({
 	profileInfo,
@@ -38,7 +38,7 @@ const Profile = ({
 				)}
 			</View>
 			<View style={styles.islandInfoContainer}>
-				<Leaf style={styles.islandIcon} />
+				<Island style={styles.islandIcon} />
 				<Text style={styles.islandText}>
 					{profileInfo?.islandName || '어떤 섬에 사시나요?'}
 				</Text>

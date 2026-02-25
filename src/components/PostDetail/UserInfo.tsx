@@ -4,7 +4,7 @@ import { FontSizes, FontWeights } from '@/constants/Typography';
 import { UserInfoProps } from '@/types/components';
 import { navigateToUserProfile } from '@/utilities/navigationHelpers';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Leaf from '@/components/ui/Icons/Leaf';
+import Island from '../ui/Icons/Island';
 
 const UserInfo = ({
 	userId,
@@ -24,7 +24,7 @@ const UserInfo = ({
 				<Text style={styles.displayName}>{displayName}</Text>
 			</Pressable>
 			<View style={styles.IslandContainer}>
-				<Leaf style={styles.logoImage} />
+				<Island style={styles.logoImage} />
 				<Text style={styles.islandName}>{islandName}</Text>
 			</View>
 		</View>
