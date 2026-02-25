@@ -49,6 +49,7 @@ const ImageInput = ({ images, setImages, containerStyle, labelStyle }: ImageInpu
 
 			<FlatList
 				data={images}
+				keyExtractor={(image) => image.uri}
 				horizontal
 				style={styles.flatListContainer}
 				ListHeaderComponent={
