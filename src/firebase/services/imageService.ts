@@ -86,7 +86,9 @@ export const uploadObjectToStorage = async ({
 
 				return downloadURLs;
 			} catch (error) {
-				await Promise.all(downloadURLs.map((url) => deleteObjectFromStorage(url)));
+				await Promise.allSettled(
+					downloadURLs.map((url) => deleteObjectFromStorage(url)),
+				);
 				throw error;
 			}
 		},
