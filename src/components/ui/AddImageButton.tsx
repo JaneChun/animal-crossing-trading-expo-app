@@ -2,24 +2,32 @@ import { Colors } from '@/constants/Color';
 import { AddImageButtonProps } from '@/types/components';
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const AddImageButton = ({
-	count,
-	totalCount,
-	onPress,
-}: AddImageButtonProps) => {
+const AddImageButton = ({ count, totalCount, onPress, isLoading }: AddImageButtonProps) => {
 	return (
 		<TouchableOpacity
 			style={[styles.addImageButtonContainer, styles.imageContainer]}
 			activeOpacity={0.5}
 			onPress={onPress}
+			disabled={isLoading}
 		>
-			<MaterialIcons name='photo-library' color={Colors.font_gray} size={48} />
-			<View style={styles.textContainer}>
-				<Text style={styles.currentCountText}>{count}</Text>
-				<Text style={styles.totalCountText}> / {totalCount}</Text>
-			</View>
+			{isLoading ? (
+				<>
+					<ActivityIndicator color={Colors.font_gray} size="large" />
+					<View style={styles.textContainer}>
+						<Text style={styles.totalCountText}>업로드중...</Text>
+					</View>
+				</>
+			) : (
+				<>
+					<MaterialIcons name="photo-library" color={Colors.font_gray} size={48} />
+					<View style={styles.textContainer}>
+						<Text style={styles.currentCountText}>{count}</Text>
+						<Text style={styles.totalCountText}> / {totalCount}</Text>
+					</View>
+				</>
+			)}
 		</TouchableOpacity>
 	);
 };

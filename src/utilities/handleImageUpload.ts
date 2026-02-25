@@ -1,12 +1,6 @@
-import {
-	deleteObjectFromStorage,
-	uploadObjectToStorage,
-} from '@/firebase/services/imageService';
-import {
-	FilteredImages,
-	GetFilteredImagesParams,
-	HandleImageUploadParams,
-} from '@/types/image';
+import { showToast } from '@/components/ui/Toast';
+import { deleteObjectFromStorage, uploadObjectToStorage } from '@/firebase/services/imageService';
+import { FilteredImages, GetFilteredImagesParams, HandleImageUploadParams } from '@/types/image';
 
 //  새 이미지 업로드 + 기존 이미지 삭제 작업
 // handleImageUpload는 결과적으로 사용할 이미지 URL 배열을 반환
@@ -24,10 +18,15 @@ export const handleImageUpload = async ({
 
 	// 새로운 이미지 처리: 스토리지에 업로드
 	if (newImages.length) {
-		uploadedImageUrls = await uploadObjectToStorage({
-			directory: collectionName,
-			images: newImages,
-		});
+		try {
+			uploadedImageUrls = await uploadObjectToStorage({
+				directory: collectionName,
+				images: newImages,
+			});
+		} catch (error) {
+			showToast('error', '이미지 업로드 중 오류가 발생했습니다.');
+			throw error;
+		}
 	}
 
 	// 삭제된 이미지 처리: 스토리지에서 삭제
@@ -48,9 +47,7 @@ const getFilteredImages = ({
 	images,
 	originalImageUrls,
 }: GetFilteredImagesParams): FilteredImages => {
-	const newImages = images.filter(
-		({ uri }) => !originalImageUrls.includes(uri),
-	);
+	const newImages = images.filter(({ uri }) => !originalImageUrls.includes(uri));
 
 	const deletedImageUrls: string[] = originalImageUrls.filter(
 		(url) => !images.some(({ uri }) => uri === url),

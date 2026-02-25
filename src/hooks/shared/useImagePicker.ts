@@ -39,6 +39,7 @@ export const useImagePicker = (options: UseImagePickerOptions = { multiple: fals
 			quality: 1,
 			orderedSelection: true,
 			selectionLimit: limit,
+			allowNetworkAccess: true, // iCloud 사진 선택
 		});
 
 		if (result.canceled) return null;

@@ -1,13 +1,14 @@
 import { storage } from '@/config/firebase';
 import { StorageCollection } from '@/types/image';
-import { compressImage } from '@/utilities/compressImage';
 import * as Crypto from 'expo-crypto';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { deleteObject, getDownloadURL, getMetadata, ref, uploadBytes } from 'firebase/storage';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 
 const UPLOAD_TIMEOUT_MS = 30_000;
-const PIPELINE_CONCURRENT_LIMIT = 3;
+const UPLOAD_BATCH_SIZE = 3;
+const MAX_RETRIES = 2;
+const RETRY_BASE_DELAY_MS = 1_000;
 
 // Promise에 시간 제한을 적용하는 wrapper 함수
 const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
@@ -17,30 +18,49 @@ const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
 	});
 };
 
+// 실패한 작업을 지수 백오프(exponential backoff)로 재시도하는 wrapper 함수
+const withRetry = async <T>(
+	fn: () => Promise<T>,
+	maxRetries: number,
+	baseDelayMs: number,
+): Promise<T> => {
+	for (let attempt = 0; attempt <= maxRetries; attempt++) {
+		try {
+			return await fn();
+		} catch (error) {
+			const isLastAttempt = attempt === maxRetries;
+			if (isLastAttempt) throw error;
+
+			const delay = baseDelayMs * 2 ** attempt;
+			await new Promise((resolve) => setTimeout(resolve, delay));
+		}
+	}
+	throw new Error('Unreachable');
+};
+
 const uploadImage = async (
 	image: ImagePickerAsset,
 	directory: StorageCollection,
 ): Promise<string> => {
-	const fileName = `${Date.now()}_${Crypto.randomUUID()}_${image.fileName}`;
-	const storageRef = ref(storage, `${directory}/${fileName}`);
+	// 업로드 실패 시 재시도
+	return withRetry(
+		async () => {
+			const response = await fetch(image.uri);
+			const blob = await response.blob();
 
-	const response = await fetch(image.uri); // 이미지 URL을 fetch하여 Blob 변환
-	const blob = await response.blob(); // Blob(바이너리) 형태로 변환
+			const fileName = `${Date.now()}_${Crypto.randomUUID()}_${image.fileName}`;
+			const storageRef = ref(storage, `${directory}/${fileName}`);
 
-	// Firebase Storage에 Blob 파일 업로드
-	await uploadBytes(storageRef, blob, {
-		contentType: image.mimeType || 'image/jpeg',
-	});
+			await withTimeout(
+				uploadBytes(storageRef, blob, { contentType: image.mimeType || 'image/jpeg' }),
+				UPLOAD_TIMEOUT_MS,
+			);
 
-	return getDownloadURL(storageRef); // 업로드 후 다운로드 URL 반환
-};
-
-const compressAndUpload = async (
-	image: ImagePickerAsset,
-	directory: StorageCollection,
-): Promise<string> => {
-	const compressed = await compressImage(image);
-	return withTimeout(uploadImage(compressed, directory), UPLOAD_TIMEOUT_MS);
+			return getDownloadURL(storageRef);
+		},
+		MAX_RETRIES,
+		RETRY_BASE_DELAY_MS,
+	);
 };
 
 export const uploadObjectToStorage = async ({
@@ -56,10 +76,10 @@ export const uploadObjectToStorage = async ({
 			const downloadURLs: string[] = [];
 
 			try {
-				for (let i = 0; i < images.length; i += PIPELINE_CONCURRENT_LIMIT) {
-					const batch = images.slice(i, i + PIPELINE_CONCURRENT_LIMIT);
+				for (let i = 0; i < images.length; i += UPLOAD_BATCH_SIZE) {
+					const batch = images.slice(i, i + UPLOAD_BATCH_SIZE);
 					const urls = await Promise.all(
-						batch.map((image) => compressAndUpload(image, directory)),
+						batch.map((image) => uploadImage(image, directory)),
 					);
 					downloadURLs.push(...urls);
 				}

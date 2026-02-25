@@ -1,6 +1,7 @@
 import { Colors } from '@/constants/Color';
 import { useImagePicker } from '@/hooks/shared/useImagePicker';
 import { ProfileImageInputProps } from '@/types/components';
+import { compressImage } from '@/utilities/compressImage';
 import { isLocalImage } from '@/utilities/typeGuards/imageGuards';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo } from '@expo/vector-icons';
@@ -31,10 +32,11 @@ const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 	};
 
 	const addImage = async () => {
-		const newImages = await pickImage();
+		const newImages = await pickImage(1);
 
 		if (newImages && isLocalImage(newImages[0])) {
-			setImage(newImages[0]);
+			const compressed = await compressImage(newImages[0]);
+			setImage(compressed);
 		}
 	};
 
@@ -56,7 +58,7 @@ const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 
 			<View style={[styles.image, styles.imageEditIconContainer]}>
 				<View style={styles.imageEditIcon}>
-					<Entypo name='camera' size={16} color={Colors.font_gray} />
+					<Entypo name="camera" size={16} color={Colors.font_gray} />
 				</View>
 			</View>
 		</TouchableOpacity>

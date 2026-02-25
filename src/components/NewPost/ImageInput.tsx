@@ -2,20 +2,17 @@ import { MAX_IMAGES } from '@/constants/post';
 import { useImagePicker } from '@/hooks/shared/useImagePicker';
 import { ImageInputProps } from '@/types/components';
 import { ImagePickerAsset } from 'expo-image-picker';
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import AddImageButton from '@/components/ui/AddImageButton';
 import ImagePreview from '@/components/ui/ImagePreview';
 import { showToast } from '@/components/ui/Toast';
+import { compressImages } from '@/utilities/compressImage';
 
-const ImageInput = ({
-	images,
-	setImages,
-	containerStyle,
-	labelStyle,
-}: ImageInputProps) => {
+const ImageInput = ({ images, setImages, containerStyle, labelStyle }: ImageInputProps) => {
 	const { pickImage } = useImagePicker({ multiple: true });
+	const [isLoading, setIsLoading] = useState(false);
 
 	const addImage = async () => {
 		const remaining = MAX_IMAGES - images.length;
@@ -24,16 +21,25 @@ const ImageInput = ({
 			return;
 		}
 
-		const newImages: ImagePickerAsset[] | null = await pickImage(remaining);
-		if (!newImages || newImages.length === 0) return;
+		setIsLoading(true);
+		const newImages = await pickImage(remaining);
+		if (!newImages || newImages.length === 0) {
+			setIsLoading(false);
+			return;
+		}
+		setIsLoading(false);
 
-		setImages([...images, ...newImages]);
+		try {
+			const compressed = await compressImages(newImages);
+			setImages([...images, ...compressed]);
+		} catch (error) {
+			console.warn('Image compression failed:', error);
+			 setImages([...images, ...newImages]); // 원본이라도 추가
+		}
 	};
 
 	const deleteImage = (uri: string) => {
-		const filtered: ImagePickerAsset[] = images.filter(
-			(image) => image.uri !== uri,
-		);
+		const filtered: ImagePickerAsset[] = images.filter((image) => image.uri !== uri);
 		setImages(filtered);
 	};
 
@@ -50,12 +56,13 @@ const ImageInput = ({
 						count={images.length}
 						totalCount={10}
 						onPress={addImage}
+						isLoading={isLoading}
 					/>
 				}
 				renderItem={({ item: image }) => (
 					<ImagePreview uri={image.uri} onDelete={deleteImage} />
 				)}
-			></FlatList>
+			/>
 		</View>
 	);
 };
