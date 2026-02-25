@@ -2,7 +2,7 @@ import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import { ImagePickerAsset } from 'expo-image-picker';
 
 const MAX_DIMENSION = 1200;
-const COMPRESS_QUALITY = 0.7;
+const COMPRESS_QUALITY = 0.4;
 
 const getJpegFileName = (originalFileName?: string | null): string => {
 	if (!originalFileName) return 'image.jpeg';
