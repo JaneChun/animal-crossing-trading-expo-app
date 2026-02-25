@@ -21,20 +21,20 @@ const ImageInput = ({ images, setImages, containerStyle, labelStyle }: ImageInpu
 			return;
 		}
 
-		setIsLoading(true);
 		const newImages = await pickImage(remaining);
 		if (!newImages || newImages.length === 0) {
-			setIsLoading(false);
 			return;
 		}
-		setIsLoading(false);
-
+		
+		setIsLoading(true);
 		try {
 			const compressed = await compressImages(newImages);
 			setImages([...images, ...compressed]);
 		} catch (error) {
 			console.warn('Image compression failed:', error);
-			 setImages([...images, ...newImages]); // 원본이라도 추가
+			setImages([...images, ...newImages]); // 원본이라도 추가
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
