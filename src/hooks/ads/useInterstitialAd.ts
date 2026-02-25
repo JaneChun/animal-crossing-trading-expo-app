@@ -25,7 +25,7 @@ export const useInterstitialAd = () => {
 			loadAd(); // 재귀 호출로 다음 광고를 미리 로드 (preloading 패턴)
 		});
 
-		// 네트워크 오류, 광고 재고 없음 등 광고 로드 실패 시 앱이 크래시되지 않도록 조용히 처리
+		// 네트워크 오류, 광고 재고 없음 등 광고 로드 실패 시 ERROR 이벤트 발생
 		const unsubscribeError = ad.addAdEventListener(AdEventType.ERROR, (error) => {
 			if (__DEV__) console.warn('Interstitial ad error:', error);
 			setIsLoaded(false);
@@ -57,12 +57,27 @@ export const useInterstitialAd = () => {
 
 			// 사용자가 광고를 닫았을 때 CLOSED 이벤트 발생
 			const unsubscribeClosed = adRef.current.addAdEventListener(AdEventType.CLOSED, () => {
-				unsubscribeClosed(); // 리스너 정리
-				resolve(); // resolve 호출
+				cleanup();
+				resolve();
 			});
 
-			// 전면 광고 표시
-			adRef.current.show();
+			// 광고 표시 중 오류 발생 시 ERROR 이벤트 발생
+			const unsubscribeError = adRef.current.addAdEventListener(AdEventType.ERROR, () => {
+				cleanup();
+				resolve();
+			});
+
+			const cleanup = () => {
+				unsubscribeClosed();
+				unsubscribeError();
+			};
+
+			try {
+				adRef.current.show();
+			} catch {
+				cleanup();
+				resolve();
+			}
 		});
 	}, [isLoaded]);
 
