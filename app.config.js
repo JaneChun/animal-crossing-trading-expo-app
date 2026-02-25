@@ -21,13 +21,14 @@ export default {
 			usesAppleSignIn: true,
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
+				FirebaseAutomaticScreenReportingEnabled: false,
 			},
 			splash: {
 				image: './assets/images/splash_image.jpg',
 				resizeMode: 'contain',
 				backgroundColor: '#ffffff',
 			},
-			"googleServicesFile": process.env.GOOGLE_SERVICE_INFO_PLIST,
+			googleServicesFile: process.env.GOOGLE_SERVICE_INFO_PLIST,
 		},
 		android: {
 			adaptiveIcon: {
@@ -82,6 +83,15 @@ export default {
 				},
 			],
 			['expo-apple-authentication'],
+			['expo-tracking-transparency'],
+			[
+				'react-native-google-mobile-ads',
+				{
+					iosAppId: process.env.EXPO_PUBLIC_ADMOB_IOS_APP_ID,
+					userTrackingUsageDescription:
+						'맞춤형 광고 제공을 위해 기기 식별자에 접근합니다. 설정에서 언제든 변경할 수 있습니다.',
+				},
+			],
 		],
 		experiments: {
 			typedRoutes: true,

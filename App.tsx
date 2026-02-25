@@ -16,6 +16,7 @@ import { useSuspensionGuard } from '@/hooks/shared/useSuspensionGuard';
 import { navigationRef } from '@/navigation/RootNavigation';
 import RootStackNavigator from '@/navigation/RootStackNavigator';
 import ErrorBoundary from '@/screens/ErrorBoundary';
+import { useAdMobInitializer } from '@/stores/ads';
 import { useAuthInitializer } from '@/stores/auth';
 import { useBlockSubscriptionInitializer } from '@/stores/block';
 import { useChatSubscriptionInitializer } from '@/stores/chat';
@@ -43,17 +44,18 @@ const linking: LinkingOptions<RootStackParamList> = {
 	},
 };
 
-	const queryClient = new QueryClient({
-		defaultOptions: {
-			queries: { staleTime: 1000 * 60 * 5, gcTime: 1000 * 60 * 10, retry: 1 },
-			mutations: {
-				retry: 1,
-			},
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: { staleTime: 1000 * 60 * 5, gcTime: 1000 * 60 * 10, retry: 1 },
+		mutations: {
+			retry: 1,
 		},
-	});
+	},
+});
 
 export default function App() {
 	useAuthInitializer();
+	useAdMobInitializer();
 	usePushNotificationInitializer();
 	useBlockSubscriptionInitializer();
 	useOnboardingInitializer();
@@ -74,7 +76,7 @@ export default function App() {
 function AppContent() {
 	useNotificationSubscriptionInitializer();
 	useChatSubscriptionInitializer();
-	
+
 	// 이전 화면 이름을 저장하는 ref (for Analytics)
 	const prevRouteNameRef = useRef<string | undefined>();
 
