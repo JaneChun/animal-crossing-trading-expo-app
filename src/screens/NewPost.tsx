@@ -179,6 +179,9 @@ const NewPost = () => {
 					userId: userInfo!.uid,
 				});
 			}
+		} catch {
+			// 이미지 업로드 에러: handleImageUpload는 순수 async 함수이므로 try-catch로 에러를 잡고, 내부에서 toast 처리 후 rethrow하여 여기로 전파됨.
+			// 게시글 작성/수정 에러: mutate()는 에러를 throw하지 않으므로 이 catch에 도달하지 않음. createPostFlow, updatePostFlow의 onError 콜백에서 처리됨.
 		} finally {
 			setIsSubmitting(false);
 		}

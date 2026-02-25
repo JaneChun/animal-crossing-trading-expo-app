@@ -489,6 +489,7 @@ export type AddImageButtonProps = {
 	count: number;
 	totalCount: number;
 	onPress: () => void;
+	isLoading: boolean;
 };
 
 type IconType = keyof typeof ICON_MAP;

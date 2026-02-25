@@ -2,12 +2,12 @@ import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
 import { ImagePickerAsset } from 'expo-image-picker';
 
 const MAX_DIMENSION = 1200;
-const COMPRESS_QUALITY = 0.7;
+const COMPRESS_QUALITY = 0.4;
 
-const getWebPFileName = (originalFileName?: string | null): string => {
-	if (!originalFileName) return 'image.webp';
+const getJpegFileName = (originalFileName?: string | null): string => {
+	if (!originalFileName) return 'image.jpeg';
 	const nameWithoutExt = originalFileName.replace(/\.[^.]+$/, '');
-	return `${nameWithoutExt || 'image'}.webp`;
+	return `${nameWithoutExt || 'image'}.jpeg`;
 };
 
 const getResizeDimensions = (
@@ -25,7 +25,7 @@ const getResizeDimensions = (
 	return { height: MAX_DIMENSION };
 };
 
-const compressImage = async (image: ImagePickerAsset): Promise<ImagePickerAsset> => {
+export const compressImage = async (image: ImagePickerAsset): Promise<ImagePickerAsset> => {
 	try {
 		const { width, height } = image;
 		const resize = getResizeDimensions(width, height);
@@ -40,7 +40,7 @@ const compressImage = async (image: ImagePickerAsset): Promise<ImagePickerAsset>
 
 		const result = await imageRef.saveAsync({
 			compress: COMPRESS_QUALITY,
-			format: SaveFormat.WEBP,
+			format: SaveFormat.JPEG,
 		});
 
 		return {
@@ -48,8 +48,8 @@ const compressImage = async (image: ImagePickerAsset): Promise<ImagePickerAsset>
 			uri: result.uri,
 			width: result.width,
 			height: result.height,
-			fileName: getWebPFileName(image.fileName),
-			mimeType: 'image/webp',
+			fileName: getJpegFileName(image.fileName),
+			mimeType: 'image/jpeg',
 		};
 	} catch (error) {
 		console.log('Image compression failed, using original:', error);

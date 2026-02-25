@@ -9,6 +9,7 @@ import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 
+import { compressImage } from '@/utilities/compressImage';
 import { useChatRoom } from '@/hooks/chat/useChatRoom';
 import { useCreateChatRoom } from '@/hooks/chat/mutation/useCreateChatRoom';
 import { useSendImageMessage } from '@/hooks/chat/mutation/useSendImageMessage';
@@ -162,7 +163,8 @@ const ChatRoom = () => {
 		const images = await pickImage(1);
 		if (!images || images.length === 0) return;
 
-		setConfirmImage(images[0]);
+		const compressed = await compressImage(images[0]);
+		setConfirmImage(compressed);
 	};
 
 	const handleImageSendConfirm = async () => {
