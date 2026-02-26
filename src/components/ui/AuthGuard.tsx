@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
+
 import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
-import { useEffect } from 'react';
+
 import EmptyIndicator from './EmptyIndicator';
 import LoadingIndicator from './loading/LoadingIndicator';
 import { showToast } from './Toast';
@@ -21,7 +23,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
 	}
 
 	if (!userInfo) {
-		return <EmptyIndicator message='접근 권한이 없습니다.' />;
+		return <EmptyIndicator message="접근 권한이 없습니다." />;
 	}
 
 	return <>{children}</>;

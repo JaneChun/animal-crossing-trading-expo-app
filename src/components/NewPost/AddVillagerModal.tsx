@@ -1,5 +1,3 @@
-import React from 'react';
-
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 import { AddVillagerModalProps } from '@/types/components';
 

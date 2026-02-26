@@ -1,7 +1,8 @@
-import { Colors } from '@/constants/Color';
-import { ThumabnailProps } from '@/types/components';
-import React from 'react';
 import { StyleSheet } from 'react-native';
+
+import { Colors } from '@/theme/Color';
+import { ThumabnailProps } from '@/types/components';
+
 import ImageWithFallback from './ImageWithFallback';
 
 const Thumbnail = ({ previewImage }: ThumabnailProps) => {
@@ -19,10 +20,10 @@ const styles = StyleSheet.create({
 		borderRadius: 6,
 		resizeMode: 'cover',
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 	},
 	emptyThumbnail: {
-		backgroundColor: Colors.border_gray,
+		backgroundColor: Colors.border.default,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},

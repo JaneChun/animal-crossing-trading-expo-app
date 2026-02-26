@@ -1,10 +1,12 @@
-import { searchClient } from '@/config/firebase';
-import { getPublicUserInfos } from '@/firebase/services/userService';
-import type { Collection, Post, PostWithCreatorInfo } from '@/types/post';
-import { PublicUserInfo } from '@/types/user';
-import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
 import { Timestamp } from 'firebase/firestore';
+
+import { searchClient } from '@/config/firebase';
+import { getPublicUserInfos } from '@/firebase/services/userService';
+import { PublicUserInfo } from '@/types/user';
+import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
+
+import type { Collection, Post, PostWithCreatorInfo } from '@/types/post';
 
 const PAGE_SIZE = 10;
 
@@ -15,9 +17,7 @@ export const useSearchPosts = <C extends Collection>({
 	collectionName: C;
 	keyword: string;
 }) => {
-	const searchPostsByCursor = async ({
-		pageParam = 0,
-	}): Promise<PostWithCreatorInfo<C>[]> => {
+	const searchPostsByCursor = async ({ pageParam = 0 }): Promise<PostWithCreatorInfo<C>[]> => {
 		const { results } = await searchClient.search({
 			requests: [
 				{
@@ -49,19 +49,16 @@ export const useSearchPosts = <C extends Collection>({
 		);
 		const publicUserInfos: Record<string, PublicUserInfo> =
 			await getPublicUserInfos(uniqueCreatorIds);
-		const populatedData: PostWithCreatorInfo<C>[] = data.map(
-			(item: Post<C>) => {
-				const userInfo =
-					publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);
+		const populatedData: PostWithCreatorInfo<C>[] = data.map((item: Post<C>) => {
+			const userInfo = publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);
 
-				return {
-					...item,
-					creatorDisplayName: userInfo.displayName,
-					creatorIslandName: userInfo.islandName,
-					creatorPhotoURL: userInfo.photoURL,
-				} as PostWithCreatorInfo<C>;
-			},
-		);
+			return {
+				...item,
+				creatorDisplayName: userInfo.displayName,
+				creatorIslandName: userInfo.islandName,
+				creatorPhotoURL: userInfo.photoURL,
+			} as PostWithCreatorInfo<C>;
+		});
 
 		return populatedData ?? [];
 	};
@@ -73,8 +70,7 @@ export const useSearchPosts = <C extends Collection>({
 		[string, C, string] // TQueryKey: 쿼리키 타입
 	>({
 		queryKey: ['keywordSearch', collectionName, keyword],
-		queryFn: ({ pageParam }) =>
-			searchPostsByCursor({ pageParam: pageParam as number }),
+		queryFn: ({ pageParam }) => searchPostsByCursor({ pageParam: pageParam as number }),
 		initialPageParam: 0,
 		getNextPageParam: (lastPage, allPages) =>
 			lastPage.length === PAGE_SIZE ? allPages.length : undefined,

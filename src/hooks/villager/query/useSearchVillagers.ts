@@ -1,6 +1,7 @@
+import { useInfiniteQuery } from '@tanstack/react-query';
+
 import { searchClient } from '@/config/firebase';
 import { Villager, VillagerSpecies } from '@/types/villager';
-import { useInfiniteQuery } from '@tanstack/react-query';
 
 const PAGE_SIZE = 30; // 3열 × 10행
 

@@ -1,28 +1,24 @@
-import { Colors } from '@/constants/Color';
+import Badge from '@/components/ui/Badge';
+import { Colors } from '@/theme/Color';
 import { BadgeProps, TypeBadgeProps } from '@/types/components';
 import { MarketType } from '@/types/post';
-import React from 'react';
-import Badge from '@/components/ui/Badge';
 
-const MarketTypeBadge = ({
-	type,
-	containerStyle,
-}: TypeBadgeProps<MarketType>) => {
+const MarketTypeBadge = ({ type, containerStyle }: TypeBadgeProps<MarketType>) => {
 	const marketBadgeMap: Record<MarketType, BadgeProps> = {
 		sell: {
 			text: '팔아요',
-			textColor: Colors.blue_text,
-			bgColor: Colors.blue_background,
+			textColor: Colors.text.blue,
+			bgColor: Colors.bg.blue,
 		},
 		buy: {
 			text: '구해요',
-			textColor: Colors.green_text,
-			bgColor: Colors.green_background,
+			textColor: Colors.text.green,
+			bgColor: Colors.bg.green,
 		},
 		done: {
 			text: '거래완료',
-			textColor: Colors.font_gray,
-			bgColor: Colors.border_gray,
+			textColor: Colors.text.tertiary,
+			bgColor: Colors.bg.tertiary,
 		},
 	};
 	return (

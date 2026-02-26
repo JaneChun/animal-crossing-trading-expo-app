@@ -1,7 +1,5 @@
-import React from 'react';
-
 import Badge from '@/components/ui/Badge';
-import { Colors } from '@/constants/Color';
+import { Colors } from '@/theme/Color';
 import { BadgeProps, TypeBadgeProps } from '@/types/components';
 import { CommunityType } from '@/types/post';
 
@@ -9,48 +7,48 @@ const CommunityTypeBadge = ({ type, containerStyle }: TypeBadgeProps<CommunityTy
 	const communityTypeBadgeMap: Record<CommunityType, BadgeProps> = {
 		general: {
 			text: '자유',
-			textColor: Colors.font_gray,
-			bgColor: Colors.border_gray,
+			textColor: Colors.text.tertiary,
+			bgColor: Colors.bg.tertiary,
 		},
 		giveaway: {
 			text: '분양',
-			textColor: Colors.blue_text,
-			bgColor: Colors.blue_background,
+			textColor: Colors.text.blue,
+			bgColor: Colors.bg.blue,
 		},
 		adopt: {
 			text: '입양',
-			textColor: Colors.green_text,
-			bgColor: Colors.green_background,
+			textColor: Colors.text.green,
+			bgColor: Colors.bg.green,
 		},
 		guide: {
 			text: '공략/팁',
-			textColor: Colors.yellow_text,
-			bgColor: Colors.yellow_background,
+			textColor: Colors.text.yellow,
+			bgColor: Colors.bg.yellow,
 		},
 		trade: {
 			text: '만지작',
-			textColor: Colors.purple_text,
-			bgColor: Colors.purple_background,
+			textColor: Colors.text.purple,
+			bgColor: Colors.bg.purple,
 		},
 		turnip: {
 			text: '무 주식',
-			textColor: Colors.primary_text,
-			bgColor: Colors.primary_background,
+			textColor: Colors.text.primaryBrand,
+			bgColor: Colors.bg.primaryBrand,
 		},
 		dream: {
 			text: '꿈번지',
-			textColor: Colors.lavendar_text,
-			bgColor: Colors.lavendar_background,
+			textColor: Colors.text.lavender,
+			bgColor: Colors.bg.lavender,
 		},
 		design: {
 			text: '마이디자인',
-			textColor: Colors.red_text,
-			bgColor: Colors.red_background,
+			textColor: Colors.text.red,
+			bgColor: Colors.bg.red,
 		},
 		parttime: {
 			text: '알바',
-			textColor: Colors.orange_text,
-			bgColor: Colors.orange_background,
+			textColor: Colors.text.orange,
+			bgColor: Colors.bg.orange,
 		},
 	};
 

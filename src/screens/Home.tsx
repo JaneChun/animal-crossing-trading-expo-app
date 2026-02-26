@@ -1,11 +1,12 @@
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useCallback } from 'react';
+
 import PostList from '@/components/Home/PostList';
 import SearchIcon from '@/components/Search/SearchIcon';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import { useCurrentTab } from '@/hooks/shared/useCurrentTab';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { Tab } from '@/types/post';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import { useCallback } from 'react';
 
 const Home = () => {
 	const setActiveTab = useActiveTabStore((state) => state.setActiveTab);
@@ -20,9 +21,9 @@ const Home = () => {
 	);
 
 	return (
-		<Layout title='거래글' headerRightComponent={<SearchIcon />}>
+		<Layout title="거래글" headerRightComponent={<SearchIcon />}>
 			<PostList
-				collectionName='Boards'
+				collectionName="Boards"
 				isAddPostButtonVisible
 				containerStyle={{ paddingHorizontal: PADDING }}
 			/>

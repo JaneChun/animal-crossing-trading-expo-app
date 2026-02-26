@@ -1,8 +1,8 @@
-import { Colors } from '@/constants/Color';
-import { AddImageButtonProps } from '@/types/components';
 import { MaterialIcons } from '@expo/vector-icons';
-import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+import { Colors } from '@/theme/Color';
+import { AddImageButtonProps } from '@/types/components';
 
 const AddImageButton = ({ count, totalCount, onPress, isLoading }: AddImageButtonProps) => {
 	return (
@@ -14,14 +14,14 @@ const AddImageButton = ({ count, totalCount, onPress, isLoading }: AddImageButto
 		>
 			{isLoading ? (
 				<>
-					<ActivityIndicator color={Colors.font_gray} size="large" />
+					<ActivityIndicator color={Colors.text.tertiary} size="large" />
 					<View style={styles.textContainer}>
 						<Text style={styles.totalCountText}>업로드중...</Text>
 					</View>
 				</>
 			) : (
 				<>
-					<MaterialIcons name="photo-library" color={Colors.font_gray} size={48} />
+					<MaterialIcons name="photo-library" color={Colors.text.tertiary} size={48} />
 					<View style={styles.textContainer}>
 						<Text style={styles.currentCountText}>{count}</Text>
 						<Text style={styles.totalCountText}> / {totalCount}</Text>
@@ -43,9 +43,9 @@ const styles = StyleSheet.create({
 	},
 	addImageButtonContainer: {
 		padding: 8,
-		backgroundColor: Colors.base,
+		backgroundColor: Colors.bg.secondary,
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
@@ -55,11 +55,11 @@ const styles = StyleSheet.create({
 		marginTop: 4,
 	},
 	currentCountText: {
-		color: Colors.primary,
+		color: Colors.brand.primary,
 		fontWeight: 'bold',
 	},
 	totalCountText: {
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontWeight: 'semibold',
 	},
 });

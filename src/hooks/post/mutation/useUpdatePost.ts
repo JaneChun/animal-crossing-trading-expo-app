@@ -1,11 +1,9 @@
-import { updatePost } from '@/firebase/services/postService';
-import { Collection, UpdatePostRequest } from '@/types/post';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-export const useUpdatePost = <C extends Collection>(
-	collectionName: C,
-	postId: string,
-) => {
+import { updatePost } from '@/firebase/services/postService';
+import { Collection, UpdatePostRequest } from '@/types/post';
+
+export const useUpdatePost = <C extends Collection>(collectionName: C, postId: string) => {
 	const queryClient = useQueryClient();
 
 	return useMutation({

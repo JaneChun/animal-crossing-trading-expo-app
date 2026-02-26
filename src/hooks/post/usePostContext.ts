@@ -13,9 +13,7 @@ export const usePostContext = () => {
 		};
 	}
 
-	const collectionName = config.collection as CollectionFromTab<
-		typeof activeTab
-	>;
+	const collectionName = config.collection as CollectionFromTab<typeof activeTab>;
 
 	return {
 		activeTab,

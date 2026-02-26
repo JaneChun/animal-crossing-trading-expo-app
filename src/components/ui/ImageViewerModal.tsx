@@ -1,9 +1,11 @@
-import { ImageViewerModalProps } from '@/types/components';
-import React, { useCallback, useState } from 'react';
-import { Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Gallery, { RenderItemInfo } from 'react-native-awesome-gallery';
 import { Ionicons } from '@expo/vector-icons';
+import { useCallback, useState } from 'react';
+import { Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import Gallery, { RenderItemInfo } from 'react-native-awesome-gallery';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { Colors } from '@/theme/Color';
+import { ImageViewerModalProps } from '@/types/components';
 
 const FALLBACK_WIDTH = 400;
 const FALLBACK_HEIGHT = 300;
@@ -54,7 +56,7 @@ const ImageViewerModal = ({
 					onPress={onRequestClose}
 					hitSlop={8}
 				>
-					<Ionicons name="close-outline" color="white" size={32} />
+					<Ionicons name="close-outline" color={Colors.text.inverse} size={32} />
 				</Pressable>
 
 				{images.length > 1 && (
@@ -80,7 +82,7 @@ const styles = StyleSheet.create({
 		width: 32,
 		height: 32,
 		borderRadius: 16,
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		backgroundColor: Colors.overlay.dim,
 		justifyContent: 'center',
 		alignItems: 'center',
 		zIndex: 10,
@@ -91,11 +93,11 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 12,
 		paddingVertical: 4,
 		borderRadius: 12,
-		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		backgroundColor: Colors.overlay.dim,
 		zIndex: 10,
 	},
 	counterText: {
-		color: 'white',
+		color: Colors.text.inverse,
 		fontSize: 14,
 		fontWeight: '500',
 	},

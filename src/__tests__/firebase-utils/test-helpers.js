@@ -1,5 +1,6 @@
-const { auth, db } = require('./firebase-admin-setup');
 const { Timestamp } = require('firebase-admin/firestore');
+
+const { auth, db } = require('./firebase-admin-setup');
 
 const TEST_USER_A = {
 	uid: 'Zrc3ke0dYXcskivyQIba4ZJKpEJp5VbQ7Ms-snLbkhM',

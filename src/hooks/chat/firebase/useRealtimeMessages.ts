@@ -1,8 +1,8 @@
+import { Timestamp, collection, limit, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { useEffect, useRef, useState } from 'react';
+
 import { db } from '@/config/firebase';
 import { Message } from '@/types/chat';
-import { Timestamp } from 'firebase/firestore';
-import { collection, limit, onSnapshot, orderBy, query } from 'firebase/firestore';
-import { useEffect, useRef, useState } from 'react';
 
 export const useRealtimeMessages = (chatId: string, count: number) => {
 	const [messages, setMessages] = useState<Message[]>([]);

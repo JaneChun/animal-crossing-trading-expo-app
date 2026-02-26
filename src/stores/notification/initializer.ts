@@ -1,10 +1,12 @@
+import { useQueryClient } from '@tanstack/react-query';
+import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import { useEffect } from 'react';
+
 import { db } from '@/config/firebase';
 import { populateSenderInfo } from '@/firebase/services/notificationService';
 import { useUserInfo } from '@/stores/auth';
 import { Notification } from '@/types/notification';
-import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
-import { useEffect } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+
 import { useNotificationStore } from './store';
 
 export const useNotificationSubscriptionInitializer = () => {

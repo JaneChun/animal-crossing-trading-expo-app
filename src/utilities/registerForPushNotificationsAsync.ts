@@ -1,6 +1,7 @@
-import { showToast } from '@/components/ui/Toast';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+
+import { showToast } from '@/components/ui/Toast';
 
 export async function registerForPushNotificationsAsync() {
 	if (!Device.isDevice) {
@@ -21,10 +22,7 @@ export async function registerForPushNotificationsAsync() {
 	}
 
 	if (finalStatus !== 'granted') {
-		showToast(
-			'warn',
-			'푸시 알림 권한이 없습니다. 설정에서 권한을 허용해주세요.',
-		);
+		showToast('warn', '푸시 알림 권한이 없습니다. 설정에서 권한을 허용해주세요.');
 
 		return null;
 	}

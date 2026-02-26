@@ -1,15 +1,5 @@
-import NameInput from '@/components/Profile/NameInput';
-import Button from '@/components/ui/Button';
-import CloseButton from '@/components/ui/CloseButton';
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
-import { pop } from '@/navigation/RootNavigation';
-import { SignUpDisplayNameRouteProp } from '@/types/navigation';
-import { navigateToSignUpEnd } from '@/utilities/navigationHelpers';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
-import React from 'react';
 import { Controller, FormProvider } from 'react-hook-form';
 import {
 	Keyboard,
@@ -20,10 +10,17 @@ import {
 	TouchableWithoutFeedback,
 	View,
 } from 'react-native';
-import {
-	SafeAreaView,
-	useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import NameInput from '@/components/Profile/NameInput';
+import Button from '@/components/ui/Button';
+import CloseButton from '@/components/ui/CloseButton';
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
+import { pop } from '@/navigation/RootNavigation';
+import { Colors } from '@/theme/Color';
+import { SignUpDisplayNameRouteProp } from '@/types/navigation';
+import { navigateToSignUpEnd } from '@/utilities/navigationHelpers';
 
 const SignUpDisplayName = () => {
 	const insets = useSafeAreaInsets();
@@ -69,20 +66,20 @@ const SignUpDisplayName = () => {
 
 							<Controller
 								control={control}
-								name='displayName'
+								name="displayName"
 								render={({ field: { value, onChange } }) => (
 									<NameInput
-										type='displayName'
+										type="displayName"
 										value={value}
 										onChangeText={onChange}
-										label='닉네임'
-										placeholder='닉네임을 입력해주세요.'
+										label="닉네임"
+										placeholder="닉네임을 입력해주세요."
 									/>
 								)}
 							/>
 
 							<View style={styles.messageContainer}>
-								<FontAwesome name='leaf' color={Colors.primary} size={14} />
+								<FontAwesome name="leaf" color={Colors.brand.primary} size={14} />
 								<Text style={styles.infoText}>
 									닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
 								</Text>
@@ -92,8 +89,8 @@ const SignUpDisplayName = () => {
 							<Button
 								disabled={!isDisplayNameValid}
 								onPress={handleNext}
-								color='mint'
-								size='lg'
+								color="mint"
+								size="lg"
 								style={styles.button}
 							>
 								다음
@@ -111,11 +108,11 @@ export default SignUpDisplayName;
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	container: {
 		flex: 1,
-		backgroundColor: '#fff',
+		backgroundColor: Colors.bg.primary,
 		padding: 24,
 	},
 	closeButton: {
@@ -136,16 +133,16 @@ const styles = StyleSheet.create({
 	label: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.semibold,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 		marginBottom: 16,
 	},
 	input: {
 		fontSize: FontSizes.md,
 		padding: 12,
 		borderWidth: 1,
-		borderColor: Colors.base,
+		borderColor: Colors.bg.secondary,
 		borderRadius: 8,
-		backgroundColor: Colors.base,
+		backgroundColor: Colors.bg.secondary,
 		marginBottom: 8,
 		textAlignVertical: 'center',
 	},
@@ -156,7 +153,7 @@ const styles = StyleSheet.create({
 		marginBottom: 8,
 	},
 	infoText: {
-		color: Colors.primary,
+		color: Colors.brand.primary,
 		fontSize: FontSizes.sm,
 		marginBottom: 16,
 	},

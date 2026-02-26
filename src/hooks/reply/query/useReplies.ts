@@ -1,9 +1,10 @@
+import { useQuery } from '@tanstack/react-query';
+import { collection, orderBy, query } from 'firebase/firestore';
+
 import { db } from '@/config/firebase';
 import { fetchAndPopulateUsers } from '@/firebase/services/replyService';
 import { Collection } from '@/types/post';
 import { Reply, ReplyWithCreatorInfo } from '@/types/reply';
-import { useQuery } from '@tanstack/react-query';
-import { collection, orderBy, query } from 'firebase/firestore';
 
 const fetchReplies = async (collectionName: Collection, postId: string, commentId: string) => {
 	const repliesRef = collection(db, collectionName, postId, 'Comments', commentId, 'Replies');

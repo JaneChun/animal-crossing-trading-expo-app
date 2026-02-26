@@ -1,6 +1,8 @@
-import { ImageWithFallbackProps } from '@/types/components';
 import { useMemo } from 'react';
 import FastImage from 'react-native-fast-image';
+
+import { ImageWithFallbackProps } from '@/types/components';
+import emptyImage from '@assets/images/empty_image.png';
 
 const ImageWithFallback = ({
 	uri,
@@ -10,7 +12,7 @@ const ImageWithFallback = ({
 	priority = 'normal',
 	resizeMode = 'cover',
 }: ImageWithFallbackProps) => {
-	const DEFAULT_FALLBACK = useMemo(() => require('../../../assets/images/empty_image.png'), []);
+	const DEFAULT_FALLBACK = useMemo(() => emptyImage, []);
 
 	const priorityLevel = useMemo(() => {
 		const priorities = {

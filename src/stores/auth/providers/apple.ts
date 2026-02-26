@@ -1,7 +1,9 @@
-import { loginWithApple } from '@/firebase/services/authService';
 import { auth } from '@/config/firebase';
-import { AuthStateManager, LoginResult } from '@/types';
+import { loginWithApple } from '@/firebase/services/authService';
+
 import { BaseAuthProvider } from './base';
+
+import { AuthStateManager, LoginResult } from '@/types';
 
 export class AppleAuthProvider extends BaseAuthProvider {
 	constructor(stateManager: AuthStateManager) {

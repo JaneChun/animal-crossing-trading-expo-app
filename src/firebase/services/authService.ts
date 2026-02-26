@@ -1,8 +1,3 @@
-import { auth, functions } from '@/config/firebase';
-import {
-	GetFirebaseCustomTokenParams,
-	GetFirebaseCustomTokenResponse,
-} from '@/types/user';
 import { login } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
 import * as AppleAuthentication from 'expo-apple-authentication';
@@ -10,6 +5,10 @@ import * as Crypto from 'expo-crypto';
 import { signInWithCustomToken, User } from 'firebase/auth';
 import { Timestamp } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
+
+import { auth, functions } from '@/config/firebase';
+import { GetFirebaseCustomTokenParams, GetFirebaseCustomTokenResponse } from '@/types/user';
+
 import { saveUserInfo } from './userService';
 
 export const loginWithKakao = async (): Promise<{

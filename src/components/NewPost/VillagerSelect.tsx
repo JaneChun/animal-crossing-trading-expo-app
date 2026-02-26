@@ -1,20 +1,20 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import React, { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Keyboard, StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import Categories from '@/components/ui/Categories';
 import SearchInput from '@/components/ui/inputs/SearchInput';
 import InlineLoadingIndicator from '@/components/ui/loading/InlineLoadingIndicator';
-import { Colors } from '@/constants/Color';
 import { VILLAGER_SPECIES } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
+import { useSearchVillagers } from '@/hooks/villager/query/useSearchVillagers';
+import { Colors } from '@/theme/Color';
 import { VillagerSelectProps } from '@/types/components';
 import { Villager, VillagerSpecies, VillagerSpeciesItem } from '@/types/villager';
 
 import VillagerSelectItem from './VillagerSelectItem';
-import { useSearchVillagers } from '@/hooks/villager/query/useSearchVillagers';
 
 const PADDING_BOTTOM = 40;
 
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
 	emptyText: {
 		fontSize: FontSizes.sm,
 		fontWeight: FontWeights.regular,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 	},
 	listContainer: {
 		flex: 1,

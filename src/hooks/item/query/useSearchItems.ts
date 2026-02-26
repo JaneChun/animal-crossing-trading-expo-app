@@ -1,6 +1,7 @@
+import { useInfiniteQuery } from '@tanstack/react-query';
+
 import { searchClient } from '@/config/firebase';
 import { Item, ItemCategory } from '@/types/post';
-import { useInfiniteQuery } from '@tanstack/react-query';
 
 const PAGE_SIZE = 20;
 

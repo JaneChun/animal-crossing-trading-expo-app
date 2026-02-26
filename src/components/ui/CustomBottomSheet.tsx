@@ -1,19 +1,10 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import BottomSheet, {
-	BottomSheetBackdrop,
-	BottomSheetView,
-} from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
-import React, { ReactNode, useCallback, useMemo, useRef } from 'react';
-import {
-	StyleProp,
-	StyleSheet,
-	Text,
-	useWindowDimensions,
-	View,
-	ViewStyle,
-} from 'react-native';
+import { ReactNode, useCallback, useMemo, useRef } from 'react';
+import { StyleProp, StyleSheet, Text, useWindowDimensions, View, ViewStyle } from 'react-native';
+
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
 
 const CustomBottomSheet = ({
 	children,
@@ -55,7 +46,7 @@ const CustomBottomSheet = ({
 				{...props}
 				appearsOnIndex={0}
 				disappearsOnIndex={-1}
-				pressBehavior='close'
+				pressBehavior="close"
 			/>
 		),
 		[],
@@ -71,25 +62,21 @@ const CustomBottomSheet = ({
 			backdropComponent={renderBackdrop}
 			enablePanDownToClose={true}
 			backgroundStyle={{
-				backgroundColor: 'white',
+				backgroundColor: Colors.bg.primary,
 				borderTopLeftRadius: 16,
 				borderTopRightRadius: 16,
 			}}
-			handleIndicatorStyle={{ width: 60, backgroundColor: Colors.icon_gray }}
+			handleIndicatorStyle={{ width: 60, backgroundColor: Colors.icon.default }}
 		>
 			<BottomSheetView style={styles.screen}>
 				{title && (
 					<View style={styles.header}>
 						{leftButton && (
-							<View style={[styles.headerButton, { left: 0 }]}>
-								{leftButton}
-							</View>
+							<View style={[styles.headerButton, { left: 0 }]}>{leftButton}</View>
 						)}
 						<Text style={styles.title}>{title}</Text>
 						{rightButton && (
-							<View style={[styles.headerButton, { right: 0 }]}>
-								{rightButton}
-							</View>
+							<View style={[styles.headerButton, { right: 0 }]}>{rightButton}</View>
 						)}
 					</View>
 				)}
@@ -121,7 +108,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		borderBottomWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		paddingTop: 20,
 		paddingBottom: 16,
 		marginHorizontal: 12,

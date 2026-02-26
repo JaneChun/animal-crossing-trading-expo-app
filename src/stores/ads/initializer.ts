@@ -1,7 +1,7 @@
+import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import mobileAds from 'react-native-google-mobile-ads';
-import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 
 const requestTrackingPermission = async (): Promise<void> => {
 	const { status } = await requestTrackingPermissionsAsync();

@@ -1,16 +1,12 @@
+import { useMutation } from '@tanstack/react-query';
+
 import { showToast } from '@/components/ui/Toast';
 import { sendMessage } from '@/firebase/services/chatService';
 import { SendChatMessageParams } from '@/types/chat';
-import { useMutation } from '@tanstack/react-query';
 
 export const useSendMessage = () => {
 	return useMutation({
-		mutationFn: ({
-			chatId,
-			senderId,
-			receiverId,
-			message,
-		}: SendChatMessageParams) =>
+		mutationFn: ({ chatId, senderId, receiverId, message }: SendChatMessageParams) =>
 			sendMessage({
 				chatId,
 				senderId,

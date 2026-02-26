@@ -1,7 +1,8 @@
-import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { Timestamp } from 'firebase/firestore';
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
+
+import { useAuthStore, useUserInfo } from '@/stores/auth';
 
 export const useSuspensionGuard = () => {
 	const userInfo = useUserInfo();
@@ -13,10 +14,7 @@ export const useSuspensionGuard = () => {
 		const suspendUntil = userInfo?.report?.suspendUntil;
 
 		if (suspendUntil && Timestamp.now() < suspendUntil) {
-			const formattedDate = suspendUntil
-				.toDate()
-				.toLocaleDateString('ko-KR')
-				.slice(0, -1);
+			const formattedDate = suspendUntil.toDate().toLocaleDateString('ko-KR').slice(0, -1);
 
 			Alert.alert(
 				'계정 일시 정지',

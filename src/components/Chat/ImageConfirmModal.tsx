@@ -1,9 +1,9 @@
-import { Colors } from '@/constants/Color';
+import { FontAwesome6 } from '@expo/vector-icons';
 import { ImagePickerAsset } from 'expo-image-picker';
-import React from 'react';
 import { Image, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FontAwesome6 } from '@expo/vector-icons';
+
+import { Colors } from '@/theme/Color';
 
 interface ImageConfirmModalProps {
 	visible: boolean;
@@ -28,13 +28,13 @@ const ImageConfirmModal = ({ visible, image, onSend, onClose }: ImageConfirmModa
 				{/* 하단 버튼 영역 */}
 				<View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
 					<Pressable onPress={onClose} hitSlop={12} testID="closeImageConfirm">
-						<FontAwesome6 name="chevron-left" size={24} color="white" />
+						<FontAwesome6 name="chevron-left" size={24} color={Colors.text.inverse} />
 					</Pressable>
 					<Pressable style={styles.sendButton} onPress={onSend} testID="sendImageButton">
 						<FontAwesome6
 							name="circle-arrow-up"
 							size={36}
-							color={Colors.primary}
+							color={Colors.brand.primary}
 							style={styles.arrowIcon}
 						/>
 					</Pressable>
@@ -49,7 +49,7 @@ export default ImageConfirmModal;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#000',
+		backgroundColor: Colors.bg.inverse,
 	},
 	imageContainer: {
 		flex: 1,
@@ -65,10 +65,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		paddingHorizontal: 20,
-		paddingTop:16,
+		paddingTop: 16,
 	},
 	sendButton: {
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		width: 36,
 		height: 36,
 		borderRadius: 18,

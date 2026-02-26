@@ -1,15 +1,17 @@
-import { Colors } from '@/constants/Color';
+import { MaterialIcons } from '@expo/vector-icons';
+import { memo } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import CommunityTypeBadge from '@/components/Community/CommunityTypeBadge';
+import ItemThumbnail from '@/components/ui/ItemThumbnail';
 import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
 import { PostUnitProps } from '@/types/components';
 import { Collection } from '@/types/post';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToPost } from '@/utilities/navigationHelpers';
 import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
-import { MaterialIcons } from '@expo/vector-icons';
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import CommunityTypeBadge from '@/components/Community/CommunityTypeBadge';
-import ItemThumbnail from '@/components/ui/ItemThumbnail';
+
 import CommunityThumbnail from './CommunityThumbnail';
 import MarketTypeBadge from './MarketTypeBadge';
 
@@ -28,11 +30,15 @@ const PostUnit = <C extends Collection>({ post, collectionName, index }: PostUni
 					<View style={styles.typeAndTitle}>
 						{/* 배지 */}
 						<View style={styles.badgeContainer}>
-							{isBoardPost(post, collectionName) && <MarketTypeBadge type={post.type} />}
-							{isCommunityPost(post, collectionName) && <CommunityTypeBadge type={post.type} />}
+							{isBoardPost(post, collectionName) && (
+								<MarketTypeBadge type={post.type} />
+							)}
+							{isCommunityPost(post, collectionName) && (
+								<CommunityTypeBadge type={post.type} />
+							)}
 						</View>
 						{/* 타이틀 */}
-						<Text style={styles.title} numberOfLines={2} ellipsizeMode='tail'>
+						<Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
 							{post.title}
 						</Text>
 					</View>
@@ -59,7 +65,11 @@ const PostUnit = <C extends Collection>({ post, collectionName, index }: PostUni
 					</View>
 					<View style={styles.commentContainer}>
 						<View style={styles.commentBox}>
-							<MaterialIcons name='mode-comment' color={Colors.icon_gray} size={15} />
+							<MaterialIcons
+								name="mode-comment"
+								color={Colors.icon.default}
+								size={15}
+							/>
 							<Text style={styles.infoText}>{post.commentCount}</Text>
 						</View>
 					</View>
@@ -75,7 +85,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		height: POST_UNIT_HEIGHT,
 		borderBottomWidth: 1,
-		borderBottomColor: Colors.border_gray,
+		borderBottomColor: Colors.border.default,
 	},
 	topRow: {
 		flexDirection: 'row',
@@ -93,7 +103,7 @@ const styles = StyleSheet.create({
 		flexShrink: 1,
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.semibold,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 	},
 	bottomRow: {
 		flexDirection: 'row',
@@ -108,7 +118,7 @@ const styles = StyleSheet.create({
 	infoText: {
 		fontSize: FontSizes.xs,
 		fontWeight: FontWeights.regular,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 	},
 	commentContainer: {
 		width: 30,
@@ -122,4 +132,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default React.memo(PostUnit);
+export default memo(PostUnit);

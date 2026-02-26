@@ -1,11 +1,13 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
 import { MaterialIcons } from '@expo/vector-icons';
-import React from 'react';
-import { ProfileProps } from '@/types/components';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+
 import Button from '@/components/ui/Button';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { ProfileProps } from '@/types/components';
+import emptyProfileImage from '@assets/images/empty_profile_image.png';
+
 import Island from '../ui/Icons/Island';
 
 const Profile = ({
@@ -21,7 +23,7 @@ const Profile = ({
 				<Pressable onPress={openImageViewerModal}>
 					<ImageWithFallback
 						uri={profileInfo?.photoURL}
-						fallbackSource={require('../../../assets/images/empty_profile_image.png')}
+						fallbackSource={emptyProfileImage}
 						style={styles.image}
 					/>
 				</Pressable>
@@ -30,8 +32,8 @@ const Profile = ({
 				<Text style={styles.displayName}>{profileInfo.displayName}</Text>
 				{profileInfo?.review?.badgeGranted && (
 					<MaterialIcons
-						name='verified'
-						color={Colors.icon_primary}
+						name="verified"
+						color={Colors.icon.primary}
 						size={18}
 						style={styles.badgeIcon}
 					/>
@@ -47,7 +49,7 @@ const Profile = ({
 			{/* 버튼 */}
 			{isMyProfile && (
 				<View style={styles.buttonsContainer}>
-					<Button color='white' size='lg' flex onPress={openEditProfileModal}>
+					<Button color="white" size="lg" flex onPress={openEditProfileModal}>
 						프로필 수정
 					</Button>
 				</View>
@@ -64,12 +66,12 @@ const styles = StyleSheet.create({
 		paddingTop: 40,
 		paddingBottom: 20,
 		alignItems: 'center',
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		borderRadius: 10,
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		elevation: 5,
-		shadowColor: Colors.border_gray,
+		shadowColor: Colors.border.default,
 		shadowOffset: {
 			width: 0,
 			height: 0,
@@ -85,7 +87,7 @@ const styles = StyleSheet.create({
 		marginBottom: 16,
 	},
 	emptyImage: {
-		backgroundColor: Colors.border_gray,
+		backgroundColor: Colors.border.default,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
 		marginRight: 2,
 	},
 	islandText: {
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 	},
 	buttonsContainer: {
 		width: '100%',

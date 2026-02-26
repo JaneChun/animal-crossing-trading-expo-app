@@ -1,21 +1,14 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { TypeSelectProps } from '@/types/components';
-import { MarketType } from '@/types/post';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-const TypeSelect = ({
-	type,
-	setType,
-	containerStyle,
-	labelStyle,
-}: TypeSelectProps) => {
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { TypeSelectProps } from '@/types/components';
+import { MarketType } from '@/types/post';
+
+const TypeSelect = ({ type, setType, containerStyle, labelStyle }: TypeSelectProps) => {
 	const typeOptions: MarketType[] = ['buy', 'sell'];
 
-	const typeButtonMap: Record<
-		MarketType,
-		{ label: string; sideStyle: object }
-	> = {
+	const typeButtonMap: Record<MarketType, { label: string; sideStyle: object }> = {
 		buy: {
 			label: '구해요',
 			sideStyle: {
@@ -71,19 +64,19 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		borderRadius: 10,
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 	},
 	buttonActive: {
-		backgroundColor: 'white',
-		borderColor: Colors.primary,
+		backgroundColor: Colors.bg.primary,
+		borderColor: Colors.brand.primary,
 	},
 	text: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.regular,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 	},
 	textActive: {
-		color: Colors.primary,
+		color: Colors.brand.primary,
 		fontWeight: FontWeights.semibold,
 	},
 });

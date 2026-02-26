@@ -1,15 +1,18 @@
+import { StyleSheet, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
+
 import { PADDING } from '@/components/ui/layout/Layout';
 import SocialLoginButton from '@/components/ui/SocialLoginButton';
 import { showToast } from '@/components/ui/Toast';
 import { auth } from '@/config/firebase';
 import { LoginResult, useAuthStore } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
 import { OauthType } from '@/types/user';
 import {
 	navigateToAgreeToTermsAndConditions,
 	replaceToMyProfile,
 } from '@/utilities/navigationHelpers';
-import { StyleSheet, View } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import landingImage from '@assets/images/landing.webp';
 
 const Login = () => {
 	const kakaoLogin = useAuthStore((state) => state.kakaoLogin);
@@ -50,9 +53,9 @@ const Login = () => {
 			<View style={styles.header}>
 				<View style={styles.titleContainer}>
 					<FastImage
-						source={require('../../assets/images/landing.webp')}
+						source={landingImage}
 						style={{ width: 300, height: 300 }}
-						resizeMode='contain'
+						resizeMode="contain"
 					/>
 				</View>
 			</View>
@@ -64,12 +67,12 @@ const Login = () => {
 					// disabled
 				/> */}
 				<SocialLoginButton
-					oauthType='naver'
+					oauthType="naver"
 					onPress={() => handleLogin('naver')}
 					style={{ width: '95%' }}
 				/>
 				<SocialLoginButton
-					oauthType='apple'
+					oauthType="apple"
 					onPress={() => handleLogin('apple')}
 					style={{ width: '95%', borderWidth: 1 }}
 				/>
@@ -84,7 +87,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		padding: PADDING,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	header: {
 		flex: 1,

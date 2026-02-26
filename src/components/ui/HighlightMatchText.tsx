@@ -1,6 +1,6 @@
-import { HighlightMatchProps } from '@/types/components';
-import React from 'react';
 import { Text } from 'react-native';
+
+import { HighlightMatchProps } from '@/types/components';
 
 const HighlightMatchText = ({
 	text = '',

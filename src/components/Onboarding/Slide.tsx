@@ -1,16 +1,20 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { SlideProps } from '@/types/components';
-import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { SlideProps } from '@/types/components';
 
 const Slide = ({ item, width, showBadge = true }: SlideProps) => {
 	return (
 		<View style={[styles.container, { width }]}>
 			{/* 이미지 */}
 			<View style={styles.imageContainer}>
-				<ImageWithFallback localSource={item.image} style={styles.image} resizeMode='contain' />
+				<ImageWithFallback
+					localSource={item.image}
+					style={styles.image}
+					resizeMode="contain"
+				/>
 			</View>
 
 			<View style={styles.content}>
@@ -48,7 +52,7 @@ const styles = StyleSheet.create({
 		paddingVertical: 18,
 	},
 	badgeContainer: {
-		backgroundColor: Colors.primary_background,
+		backgroundColor: Colors.bg.primaryBrand,
 		paddingVertical: 6,
 		paddingHorizontal: 12,
 		borderRadius: 50,
@@ -56,18 +60,18 @@ const styles = StyleSheet.create({
 		marginBottom: 12,
 	},
 	badgeText: {
-		color: Colors.primary_text,
+		color: Colors.text.primaryBrand,
 		fontWeight: FontWeights.semibold,
 	},
 	title: {
 		fontSize: FontSizes.xxl,
 		fontWeight: FontWeights.bold,
 		marginBottom: 16,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 	},
 	description: {
 		fontSize: FontSizes.md,
 		lineHeight: 24,
-		color: Colors.font_dark_gray,
+		color: Colors.text.secondary,
 	},
 });

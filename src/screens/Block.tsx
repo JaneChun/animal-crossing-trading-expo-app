@@ -1,13 +1,14 @@
+import { useEffect, useRef, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+
 import BlockedUserUnit from '@/components/Block/BlockedUserUnit';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import { PADDING } from '@/components/ui/layout/Layout';
-import { Colors } from '@/constants/Color';
 import { getPublicUserInfo } from '@/firebase/services/userService';
 import { useBlockStore } from '@/stores/block';
+import { Colors } from '@/theme/Color';
 import { BlockedUser } from '@/types/user';
-import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
 
 const Block = () => {
 	const blockedUsers = useBlockStore((state) => state.blockedUsers);
@@ -74,9 +75,7 @@ const Block = () => {
 			keyExtractor={(u) => u.uid}
 			renderItem={renderItem}
 			ItemSeparatorComponent={() => <View style={styles.separator} />}
-			ListEmptyComponent={
-				<EmptyIndicator message='차단한 사용자가 없습니다.' />
-			}
+			ListEmptyComponent={<EmptyIndicator message="차단한 사용자가 없습니다." />}
 			style={styles.screen}
 			contentContainerStyle={styles.content}
 		/>
@@ -88,7 +87,7 @@ export default Block;
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	content: {
 		flexGrow: 1,
@@ -96,7 +95,7 @@ const styles = StyleSheet.create({
 	},
 	separator: {
 		height: 1,
-		backgroundColor: Colors.border_gray,
+		backgroundColor: Colors.border.default,
 		marginHorizontal: 16,
 	},
 });

@@ -1,14 +1,11 @@
-import { Colors } from '@/constants/Color';
+import { Entypo, FontAwesome6, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { useChatStore } from '@/stores/chat';
 import { useNotificationStore } from '@/stores/notification';
-import {
-	Entypo,
-	FontAwesome6,
-	MaterialCommunityIcons,
-	MaterialIcons,
-} from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Colors } from '@/theme/Color';
+
 import ChatStackNavigator from './ChatStackNavigator';
 import CommunityStackNavigator from './CommunityStackNavigator';
 import HomeStackNavigator from './HomeStackNavigator';
@@ -19,22 +16,20 @@ const MainTab = createBottomTabNavigator();
 
 const getTabBarIcon =
 	(name: string, IconComponent: any, size = 24) =>
-	({ focused }: { focused: boolean }) =>
-		(
-			<IconComponent
-				name={name}
-				size={size}
-				color={focused ? Colors.primary : Colors.font_dark_gray}
-			/>
-		);
+	// eslint-disable-next-line react/display-name
+	({ focused }: { focused: boolean }) => (
+		<IconComponent
+			name={name}
+			size={size}
+			color={focused ? Colors.brand.primary : Colors.text.secondary}
+		/>
+	);
 
 const MainTabNavigator = () => {
 	const userInfo = useUserInfo();
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 	const unreadChatCount = useChatStore((state) => state.unreadCount);
-	const unreadNotificationCount = useNotificationStore(
-		(state) => state.unreadCount,
-	);
+	const unreadNotificationCount = useNotificationStore((state) => state.unreadCount);
 
 	return (
 		<MainTab.Navigator
@@ -45,11 +40,11 @@ const MainTabNavigator = () => {
 					display: isAuthLoading ? 'none' : 'flex',
 				},
 				tabBarIconStyle: { flex: 1 },
-				tabBarActiveTintColor: Colors.primary,
+				tabBarActiveTintColor: Colors.brand.primary,
 			}}
 		>
 			<MainTab.Screen
-				name='HomeTab'
+				name="HomeTab"
 				component={HomeStackNavigator}
 				options={{
 					title: '마켓',
@@ -57,7 +52,7 @@ const MainTabNavigator = () => {
 				}}
 			/>
 			<MainTab.Screen
-				name='CommunityTab'
+				name="CommunityTab"
 				component={CommunityStackNavigator}
 				options={{
 					title: '커뮤니티',
@@ -65,20 +60,19 @@ const MainTabNavigator = () => {
 				}}
 			/>
 			<MainTab.Screen
-				name='NoticeTab'
+				name="NoticeTab"
 				component={NoticeStackNavigator}
 				options={{
 					title: '알림',
 					tabBarIcon: getTabBarIcon('bell', Entypo),
-					tabBarBadge:
-						unreadNotificationCount > 0 ? unreadNotificationCount : undefined,
+					tabBarBadge: unreadNotificationCount > 0 ? unreadNotificationCount : undefined,
 					tabBarBadgeStyle: {
 						marginTop: 8,
 					},
 				}}
 			/>
 			<MainTab.Screen
-				name='ChatTab'
+				name="ChatTab"
 				component={ChatStackNavigator}
 				options={{
 					title: '채팅',
@@ -90,7 +84,7 @@ const MainTabNavigator = () => {
 				}}
 			/>
 			<MainTab.Screen
-				name='ProfileTab'
+				name="ProfileTab"
 				component={ProfileStackNavigator}
 				options={{
 					title: userInfo ? '프로필' : '로그인',

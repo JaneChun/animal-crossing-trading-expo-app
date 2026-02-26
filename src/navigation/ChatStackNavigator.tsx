@@ -1,5 +1,6 @@
-import Chat from '@/screens/Chat';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import Chat from '@/screens/Chat';
 
 const ChatStack = createNativeStackNavigator();
 
@@ -12,7 +13,7 @@ const ChatStackNavigator = () => {
 				// animation: 'slide_from_left',
 			}}
 		>
-			<ChatStack.Screen name='Chat' component={Chat} />
+			<ChatStack.Screen name="Chat" component={Chat} />
 		</ChatStack.Navigator>
 	);
 };

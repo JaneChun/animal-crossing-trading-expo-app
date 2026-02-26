@@ -1,5 +1,6 @@
-import { ImageType } from '@/types/image';
 import { ImagePickerAsset } from 'expo-image-picker';
+
+import { ImageType } from '@/types/image';
 
 export const isLocalImage = (image: ImageType): image is ImagePickerAsset => {
 	return 'assetId' in image;

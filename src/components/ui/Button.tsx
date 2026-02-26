@@ -1,8 +1,9 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { ButtonColor, ButtonProps, ButtonSize } from '@/types/components';
-import React from 'react';
+import { memo } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { ButtonColor, ButtonProps, ButtonSize } from '@/types/components';
 
 const Button = ({
 	children,
@@ -36,16 +37,16 @@ const Button = ({
 	const getTextStyles = (color: ButtonColor) => {
 		switch (color) {
 			case 'mint':
-				return { color: 'white' };
+				return { color: Colors.text.inverse };
 			case 'white':
-				return { color: Colors.primary };
+				return { color: Colors.brand.primary };
 			case 'gray':
-				return { color: Colors.font_black };
+				return { color: Colors.text.primary };
 			case 'red': {
-				return { color: 'white' };
+				return { color: Colors.text.inverse };
 			}
 			case 'redWhite': {
-				return { color: Colors.badge_red };
+				return { color: Colors.badge.red };
 			}
 			default:
 				return {};
@@ -86,7 +87,9 @@ const Button = ({
 			]}
 			testID={testID}
 		>
-			<Text style={[styles.text, disabled ? styles.disabledText : textStyles]}>{children}</Text>
+			<Text style={[styles.text, disabled ? styles.disabledText : textStyles]}>
+				{children}
+			</Text>
 		</TouchableOpacity>
 	);
 };
@@ -98,37 +101,37 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	disabledStyle: {
-		backgroundColor: Colors.border_gray,
+		backgroundColor: Colors.border.default,
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 	},
 	disabledText: {
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 	},
 	mint: {
-		backgroundColor: Colors.primary,
+		backgroundColor: Colors.brand.primary,
 		borderWidth: 1,
-		borderColor: Colors.primary,
+		borderColor: Colors.brand.primary,
 	},
 	white: {
 		backgroundColor: 'transparent',
 		borderWidth: 1,
-		borderColor: Colors.primary,
+		borderColor: Colors.brand.primary,
 	},
 	gray: {
 		backgroundColor: 'transparent',
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 	},
 	red: {
-		backgroundColor: Colors.badge_red,
+		backgroundColor: Colors.badge.red,
 		borderWidth: 1,
-		borderColor: Colors.badge_red,
+		borderColor: Colors.badge.red,
 	},
 	redWhite: {
 		backgroundColor: 'transparent',
 		borderWidth: 1,
-		borderColor: Colors.badge_red,
+		borderColor: Colors.badge.red,
 	},
 	text: {
 		fontWeight: FontWeights.bold,
@@ -156,4 +159,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default React.memo(Button);
+export default memo(Button);

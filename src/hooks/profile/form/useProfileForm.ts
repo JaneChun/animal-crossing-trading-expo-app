@@ -1,6 +1,8 @@
-import { useUserInfo } from '@/stores/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+
+import { useUserInfo } from '@/stores/auth';
+
 import { ProfileFormSchema, ProfileFormValues } from './profileFormSchema';
 
 export const useProfileForm = () => {

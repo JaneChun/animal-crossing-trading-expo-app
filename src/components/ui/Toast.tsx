@@ -1,7 +1,9 @@
-import { FontSizes, FontWeights } from '@/constants/Typography';
 import { FontAwesome, FontAwesome6 } from '@expo/vector-icons';
 import { StyleSheet, Text, View } from 'react-native';
 import Toast, { BaseToastProps } from 'react-native-toast-message';
+
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
 
 interface CustomToastProps extends BaseToastProps {
 	text1?: string;
@@ -9,11 +11,11 @@ interface CustomToastProps extends BaseToastProps {
 
 export const toastConfig = {
 	success: ({ text1 }: CustomToastProps) => (
-		<View style={[styles.container, { backgroundColor: '#2dcd6f' }]}>
+		<View style={[styles.container, { backgroundColor: Colors.status.success }]}>
 			<FontAwesome6
-				name='check-circle'
+				name="check-circle"
 				size={20}
-				color='white'
+				color={Colors.text.inverse}
 				style={{ marginRight: 8 }}
 			/>
 			<View style={styles.textContainer}>
@@ -22,11 +24,11 @@ export const toastConfig = {
 		</View>
 	),
 	error: ({ text1 }: CustomToastProps) => (
-		<View style={[styles.container, { backgroundColor: '#E73B2A' }]}>
+		<View style={[styles.container, { backgroundColor: Colors.status.error }]}>
 			<FontAwesome6
-				name='xmark-circle'
+				name="xmark-circle"
 				size={20}
-				color='white'
+				color={Colors.text.inverse}
 				style={{ marginRight: 8 }}
 			/>
 			<View style={styles.textContainer}>
@@ -35,11 +37,11 @@ export const toastConfig = {
 		</View>
 	),
 	warn: ({ text1 }: CustomToastProps) => (
-		<View style={[styles.container, { backgroundColor: '#FFA500' }]}>
+		<View style={[styles.container, { backgroundColor: Colors.status.warning }]}>
 			<FontAwesome
-				name='warning'
+				name="warning"
 				size={20}
-				color='white'
+				color={Colors.text.inverse}
 				style={{ marginRight: 8 }}
 			/>
 			<View style={styles.textContainer}>
@@ -50,9 +52,9 @@ export const toastConfig = {
 	info: ({ text1 }: CustomToastProps) => (
 		<View style={[styles.container, { backgroundColor: '#1E90FF' }]}>
 			<FontAwesome6
-				name='circle-info'
+				name="circle-info"
 				size={20}
-				color='white'
+				color={Colors.text.inverse}
 				style={{ marginRight: 8 }}
 			/>
 			<View style={styles.textContainer}>
@@ -104,7 +106,7 @@ const styles = StyleSheet.create({
 		marginLeft: 8,
 	},
 	text: {
-		color: 'white',
+		color: Colors.text.inverse,
 		fontSize: FontSizes.sm,
 		fontWeight: FontWeights.regular,
 		flexWrap: 'wrap',

@@ -1,16 +1,21 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { SocialLoginButtonProps } from '@/types/components';
-import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
-const socialImages: Record<string, any> = {
-	kakao: require('../../../assets/images/kakao.png'),
-	kakao_round: require('../../../assets/images/kakao_round.png'),
-	naver: require('../../../assets/images/naver.png'),
-	naver_round: require('../../../assets/images/naver_round.png'),
-	apple: require('../../../assets/images/apple.webp'),
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { SocialLoginButtonProps } from '@/types/components';
+import appleImage from '@assets/images/apple.webp';
+import kakaoImage from '@assets/images/kakao.png';
+import kakaoRoundImage from '@assets/images/kakao_round.png';
+import naverImage from '@assets/images/naver.png';
+import naverRoundImage from '@assets/images/naver_round.png';
+
+const socialImages: Record<string, number> = {
+	kakao: kakaoImage,
+	kakao_round: kakaoRoundImage,
+	naver: naverImage,
+	naver_round: naverRoundImage,
+	apple: appleImage,
 };
 
 const SocialLoginButton = ({
@@ -27,11 +32,7 @@ const SocialLoginButton = ({
 		<TouchableOpacity
 			activeOpacity={0.7}
 			onPress={onPress}
-			style={[
-				styles.buttonContainer,
-				{ backgroundColor: Colors[oauthType] },
-				style,
-			]}
+			style={[styles.buttonContainer, { backgroundColor: Colors.social[oauthType] }, style]}
 			disabled={disabled}
 		>
 			<FastImage
@@ -45,18 +46,18 @@ const SocialLoginButton = ({
 					{
 						color:
 							oauthType === 'naver'
-								? 'white'
+								? Colors.social.naverText
 								: oauthType === 'kakao'
-								? Colors.kakao_text
-								: Colors.apple_text,
+									? Colors.social.kakaoText
+									: Colors.social.appleText,
 					},
 				]}
 			>
 				{oauthType === 'naver'
 					? '네이버로 로그인'
 					: oauthType === 'kakao'
-					? '카카오로 로그인'
-					: 'Apple로 로그인'}
+						? '카카오로 로그인'
+						: 'Apple로 로그인'}
 			</Text>
 			{disabled && (
 				<View style={styles.bubbleWrapper}>
@@ -108,13 +109,13 @@ const styles = StyleSheet.create({
 	},
 	// 풍선 본체
 	bubble: {
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		paddingLeft: 4,
 		paddingRight: 8,
 		paddingVertical: 6,
 		borderRadius: 10,
 		// iOS 그림자
-		shadowColor: '#000',
+		shadowColor: Colors.bg.inverse,
 		shadowOffset: { width: 0, height: 1 },
 		shadowOpacity: 0.1,
 		shadowRadius: 2,
@@ -135,6 +136,6 @@ const styles = StyleSheet.create({
 		borderTopWidth: 7,
 		borderLeftColor: 'transparent',
 		borderRightColor: 'transparent',
-		borderTopColor: 'white',
+		borderTopColor: Colors.text.inverse,
 	},
 });

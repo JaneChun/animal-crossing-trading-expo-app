@@ -1,12 +1,13 @@
-import { Colors } from '@/constants/Color';
+import { FontAwesome6 } from '@expo/vector-icons';
+import { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
 import { createReview, getReviewBySenderId } from '@/firebase/services/reviewService';
 import { useReceiverInfo } from '@/hooks/chat/query/useReceiverInfo';
 import { useUserInfo } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
 import { ReviewIMessage } from '@/types/chat';
 import { CreateReviewParams, ReviewValue } from '@/types/review';
-import { FontAwesome6 } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 const ReviewMessageUnit = ({ message }: { message: ReviewIMessage }) => {
 	const [localReview, setLocalReview] = useState<ReviewValue>(0);
@@ -72,11 +73,11 @@ const ReviewMessageUnit = ({ message }: { message: ReviewIMessage }) => {
 						style={styles.iconContainer}
 						disabled={isReviewed}
 						onPress={() => sendReview(1)}
-						testID='goodReviewButton'
+						testID="goodReviewButton"
 					>
 						<FontAwesome6
-							name='smile-beam'
-							color={localReview === 1 ? Colors.icon_green : Colors.icon_gray}
+							name="smile-beam"
+							color={localReview === 1 ? Colors.icon.green : Colors.icon.default}
 							size={24}
 						/>
 					</Pressable>
@@ -84,11 +85,11 @@ const ReviewMessageUnit = ({ message }: { message: ReviewIMessage }) => {
 						style={styles.iconContainer}
 						disabled={isReviewed}
 						onPress={() => sendReview(-1)}
-						testID='badReviewButton'
+						testID="badReviewButton"
 					>
 						<FontAwesome6
-							name='frown-open'
-							color={localReview === -1 ? Colors.icon_red : Colors.icon_gray}
+							name="frown-open"
+							color={localReview === -1 ? Colors.icon.red : Colors.icon.default}
 							size={24}
 						/>
 					</Pressable>
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
 	},
 	text: {
 		fontSize: 14,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 	},
 	buttonsContainer: {
 		flexDirection: 'row',

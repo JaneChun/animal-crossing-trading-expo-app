@@ -1,17 +1,19 @@
-import { Colors } from '@/constants/Color';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { useCallback, useMemo, useState } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+
+import Categories from '@/components/ui/Categories';
+import SearchInput from '@/components/ui/inputs/SearchInput';
+import InlineLoadingIndicator from '@/components/ui/loading/InlineLoadingIndicator';
 import { ITEM_CATEGORIES } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useSearchItems } from '@/hooks/item/query/useSearchItems';
 import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
+import { Colors } from '@/theme/Color';
 import { ItemSelectProps } from '@/types/components';
 import { Item, ItemCategory, ItemCategoryItem } from '@/types/post';
-import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import React, { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
-import Categories from '@/components/ui/Categories';
-import SearchInput from '@/components/ui/inputs/SearchInput';
-import InlineLoadingIndicator from '@/components/ui/loading/InlineLoadingIndicator';
+
 import ItemSelectItem, { ITEM_HEIGHT } from './ItemSelectItem';
 
 const ItemSelect = ({ cart, addItemToCart, containerStyle, labelStyle }: ItemSelectProps) => {
@@ -71,7 +73,7 @@ const ItemSelect = ({ cart, addItemToCart, containerStyle, labelStyle }: ItemSel
 				onChangeText={setSearchInput}
 				resetSearchInput={() => setSearchInput('')}
 				onSubmit={() => {}}
-				placeholder='아이템 검색'
+				placeholder="아이템 검색"
 				containerStyle={{ marginBottom: 8 }}
 				InputComponent={BottomSheetTextInput}
 			/>
@@ -101,7 +103,7 @@ const ItemSelect = ({ cart, addItemToCart, containerStyle, labelStyle }: ItemSel
 							onEndReached={fetchNext}
 							onEndReachedThreshold={0.5}
 							ListEmptyComponent={getListEmptyComponent}
-							keyboardShouldPersistTaps='handled'
+							keyboardShouldPersistTaps="handled"
 						/>
 					)}
 				</View>
@@ -117,7 +119,7 @@ const styles = StyleSheet.create({
 	emptyText: {
 		fontSize: FontSizes.sm,
 		fontWeight: FontWeights.regular,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 	},
 	listContainer: {
 		flex: 1,

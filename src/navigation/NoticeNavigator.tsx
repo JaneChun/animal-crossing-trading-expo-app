@@ -1,5 +1,6 @@
-import Notice from '@/screens/Notice';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import Notice from '@/screens/Notice';
 
 const NoticeStack = createNativeStackNavigator();
 
@@ -10,7 +11,7 @@ const NoticeStackNavigator = () => {
 				headerShown: false,
 			}}
 		>
-			<NoticeStack.Screen name='Notice' component={Notice} />
+			<NoticeStack.Screen name="Notice" component={Notice} />
 		</NoticeStack.Navigator>
 	);
 };

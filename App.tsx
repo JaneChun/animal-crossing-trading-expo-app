@@ -4,12 +4,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as Linking from 'expo-linking';
 import { useRef } from 'react';
 import { StyleSheet } from 'react-native';
-import 'react-native-gesture-handler';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
-import { logScreenView } from '@/config/analytics';
+
 import { toastConfig } from '@/components/ui/Toast';
+import { logScreenView } from '@/config/analytics';
 import { useAppState } from '@/hooks/shared/useAppState';
 import { useOnlineManager } from '@/hooks/shared/useOnlineManager';
 import { useSuspensionGuard } from '@/hooks/shared/useSuspensionGuard';
@@ -23,6 +23,7 @@ import { useChatSubscriptionInitializer } from '@/stores/chat';
 import { useNotificationSubscriptionInitializer } from '@/stores/notification';
 import { useOnboardingInitializer } from '@/stores/onboarding/initializer';
 import { usePushNotificationInitializer } from '@/stores/push';
+import { Colors } from '@/theme/Color';
 import { RootStackParamList } from '@/types/navigation';
 
 if (__DEV__) {
@@ -117,7 +118,7 @@ function AppContent() {
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	flex: {
 		flex: 1,

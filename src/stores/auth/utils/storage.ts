@@ -1,5 +1,7 @@
-import { UserInfo } from '@/types/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { UserInfo } from '@/types/user';
+
 import { AuthStorageData } from '@/types';
 
 const USER_STORAGE_KEY = '@user';
@@ -48,9 +50,6 @@ export const clearUserStorage = async (): Promise<void> => {
 
 export const isUserDataValid = (userData: any): userData is UserInfo => {
 	return (
-		userData &&
-		typeof userData === 'object' &&
-		userData.uid &&
-		typeof userData.uid === 'string'
+		userData && typeof userData === 'object' && userData.uid && typeof userData.uid === 'string'
 	);
 };

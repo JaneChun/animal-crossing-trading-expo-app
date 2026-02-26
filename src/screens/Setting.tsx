@@ -1,16 +1,18 @@
+import { Linking, StyleSheet, Text, View } from 'react-native';
+
 import PushNotificationToggle from '@/components/Profile/PushNotificationToggle';
+import SettingListItem from '@/components/Profile/SettingListItem';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useAuthStore } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
 import {
 	navigateToAccount,
 	navigateToBlock,
 	navigateToPrivacyPolicy,
 	navigateToTermsOfService,
 } from '@/utilities/navigationHelpers';
-import { Linking, StyleSheet, Text, View } from 'react-native';
-import SettingListItem from '@/components/Profile/SettingListItem';
 
 const Setting = () => {
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
@@ -22,10 +24,10 @@ const Setting = () => {
 			<View style={styles.container}>
 				<Text style={styles.title}>사용자 설정</Text>
 				<SettingListItem
-					borderRound='top'
+					borderRound="top"
 					showChevron
 					onPress={navigateToAccount}
-					testID='myAccountButton'
+					testID="myAccountButton"
 				>
 					<Text style={styles.text}>내 계정</Text>
 				</SettingListItem>
@@ -35,11 +37,7 @@ const Setting = () => {
 						<PushNotificationToggle />
 					</View>
 				</SettingListItem>
-				<SettingListItem
-					borderRound='bottom'
-					showChevron
-					onPress={navigateToBlock}
-				>
+				<SettingListItem borderRound="bottom" showChevron onPress={navigateToBlock}>
 					<Text style={styles.text}>차단 사용자 관리</Text>
 				</SettingListItem>
 			</View>
@@ -47,7 +45,7 @@ const Setting = () => {
 			<View style={styles.container}>
 				<Text style={styles.title}>앱 정보</Text>
 				<SettingListItem
-					borderRound='top'
+					borderRound="top"
 					showChevron
 					onPress={() => {
 						Linking.openURL('mailto:janechun22@gmail.com');
@@ -58,11 +56,7 @@ const Setting = () => {
 				<SettingListItem showChevron onPress={navigateToTermsOfService}>
 					<Text style={styles.text}>이용약관</Text>
 				</SettingListItem>
-				<SettingListItem
-					borderRound='bottom'
-					showChevron
-					onPress={navigateToPrivacyPolicy}
-				>
+				<SettingListItem borderRound="bottom" showChevron onPress={navigateToPrivacyPolicy}>
 					<Text style={styles.text}>개인정보 처리방침</Text>
 				</SettingListItem>
 				{/* <SettingListItem borderRound='bottom' onPress={() => {}}>
@@ -78,7 +72,7 @@ export default Setting;
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		padding: PADDING,
 	},
 	container: {

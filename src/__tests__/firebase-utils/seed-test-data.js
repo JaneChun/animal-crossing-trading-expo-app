@@ -754,7 +754,11 @@ async function seedData() {
 		console.log('📨 메시지 생성 중...');
 		for (const messageGroup of testMessages) {
 			for (const message of messageGroup.messages) {
-				await db.collection('Chats').doc(messageGroup.chatId).collection('Messages').add(message);
+				await db
+					.collection('Chats')
+					.doc(messageGroup.chatId)
+					.collection('Messages')
+					.add(message);
 			}
 			console.log(
 				`✅ 메시지 생성 완료: ${messageGroup.chatId} (${messageGroup.messages.length}개)`,

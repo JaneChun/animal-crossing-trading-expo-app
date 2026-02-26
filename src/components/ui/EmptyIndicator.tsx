@@ -1,6 +1,3 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { EmptyIndicatorProps } from '@/types/components';
 import {
 	Entypo,
 	Feather,
@@ -9,8 +6,11 @@ import {
 	MaterialCommunityIcons,
 	MaterialIcons,
 } from '@expo/vector-icons';
-import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { EmptyIndicatorProps } from '@/types/components';
 
 export const ICON_MAP = {
 	MaterialCommunityIcons,
@@ -31,7 +31,7 @@ const EmptyIndicator = ({
 	return (
 		<View style={styles.emptyContainer}>
 			<View style={styles.emptyIcon}>
-				<IconComponent name={iconName} size={72} color={Colors.icon_gray} />
+				<IconComponent name={iconName} size={72} color={Colors.text.tertiary} />
 			</View>
 			<Text style={styles.emptyText}>{message}</Text>
 		</View>
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	emptyIcon: {
 		marginBottom: 16,
@@ -53,6 +53,6 @@ const styles = StyleSheet.create({
 	emptyText: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.light,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 	},
 });

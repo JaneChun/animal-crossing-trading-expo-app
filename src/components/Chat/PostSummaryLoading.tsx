@@ -1,7 +1,7 @@
-import { Colors } from '@/constants/Color';
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
+
 import ThreeDotsLoadingIndicator from '@/components/ui/loading/ThreeDotsLoadingIndicator';
+import { Colors } from '@/theme/Color';
 
 const PostSummaryLoading = () => {
 	return (
@@ -20,9 +20,9 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingHorizontal: 16,
 		height: 70,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		borderWidth: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		borderRadius: 8,
 	},
 });

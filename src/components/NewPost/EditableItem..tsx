@@ -1,26 +1,16 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { EditableItemProps } from '@/types/components';
 import { FontAwesome6, Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import {
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-	ViewStyle,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+
 import Bell from '@/components/ui/Icons/Bell';
 import MileTicket from '@/components/ui/Icons/MileTicket';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { EditableItemProps } from '@/types/components';
 
-const EditableItem = ({
-	item,
-	readonly = false,
-	onDeleteItem,
-}: EditableItemProps) => {
+const EditableItem = ({ item, readonly = false, onDeleteItem }: EditableItemProps) => {
 	const readOnlyContainer: ViewStyle = {
-		backgroundColor: Colors.base,
+		backgroundColor: Colors.bg.secondary,
 		borderWidth: 0,
 	};
 
@@ -31,7 +21,7 @@ const EditableItem = ({
 
 			{/* 본문 */}
 			<View style={styles.body}>
-				<Text style={styles.name} numberOfLines={1} ellipsizeMode='tail'>
+				<Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">
 					{item.name}
 				</Text>
 				{item.color && <Text style={styles.color}>{item.color}</Text>}
@@ -41,7 +31,7 @@ const EditableItem = ({
 						{item.price}
 						{item.unit === 'bell' ? '덩' : '마일'}
 					</Text>
-					<Ionicons name='close' size={14} color={Colors.font_gray} />
+					<Ionicons name="close" size={14} color={Colors.text.tertiary} />
 					<Text style={styles.quantity}>{item.quantity}</Text>
 				</View>
 			</View>
@@ -57,11 +47,8 @@ const EditableItem = ({
 			</View>
 
 			{!readonly && onDeleteItem && (
-				<TouchableOpacity
-					style={styles.deleteButton}
-					onPress={() => onDeleteItem(item.id)}
-				>
-					<FontAwesome6 name='circle-minus' size={22} color={Colors.primary} />
+				<TouchableOpacity style={styles.deleteButton} onPress={() => onDeleteItem(item.id)}>
+					<FontAwesome6 name="circle-minus" size={22} color={Colors.brand.primary} />
 				</TouchableOpacity>
 			)}
 		</View>
@@ -77,9 +64,9 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingVertical: 12,
 		paddingHorizontal: 16,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		borderRadius: 16,
 		marginBottom: 12,
 	},
@@ -102,11 +89,11 @@ const styles = StyleSheet.create({
 	},
 	color: {
 		fontSize: FontSizes.sm,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 	},
 	quantity: {
 		fontSize: FontSizes.sm,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 	},
 	quantityContainer: {
 		flexDirection: 'row',
@@ -124,7 +111,7 @@ const styles = StyleSheet.create({
 		height: 20,
 	},
 	price: {
-		color: Colors.font_black,
+		color: Colors.text.primary,
 	},
 	deleteButton: {
 		padding: 6,

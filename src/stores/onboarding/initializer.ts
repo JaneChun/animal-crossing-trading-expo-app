@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+
 import { useOnboardingStore } from './store';
 import { getOnboardingStatus } from './utils/storage';
 

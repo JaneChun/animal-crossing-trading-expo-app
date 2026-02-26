@@ -1,10 +1,12 @@
-import ImageViewerModal from '@/components/ui/ImageViewerModal';
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { useUserInfo } from '@/stores/auth';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { IMessage } from 'react-native-gifted-chat';
+
+import ImageViewerModal from '@/components/ui/ImageViewerModal';
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { useUserInfo } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
+
 import ImageWithFallback from '../ui/ImageWithFallback';
 
 const ImageMessageUnit = ({ message }: { message: IMessage }) => {
@@ -76,7 +78,7 @@ const styles = StyleSheet.create({
 	},
 	infoText: {
 		fontSize: FontSizes.xxs,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontWeight: FontWeights.light,
 	},
 });

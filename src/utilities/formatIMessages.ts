@@ -1,10 +1,11 @@
+import { IMessage } from 'react-native-gifted-chat';
+
 import {
 	ExtendedIMessage,
 	Message,
 	ReviewMessagePayload,
 	SystemMessagePayload,
 } from '@/types/chat';
-import { IMessage } from 'react-native-gifted-chat';
 
 // JSON 파싱을 안전하게 처리
 const safeJSONParse = <T>(str: string): T | null => {

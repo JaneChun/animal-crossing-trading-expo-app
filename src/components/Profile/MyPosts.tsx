@@ -1,13 +1,14 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { MyPostsProps } from '@/types/components';
-import { Collection } from '@/types/post';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text } from 'react-native';
+
 import PostList from '@/components/Home/PostList';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { MyPostsProps } from '@/types/components';
+import { Collection } from '@/types/post';
 
 const OPTIONS = [
 	{ value: 'Boards' as Collection, label: '마켓' },
@@ -50,7 +51,7 @@ const MyPosts = ({ isMyProfile, profileInfo }: MyPostsProps) => {
 			headerRightComponent={
 				<Pressable style={styles.filterButtonContainer} onPress={showOptionSelect}>
 					<Text style={styles.filterButtonText}>{selectedOption?.label}</Text>
-					<Entypo name='chevron-down' size={16} color={Colors.font_gray} />
+					<Entypo name="chevron-down" size={16} color={Colors.text.tertiary} />
 				</Pressable>
 			}
 		>
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
 	filterButtonText: {
 		fontSize: FontSizes.sm,
 		fontWeight: FontWeights.semibold,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		marginRight: 2,
 	},
 });

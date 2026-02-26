@@ -1,6 +1,8 @@
+import { create } from 'zustand';
+
 import { getSafeUid } from '@/firebase/services/chatService';
 import { ChatWithReceiverInfo } from '@/types/chat';
-import { create } from 'zustand';
+
 import { ChatStore } from './types';
 
 export const useChatStore = create<ChatStore>((set, get) => ({
@@ -14,13 +16,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 	// Actions
 	updateUnreadCount: (uid: string) => {
 		const { chats } = get();
-		const totalUnread = chats.reduce(
-			(acc: number, chat: ChatWithReceiverInfo) => {
-				const count = chat.unreadCount?.[getSafeUid(uid)] || 0;
-				return acc + Number(count);
-			},
-			0,
-		);
+		const totalUnread = chats.reduce((acc: number, chat: ChatWithReceiverInfo) => {
+			const count = chat.unreadCount?.[getSafeUid(uid)] || 0;
+			return acc + Number(count);
+		}, 0);
 		set({ unreadCount: totalUnread });
 	},
 

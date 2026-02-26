@@ -1,8 +1,5 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { DropdownInputProps, DropdownOption } from '@/types/components';
 import { Feather } from '@expo/vector-icons';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
 	LayoutRectangle,
 	Pressable,
@@ -13,6 +10,10 @@ import {
 	View,
 } from 'react-native';
 
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { DropdownInputProps, DropdownOption } from '@/types/components';
+
 const DropdownInput = ({
 	options,
 	value,
@@ -22,8 +23,7 @@ const DropdownInput = ({
 	style,
 }: DropdownInputProps) => {
 	const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
-	const [dropdownPosition, setDropdownPosition] =
-		useState<LayoutRectangle | null>(null);
+	const [dropdownPosition, setDropdownPosition] = useState<LayoutRectangle | null>(null);
 
 	const comboBoxRef = useRef<View | null>(null);
 
@@ -45,7 +45,7 @@ const DropdownInput = ({
 				ref={comboBoxRef}
 				style={[
 					styles.inputContainer,
-					disabled && { backgroundColor: Colors.base },
+					disabled && { backgroundColor: Colors.bg.secondary },
 					style,
 				]}
 				onPress={openModal}
@@ -58,16 +58,13 @@ const DropdownInput = ({
 				<Feather
 					name={`chevron-${isDropdownVisible ? 'up' : 'down'}`}
 					size={24}
-					color={Colors.primary}
+					color={Colors.brand.primary}
 				/>
 			</Pressable>
 
 			{/* 모달 드롭다운 */}
 			<RNmodal visible={isDropdownVisible} transparent>
-				<Pressable
-					style={styles.modalOverlay}
-					onPress={() => setDropdownVisible(false)}
-				/>
+				<Pressable style={styles.modalOverlay} onPress={() => setDropdownVisible(false)} />
 				{dropdownPosition && (
 					<View
 						style={[
@@ -107,8 +104,8 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		borderWidth: 1,
-		// borderColor: Colors.border_gray,
-		borderColor: Colors.primary,
+		// borderColor: Colors.border.default,
+		borderColor: Colors.brand.primary,
 		borderRadius: 8,
 		backgroundColor: 'transparent',
 		height: 48,
@@ -117,21 +114,21 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.semibold,
-		// color: Colors.font_black,
-		color: Colors.primary,
+		// color: Colors.text.primary,
+		color: Colors.brand.primary,
 	},
 	modalOverlay: {
 		flex: 1,
 	},
 	modalContent: {
 		position: 'absolute',
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		borderRadius: 8,
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		marginTop: 8,
 		elevation: 5,
-		shadowColor: Colors.border_gray,
+		shadowColor: Colors.border.default,
 		shadowOffset: {
 			width: 0,
 			height: 0,
@@ -145,10 +142,10 @@ const styles = StyleSheet.create({
 	},
 	optionText: {
 		fontSize: FontSizes.md,
-		color: Colors.font_dark_gray,
+		color: Colors.text.secondary,
 	},
 	optionBorderBottom: {
 		// borderBottomWidth: 1,
-		// borderBottomColor: Colors.border_gray,
+		// borderBottomColor: Colors.border.default,
 	},
 });

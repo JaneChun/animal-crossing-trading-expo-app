@@ -1,10 +1,11 @@
+import { useCallback } from 'react';
+import { Alert } from 'react-native';
+
 import { showToast } from '@/components/ui/Toast';
 import { blockUser, unblockUser } from '@/firebase/services/blockService';
 import { useUserInfo } from '@/stores/auth';
 import { useBlockStore } from '@/stores/block';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
-import { useCallback } from 'react';
-import { Alert } from 'react-native';
 
 export function useBlockUser({
 	targetUserId,
@@ -83,10 +84,7 @@ export function useBlockUser({
 							userId: userInfo.uid,
 							targetUserId,
 						});
-						showToast(
-							'success',
-							`${targetUserDisplayName}님 차단을 해제했어요.`,
-						);
+						showToast('success', `${targetUserDisplayName}님 차단을 해제했어요.`);
 					},
 				},
 			],

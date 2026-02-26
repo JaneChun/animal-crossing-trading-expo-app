@@ -1,13 +1,5 @@
-import { db } from '@/config/firebase';
-import { Comment, CreateCommentRequest, UpdateCommentRequest } from '@/types/comment';
-import { Notification } from '@/types/notification';
-import { Collection } from '@/types/post';
-import { PublicUserInfo } from '@/types/user';
-import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
-import { sanitize } from '@/utilities/sanitize';
 import {
 	collection,
-	deleteDoc,
 	doc,
 	DocumentData,
 	getDocs,
@@ -17,8 +9,17 @@ import {
 	writeBatch,
 } from 'firebase/firestore';
 import { Alert } from 'react-native';
+
+import { db } from '@/config/firebase';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import { getDocFromFirestore } from '@/firebase/core/firestoreService';
+import { Comment, CreateCommentRequest, UpdateCommentRequest } from '@/types/comment';
+import { Notification } from '@/types/notification';
+import { Collection } from '@/types/post';
+import { PublicUserInfo } from '@/types/user';
+import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
+import { sanitize } from '@/utilities/sanitize';
+
 import { getPublicUserInfos } from './userService';
 
 export const fetchAndPopulateUsers = async <T extends Comment, U>(q: Query<DocumentData>) => {
@@ -34,11 +35,12 @@ export const fetchAndPopulateUsers = async <T extends Comment, U>(q: Query<Docum
 			return { id, ...docData } as unknown as T;
 		});
 
-		const uniqueCreatorIds: string[] = [...new Set(data.map((item) => item.creatorId))] as string[];
+		const uniqueCreatorIds: string[] = [
+			...new Set(data.map((item) => item.creatorId)),
+		] as string[];
 
-		const publicUserInfos: Record<string, PublicUserInfo> = await getPublicUserInfos(
-			uniqueCreatorIds,
-		);
+		const publicUserInfos: Record<string, PublicUserInfo> =
+			await getPublicUserInfos(uniqueCreatorIds);
 
 		const populatedData: U[] = data.map((item) => {
 			const userInfo = publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);

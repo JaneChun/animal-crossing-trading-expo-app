@@ -1,22 +1,18 @@
-import { Colors } from '@/constants/Color';
-import { CURRENCY_OPTIONS } from '@/constants/post';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { EditItemModalProps } from '@/types/components';
-import { CartItem } from '@/types/post';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+
 import Total from '@/components/PostDetail/Total';
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 import DropdownInput from '@/components/ui/inputs/DropdownInput';
 import NumberInput from '@/components/ui/inputs/NumberInput';
+import { CURRENCY_OPTIONS } from '@/constants/post';
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { EditItemModalProps } from '@/types/components';
+import { CartItem } from '@/types/post';
 
-const EditItemModal = ({
-	item,
-	isVisible,
-	updateItemFromCart,
-	onClose,
-}: EditItemModalProps) => {
+const EditItemModal = ({ item, isVisible, updateItemFromCart, onClose }: EditItemModalProps) => {
 	const [quantityInput, setQuantityInput] = useState<number>(1);
 	const [milesTicketInput, setMilesTicketInput] = useState<number>(1);
 	const [selectedUnit, setSelectedUnit] = useState<string>('mileticket');
@@ -49,11 +45,7 @@ const EditItemModal = ({
 	}, [quantityInput, milesTicketInput, selectedUnit]);
 
 	return (
-		<CustomBottomSheet
-			isVisible={isVisible}
-			onClose={onClose}
-			heightRatio={0.45}
-		>
+		<CustomBottomSheet isVisible={isVisible} onClose={onClose} heightRatio={0.45}>
 			<View style={styles.content}>
 				{/* 타이틀 */}
 				<Text style={styles.title}>{item?.name}</Text>
@@ -82,9 +74,7 @@ const EditItemModal = ({
 						setValue={setQuantityInput}
 						InputComponent={BottomSheetTextInput}
 					/>
-					<View
-						style={[styles.inputContainer, { backgroundColor: Colors.base }]}
-					>
+					<View style={[styles.inputContainer, { backgroundColor: Colors.bg.secondary }]}>
 						<Text style={styles.text}>개</Text>
 					</View>
 				</View>
@@ -119,7 +109,7 @@ const styles = StyleSheet.create({
 	},
 	subTitle: {
 		fontSize: FontSizes.md,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		marginBottom: 16,
 	},
 	row: {
@@ -132,7 +122,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		borderRadius: 8,
 		backgroundColor: 'transparent',
 		height: 48,
@@ -141,7 +131,7 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.semibold,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 	},
 	totalContainer: {
 		justifyContent: 'flex-end',

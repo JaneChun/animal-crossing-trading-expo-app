@@ -1,3 +1,10 @@
+import { useRoute } from '@react-navigation/native';
+import { ImagePickerAsset } from 'expo-image-picker';
+import { useEffect, useRef, useState } from 'react';
+import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
+import { GiftedChat, IMessage } from 'react-native-gifted-chat';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { renderComposer, renderDay, renderMessage } from '@/components/Chat/CustomRenderers';
 import ImageConfirmModal from '@/components/Chat/ImageConfirmModal';
 import UserInfoLabel from '@/components/Chat/Message/UserInfoLabel';
@@ -6,32 +13,23 @@ import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
-import { Colors } from '@/constants/Color';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
-
-import { compressImage } from '@/utilities/compressImage';
-import { useChatRoom } from '@/hooks/chat/useChatRoom';
 import { useCreateChatRoom } from '@/hooks/chat/mutation/useCreateChatRoom';
 import { useSendImageMessage } from '@/hooks/chat/mutation/useSendImageMessage';
+import { useChatRoom } from '@/hooks/chat/useChatRoom';
 import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useChatPresence } from '@/hooks/shared/useChatPresence';
 import { useImagePicker } from '@/hooks/shared/useImagePicker';
 import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
 import { useReportUser } from '@/hooks/shared/useReportUser';
-
 import { goBack } from '@/navigation/RootNavigation';
 import { useBlockStore } from '@/stores/block';
+import { Colors } from '@/theme/Color';
 import { Message } from '@/types/chat';
 import { ChatRoomRouteProp } from '@/types/navigation';
+import { compressImage } from '@/utilities/compressImage';
 import { convertSendParamsToMessage } from '@/utilities/convertSendParamsToMessage';
 import { createIMessage } from '@/utilities/createIMessage';
-import { ImagePickerAsset } from 'expo-image-picker';
-
-import { useRoute } from '@react-navigation/native';
-import React, { useEffect, useRef, useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
-import { GiftedChat, IMessage } from 'react-native-gifted-chat';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ChatRoom = () => {
 	const hasChatRoomCreated = useRef<boolean>(false);
@@ -207,7 +205,7 @@ const ChatRoom = () => {
 					}
 					headerRightComponent={
 						<ActionSheetButton
-							color={Colors.font_black}
+							color={Colors.text.primary}
 							size={18}
 							destructiveButtonIndex={2}
 							options={headerOptions}
@@ -230,7 +228,7 @@ const ChatRoom = () => {
 								messages={messages}
 								user={{ _id: userInfo!.uid }}
 								messagesContainerStyle={{
-									backgroundColor: Colors.base,
+									backgroundColor: Colors.bg.secondary,
 									paddingTop: keyboardHeight, // 키보드 올라왔을 때 키보드 높이만큼 잘리는 컨텐츠 방지
 								}}
 								bottomOffset={-insets.bottom} // 키보드 올라왔을 때 아래로 insets.bottom만큼 이동
@@ -279,15 +277,15 @@ const ChatRoom = () => {
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	blockMessageContainer: {
 		paddingVertical: 16,
-		backgroundColor: Colors.badge_red,
+		backgroundColor: Colors.badge.red,
 	},
 	blockMessageText: {
 		textAlign: 'center',
-		color: 'white',
+		color: Colors.text.inverse,
 	},
 });
 export default ChatRoom;

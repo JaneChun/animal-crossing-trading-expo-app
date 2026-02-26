@@ -1,14 +1,10 @@
-import React from 'react';
 import { StyleSheet } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
+import threeDotsImage from '@assets/images/three_dots.gif';
+
 const ThreeDotsLoadingIndicator = () => {
-	return (
-		<FastImage
-			source={require('../../../../assets/images/three_dots.gif')}
-			style={styles.image}
-		/>
-	);
+	return <FastImage source={threeDotsImage} style={styles.image} />;
 };
 
 export default ThreeDotsLoadingIndicator;

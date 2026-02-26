@@ -1,3 +1,6 @@
+import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
+import { collection, limit, orderBy, query, startAfter, where } from 'firebase/firestore';
+
 import { db } from '@/config/firebase';
 import { fetchAndPopulateUsers } from '@/firebase/services/postService';
 import { useBlockStore } from '@/stores/block';
@@ -10,24 +13,11 @@ import {
 	Post,
 	PostWithCreatorInfo,
 } from '@/types/post';
-import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
-import {
-	collection,
-	limit,
-	orderBy,
-	query,
-	startAfter,
-	where,
-} from 'firebase/firestore';
 
 const PAGE_SIZE = 10;
 
 // Firestore 쿼리 구성 함수
-const getFirestoreQuery = ({
-	collectionName,
-	filter,
-	lastDoc,
-}: FirestoreQueryParams) => {
+const getFirestoreQuery = ({ collectionName, filter, lastDoc }: FirestoreQueryParams) => {
 	let q = query(
 		collection(db, collectionName),
 		where('status', 'not-in', ['hidden', 'deleted']), // 숨김/삭제된 게시글 제외
@@ -74,10 +64,7 @@ export const fetchPostsByCursor = async <C extends Collection>({
 	return { data, lastDoc: _lastDoc };
 };
 
-export const useInfinitePosts = <C extends Collection>(
-	collectionName: C,
-	filter?: Filter,
-) => {
+export const useInfinitePosts = <C extends Collection>(collectionName: C, filter?: Filter) => {
 	const blockedUsers = useBlockStore((s) => s.blockedUsers);
 	const blockedBy = useBlockStore((s) => s.blockedBy);
 

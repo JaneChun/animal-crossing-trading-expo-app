@@ -1,9 +1,10 @@
+import { useMutation } from '@tanstack/react-query';
+
 import {
 	markAllUnreadMessagesAsRead,
 	markMessagesAsReadByIds,
 } from '@/firebase/services/chatService';
 import { MarkMessageAsReadParams } from '@/types/chat';
-import { useMutation } from '@tanstack/react-query';
 
 export const useMarkAllUnreadAsRead = () => {
 	return useMutation({

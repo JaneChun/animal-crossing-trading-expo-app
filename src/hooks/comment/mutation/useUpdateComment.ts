@@ -1,7 +1,8 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { updateComment } from '@/firebase/services/commentService';
 import { UpdateCommentRequest } from '@/types/comment';
 import { Collection } from '@/types/post';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useUpdateComment = ({
 	collectionName,

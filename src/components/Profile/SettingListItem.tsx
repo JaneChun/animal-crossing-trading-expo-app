@@ -1,12 +1,7 @@
-import { Colors } from '@/constants/Color';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import {
-	StyleProp,
-	StyleSheet,
-	TouchableOpacity,
-	ViewStyle,
-} from 'react-native';
+import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
+
+import { Colors } from '@/theme/Color';
 
 const SettingListItem = ({
 	children,
@@ -38,7 +33,7 @@ const SettingListItem = ({
 		>
 			{children}
 			{showChevron && (
-				<Ionicons name='chevron-forward' size={20} color={Colors.font_black} />
+				<Ionicons name="chevron-forward" size={20} color={Colors.text.primary} />
 			)}
 		</TouchableOpacity>
 	);
@@ -50,11 +45,11 @@ const styles = StyleSheet.create({
 	row: {
 		padding: 16,
 		borderTopWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		backgroundColor: Colors.base,
+		backgroundColor: Colors.bg.secondary,
 	},
 	topRow: {
 		borderTopWidth: 0,

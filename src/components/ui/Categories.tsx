@@ -1,9 +1,9 @@
 import { Entypo } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
 import { CategoriesProps } from '@/types/components';
 import { Category, CategoryItem, ItemCategory, ItemCategoryItem } from '@/types/post';
 import { VillagerSpecies, VillagerSpeciesItem } from '@/types/villager';
@@ -41,7 +41,7 @@ const Categories = <
 			<Entypo
 				name={showAll ? 'chevron-up' : 'chevron-down'}
 				size={20}
-				color={Colors.primary}
+				color={Colors.brand.primary}
 			/>
 		</Pressable>
 	);
@@ -91,21 +91,21 @@ const styles = StyleSheet.create({
 		paddingVertical: 8,
 		paddingHorizontal: 14,
 		borderRadius: 50,
-		backgroundColor: Colors.base,
+		backgroundColor: Colors.bg.secondary,
 		borderWidth: 1,
-		borderColor: Colors.base,
+		borderColor: Colors.bg.secondary,
 	},
 	categorySelected: {
-		backgroundColor: 'white',
-		borderColor: Colors.primary,
+		backgroundColor: Colors.bg.primary,
+		borderColor: Colors.brand.primary,
 	},
 	categoryText: {
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontSize: FontSizes.sm,
 		fontWeight: FontWeights.semibold,
 	},
 	categoryTextSelected: {
-		color: Colors.primary,
+		color: Colors.brand.primary,
 	},
 	toggleButton: {
 		padding: 6,

@@ -1,19 +1,20 @@
+import { Alert, StyleSheet, Text, View } from 'react-native';
+
+import SettingListItem from '@/components/Profile/SettingListItem';
 import Apple from '@/components/ui/Icons/Apple';
 import Kakao from '@/components/ui/Icons/Kakao';
 import Naver from '@/components/ui/Icons/Naver';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
-import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore, useUserInfo } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
 import {
 	navigateToDeleteAccount,
 	navigateToSocialAccountCheck,
 } from '@/utilities/navigationHelpers';
-import { Alert, StyleSheet, Text, View } from 'react-native';
-import SettingListItem from '@/components/Profile/SettingListItem';
 
 const Account = () => {
 	const userInfo = useUserInfo();
@@ -38,7 +39,7 @@ const Account = () => {
 		else if (userInfo.oauthType === 'naver') isSuccess = await naverLogout();
 		else if (userInfo.oauthType === 'apple') isSuccess = await appleLogout();
 
-		if (Boolean(isSuccess)) {
+		if (isSuccess) {
 			backToProfile();
 			showToast('success', '로그아웃되었습니다.');
 		} else {
@@ -65,7 +66,7 @@ const Account = () => {
 	return (
 		<View style={styles.screen}>
 			<View style={styles.container}>
-				<SettingListItem borderRound='all'>
+				<SettingListItem borderRound="all">
 					<View style={styles.emailRow}>
 						<Text style={styles.text}>이메일</Text>
 						<View style={styles.email}>
@@ -78,7 +79,7 @@ const Account = () => {
 							)}
 							<Text
 								numberOfLines={1}
-								ellipsizeMode='tail'
+								ellipsizeMode="tail"
 								style={[styles.text, styles.emailText]}
 							>
 								{userInfo?.email}
@@ -88,18 +89,14 @@ const Account = () => {
 				</SettingListItem>
 			</View>
 			<View style={styles.container}>
-				<SettingListItem
-					borderRound='top'
-					onPress={handleLogout}
-					testID='logoutButton'
-				>
+				<SettingListItem borderRound="top" onPress={handleLogout} testID="logoutButton">
 					<Text style={styles.text}>로그아웃</Text>
 				</SettingListItem>
 				<SettingListItem
-					borderRound='bottom'
+					borderRound="bottom"
 					showChevron
 					onPress={handleNavigateToDeleteAccount}
-					testID='deleteAccountButton'
+					testID="deleteAccountButton"
 				>
 					<Text style={styles.text}>탈퇴하기</Text>
 				</SettingListItem>
@@ -113,7 +110,7 @@ export default Account;
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		padding: PADDING,
 	},
 	container: {
@@ -151,6 +148,6 @@ const styles = StyleSheet.create({
 	},
 	emailText: {
 		flexShrink: 1,
-		color: Colors.font_dark_gray,
+		color: Colors.text.secondary,
 	},
 });

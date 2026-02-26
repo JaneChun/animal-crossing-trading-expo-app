@@ -1,14 +1,14 @@
+import { Alert, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import Button from '@/components/ui/Button';
 import CloseButton from '@/components/ui/CloseButton';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
-import { Colors } from '@/constants/Color'; // 프로젝트 컬러 상수
 import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore, useUserInfo } from '@/stores/auth';
-import React from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Colors } from '@/theme/Color'; // 프로젝트 컬러 상수
 
 const guideList = [
 	{
@@ -18,8 +18,7 @@ const guideList = [
 	},
 	{
 		title: '재가입하면 그대로 복구돼요 🔄',
-		description:
-			'같은 소셜 계정으로 재가입하면, 이전에 작성한 모든 콘텐츠가 다시 복구됩니다.',
+		description: '같은 소셜 계정으로 재가입하면, 이전에 작성한 모든 콘텐츠가 다시 복구됩니다.',
 	},
 	{
 		title: '30일 동안 재가입이 제한돼요 ⏳',
@@ -54,14 +53,11 @@ const DeleteAccount = () => {
 
 		let isSuccess: boolean | void = false;
 
-		if (userInfo.oauthType === 'kakao')
-			isSuccess = await kakaoDeleteAccount(userInfo.uid);
-		else if (userInfo.oauthType === 'naver')
-			isSuccess = await naverDeleteAccount(userInfo.uid);
-		else if (userInfo.oauthType === 'apple')
-			isSuccess = await appleDeleteAccount(userInfo.uid);
+		if (userInfo.oauthType === 'kakao') isSuccess = await kakaoDeleteAccount(userInfo.uid);
+		else if (userInfo.oauthType === 'naver') isSuccess = await naverDeleteAccount(userInfo.uid);
+		else if (userInfo.oauthType === 'apple') isSuccess = await appleDeleteAccount(userInfo.uid);
 
-		if (Boolean(isSuccess)) {
+		if (isSuccess) {
 			Alert.alert('탈퇴 완료', '회원 탈퇴가 완료되었습니다.');
 			backToProfile();
 		} else {
@@ -89,9 +85,7 @@ const DeleteAccount = () => {
 				hasBorderBottom={false}
 			>
 				<View style={styles.container}>
-					<Text style={styles.title}>
-						{'탈퇴 전, 아래 내용을\n꼭 확인해주세요'}
-					</Text>
+					<Text style={styles.title}>{'탈퇴 전, 아래 내용을\n꼭 확인해주세요'}</Text>
 					<Text style={styles.subtitle}>탈퇴 시 유의사항 안내</Text>
 
 					{guideList.map((item, index) => (
@@ -102,15 +96,10 @@ const DeleteAccount = () => {
 					))}
 					<View style={styles.bottom}>
 						<View style={styles.buttonsContainer}>
-							<Button onPress={backToAccount} color='gray' size='lg2' flex>
+							<Button onPress={backToAccount} color="gray" size="lg2" flex>
 								취소
 							</Button>
-							<Button
-								onPress={handleDeleteAccount}
-								color='mint'
-								size='lg2'
-								flex
-							>
+							<Button onPress={handleDeleteAccount} color="mint" size="lg2" flex>
 								탈퇴할래요
 							</Button>
 						</View>
@@ -126,7 +115,7 @@ export default DeleteAccount;
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	container: {
 		flex: 1,
@@ -136,15 +125,15 @@ const styles = StyleSheet.create({
 		fontSize: 22,
 		fontWeight: 'bold',
 		marginBottom: 8,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 	},
 	subtitle: {
 		fontSize: 14,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		marginBottom: 24,
 	},
 	infoBox: {
-		backgroundColor: Colors.base,
+		backgroundColor: Colors.bg.secondary,
 		borderRadius: 10,
 		padding: 16,
 		marginBottom: 16,
@@ -152,12 +141,12 @@ const styles = StyleSheet.create({
 	infoTitle: {
 		fontSize: 16,
 		fontWeight: 'bold',
-		color: Colors.font_black,
+		color: Colors.text.primary,
 		marginBottom: 6,
 	},
 	infoDescription: {
 		fontSize: 14,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		lineHeight: 18,
 	},
 	bottom: {

@@ -55,5 +55,19 @@ module.exports = {
 		'react-hooks/rules-of-hooks': 'error',
 		'react-hooks/exhaustive-deps': 'warn',
 	},
+	overrides: [
+		{
+			files: ['**/__tests__/**', '**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}'],
+			rules: {
+				// 테스트 환경에서는 require 사용 허용
+				'@typescript-eslint/no-require-imports': 'off',
+				// 테스트 mock 데이터에서 any 타입 허용
+				'@typescript-eslint/no-explicit-any': 'off',
+				// 테스트 헬퍼에서 미사용 변수 경고로 완화
+				'@typescript-eslint/no-unused-vars': 'warn',
+				'unused-imports/no-unused-vars': 'off',
+			},
+		},
+	],
 	ignorePatterns: ['/dist/*'], // dist 폴더 무시
 };

@@ -1,8 +1,11 @@
-import { loginWithNaver } from '@/firebase/services/authService';
 import NaverLogin from '@react-native-seoul/naver-login';
+
 import { auth } from '@/config/firebase';
-import { AuthStateManager, LoginResult } from '@/types';
+import { loginWithNaver } from '@/firebase/services/authService';
+
 import { BaseAuthProvider } from './base';
+
+import { AuthStateManager, LoginResult } from '@/types';
 
 export class NaverAuthProvider extends BaseAuthProvider {
 	constructor(stateManager: AuthStateManager) {

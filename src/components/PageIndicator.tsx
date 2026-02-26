@@ -1,7 +1,7 @@
-import { Colors } from '@/constants/Color';
-import { PageIndicatorProps } from '@/types/components';
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
+
+import { Colors } from '@/theme/Color';
+import { PageIndicatorProps } from '@/types/components';
 
 const PageIndicator = ({ totalPages, currentIndex }: PageIndicatorProps) => {
 	return (
@@ -35,9 +35,9 @@ const styles = StyleSheet.create({
 		borderRadius: 4,
 	},
 	activeDot: {
-		backgroundColor: Colors.primary,
+		backgroundColor: Colors.brand.primary,
 	},
 	inactiveDot: {
-		backgroundColor: Colors.icon_gray,
+		backgroundColor: Colors.icon.default,
 	},
 });

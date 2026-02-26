@@ -1,7 +1,7 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
 
 const DateSeparator = ({ date }: { date: string }) => {
 	return (
@@ -25,10 +25,10 @@ const styles = StyleSheet.create({
 	line: {
 		flex: 1,
 		height: 0.5,
-		backgroundColor: Colors.font_gray,
+		backgroundColor: Colors.text.tertiary,
 	},
 	text: {
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontSize: FontSizes.xs,
 		fontWeight: FontWeights.light,
 		marginHorizontal: 6,

@@ -1,9 +1,9 @@
+import { Timestamp, collection, limit, orderBy, query, startAfter } from 'firebase/firestore';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import { db } from '@/config/firebase';
 import { queryDocs } from '@/firebase/core/firestoreService';
 import { Message } from '@/types/chat';
-import { Timestamp } from 'firebase/firestore';
-import { collection, limit, orderBy, query, startAfter } from 'firebase/firestore';
-import { useCallback, useEffect, useRef, useState } from 'react';
 
 export const useLoadMoreMessages = (chatId: string, pageSize: number) => {
 	const [messages, setMessages] = useState<Message[]>([]);

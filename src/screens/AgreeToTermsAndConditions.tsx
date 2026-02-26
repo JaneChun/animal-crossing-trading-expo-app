@@ -1,20 +1,21 @@
+import { useRoute } from '@react-navigation/native';
+import Checkbox from 'expo-checkbox';
+import { useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 import Button from '@/components/ui/Button';
 import CloseButton from '@/components/ui/CloseButton';
 import { PADDING } from '@/components/ui/layout/Layout';
-import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { goBack } from '@/navigation/RootNavigation';
+import { Colors } from '@/theme/Color';
 import { SignUpDisplayNameRouteProp } from '@/types/navigation';
 import {
 	navigateToPrivacyPolicy,
 	navigateToSignUp,
 	navigateToTermsOfService,
 } from '@/utilities/navigationHelpers';
-import { useRoute } from '@react-navigation/native';
-import Checkbox from 'expo-checkbox';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const AgreeToTermsAndConditions = () => {
 	const [allAgree, setAllAgree] = useState(false);
@@ -69,9 +70,9 @@ const AgreeToTermsAndConditions = () => {
 						<Checkbox
 							value={allAgree}
 							onValueChange={setAllAgree}
-							color={allAgree ? Colors.primary : undefined}
+							color={allAgree ? Colors.brand.primary : undefined}
 							style={styles.checkbox}
-							testID='allAgreeCheckbox'
+							testID="allAgreeCheckbox"
 						/>
 						<Text style={styles.largeLabel}>전체 약관 동의</Text>
 					</View>
@@ -83,7 +84,7 @@ const AgreeToTermsAndConditions = () => {
 						<Checkbox
 							value={termsAgree}
 							onValueChange={setTermsAgree}
-							color={termsAgree ? Colors.primary : undefined}
+							color={termsAgree ? Colors.brand.primary : undefined}
 							style={styles.checkbox}
 						/>
 						<Text style={styles.label}>서비스 이용약관 (필수)</Text>
@@ -97,7 +98,7 @@ const AgreeToTermsAndConditions = () => {
 						<Checkbox
 							value={privacyAgree}
 							onValueChange={setPrivacyAgree}
-							color={privacyAgree ? Colors.primary : undefined}
+							color={privacyAgree ? Colors.brand.primary : undefined}
 							style={styles.checkbox}
 						/>
 						<Text style={styles.label}>개인정보 수집 및 이용 동의 (필수)</Text>
@@ -111,8 +112,8 @@ const AgreeToTermsAndConditions = () => {
 				<Button
 					disabled={!termsAgree || !privacyAgree}
 					onPress={handleNext}
-					color='mint'
-					size='lg'
+					color="mint"
+					size="lg"
 					style={styles.button}
 				>
 					동의하고 계속하기
@@ -127,7 +128,7 @@ export default AgreeToTermsAndConditions;
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	container: {
 		flex: 1,
@@ -146,11 +147,11 @@ const styles = StyleSheet.create({
 	},
 	subtitle: {
 		fontSize: 14,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		marginBottom: 24,
 	},
 	infoBox: {
-		backgroundColor: Colors.base,
+		backgroundColor: Colors.bg.secondary,
 		borderRadius: 10,
 		paddingHorizontal: 24,
 		paddingVertical: 32,
@@ -164,26 +165,26 @@ const styles = StyleSheet.create({
 	largeLabel: {
 		fontSize: FontSizes.lg,
 		fontWeight: FontWeights.bold,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 		marginLeft: 8,
 	},
 	label: {
 		flex: 1,
 		fontSize: FontSizes.md,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 		marginLeft: 8,
 	},
 	divider: {
 		height: 1,
-		backgroundColor: '#e1e1e1',
+		backgroundColor: Colors.divider.thick,
 		marginBottom: 16,
 	},
 	link: {
 		fontSize: 14,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		marginLeft: 8,
 		borderBottomWidth: 1,
-		borderColor: Colors.font_gray,
+		borderColor: Colors.text.tertiary,
 	},
 	checkbox: {
 		borderRadius: '50%',

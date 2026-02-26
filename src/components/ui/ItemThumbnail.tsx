@@ -1,8 +1,9 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { ItemThumabnailProps } from '@/types/components';
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
+
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { ItemThumabnailProps } from '@/types/components';
+
 import ImageWithFallback from './ImageWithFallback';
 
 const ItemThumbnail = ({ previewImage, itemLength }: ItemThumabnailProps) => {
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
 		borderRadius: 21,
 		resizeMode: 'cover',
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 	},
 	badgeContainer: {
 		position: 'absolute',
@@ -43,16 +44,16 @@ const styles = StyleSheet.create({
 		borderRadius: 12,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: Colors.border_gray,
-		borderColor: Colors.primary,
+		backgroundColor: Colors.border.default,
+		borderColor: Colors.brand.primary,
 	},
 	badgeText: {
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontSize: FontSizes.sm,
 		fontWeight: FontWeights.regular,
 	},
 	emptyThumbnail: {
-		backgroundColor: Colors.border_gray,
+		backgroundColor: Colors.border.default,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},

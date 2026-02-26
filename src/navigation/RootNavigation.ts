@@ -1,9 +1,10 @@
-import type { MainTabParamList, RootStackParamList } from '@/types/navigation';
 import {
 	CommonActions,
 	createNavigationContainerRef,
 	StackActions,
 } from '@react-navigation/native';
+
+import type { MainTabParamList, RootStackParamList } from '@/types/navigation';
 
 type RouteName = keyof RootStackParamList;
 type Params<N extends RouteName> = RootStackParamList[N];
@@ -13,9 +14,8 @@ type Params<N extends RouteName> = RootStackParamList[N];
 	- Params<N>이 undefined인 경우: 해당 화면은 params가 없으므로 name만 전달
 	- Params<N>이 객체 타입인 경우: name, params 전달
 */
-type NavigationArgs<N extends RouteName> = Params<N> extends undefined
-	? [name: N]
-	: [name: N, params: RootStackParamList[N]];
+type NavigationArgs<N extends RouteName> =
+	Params<N> extends undefined ? [name: N] : [name: N, params: RootStackParamList[N]];
 
 export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 

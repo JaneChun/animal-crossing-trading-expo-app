@@ -1,15 +1,16 @@
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { useEffect, useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
+import Button from '@/components/ui/Button';
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
-import { Colors } from '@/constants/Color';
+import { PADDING } from '@/components/ui/layout/Layout';
+import { showToast } from '@/components/ui/Toast';
 import { MAX_COMMENT_LENGTH } from '@/constants/post';
 import { FontSizes } from '@/constants/Typography';
 import { goBack } from '@/navigation/RootNavigation';
-import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import Button from '@/components/ui/Button';
-import { PADDING } from '@/components/ui/layout/Layout';
-import { showToast } from '@/components/ui/Toast';
+import { Colors } from '@/theme/Color';
 
 type EditCommentModalProps = {
 	comment: string;
@@ -38,10 +39,7 @@ const EditCommentModal = ({
 		if (text.length >= MAX_COMMENT_LENGTH) {
 			const truncated = text.slice(0, MAX_COMMENT_LENGTH);
 
-			showToast(
-				'warn',
-				`댓글은 최대 ${MAX_COMMENT_LENGTH}자까지만 입력 가능합니다.`,
-			);
+			showToast('warn', `댓글은 최대 ${MAX_COMMENT_LENGTH}자까지만 입력 가능합니다.`);
 
 			setNewCommentInput(truncated);
 			return;
@@ -57,13 +55,13 @@ const EditCommentModal = ({
 	};
 
 	const submitButton = (
-		<Button disabled={!isValid} color='white' size='md2' onPress={handleSubmit}>
+		<Button disabled={!isValid} color="white" size="md2" onPress={handleSubmit}>
 			완료
 		</Button>
 	);
 
 	const cancelButton = (
-		<Button color='gray' size='md2' onPress={goBack}>
+		<Button color="gray" size="md2" onPress={goBack}>
 			취소
 		</Button>
 	);
@@ -97,7 +95,7 @@ export default EditCommentModal;
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	bottomSheetBodyStyle: {
 		padding: PADDING,
@@ -107,7 +105,7 @@ const styles = StyleSheet.create({
 	textInput: {
 		fontSize: FontSizes.md,
 		lineHeight: 26,
-		color: Colors.font_dark_gray,
+		color: Colors.text.secondary,
 		paddingRight: PADDING,
 	},
 });

@@ -1,5 +1,6 @@
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 import { UpdateModal } from '@/components/ui/UpdateModal';
-import { Colors } from '@/constants/Color';
 import { useVersionCheck } from '@/hooks/shared/useVersionCheck';
 import Account from '@/screens/Account';
 import AgreeToTermsAndConditions from '@/screens/AgreeToTermsAndConditions';
@@ -20,7 +21,8 @@ import SplashScreen from '@/screens/SplashScreen';
 import TermsOfService from '@/screens/TermsOfService';
 import { useAuthStore } from '@/stores/auth';
 import { useOnboardingStore } from '@/stores/onboarding/store';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Colors } from '@/theme/Color';
+
 import MainTabNavigator from './MainTabNavigator';
 
 const RootStack = createNativeStackNavigator();
@@ -45,8 +47,8 @@ const RootStackNavigator = () => {
 	const commonOptions = {
 		headerShown: isAuthLoading ? false : true, // 로그인/로그아웃/탈퇴 시 로딩화면 표시할 때 상단 헤더 숨김 처리
 		title: '',
-		headerTintColor: Colors.font_black,
-		headerBackButtonDisplayMode: 'minimal' as 'minimal',
+		headerTintColor: Colors.text.primary,
+		headerBackButtonDisplayMode: 'minimal' as const,
 	};
 
 	if (isAppInitializing) {

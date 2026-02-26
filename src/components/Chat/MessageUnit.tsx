@@ -1,9 +1,9 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { useUserInfo } from '@/stores/auth';
-import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { IMessage } from 'react-native-gifted-chat';
+
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { useUserInfo } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
 
 const MessageUnit = ({ message }: { message: IMessage }) => {
 	const userInfo = useUserInfo();
@@ -57,11 +57,11 @@ const styles = StyleSheet.create({
 		borderRadius: 16,
 	},
 	sentBubble: {
-		backgroundColor: Colors.primary,
+		backgroundColor: Colors.brand.primary,
 		marginRight: 24,
 	},
 	receivedBubble: {
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		marginLeft: 24,
 	},
 	messageText: {
@@ -69,17 +69,17 @@ const styles = StyleSheet.create({
 		fontWeight: FontWeights.regular,
 	},
 	sentTextColor: {
-		color: 'white',
+		color: Colors.text.inverse,
 	},
 	receivedTextColor: {
-		color: Colors.font_black,
+		color: Colors.text.primary,
 	},
 	infoContainer: {
 		alignItems: 'flex-end',
 	},
 	infoText: {
 		fontSize: FontSizes.xxs,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontWeight: FontWeights.light,
 	},
 });

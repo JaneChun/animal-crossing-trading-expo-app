@@ -1,9 +1,10 @@
-import { storage } from '@/config/firebase';
-import { StorageCollection } from '@/types/image';
 import * as Crypto from 'expo-crypto';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { deleteObject, getDownloadURL, getMetadata, ref, uploadBytes } from 'firebase/storage';
+
+import { storage } from '@/config/firebase';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
+import { StorageCollection } from '@/types/image';
 
 const UPLOAD_TIMEOUT_MS = 30_000;
 const UPLOAD_BATCH_SIZE = 3;
@@ -86,9 +87,7 @@ export const uploadObjectToStorage = async ({
 
 				return downloadURLs;
 			} catch (error) {
-				await Promise.allSettled(
-					downloadURLs.map((url) => deleteObjectFromStorage(url)),
-				);
+				await Promise.allSettled(downloadURLs.map((url) => deleteObjectFromStorage(url)));
 				throw error;
 			}
 		},

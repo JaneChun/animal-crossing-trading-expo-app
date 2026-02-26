@@ -1,4 +1,5 @@
-import React from 'react';
+import { memo } from 'react';
+
 import Thumbnail from '@/components/ui/Thumbnail';
 import { useVillagersByIds } from '@/hooks/villager/query/useVillagersByIds';
 
@@ -23,4 +24,4 @@ const CommunityThumbnail = ({ images, villagers = [] }: CommunityThumbnailProps)
 	return null;
 };
 
-export default React.memo(CommunityThumbnail);
+export default memo(CommunityThumbnail);

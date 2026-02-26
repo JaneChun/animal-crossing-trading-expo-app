@@ -1,8 +1,8 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { TabBarLabelProps } from '@/types/components';
-import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { TabBarLabelProps } from '@/types/components';
 
 const TabBarLabel = ({ label, hasUnread }: TabBarLabelProps) => {
 	return (
@@ -23,13 +23,13 @@ const styles = StyleSheet.create({
 	label: {
 		fontSize: FontSizes.sm,
 		fontWeight: FontWeights.semibold,
-		color: Colors.primary,
+		color: Colors.brand.primary,
 	},
 	badge: {
 		width: 7,
 		height: 7,
 		borderRadius: 4,
-		backgroundColor: Colors.badge_red,
+		backgroundColor: Colors.badge.red,
 		marginLeft: 4,
 		position: 'absolute',
 		top: -2,

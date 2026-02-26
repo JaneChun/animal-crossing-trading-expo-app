@@ -1,12 +1,12 @@
-import { Colors } from '@/constants/Color';
-import { ActionSheetButtonProps } from '@/types/components';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo } from '@expo/vector-icons';
-import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 
+import { Colors } from '@/theme/Color';
+import { ActionSheetButtonProps } from '@/types/components';
+
 const ActionSheetButton = ({
-	color = Colors.font_black,
+	color = Colors.text.primary,
 	size = 24,
 	options,
 	destructiveButtonIndex,
@@ -32,9 +32,9 @@ const ActionSheetButton = ({
 		<TouchableOpacity
 			style={styles.iconContainer}
 			onPress={handlePress}
-			testID='actionSheetButton'
+			testID="actionSheetButton"
 		>
-			<Entypo name='dots-three-vertical' size={size} color={color} />
+			<Entypo name="dots-three-vertical" size={size} color={color} />
 		</TouchableOpacity>
 	);
 };

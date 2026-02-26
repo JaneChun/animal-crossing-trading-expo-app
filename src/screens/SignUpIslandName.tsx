@@ -1,20 +1,7 @@
-import NameInput from '@/components/Profile/NameInput';
-import Button from '@/components/ui/Button';
-import CloseButton from '@/components/ui/CloseButton';
-import { showToast } from '@/components/ui/Toast';
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { saveUserInfo } from '@/firebase/services/userService';
-import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
-import { pop } from '@/navigation/RootNavigation';
-import { useAuthStore } from '@/stores/auth';
-import { SignUpIslandNameRouteProp } from '@/types/navigation';
-import { UserInfo } from '@/types/user';
 import { FontAwesome } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute } from '@react-navigation/native';
 import { Timestamp } from 'firebase/firestore';
-import React from 'react';
 import { Controller, FormProvider } from 'react-hook-form';
 import {
 	Keyboard,
@@ -25,10 +12,20 @@ import {
 	TouchableWithoutFeedback,
 	View,
 } from 'react-native';
-import {
-	SafeAreaView,
-	useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import NameInput from '@/components/Profile/NameInput';
+import Button from '@/components/ui/Button';
+import CloseButton from '@/components/ui/CloseButton';
+import { showToast } from '@/components/ui/Toast';
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { saveUserInfo } from '@/firebase/services/userService';
+import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
+import { pop } from '@/navigation/RootNavigation';
+import { useAuthStore } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
+import { SignUpIslandNameRouteProp } from '@/types/navigation';
+import { UserInfo } from '@/types/user';
 
 const SignUpIslandName = () => {
 	const insets = useSafeAreaInsets();
@@ -99,20 +96,20 @@ const SignUpIslandName = () => {
 
 							<Controller
 								control={control}
-								name='islandName'
+								name="islandName"
 								render={({ field: { value, onChange } }) => (
 									<NameInput
-										type='islandName'
+										type="islandName"
 										value={value}
 										onChangeText={onChange}
-										label='섬 이름'
-										placeholder='섬 이름을 입력해주세요.'
+										label="섬 이름"
+										placeholder="섬 이름을 입력해주세요."
 									/>
 								)}
 							/>
 
 							<View style={styles.messageContainer}>
-								<FontAwesome name='leaf' color={Colors.primary} size={14} />
+								<FontAwesome name="leaf" color={Colors.brand.primary} size={14} />
 								<Text style={styles.infoText}>
 									닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
 								</Text>
@@ -122,8 +119,8 @@ const SignUpIslandName = () => {
 							<Button
 								disabled={!isIslandNameValid}
 								onPress={onSubmit}
-								color='mint'
-								size='lg'
+								color="mint"
+								size="lg"
 								style={styles.button}
 							>
 								시작하기
@@ -141,11 +138,11 @@ export default SignUpIslandName;
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	container: {
 		flex: 1,
-		backgroundColor: '#fff',
+		backgroundColor: Colors.bg.primary,
 		padding: 24,
 	},
 	closeButton: {
@@ -166,16 +163,16 @@ const styles = StyleSheet.create({
 	label: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.semibold,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 		marginBottom: 16,
 	},
 	input: {
 		fontSize: FontSizes.md,
 		padding: 12,
 		borderWidth: 1,
-		borderColor: Colors.base,
+		borderColor: Colors.bg.secondary,
 		borderRadius: 8,
-		backgroundColor: Colors.base,
+		backgroundColor: Colors.bg.secondary,
 		marginBottom: 8,
 		textAlignVertical: 'center',
 	},
@@ -186,7 +183,7 @@ const styles = StyleSheet.create({
 		marginBottom: 8,
 	},
 	infoText: {
-		color: Colors.primary,
+		color: Colors.brand.primary,
 		fontSize: FontSizes.sm,
 		marginBottom: 16,
 	},

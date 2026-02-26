@@ -1,26 +1,17 @@
-import { Colors } from '@/constants/Color';
+import { FontAwesome } from '@expo/vector-icons';
+import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Reanimated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
+
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { getSafeUid, leaveChatRoom } from '@/firebase/services/chatService';
 import { useUserInfo } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
 import { ChatWithReceiverInfo } from '@/types/chat';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToChatRoom } from '@/utilities/navigationHelpers';
-import { FontAwesome } from '@expo/vector-icons';
-import React from 'react';
-import {
-	Alert,
-	Pressable,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native';
-import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import Reanimated, {
-	SharedValue,
-	useAnimatedStyle,
-} from 'react-native-reanimated';
-import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import emptyProfileImage from '@assets/images/empty_profile_image.png';
 
 const ChatUnit = (props: ChatWithReceiverInfo) => {
 	const { id, lastMessage, unreadCount, updatedAt, receiverInfo } = props;
@@ -43,14 +34,9 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 		await leaveChatRoom({ chatId, userId: userInfo.uid });
 	};
 
-	const unreadMessageCount = userInfo
-		? unreadCount?.[getSafeUid(userInfo.uid)] ?? 0
-		: 0;
+	const unreadMessageCount = userInfo ? (unreadCount?.[getSafeUid(userInfo.uid)] ?? 0) : 0;
 
-	const RightAction = (
-		prog: SharedValue<number>,
-		drag: SharedValue<number>,
-	) => {
+	const RightAction = (prog: SharedValue<number>, drag: SharedValue<number>) => {
 		const animatedStyle = useAnimatedStyle(() => {
 			return {
 				transform: [{ translateX: drag.value + 80 }],
@@ -63,7 +49,7 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 					style={styles.rightActionContainer}
 					onPress={async () => await deleteChat(id)}
 				>
-					<FontAwesome name='trash' color='white' size={24} />
+					<FontAwesome name="trash" color={Colors.text.inverse} size={24} />
 				</TouchableOpacity>
 			</Reanimated.View>
 		);
@@ -71,14 +57,11 @@ const ChatUnit = (props: ChatWithReceiverInfo) => {
 
 	return (
 		<Swipeable friction={2} renderRightActions={RightAction}>
-			<Pressable
-				onPress={() => navigateToChatRoom({ chatId: id })}
-				style={styles.container}
-			>
+			<Pressable onPress={() => navigateToChatRoom({ chatId: id })} style={styles.container}>
 				<View style={styles.header}>
 					<ImageWithFallback
 						uri={receiverInfo?.photoURL}
-						fallbackSource={require('../../../assets/images/empty_profile_image.png')}
+						fallbackSource={emptyProfileImage}
 						style={styles.profileImage}
 					/>
 				</View>
@@ -110,7 +93,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 24,
 		paddingVertical: 12,
 		borderBottomWidth: 1,
-		borderBottomColor: Colors.border_gray,
+		borderBottomColor: Colors.border.default,
 	},
 	header: {},
 	profileImage: {
@@ -130,11 +113,11 @@ const styles = StyleSheet.create({
 	chatUserName: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.semibold,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 	},
 	chatTime: {
 		fontSize: FontSizes.xs,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontWeight: FontWeights.regular,
 	},
 	content: {
@@ -144,19 +127,19 @@ const styles = StyleSheet.create({
 	},
 	count: {
 		borderRadius: 25,
-		backgroundColor: Colors.badge_red,
-		color: 'white',
+		backgroundColor: Colors.badge.red,
+		color: Colors.text.inverse,
 		paddingVertical: 2,
 		paddingHorizontal: 7,
 	},
 	lastMessage: {
 		flex: 1,
 		fontSize: FontSizes.sm,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontWeight: FontWeights.light,
 	},
 	rightActionContainer: {
-		backgroundColor: Colors.badge_red,
+		backgroundColor: Colors.badge.red,
 		width: 80,
 		flex: 1,
 		justifyContent: 'center',

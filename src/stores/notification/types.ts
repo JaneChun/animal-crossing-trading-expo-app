@@ -14,6 +14,4 @@ export interface NotificationActions {
 	resetStore: () => void;
 }
 
-export interface NotificationStore
-	extends NotificationStoreState,
-		NotificationActions {}
+export interface NotificationStore extends NotificationStoreState, NotificationActions {}

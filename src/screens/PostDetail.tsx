@@ -1,6 +1,6 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -23,7 +23,6 @@ import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
-import { Colors } from '@/constants/Color';
 import { usePost } from '@/hooks/post/usePost';
 import { usePostComment } from '@/hooks/post/usePostComment';
 import { usePostReply } from '@/hooks/reply/usePostReply';
@@ -31,6 +30,7 @@ import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useReportUser } from '@/hooks/shared/useReportUser';
 import { useVillagersByIds } from '@/hooks/villager/query/useVillagersByIds';
 import { useUserInfo } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
 import { PostDetailRouteProp } from '@/types/navigation';
 import { Collection, CommunityType, MarketType } from '@/types/post';
 import { navigateToEditPost } from '@/utilities/navigationHelpers';
@@ -179,7 +179,7 @@ const PostDetail = () => {
 					headerRightComponent={
 						userInfo ? (
 							<ActionSheetButton
-								color={Colors.font_black}
+								color={Colors.text.primary}
 								size={18}
 								destructiveButtonIndex={
 									isAuthor ? (showDoneOption ? 2 : 1) : undefined
@@ -348,7 +348,7 @@ export default PostDetail;
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	content: {
 		padding: 24,
@@ -361,13 +361,13 @@ const styles = StyleSheet.create({
 	},
 	header: {
 		borderBottomWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		paddingBottom: 16,
 		marginBottom: 16,
 	},
 	body: {
 		borderBottomWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		marginBottom: 16,
 	},
 	infoContainer: {

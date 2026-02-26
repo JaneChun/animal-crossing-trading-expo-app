@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+
 import { OnboardingStoreState } from './types';
 
 export const useOnboardingStore = create<OnboardingStoreState>((set) => ({
