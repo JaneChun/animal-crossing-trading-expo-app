@@ -4,14 +4,9 @@ import { auth } from '@/config/firebase';
 import { loginWithNaver } from '@/firebase/services/authService';
 
 import { BaseAuthProvider } from './base';
-
-import { AuthStateManager, LoginResult } from '@/types';
+import { LoginResult } from '../types';
 
 export class NaverAuthProvider extends BaseAuthProvider {
-	constructor(stateManager: AuthStateManager) {
-		super(stateManager);
-	}
-
 	// 네이버 전용 로그인 구현
 	async login(): Promise<LoginResult> {
 		return this.executeLogin(async () => {

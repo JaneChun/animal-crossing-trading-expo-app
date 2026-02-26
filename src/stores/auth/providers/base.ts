@@ -8,7 +8,7 @@ import {
 	signOutFromFirebase,
 } from '@/stores/auth/utils/session';
 
-import { AuthProvider, AuthStateManager, LoginResult } from '@/types';
+import { AuthProvider, AuthStateManager, LoginResult } from '../types';
 
 /**
  * 모든 소셜 로그인 provider들이 상속받는 기본 클래스

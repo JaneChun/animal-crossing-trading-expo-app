@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { UserInfo } from '@/types/user';
 
-import { AuthStorageData } from '@/types';
+import { AuthStorageData } from '../types';
 
 const USER_STORAGE_KEY = '@user';
 

@@ -5,8 +5,7 @@ import { getUserInfo } from '@/firebase/services/userService';
 import { UserInfo } from '@/types/user';
 
 import { clearUserStorage, saveUserToStorage } from './storage';
-
-import { AuthStateManager } from '@/types';
+import { AuthStateManager } from '../types';
 
 // 로딩 상태 관리 wrapper
 export const executeWithLoading = async <T>(
