@@ -17,6 +17,13 @@ module.exports = {
 		jest: true, // Jest 환경 활성화 (describe, test, expect 등)
 	},
 	plugins: ['unused-imports', 'import', 'react-hooks', '@typescript-eslint'],
+	settings: {
+		'import/resolver': {
+			typescript: {
+				alwaysTryTypes: true,
+			},
+		},
+	},
 	rules: {
 		'react/prop-types': 'off',
 		'unused-imports/no-unused-imports': 'error', // 사용하지 않는 import 삭제
