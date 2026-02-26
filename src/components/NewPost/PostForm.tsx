@@ -35,10 +35,10 @@ const PostForm = ({
 
 	// 분양/입양 타입이 아닐 때 villagers 초기화
 	useEffect(() => {
-		if (currentType !== 'giveaway' && currentType !== 'adopt') {
+		if (isCommunity && currentType !== 'giveaway' && currentType !== 'adopt') {
 			setValue('villagers', []);
 		}
-	}, [currentType, setValue]);
+	}, [isCommunity, currentType, setValue]);
 
 	const dropdownOptions = COMMUNITY_TYPES.map(({ KR, EN }) => ({
 		text: KR,

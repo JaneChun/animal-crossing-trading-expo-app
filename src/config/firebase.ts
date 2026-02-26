@@ -1,6 +1,7 @@
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { liteClient } from 'algoliasearch/lite';
 import { initializeApp } from 'firebase/app';
+// @ts-expect-error getReactNativePersistence는 React Native 환경에서만 제공되며 타입 정의에 포함되지 않음
 import { connectAuthEmulator, getReactNativePersistence, initializeAuth } from 'firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
@@ -62,6 +63,6 @@ if (USE_EMULATOR && __DEV__) {
 }
 
 export const searchClient = liteClient(
-	process.env.EXPO_PUBLIC_ALGOLIA_APP_ID,
-	process.env.EXPO_PUBLIC_ALGOLIA_SEARCH_KEY,
+	process.env.EXPO_PUBLIC_ALGOLIA_APP_ID!,
+	process.env.EXPO_PUBLIC_ALGOLIA_SEARCH_KEY!,
 );

@@ -18,7 +18,7 @@ const fetchPostDetail = async <C extends Collection>(
 		creatorDisplayName: userInfo.displayName,
 		creatorIslandName: userInfo.islandName,
 		creatorPhotoURL: userInfo.photoURL,
-	};
+	} as PostWithCreatorInfo<C>;
 };
 
 export const usePostDetail = <C extends Collection>(collectionName: C, id: string) => {

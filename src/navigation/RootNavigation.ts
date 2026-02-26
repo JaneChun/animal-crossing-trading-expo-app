@@ -27,11 +27,7 @@ export const navigate = <N extends RouteName>(...args: NavigationArgs<N>) => {
 	const [name, params] = args;
 	if (!navigationRef.isReady()) return;
 
-	if (params === undefined) {
-		navigationRef.navigate(name);
-	} else {
-		navigationRef.navigate(name, params);
-	}
+	navigationRef.dispatch(CommonActions.navigate({ name: name as string, params }));
 };
 
 // 뒤로가기
@@ -50,7 +46,7 @@ export const resetTo = <RouteName extends keyof RootStackParamList>(
 		navigationRef.dispatch(
 			CommonActions.reset({
 				index: 0,
-				routes: [{ name, params }],
+				routes: [{ name: name as string, params }],
 			}),
 		);
 	}
@@ -65,11 +61,7 @@ export const replace = <N extends RouteName>(...args: NavigationArgs<N>) => {
 	const [name, params] = args;
 	if (!navigationRef.isReady()) return;
 
-	if (params === undefined) {
-		navigationRef.dispatch(StackActions.replace(name));
-	} else {
-		navigationRef.dispatch(StackActions.replace(name, params));
-	}
+	navigationRef.dispatch(StackActions.replace(name as string, params));
 };
 
 // 스택에 새 화면 추가
@@ -77,11 +69,7 @@ export const push = <N extends RouteName>(...args: NavigationArgs<N>) => {
 	const [name, params] = args;
 	if (!navigationRef.isReady()) return;
 
-	if (params === undefined) {
-		navigationRef.dispatch(StackActions.push(name));
-	} else {
-		navigationRef.dispatch(StackActions.push(name, params));
-	}
+	navigationRef.dispatch(StackActions.push(name as string, params));
 };
 
 // 해당 라우트까지 스택 pop
@@ -90,9 +78,9 @@ export const popTo = <N extends RouteName>(...args: NavigationArgs<N>) => {
 	if (!navigationRef.isReady()) return;
 
 	if (params === undefined) {
-		navigationRef.dispatch(StackActions.popTo(name));
+		navigationRef.dispatch(StackActions.popTo(name as string));
 	} else {
-		navigationRef.dispatch(StackActions.popTo(name, params, { merge: true })); // params 병합
+		navigationRef.dispatch(StackActions.popTo(name as string, params, { merge: true }));
 	}
 };
 
@@ -119,7 +107,7 @@ export const navigateToTab = <TabName extends keyof RootStackParamList>(name: Ta
 	if (navigationRef.isReady()) {
 		navigationRef.dispatch(
 			CommonActions.navigate({
-				name,
+				name: name as string,
 			}),
 		);
 	}
@@ -133,7 +121,7 @@ export const navigateToTabAndResetStack = <TabName extends keyof MainTabParamLis
 	if (navigationRef.isReady()) {
 		navigationRef.dispatch(
 			CommonActions.navigate({
-				name: 'MainTab',
+				name: 'MainTab' as string,
 				params: {
 					screen: tabName,
 					params: {

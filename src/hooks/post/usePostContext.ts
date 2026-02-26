@@ -1,6 +1,6 @@
 import { TAB_COLLECTION_CONFIG } from '@/constants/post';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
-import { CollectionFromTab } from '@/types/post';
+import { Collection } from '@/types/post';
 
 export const usePostContext = () => {
 	const activeTab = useActiveTabStore((state) => state.activeTab);
@@ -8,12 +8,12 @@ export const usePostContext = () => {
 
 	if (!config) {
 		return {
-			activeTab: 'Home',
-			collectionName: 'Boards',
+			activeTab: 'Home' as const,
+			collectionName: 'Boards' as Collection,
 		};
 	}
 
-	const collectionName = config.collection as CollectionFromTab<typeof activeTab>;
+	const collectionName = config.collection as Collection;
 
 	return {
 		activeTab,

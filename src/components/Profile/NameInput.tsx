@@ -3,10 +3,9 @@ import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import ValidationInput from '@/components/ui/inputs/ValidationInput';
 import { FontSizes, FontWeights } from '@/constants/Typography';
+import { ProfileFormValues } from '@/hooks/profile/form/profileFormSchema';
 import { Colors } from '@/theme/Color';
 import { NameInputProp } from '@/types/components';
-
-import { ProfileFormValues } from '@/hooks/form/Profile/profileFormSchema';
 
 const NameInput = ({
 	type,
@@ -18,7 +17,7 @@ const NameInput = ({
 }: NameInputProp) => {
 	const {
 		formState: { errors },
-	} = useFormContext();
+	} = useFormContext<ProfileFormValues>();
 
 	const errorMessage = errors?.[type as keyof ProfileFormValues]?.message as string;
 

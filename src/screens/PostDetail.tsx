@@ -2,6 +2,7 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
 import { useRef, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -45,7 +46,7 @@ const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
 	const { id = '', collectionName = '', notificationId = '' } = route.params;
 
-	const flatListRef = useRef<any>(null);
+	const flatListRef = useRef<FlatList>(null);
 	const commentInputRef = useRef<CommentInputRef>(null);
 	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
 

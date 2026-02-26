@@ -2,8 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { UserInfo } from '@/types/user';
 
-import { AuthStorageData } from '../types';
-
 const USER_STORAGE_KEY = '@user';
 
 export const getUserFromStorage = async (): Promise<UserInfo | null> => {
@@ -14,10 +12,10 @@ export const getUserFromStorage = async (): Promise<UserInfo | null> => {
 			return null;
 		}
 
-		const parsedUser = JSON.parse(storedUser) as AuthStorageData;
+		const parsedUser = JSON.parse(storedUser);
 
 		// 저장된 정보가 유효한 형식인지 검증
-		if (!parsedUser.uid || typeof parsedUser.uid !== 'string') {
+		if (!parsedUser?.uid || typeof parsedUser.uid !== 'string') {
 			await clearUserStorage();
 			return null;
 		}
@@ -46,10 +44,4 @@ export const clearUserStorage = async (): Promise<void> => {
 		console.error('AsyncStorage 유저 초기화 실패:', error);
 		throw error;
 	}
-};
-
-export const isUserDataValid = (userData: any): userData is UserInfo => {
-	return (
-		userData && typeof userData === 'object' && userData.uid && typeof userData.uid === 'string'
-	);
 };

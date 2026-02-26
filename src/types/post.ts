@@ -13,9 +13,6 @@ export type Collection = 'Boards' | 'Communities';
 // 탭 이름을 나타내는 유니언 타입 ('Home' | 'Community' | ...)
 export type Tab = keyof typeof TAB_COLLECTION_CONFIG;
 
-// 특정 탭(Tab)에서 사용할 컬렉션 이름 타입을 유추하는 조건부 타입 (CollectionFromTab<'Home'> → 'Boards')
-export type CollectionFromTab<T extends Tab> = (typeof TAB_COLLECTION_CONFIG)[T]['collection'];
-
 // 마켓글 타입
 export type MarketTypeItem = (typeof MARKET_TYPES)[number];
 export type MarketType = (typeof MARKET_TYPES)[number]['EN'];

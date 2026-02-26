@@ -1,3 +1,4 @@
+import { User } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
 
 import { functions } from '@/config/firebase';
@@ -37,7 +38,7 @@ export abstract class BaseAuthProvider implements AuthProvider {
 	 * @returns 로그인 결과 (성공여부, 신규 사용자여부, 이메일)
 	 */
 	protected async executeLogin(
-		providerLogin: () => Promise<{ user: any; email: string } | null>,
+		providerLogin: () => Promise<{ user: User; email: string } | null>,
 	): Promise<LoginResult> {
 		let isNewUser = false;
 		let userEmail = '';

@@ -40,7 +40,8 @@ export const useImagePicker = (options: UseImagePickerOptions = { multiple: fals
 			quality: 1,
 			orderedSelection: true,
 			selectionLimit: limit,
-			allowNetworkAccess: true, // iCloud 사진 선택
+			// @ts-expect-error: iCloud 사진 선택을 위해 필요한 옵션이지만, expo-image-picker의 타입 정의에는 누락되어 있음
+			allowNetworkAccess: true,
 		});
 
 		if (result.canceled) return null;
