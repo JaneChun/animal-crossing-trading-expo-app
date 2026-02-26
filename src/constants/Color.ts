@@ -42,3 +42,36 @@ export const Colors = {
 	// badge
 	badge_red: '#ff3a30',
 };
+
+/**
+ * Semantic Colors — 의미 기반 컬러 토큰
+ * 기존 Colors의 값을 역할(role) 기준으로 재매핑
+ *
+ */
+export const SemanticColors = {
+	// 텍스트
+	text: {
+		primary: '#050512',
+		secondary: '#262634',
+		tertiary: '#9797a0',
+		inverse: '#FFFFFF',
+	},
+
+	// 배경
+	bg: {
+		primary: '#FFFFFF',
+		secondary: '#F5F5F8',
+	},
+
+	// 구분선
+	divider: '#eff0f4',
+	dividerThick: '#e1e1e1',
+
+	// 상태
+	error: '#E73B2A',
+	success: '#2dcd6f',
+	warning: '#FFA500',
+
+	// 오버레이
+	dim: 'rgba(0, 0, 0, 0.5)',
+} as const;
