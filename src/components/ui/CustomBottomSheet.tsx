@@ -1,6 +1,6 @@
 import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
-import { ReactNode, useCallback, useMemo, useRef } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import { StyleProp, StyleSheet, Text, useWindowDimensions, View, ViewStyle } from 'react-native';
 
 import { FontSizes, FontWeights } from '@/constants/Typography';
@@ -30,6 +30,14 @@ const CustomBottomSheet = ({
 	const headerHeight = useHeaderHeight();
 
 	const snapPoints = useMemo(() => [`${heightRatio * 100}`], [heightRatio]);
+
+	useEffect(() => {
+		if (isVisible) {
+			bottomSheetRef.current?.snapToIndex(0);
+		} else {
+			bottomSheetRef.current?.close();
+		}
+	}, [isVisible]);
 
 	const handleSheetChanges = useCallback(
 		(index: number) => {
