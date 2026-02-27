@@ -16,6 +16,9 @@ export const useProfileForm = () => {
 			islandName: userInfo?.islandName || '',
 			image: userInfo?.photoURL ? { uri: userInfo.photoURL } : null, // ImagePicker로 추가한 이미지
 			originalImageUrl: userInfo?.photoURL || '', // Firestore에서 가져온 기존 이미지
+			fruit: userInfo?.fruit || '',
+			titleFirst: userInfo?.titleFirst || '',
+			titleLast: userInfo?.titleLast || '',
 		},
 	});
 

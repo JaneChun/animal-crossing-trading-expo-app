@@ -24,6 +24,9 @@ export const ProfileFormSchema = z.object({
 		}),
 	image: z.custom<ImagePickerAsset | null>().nullable(),
 	originalImageUrl: z.string(),
+	fruit: z.string().optional(),
+	titleFirst: z.string().optional(),
+	titleLast: z.string().optional(),
 });
 
 export type ProfileFormValues = z.infer<typeof ProfileFormSchema>;

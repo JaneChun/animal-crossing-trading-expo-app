@@ -13,7 +13,7 @@ import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
-import { FontSizes } from '@/constants/Typography';
+import { FontSizes, FontWeights } from '@/constants/Typography';
 import { updateDocToFirestore } from '@/firebase/core/firestoreService';
 import {
 	checkIfObjectExistsInStorage,
@@ -27,6 +27,8 @@ import { EditProfileModalProps } from '@/types/components';
 import { UserInfo } from '@/types/user';
 
 import NameInput from './NameInput';
+import { TouchableOpacity, Image } from 'react-native';
+import { FRUIT_IMAGES } from '@/constants/profile';
 
 const EditProfileModal = ({
 	isVisible,
@@ -54,6 +56,9 @@ const EditProfileModal = ({
 
 		setValue('displayName', userInfo.displayName);
 		setValue('islandName', userInfo?.islandName ?? '');
+		setValue('fruit', userInfo?.fruit ?? '');
+		setValue('titleFirst', userInfo?.titleFirst ?? '');
+		setValue('titleLast', userInfo?.titleLast ?? '');
 
 		if (userInfo.photoURL) {
 			setValue('originalImageUrl', userInfo.photoURL);
@@ -65,6 +70,9 @@ const EditProfileModal = ({
 	const islandName = watch('islandName');
 	const image = watch('image');
 	const originalImageUrl = watch('originalImageUrl');
+	const fruit = watch('fruit');
+	const titleFirst = watch('titleFirst');
+	const titleLast = watch('titleLast');
 
 	const isDisplayNameValid = !errors.displayName && displayName.length > 0;
 	const isIslandNameValid = !errors.islandName && islandName.length > 0;
@@ -92,6 +100,19 @@ const EditProfileModal = ({
 			// 섬 이름
 			if (islandName !== userInfo.islandName) {
 				requestData.islandName = islandName;
+			}
+
+			// 과일
+			if (fruit !== userInfo.fruit) {
+				requestData.fruit = fruit ?? '';
+			}
+
+			// 칭호
+			if (titleFirst !== userInfo.titleFirst) {
+				requestData.titleFirst = titleFirst ?? '';
+			}
+			if (titleLast !== userInfo.titleLast) {
+				requestData.titleLast = titleLast ?? '';
 			}
 
 			// 기존 이미지가 있었고, 새로운 이미지로 변경한 경우
@@ -192,8 +213,8 @@ const EditProfileModal = ({
 							)}
 						/>
 
-						{/* 닉네임, 섬 이름 */}
 						<View style={styles.info}>
+							{/* 닉네임 */}
 							<Controller
 								control={control}
 								name="displayName"
@@ -208,6 +229,7 @@ const EditProfileModal = ({
 									/>
 								)}
 							/>
+							{/* 섬 이름 */}
 							<Controller
 								control={control}
 								name="islandName"
@@ -222,7 +244,59 @@ const EditProfileModal = ({
 									/>
 								)}
 							/>
+							{/* 과일 */}
+							<View style={styles.inputContainer}>
+								<Text style={styles.label}>과일</Text>
+								<View style={styles.fruitContainer}>
+									{Object.entries(FRUIT_IMAGES).map(([name, imageUrl]) => (
+										<TouchableOpacity
+											key={name}
+											onPress={() =>
+												setValue('fruit', fruit === name ? '' : name)
+											}
+											style={[
+												styles.fruitItem,
+												fruit === name && styles.selectedFruitItem,
+											]}
+										>
+											<Image source={imageUrl} style={styles.fruitImage} />
+										</TouchableOpacity>
+									))}
+								</View>
+							</View>
 
+							{/* 칭호 */}
+							<View style={styles.inputContainer}>
+								<Text style={styles.label}>칭호</Text>
+								<View style={styles.titleContainer}>
+									<Controller
+										control={control}
+										name="titleFirst"
+										render={({ field: { value, onChange } }) => (
+											<BottomSheetTextInput
+												value={value}
+												onChangeText={onChange}
+												placeholder="초면의"
+												style={styles.titleInput}
+											/>
+										)}
+									/>
+									<Controller
+										control={control}
+										name="titleLast"
+										render={({ field: { value, onChange } }) => (
+											<BottomSheetTextInput
+												value={value}
+												onChangeText={onChange}
+												placeholder="이주민"
+												style={styles.titleInput}
+											/>
+										)}
+									/>
+								</View>
+							</View>
+
+							{/* 안내 문구 */}
 							<View style={styles.messageContainer}>
 								<FontAwesome name="leaf" color={Colors.brand.primary} size={14} />
 								<Text style={styles.infoText}>
@@ -267,5 +341,50 @@ const styles = StyleSheet.create({
 		color: Colors.brand.primary,
 		fontSize: FontSizes.sm,
 		marginBottom: 16,
+	},
+	inputContainer: {
+		marginBottom: 24,
+	},
+	label: {
+		fontSize: FontSizes.md,
+		fontWeight: FontWeights.semibold,
+		color: Colors.text.primary,
+		marginBottom: 16,
+	},
+	fruitContainer: {
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		marginBottom: 8,
+	},
+	titleContainer: {
+		flexDirection: 'row',
+		gap: 12,
+	},
+	titleInput: {
+		flex: 1,
+		fontSize: FontSizes.md,
+		padding: 12,
+		borderWidth: 1,
+		borderColor: Colors.bg.secondary,
+		borderRadius: 8,
+		backgroundColor: Colors.bg.secondary,
+		textAlignVertical: 'center',
+		height: 45,
+	},
+	fruitItem: {
+		width: 52,
+		height: 52,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: Colors.bg.secondary,
+		borderRadius: 18,
+	},
+	selectedFruitItem: {
+		backgroundColor: Colors.brand.primary,
+	},
+	fruitImage: {
+		width: 36,
+		height: 36,
+		resizeMode: 'contain',
 	},
 });

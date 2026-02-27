@@ -8,6 +8,9 @@ export interface PublicUserInfo {
 	pushToken?: string;
 	review?: UserReview;
 	report?: UserReport;
+	fruit?: string;
+	titleFirst?: string;
+	titleLast?: string;
 }
 
 export type UserReview = {
