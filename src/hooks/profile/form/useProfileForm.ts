@@ -19,6 +19,7 @@ export const useProfileForm = () => {
 			fruit: userInfo?.fruit || '',
 			titleFirst: userInfo?.titleFirst || '',
 			titleLast: userInfo?.titleLast || '',
+			bio: userInfo?.bio || '',
 		},
 	});
 

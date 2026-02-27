@@ -60,6 +60,7 @@ const EditProfileModal = ({
 		setValue('fruit', userInfo?.fruit ?? '');
 		setValue('titleFirst', userInfo?.titleFirst ?? '');
 		setValue('titleLast', userInfo?.titleLast ?? '');
+		setValue('bio', userInfo?.bio ?? '');
 
 		if (userInfo.photoURL) {
 			setValue('originalImageUrl', userInfo.photoURL);
@@ -74,12 +75,14 @@ const EditProfileModal = ({
 	const fruit = watch('fruit');
 	const titleFirst = watch('titleFirst');
 	const titleLast = watch('titleLast');
+	const bio = watch('bio');
 
 	const isDisplayNameValid = !errors.displayName && displayName.length > 0;
 	const isIslandNameValid = !errors.islandName && islandName.length > 0;
 	const isTitleValid = !errors.titleFirst && !errors.titleLast;
+	const isBioValid = !errors.bio;
 
-	const isValid = isDisplayNameValid && isIslandNameValid && isTitleValid;
+	const isValid = isDisplayNameValid && isIslandNameValid && isTitleValid && isBioValid;
 
 	const handleClose = () => {
 		reset();
@@ -105,16 +108,21 @@ const EditProfileModal = ({
 			}
 
 			// 과일
-			if (fruit !== userInfo.fruit) {
+			if (fruit !== (userInfo.fruit ?? '')) {
 				requestData.fruit = fruit ?? '';
 			}
 
 			// 칭호
-			if (titleFirst !== userInfo.titleFirst) {
+			if (titleFirst !== (userInfo.titleFirst ?? '')) {
 				requestData.titleFirst = titleFirst ?? '';
 			}
-			if (titleLast !== userInfo.titleLast) {
+			if (titleLast !== (userInfo.titleLast ?? '')) {
 				requestData.titleLast = titleLast ?? '';
+			}
+
+			// 한마디
+			if (bio !== (userInfo.bio ?? '')) {
+				requestData.bio = bio ?? '';
 			}
 
 			// 기존 이미지가 있었고, 새로운 이미지로 변경한 경우
@@ -306,6 +314,32 @@ const EditProfileModal = ({
 								)}
 							</View>
 
+							{/* 한마디 */}
+							<View style={styles.inputContainer}>
+								<Text style={styles.label}>한마디</Text>
+								<Controller
+									control={control}
+									name="bio"
+									render={({ field: { value, onChange } }) => (
+										<View style={styles.bioWrapper}>
+											<BottomSheetTextInput
+												value={value}
+												onChangeText={onChange}
+												placeholder="한마디를 적어주세요!"
+												style={styles.bioInput}
+												maxLength={20}
+											/>
+											<Text style={styles.bioCounter}>
+												{(value ?? '').length}/20
+											</Text>
+										</View>
+									)}
+								/>
+								{errors.bio?.message && (
+									<ErrorMessage message={errors.bio.message as string} />
+								)}
+							</View>
+
 							{/* 안내 문구 */}
 							<View style={styles.messageContainer}>
 								<FontAwesome name="leaf" color={Colors.brand.primary} size={14} />
@@ -396,5 +430,25 @@ const styles = StyleSheet.create({
 		width: 36,
 		height: 36,
 		resizeMode: 'contain',
+	},
+	bioWrapper: {
+		position: 'relative',
+	},
+	bioInput: {
+		fontSize: FontSizes.md,
+		paddingHorizontal: 12,
+		paddingVertical: 18,
+		paddingBottom: 32,
+		borderWidth: 1,
+		borderColor: Colors.bg.secondary,
+		borderRadius: 8,
+		backgroundColor: Colors.bg.secondary,
+	},
+	bioCounter: {
+		position: 'absolute',
+		bottom: 8,
+		right: 12,
+		fontSize: FontSizes.xs,
+		color: Colors.text.tertiary,
 	},
 });

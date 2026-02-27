@@ -11,6 +11,7 @@ export interface PublicUserInfo {
 	fruit?: Fruit;
 	titleFirst?: string;
 	titleLast?: string;
+	bio?: string;
 }
 
 export type Fruit = 'apple' | 'cherry' | 'orange' | 'peach' | 'pear';

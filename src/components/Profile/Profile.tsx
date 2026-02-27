@@ -53,7 +53,9 @@ const Profile = ({
 						{/* Chat Bubble */}
 						<View style={styles.chatBubbleContainer}>
 							<View style={styles.chatBubble}>
-								<Text style={styles.chatText}>한마디를 적어주세요!</Text>
+								<Text style={styles.chatText}>
+									{profileInfo?.bio || '한마디를 적어주세요!'}
+								</Text>
 							</View>
 							<View style={styles.chatBubbleTail} />
 						</View>
