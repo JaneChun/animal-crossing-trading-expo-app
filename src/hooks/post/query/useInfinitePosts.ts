@@ -1,4 +1,4 @@
-import { InfiniteData, useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { collection, limit, orderBy, query, startAfter, where } from 'firebase/firestore';
 
 import { db } from '@/config/firebase';
@@ -71,7 +71,7 @@ export const useInfinitePosts = <C extends Collection>(collectionName: C, filter
 	return useInfiniteQuery<
 		PaginatedPosts<C>, // fetch 함수 반환 타입
 		Error, // 에러 타입
-		InfiniteData<PaginatedPosts<C>>, // 리턴될 data 타입
+		PostWithCreatorInfo<C>[], //  리턴될 data 타입
 		[string, Collection, Filter?], // queryKey 타입
 		Doc // pageParam의 타입
 	>({
@@ -80,18 +80,15 @@ export const useInfinitePosts = <C extends Collection>(collectionName: C, filter
 			fetchPostsByCursor({ collectionName, filter, lastDoc: pageParam }),
 		initialPageParam: null,
 		getNextPageParam: (lastPage: PaginatedPosts<C>) => lastPage.lastDoc,
-		// 클라이언트 측 내가 차단한 유저, 나를 차단한 유저의 글 필터링
-		select: (infiniteData) => ({
-			pageParams: infiniteData.pageParams,
-			pages: infiniteData.pages.map((page) => ({
-				data: page.data.filter(
+		// 차단 유저 필터링 + 플랫 배열 변환
+		select: (infiniteData) =>
+			infiniteData.pages.flatMap((page) =>
+				page.data.filter(
 					(post) =>
 						!blockedUsers.includes(post.creatorId) &&
 						!blockedBy.includes(post.creatorId),
 				),
-				lastDoc: page.lastDoc,
-			})),
-		}),
+			),
 		refetchOnMount: true,
 	});
 };

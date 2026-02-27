@@ -5,6 +5,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showLongToast, showToast } from '@/components/ui/Toast';
 import { auth } from '@/config/firebase';
+import { NATIVE_AD_INTERVAL } from '@/constants/ads';
 import { useInfinitePosts } from '@/hooks/post/query/useInfinitePosts';
 import { useUserInfo } from '@/stores/auth';
 import { Colors } from '@/theme/Color';
@@ -16,7 +17,36 @@ import {
 	navigateToNewPost,
 } from '@/utilities/navigationHelpers';
 
+import NativeAdUnit from './NativeAdUnit';
 import PostUnit, { POST_UNIT_HEIGHT } from './PostUnit';
+
+// ─── 리스트 아이템 타입 (게시글 | 광고) ─────────────────────────────────────────────
+type PostItem = {
+	type: 'post';
+	data: PostWithCreatorInfo<Collection>;
+};
+
+type AdItem = {
+	type: 'ad';
+	id: string;
+};
+
+type ListItem = PostItem | AdItem;
+
+/** 게시글 배열에 NATIVE_AD_INTERVAL 간격으로 광고 플레이스홀더를 삽입 */
+const insertAds = (posts: PostWithCreatorInfo<Collection>[]): ListItem[] => {
+	const result: ListItem[] = [];
+
+	for (let i = 0; i < posts.length; i++) {
+		// NATIVE_AD_INTERVAL개마다 광고 삽입 (첫 번째 광고는 10번째 게시글 뒤)
+		if (i > 0 && i % NATIVE_AD_INTERVAL === 0) {
+			result.push({ type: 'ad', id: `ad-${i}` });
+		}
+		result.push({ type: 'post', data: posts[i] });
+	}
+
+	return result;
+};
 
 const PostList = ({
 	collectionName,
@@ -25,10 +55,17 @@ const PostList = ({
 	containerStyle,
 }: PostListProps) => {
 	const userInfo = useUserInfo();
-	const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage, refetch, isFetching } =
-		useInfinitePosts(collectionName, filter);
+	const {
+		data: posts,
+		isLoading,
+		hasNextPage,
+		fetchNextPage,
+		isFetchingNextPage,
+		refetch,
+		isFetching,
+	} = useInfinitePosts(collectionName, filter);
 
-	const flatListData = data?.pages.flatMap((page) => page.data) ?? [];
+	const listData = useMemo(() => insertAds(posts ?? []), [posts]);
 
 	const onPressAddPostButton = () => {
 		if (!userInfo || !auth.currentUser) {
@@ -46,20 +83,27 @@ const PostList = ({
 		navigateToNewPost(collectionName);
 	};
 
-	const renderPostUnit = useCallback(
-		({ item, index }: { item: PostWithCreatorInfo<Collection>; index: number }) => (
-			<PostUnit post={item} collectionName={collectionName} index={index} />
-		),
+	const renderItem = useCallback(
+		({ item, index }: { item: ListItem; index: number }) => {
+			if (item.type === 'ad') {
+				return <NativeAdUnit />;
+			}
+			return <PostUnit post={item.data} collectionName={collectionName} index={index} />;
+		},
 		[collectionName],
 	);
 
+	const keyExtractor = useCallback((item: ListItem) => {
+		return item.type === 'ad' ? item.id : item.data.id;
+	}, []);
+
 	const getItemLayout = useCallback(
-		(data: any, index: number) => ({
+		(_data: any, index: number) => ({
 			length: POST_UNIT_HEIGHT,
 			offset: POST_UNIT_HEIGHT * index,
 			index,
 		}),
-		[POST_UNIT_HEIGHT],
+		[],
 	);
 
 	const fetchNext = useCallback(() => {
@@ -80,9 +124,9 @@ const PostList = ({
 	return (
 		<>
 			<FlatList
-				data={flatListData}
-				keyExtractor={({ id }) => id}
-				renderItem={renderPostUnit}
+				data={listData}
+				keyExtractor={keyExtractor}
+				renderItem={renderItem}
 				style={containerStyle}
 				initialNumToRender={15}
 				maxToRenderPerBatch={15}
