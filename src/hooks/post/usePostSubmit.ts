@@ -1,5 +1,5 @@
 import { showToast } from '@/components/ui/Toast';
-import { useShowInterstitialAd } from '@/hooks/ads/useShowInterstitialAd';
+// import { useShowInterstitialAd } from '@/hooks/ads/useShowInterstitialAd';
 import { goBack } from '@/navigation/RootNavigation';
 import {
 	buildCreatePostRequestParams,
@@ -19,7 +19,7 @@ export const usePostSubmit = <C extends Collection>({
 	createPost,
 	updatePost,
 }: usePostSubmitParams<C>) => {
-	const { showAdIfReady } = useShowInterstitialAd();
+	// const { showAdIfReady } = useShowInterstitialAd();
 	const buildCreatePostRequest = ({
 		collectionName,
 		imageUrls,
@@ -88,7 +88,7 @@ export const usePostSubmit = <C extends Collection>({
 			{ requestData, userId },
 			{
 				onSuccess: async (id: string) => {
-					await showAdIfReady();
+					// await showAdIfReady();
 					resetAll();
 					popToPostDetail({ postId: id, collectionName });
 					showToast('success', '게시글이 작성되었습니다.');
@@ -108,7 +108,7 @@ export const usePostSubmit = <C extends Collection>({
 		});
 		updatePost(data, {
 			onSuccess: async () => {
-				await showAdIfReady();
+				// await showAdIfReady();
 				resetAll();
 				goBack();
 				showToast('success', '게시글이 수정되었습니다.');

@@ -15,7 +15,7 @@ import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGua
 import CommunityThumbnail from './CommunityThumbnail';
 import MarketTypeBadge from './MarketTypeBadge';
 
-export const POST_UNIT_HEIGHT = 100;
+export const POST_UNIT_HEIGHT = 95;
 
 const PostUnit = <C extends Collection>({ post, collectionName, index }: PostUnitProps<C>) => {
 	return (
