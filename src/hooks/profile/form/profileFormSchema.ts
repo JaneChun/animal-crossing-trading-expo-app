@@ -32,6 +32,7 @@ export const ProfileFormSchema = z.object({
 		.refine((name) => !cenkor(name).filtered, {
 			message: '부적절한 단어가 포함되어 있습니다.',
 		})
+		.or(z.literal(''))
 		.optional(),
 	titleLast: z
 		.string()
@@ -40,6 +41,7 @@ export const ProfileFormSchema = z.object({
 		.refine((name) => !cenkor(name).filtered, {
 			message: '부적절한 단어가 포함되어 있습니다.',
 		})
+		.or(z.literal(''))
 		.optional(),
 });
 

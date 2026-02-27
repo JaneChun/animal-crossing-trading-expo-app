@@ -7,3 +7,11 @@ export const FRUIT_IMAGES = {
 	peach: require('@assets/images/profile/peach.png'),
 	pear: require('@assets/images/profile/pear.png'),
 };
+
+export const FRUIT_NAMES = {
+	apple: '사과',
+	cherry: '체리',
+	orange: '오렌지',
+	peach: '복숭아',
+	pear: '배',
+};
