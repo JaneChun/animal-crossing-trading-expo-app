@@ -1,9 +1,8 @@
-import { FontAwesome6 } from '@expo/vector-icons';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
-
-import { FontSizes } from '@/constants/Typography';
 import { Colors } from '@/theme/Color';
 import { ValidationInputProp } from '@/types/components';
+import ErrorMessage from '../ErrorMessage';
+import { StyleSheet, TextInput } from 'react-native';
+import { FontSizes } from '@/constants/Typography';
 
 const ValidationInput = ({
 	inputStyle,
@@ -19,12 +18,9 @@ const ValidationInput = ({
 				placeholderTextColor={Colors.text.tertiary}
 				style={[inputStyle, errorMessage ? { borderColor: 'red' } : null]}
 			/>
-			{errorMessage ? (
-				<View style={[errorMessageContainerStyle, styles.errorMessageContainer]}>
-					<FontAwesome6 name="circle-exclamation" color="red" size={12} />
-					<Text style={styles.errorMessage}>{errorMessage}</Text>
-				</View>
-			) : null}
+			{errorMessage && (
+				<ErrorMessage message={errorMessage} containerStyle={errorMessageContainerStyle} />
+			)}
 		</>
 	);
 };
@@ -38,15 +34,5 @@ const styles = StyleSheet.create({
 		lineHeight: 20,
 		color: Colors.text.tertiary,
 		fontSize: FontSizes.sm,
-	},
-	errorMessageContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 4,
-		marginTop: 6,
-	},
-	errorMessage: {
-		color: Colors.badge.red,
-		fontSize: FontSizes.xs,
 	},
 });

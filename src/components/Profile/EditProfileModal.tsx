@@ -29,6 +29,7 @@ import { UserInfo } from '@/types/user';
 import NameInput from './NameInput';
 import { TouchableOpacity, Image } from 'react-native';
 import { FRUIT_IMAGES } from '@/constants/profile';
+import ErrorMessage from '../ui/ErrorMessage';
 
 const EditProfileModal = ({
 	isVisible,
@@ -76,8 +77,9 @@ const EditProfileModal = ({
 
 	const isDisplayNameValid = !errors.displayName && displayName.length > 0;
 	const isIslandNameValid = !errors.islandName && islandName.length > 0;
+	const isTitleValid = !errors.titleFirst && !errors.titleLast;
 
-	const isValid = isDisplayNameValid && isIslandNameValid;
+	const isValid = isDisplayNameValid && isIslandNameValid && isTitleValid;
 
 	const handleClose = () => {
 		reset();
@@ -294,6 +296,14 @@ const EditProfileModal = ({
 										)}
 									/>
 								</View>
+								{(errors.titleFirst?.message || errors.titleLast?.message) && (
+									<ErrorMessage
+										message={
+											(errors.titleFirst?.message ||
+												errors.titleLast?.message) as string
+										}
+									/>
+								)}
 							</View>
 
 							{/* 안내 문구 */}
@@ -343,7 +353,7 @@ const styles = StyleSheet.create({
 		marginBottom: 16,
 	},
 	inputContainer: {
-		marginBottom: 24,
+		marginBottom: 18,
 	},
 	label: {
 		fontSize: FontSizes.md,
