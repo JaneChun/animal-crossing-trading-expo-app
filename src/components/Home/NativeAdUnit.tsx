@@ -43,7 +43,7 @@ const NativeAdUnit = () => {
 								</Text>
 							</NativeAsset>
 						)}
-						{nativeAd.starRating !== null && (
+						{nativeAd.starRating !== null && nativeAd.starRating !== undefined && (
 							<NativeAsset assetType={NativeAssetType.STAR_RATING}>
 								<Text style={styles.starRating}>
 									{'★'.repeat(
