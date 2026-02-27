@@ -1,9 +1,3 @@
-import { db } from '@/config/firebase';
-import { Collection, CreatePostRequest, Post, PostDoc, UpdatePostRequest } from '@/types/post';
-import { PublicUserInfo } from '@/types/user';
-import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
-import { sanitize } from '@/utilities/sanitize';
-import { toPost } from '@/utilities/toPost';
 import {
 	collection,
 	DocumentData,
@@ -13,6 +7,8 @@ import {
 	Timestamp,
 	where,
 } from 'firebase/firestore';
+
+import { db } from '@/config/firebase';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import {
 	addDocToFirestore,
@@ -21,6 +17,12 @@ import {
 	queryDocs,
 	updateDocToFirestore,
 } from '@/firebase/core/firestoreService';
+import { Collection, CreatePostRequest, Post, PostDoc, UpdatePostRequest } from '@/types/post';
+import { PublicUserInfo } from '@/types/user';
+import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
+import { sanitize } from '@/utilities/sanitize';
+import { toPost } from '@/utilities/toPost';
+
 import { chunkArray, getPublicUserInfos } from './userService';
 
 export const fetchAndPopulateUsers = async <C extends Collection, T extends Post<C>, U>(

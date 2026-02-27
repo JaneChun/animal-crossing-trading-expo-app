@@ -1,11 +1,8 @@
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { liteClient } from 'algoliasearch/lite';
 import { initializeApp } from 'firebase/app';
-import {
-	connectAuthEmulator,
-	getReactNativePersistence,
-	initializeAuth,
-} from 'firebase/auth';
+// @ts-expect-error getReactNativePersistence는 React Native 환경에서만 제공되며 타입 정의에 포함되지 않음
+import { connectAuthEmulator, getReactNativePersistence, initializeAuth } from 'firebase/auth';
 import { connectFirestoreEmulator, getFirestore } from 'firebase/firestore';
 import { connectFunctionsEmulator, getFunctions } from 'firebase/functions';
 import { connectStorageEmulator, getStorage } from 'firebase/storage';
@@ -40,17 +37,13 @@ if (USE_EMULATOR && __DEV__) {
 		console.log('🔧 Firebase Emulator 연결 중...');
 
 		// 환경 변수에서 호스트 정보 가져오기
-		const authHost =
-			process.env.EXPO_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST || 'localhost:9099';
+		const authHost = process.env.EXPO_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST || 'localhost:9099';
 		const firestoreHost =
-			process.env.EXPO_PUBLIC_FIREBASE_FIRESTORE_EMULATOR_HOST ||
-			'localhost:8080';
+			process.env.EXPO_PUBLIC_FIREBASE_FIRESTORE_EMULATOR_HOST || 'localhost:8080';
 		const functionsHost =
-			process.env.EXPO_PUBLIC_FIREBASE_FUNCTIONS_EMULATOR_HOST ||
-			'localhost:5001';
+			process.env.EXPO_PUBLIC_FIREBASE_FUNCTIONS_EMULATOR_HOST || 'localhost:5001';
 		const storageHost =
-			process.env.EXPO_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST ||
-			'localhost:9199';
+			process.env.EXPO_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST || 'localhost:9199';
 
 		connectAuthEmulator(auth, `http://${authHost}`);
 
@@ -58,11 +51,7 @@ if (USE_EMULATOR && __DEV__) {
 		connectFirestoreEmulator(db, firestoreHostname, parseInt(firestorePort));
 
 		const [functionsHostname, functionsPort] = functionsHost.split(':');
-		connectFunctionsEmulator(
-			functions,
-			functionsHostname,
-			parseInt(functionsPort),
-		);
+		connectFunctionsEmulator(functions, functionsHostname, parseInt(functionsPort));
 
 		const [storageHostname, storagePort] = storageHost.split(':');
 		connectStorageEmulator(storage, storageHostname, parseInt(storagePort));
@@ -74,6 +63,6 @@ if (USE_EMULATOR && __DEV__) {
 }
 
 export const searchClient = liteClient(
-	process.env.EXPO_PUBLIC_ALGOLIA_APP_ID,
-	process.env.EXPO_PUBLIC_ALGOLIA_SEARCH_KEY,
+	process.env.EXPO_PUBLIC_ALGOLIA_APP_ID!,
+	process.env.EXPO_PUBLIC_ALGOLIA_SEARCH_KEY!,
 );

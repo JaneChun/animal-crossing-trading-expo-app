@@ -1,8 +1,9 @@
-import { Colors } from '@/constants/Color';
+import { StyleSheet, Text, View } from 'react-native';
+
 import { FontSizes } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
 import { CreatedAtProps } from '@/types/components';
 import { elapsedTime } from '@/utilities/elapsedTime';
-import { StyleSheet, Text, View } from 'react-native';
 
 const CreatedAt = ({ createdAt, containerStyle }: CreatedAtProps) => {
 	return (
@@ -16,7 +17,7 @@ export default CreatedAt;
 
 const styles = StyleSheet.create({
 	date: {
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontSize: FontSizes.xs,
 	},
 });

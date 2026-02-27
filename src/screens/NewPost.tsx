@@ -1,6 +1,7 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { ImagePickerAsset } from 'expo-image-picker';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldErrors, FormProvider } from 'react-hook-form';
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -147,7 +148,7 @@ const NewPost = () => {
 			// 결과적으로 사용할 이미지 URL 배열
 			const imageUrls: string[] = await handleImageUpload({
 				collectionName,
-				images: formData.images ?? [],
+				images: (formData.images ?? []) as ImagePickerAsset[],
 				originalImageUrls: formData.originalImageUrls ?? [],
 			});
 

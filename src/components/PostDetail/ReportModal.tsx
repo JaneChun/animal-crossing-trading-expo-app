@@ -1,13 +1,13 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { REPORT_CATEGORIES } from '@/constants/post';
-import { ReportUserParams } from '@/types/components';
 import Button from '@/components/ui/Button';
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
+import { REPORT_CATEGORIES } from '@/constants/post';
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { ReportUserParams } from '@/types/components';
 
 type ReportModalProps = {
 	isVisible: boolean;
@@ -40,27 +40,27 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 		<CustomBottomSheet
 			isVisible={isVisible}
 			onClose={onClose}
-			title='신고하기'
+			title="신고하기"
 			heightRatio={0.6}
 			rightButton={
 				step === 1 ? (
 					<Button
 						disabled={!selectedCategory}
-						color='white'
-						size='md2'
+						color="white"
+						size="md2"
 						onPress={handleNext}
 					>
 						다음
 					</Button>
 				) : (
-					<Button color='white' size='md2' onPress={handleSubmit}>
+					<Button color="white" size="md2" onPress={handleSubmit}>
 						제출
 					</Button>
 				)
 			}
 			leftButton={
 				step === 1 ? null : (
-					<Button color='gray' size='md2' onPress={handleBack}>
+					<Button color="gray" size="md2" onPress={handleBack}>
 						이전
 					</Button>
 				)
@@ -98,7 +98,7 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 						<Text style={styles.label}>상세 내용 (선택)</Text>
 						<BottomSheetTextInput
 							style={styles.textInput}
-							placeholder='자세한 내용을 입력해주세요'
+							placeholder="자세한 내용을 입력해주세요"
 							value={detail}
 							onChangeText={setDetail}
 							multiline
@@ -119,31 +119,31 @@ const styles = StyleSheet.create({
 	label: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.semibold,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 		marginBottom: 16,
 	},
 	categoryButton: {
 		padding: 12,
 		borderRadius: 8,
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		marginBottom: 10,
 	},
 	selectedCategory: {
-		borderColor: Colors.primary,
-		backgroundColor: '#e6f8f5',
+		borderColor: Colors.brand.primary,
+		backgroundColor: Colors.brand.secondary,
 	},
 	categoryText: {
-		color: Colors.font_black,
+		color: Colors.text.primary,
 		fontSize: FontSizes.md,
 	},
 	selectedCategoryText: {
-		color: Colors.primary,
+		color: Colors.brand.primary,
 		fontWeight: 'bold',
 	},
 	textInput: {
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		borderRadius: 8,
 		padding: 12,
 		height: 100,

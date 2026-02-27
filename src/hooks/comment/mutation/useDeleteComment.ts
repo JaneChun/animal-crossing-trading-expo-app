@@ -1,6 +1,7 @@
+import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { deleteComment } from '@/firebase/services/commentService';
 import { Collection, PaginatedPosts } from '@/types/post';
-import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeleteComment = (collectionName: Collection, postId: string, commentId: string) => {
 	const queryClient = useQueryClient();
@@ -23,7 +24,13 @@ export const useDeleteComment = (collectionName: Collection, postId: string, com
 							...page,
 							data: page.data.map((post) =>
 								post.id === postId
-									? { ...post, commentCount: Math.max(0, post.commentCount - totalDecrement) }
+									? {
+											...post,
+											commentCount: Math.max(
+												0,
+												post.commentCount - totalDecrement,
+											),
+										}
 									: post,
 							),
 						})),

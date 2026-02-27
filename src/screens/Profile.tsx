@@ -1,3 +1,8 @@
+import { useFocusEffect, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
+import { useCallback, useEffect, useState } from 'react';
+import { Image, Keyboard, View } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+
 import ReportModal from '@/components/PostDetail/ReportModal';
 import EditProfileModal from '@/components/Profile/EditProfileModal';
 import MyPosts from '@/components/Profile/MyPosts';
@@ -7,20 +12,17 @@ import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import ImageViewerModal from '@/components/ui/ImageViewerModal';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
-import { Colors } from '@/constants/Color';
 import { useBlockUser } from '@/hooks/shared/useBlockUser';
+import { useCachedPublicUserInfo } from '@/hooks/shared/useCachedPublicUserInfo';
 import { useCurrentTab } from '@/hooks/shared/useCurrentTab';
 import useLoading from '@/hooks/shared/useLoading';
-import { useCachedPublicUserInfo } from '@/hooks/shared/useCachedPublicUserInfo';
 import { useReportUser } from '@/hooks/shared/useReportUser';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useUserInfo } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
 import { ProfileRouteProp, RootStackNavigation } from '@/types/navigation';
 import { Tab } from '@/types/post';
-import { useFocusEffect, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
-import { useCallback, useEffect, useState } from 'react';
-import { Image, Keyboard, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import emptyProfileImage from '@assets/images/empty_profile_image.png';
 
 const Profile = () => {
 	const route = useRoute<ProfileRouteProp>();
@@ -57,8 +59,7 @@ const Profile = () => {
 
 	const isMyProfile: boolean = (userInfo && userInfo.uid === profileInfo?.uid) ?? false;
 
-	const emptyProfileImageSource = require('../../assets/images/empty_profile_image.png');
-	const resolvedEmptyProfileImage = Image.resolveAssetSource(emptyProfileImageSource);
+	const resolvedEmptyProfileImage = Image.resolveAssetSource(emptyProfileImage);
 
 	useFocusEffect(
 		useCallback(() => {
@@ -72,7 +73,7 @@ const Profile = () => {
 				userInfo &&
 				profileInfo && (
 					<ActionSheetButton
-						color={Colors.font_black}
+						color={Colors.text.primary}
 						size={18}
 						cancelIndex={2}
 						options={[

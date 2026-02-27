@@ -11,8 +11,6 @@ export const sanitize = (text: string): string => {
 
 	// 문자별로 범위에 걸리면 '□'로 교체
 	return [...text]
-		.map((ch, i) =>
-			ranges.some(({ from, to }) => i >= from && i <= to) ? '□' : ch,
-		)
+		.map((ch, i) => (ranges.some(({ from, to }) => i >= from && i <= to) ? '□' : ch))
 		.join('');
 };

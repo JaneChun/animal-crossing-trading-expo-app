@@ -1,12 +1,14 @@
-import { db } from '@/config/firebase';
-import { Notification, PopulatedNotification } from '@/types/notification';
-import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
+import { QueryClient } from '@tanstack/react-query';
 import { doc, writeBatch } from 'firebase/firestore';
+
+import { db } from '@/config/firebase';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import { deleteDocFromFirestore, updateDocToFirestore } from '@/firebase/core/firestoreService';
-import { getPosts } from './postService';
+import { Notification, PopulatedNotification } from '@/types/notification';
+import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
+
 import { getCachedPublicUserInfos } from './cachedUserService';
-import { QueryClient } from '@tanstack/react-query';
+import { getPosts } from './postService';
 
 export const populateSenderInfo = async ({
 	notifications,

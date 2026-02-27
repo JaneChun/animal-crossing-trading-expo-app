@@ -8,17 +8,12 @@ export function isBoardPost(
 	collectionName: Collection,
 ): post is BoardPost {
 	return (
-		collectionName === 'Boards' &&
-		post !== null &&
-		typeof post === 'object' &&
-		'cart' in post
+		collectionName === 'Boards' && post !== null && typeof post === 'object' && 'cart' in post
 	);
 }
 
 // Communities 타입 가드 함수
-export type CommunityPost =
-	| PostWithCreatorInfo<'Communities'>
-	| Post<'Communities'>;
+export type CommunityPost = PostWithCreatorInfo<'Communities'> | Post<'Communities'>;
 
 export function isCommunityPost(
 	post: PostWithCreatorInfo<Collection> | Post<Collection>,

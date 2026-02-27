@@ -1,9 +1,11 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import React from 'react';
 import { Alert, Linking, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import appIconImage from '@assets/images/app_icon.webp';
+
 import Button from './Button';
 
 interface UpdateModalProps {
@@ -53,10 +55,14 @@ export const UpdateModal = ({
 		<Modal
 			visible={isVisible}
 			transparent
-			animationType='fade'
+			animationType="fade"
 			onRequestClose={handleSkip} // Android 백 버튼 처리
 		>
-			<TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={handleBackdropPress}>
+			<TouchableOpacity
+				style={styles.overlay}
+				activeOpacity={1}
+				onPress={handleBackdropPress}
+			>
 				<TouchableOpacity
 					style={styles.modalContainer}
 					activeOpacity={1}
@@ -64,9 +70,9 @@ export const UpdateModal = ({
 				>
 					<View style={styles.content}>
 						<FastImage
-							source={require('../../../assets/images/app_icon.webp')}
+							source={appIconImage}
 							style={styles.image}
-							resizeMode='contain'
+							resizeMode="contain"
 						/>
 
 						{/* 제목 */}
@@ -83,12 +89,15 @@ export const UpdateModal = ({
 
 						{/* 버튼 영역 */}
 						<View style={styles.buttonContainer}>
-							<Button size='lg' color='mint' onPress={handleUpdate}>
+							<Button size="lg" color="mint" onPress={handleUpdate}>
 								<Text>업데이트 하러가기</Text>
 							</Button>
 
 							{!isForceUpdate && (
-								<TouchableWithoutFeedback style={styles.laterButton} onPress={onClose}>
+								<TouchableWithoutFeedback
+									style={styles.laterButton}
+									onPress={onClose}
+								>
 									<Text style={styles.laterButtonText}>다음에 할게요</Text>
 								</TouchableWithoutFeedback>
 							)}
@@ -103,20 +112,20 @@ export const UpdateModal = ({
 const styles = StyleSheet.create({
 	overlay: {
 		flex: 1,
-		backgroundColor: 'rgba(0, 0, 0, 0.5)', // 더 진한 배경으로 강제성 강조
+		backgroundColor: Colors.overlay.dim,
 		justifyContent: 'center',
 		alignItems: 'center',
 		padding: 20,
 	},
 	modalContainer: {
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		borderRadius: 20,
 		padding: 24,
 		width: '90%',
 		maxWidth: 400,
 		maxHeight: '80%',
 		// 그림자 효과
-		shadowColor: '#000',
+		shadowColor: Colors.bg.inverse,
 		shadowOffset: {
 			width: 0,
 			height: 10,
@@ -136,7 +145,7 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: FontSizes.lg,
 		fontWeight: FontWeights.bold,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 		textAlign: 'center',
 		marginBottom: 18,
 	},
@@ -145,7 +154,7 @@ const styles = StyleSheet.create({
 	},
 	message: {
 		fontSize: FontSizes.sm,
-		color: Colors.font_dark_gray,
+		color: Colors.text.secondary,
 		lineHeight: 20,
 	},
 	buttonContainer: {
@@ -155,7 +164,7 @@ const styles = StyleSheet.create({
 		marginTop: 12,
 	},
 	laterButtonText: {
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		textAlign: 'center',
 	},
 });

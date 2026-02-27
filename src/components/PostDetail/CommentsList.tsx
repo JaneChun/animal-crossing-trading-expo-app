@@ -1,5 +1,7 @@
-import { CommentsListProps } from '@/types/components';
 import { StyleSheet, Text, View } from 'react-native';
+
+import { CommentsListProps } from '@/types/components';
+
 import CommentUnit from './CommentUnit';
 
 const CommentsList = ({

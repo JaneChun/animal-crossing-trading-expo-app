@@ -1,5 +1,6 @@
-import { Message, SendChatMessageParams } from '@/types/chat';
 import { Timestamp } from 'firebase/firestore';
+
+import { Message, SendChatMessageParams } from '@/types/chat';
 
 export const convertSendParamsToMessage = ({
 	sendParams,

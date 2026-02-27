@@ -1,13 +1,12 @@
+import { StyleSheet, Text, View } from 'react-native';
+
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { BadgeProps } from '@/types/components';
-import { StyleSheet, Text, View } from 'react-native';
 
 const Badge = ({ text, textColor, bgColor, containerStyle }: BadgeProps) => {
 	return (
 		<View style={containerStyle}>
-			<Text
-				style={[styles.badge, { color: textColor, backgroundColor: bgColor }]}
-			>
+			<Text style={[styles.badge, { color: textColor, backgroundColor: bgColor }]}>
 				{text}
 			</Text>
 		</View>

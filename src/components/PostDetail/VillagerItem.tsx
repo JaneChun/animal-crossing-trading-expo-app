@@ -1,10 +1,9 @@
-import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
-import { Colors } from '@/constants/Color';
 import { VILLAGER_PERSONALITIES } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
 import { VillagerItemProps } from '@/types/components';
 
 const VillagerItem = ({ villager, containerStyle = {} }: VillagerItemProps) => {
@@ -35,7 +34,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingVertical: 12,
 		paddingHorizontal: 16,
-		backgroundColor: Colors.base,
+		backgroundColor: Colors.bg.secondary,
 		borderRadius: 16,
 	},
 	body: {
@@ -57,6 +56,6 @@ const styles = StyleSheet.create({
 	},
 	personality: {
 		fontSize: FontSizes.sm,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 	},
 });

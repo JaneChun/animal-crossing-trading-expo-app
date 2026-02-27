@@ -1,5 +1,6 @@
-import { REPORT_CATEGORIES } from '@/constants/post';
 import { Timestamp } from 'firebase/firestore';
+
+import { REPORT_CATEGORIES } from '@/constants/post';
 
 export interface Report {
 	id: string;

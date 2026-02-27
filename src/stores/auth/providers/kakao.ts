@@ -1,14 +1,12 @@
-import { loginWithKakao } from '@/firebase/services/authService';
 import { isLogined, logout } from '@react-native-kakao/user';
+
 import { auth } from '@/config/firebase';
-import { AuthStateManager, LoginResult } from '@/types';
+import { loginWithKakao } from '@/firebase/services/authService';
+
 import { BaseAuthProvider } from './base';
+import { LoginResult } from '../types';
 
 export class KakaoAuthProvider extends BaseAuthProvider {
-	constructor(stateManager: AuthStateManager) {
-		super(stateManager);
-	}
-
 	// 카카오 전용 로그인 구현
 	async login(): Promise<LoginResult> {
 		return this.executeLogin(async () => {

@@ -1,3 +1,6 @@
+import { useIsFetching } from '@tanstack/react-query';
+import { useState } from 'react';
+
 import { showToast } from '@/components/ui/Toast';
 import { useCreateReply } from '@/hooks/reply/mutation/useCreateReply';
 import { useUpdateReply } from '@/hooks/reply/mutation/useUpdateReply';
@@ -5,8 +8,6 @@ import { useUserInfo } from '@/stores/auth';
 import { Collection } from '@/types/post';
 import { CreateReplyRequest, UpdateReplyRequest } from '@/types/reply';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
-import { useIsFetching } from '@tanstack/react-query';
-import { useState } from 'react';
 
 export const usePostReply = (collectionName: Collection, postId: string) => {
 	const userInfo = useUserInfo();

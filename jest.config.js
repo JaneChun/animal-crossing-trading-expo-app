@@ -9,6 +9,7 @@ module.exports = {
 			moduleFileExtensions: ['js', 'json'],
 			moduleNameMapper: {
 				'^@/(.*)$': '<rootDir>/src/$1',
+				'^@assets/(.*)$': '<rootDir>/assets/$1',
 			},
 			transform: {
 				'^.+.js$': 'babel-jest',

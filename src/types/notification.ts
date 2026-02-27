@@ -1,4 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
+
 import { Collection, Post } from './post';
 import { PublicUserInfo } from './user';
 

@@ -1,12 +1,12 @@
 import { StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
+import { Colors } from '@/theme/Color';
+import dotSpinnerImage from 'assets/images/dots-spinner.jpg';
+
 const LoadingIndicator = () => (
 	<View style={styles.loadingContainer}>
-		<FastImage
-			source={require('../../../../assets/images/dots-spinner.jpg')}
-			style={{ height: 150, width: 150 }}
-		/>
+		<FastImage source={dotSpinnerImage} style={{ height: 150, width: 150 }} />
 	</View>
 );
 
@@ -17,6 +17,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 });

@@ -1,11 +1,11 @@
+import { Entypo } from '@expo/vector-icons';
+import { StyleSheet, Text, View } from 'react-native';
+
+import Bell from '@/components/ui/Icons/Bell';
+import MileTicket from '@/components/ui/Icons/MileTicket';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { TotalProps } from '@/types/components';
 import { CurrencyOption } from '@/types/post';
-import { Entypo } from '@expo/vector-icons';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import Bell from '@/components/ui/Icons/Bell';
-import MileTicket from '@/components/ui/Icons/MileTicket';
 
 const Total = ({ cart = [], containerStyle }: TotalProps) => {
 	const { totalBell, totalMileTicket } = cart.reduce(
@@ -36,7 +36,7 @@ const Total = ({ cart = [], containerStyle }: TotalProps) => {
 				</View>
 			)}
 
-			{totalBell > 0 && totalMileTicket > 0 && <Entypo name='plus' />}
+			{totalBell > 0 && totalMileTicket > 0 && <Entypo name="plus" />}
 
 			{totalMileTicket > 0 && (
 				<View style={styles.totalPriceContainer}>

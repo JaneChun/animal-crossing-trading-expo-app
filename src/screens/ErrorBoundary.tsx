@@ -1,16 +1,10 @@
+import React, { ReactNode } from 'react';
+import { Button, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
 import { showToast } from '@/components/ui/Toast';
-import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { reportError } from '@/firebase/services/errorService';
-import React, { ReactNode } from 'react';
-import {
-	Button,
-	ScrollView,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-	View,
-} from 'react-native';
+import { Colors } from '@/theme/Color';
 
 interface ErrorBoundaryProps {
 	children: ReactNode;
@@ -22,10 +16,7 @@ interface ErrorBoundaryState {
 	errorStack: string | null;
 }
 
-class ErrorBoundary extends React.Component<
-	ErrorBoundaryProps,
-	ErrorBoundaryState
-> {
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
 	constructor(props: ErrorBoundaryProps) {
 		super(props);
 		this.state = {
@@ -55,10 +46,7 @@ class ErrorBoundary extends React.Component<
 
 	reportErrorToFirestore = async () => {
 		try {
-			await reportError(
-				this.state.errorMessage ?? '',
-				this.state.errorStack ?? '',
-			);
+			await reportError(this.state.errorMessage ?? '', this.state.errorStack ?? '');
 
 			showToast('success', '개발팀에 에러가 보고되었습니다.');
 		} catch (e) {
@@ -72,7 +60,7 @@ class ErrorBoundary extends React.Component<
 				<ScrollView contentContainerStyle={styles.container}>
 					<View style={styles.infoContainer}>
 						<Text style={styles.title}>앱에 문제가 발생했습니다.</Text>
-						<Button title='재시도' onPress={this.resetError} />
+						<Button title="재시도" onPress={this.resetError} />
 					</View>
 
 					{/* 에러 리포트 버튼 */}
@@ -120,7 +108,7 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 	},
 	toggleButtonText: {
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontSize: FontSizes.sm,
 	},
 	logContainer: {
@@ -131,6 +119,6 @@ const styles = StyleSheet.create({
 	},
 	logText: {
 		fontSize: FontSizes.xs,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 	},
 });

@@ -2,12 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 import { collection, query, where } from 'firebase/firestore';
 
 import { db } from '@/config/firebase';
+import { MAX_VILLAGERS } from '@/constants/post';
 import { queryDocs } from '@/firebase/core/firestoreService';
 import { Villager } from '@/types/villager';
-import { MAX_VILLAGERS } from '@/constants/post';
 
 const fetchVillagersByIds = async (villagerIds: string[]): Promise<Villager[]> => {
-	const q = query(collection(db, 'Villagers'), where('__name__', 'in', villagerIds.slice(0, MAX_VILLAGERS)));
+	const q = query(
+		collection(db, 'Villagers'),
+		where('__name__', 'in', villagerIds.slice(0, MAX_VILLAGERS)),
+	);
 
 	const villagers = await queryDocs<Villager>(q);
 
@@ -36,5 +39,4 @@ export const useVillagersByIds = (villagerIds: string[]): Villager[] => {
 	});
 
 	return villagers;
-
 };

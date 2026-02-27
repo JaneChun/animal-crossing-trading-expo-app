@@ -1,5 +1,6 @@
-import { ReviewIMessage, SystemIMessage } from '@/types/chat';
 import { IMessage } from 'react-native-gifted-chat';
+
+import { ReviewIMessage, SystemIMessage } from '@/types/chat';
 
 export const isSystemMessage = (message: IMessage): message is SystemIMessage => {
 	return 'system' in message && message.system === true;

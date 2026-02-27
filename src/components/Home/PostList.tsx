@@ -1,7 +1,13 @@
-import { Colors } from '@/constants/Color';
+import { FontAwesome6 } from '@expo/vector-icons';
+import { useCallback, useMemo } from 'react';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+
+import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
+import { showLongToast, showToast } from '@/components/ui/Toast';
 import { auth } from '@/config/firebase';
 import { useInfinitePosts } from '@/hooks/post/query/useInfinitePosts';
 import { useUserInfo } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
 import { PostListProps } from '@/types/components';
 import { Collection, PostWithCreatorInfo } from '@/types/post';
 import {
@@ -9,11 +15,7 @@ import {
 	navigateToMyProfile,
 	navigateToNewPost,
 } from '@/utilities/navigationHelpers';
-import { FontAwesome6 } from '@expo/vector-icons';
-import React, { useCallback, useMemo } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
-import { showLongToast, showToast } from '@/components/ui/Toast';
+
 import PostUnit, { POST_UNIT_HEIGHT } from './PostUnit';
 
 const PostList = ({
@@ -23,17 +25,8 @@ const PostList = ({
 	containerStyle,
 }: PostListProps) => {
 	const userInfo = useUserInfo();
-	const {
-		data,
-		isLoading,
-		error,
-		hasNextPage,
-		fetchNextPage,
-		isFetchingNextPage,
-		refetch,
-		isFetching,
-		status,
-	} = useInfinitePosts(collectionName, filter);
+	const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage, refetch, isFetching } =
+		useInfinitePosts(collectionName, filter);
 
 	const flatListData = data?.pages.flatMap((page) => page.data) ?? [];
 
@@ -105,9 +98,9 @@ const PostList = ({
 				<Pressable
 					style={styles.addPostButton}
 					onPress={onPressAddPostButton}
-					testID='addPostButton'
+					testID="addPostButton"
 				>
-					<FontAwesome6 name='circle-plus' size={48} color={Colors.primary} />
+					<FontAwesome6 name="circle-plus" size={48} color={Colors.brand.primary} />
 					<View style={styles.whiteBackground} />
 				</Pressable>
 			)}
@@ -118,7 +111,7 @@ const PostList = ({
 const styles = StyleSheet.create({
 	endText: {
 		textAlign: 'center',
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		marginVertical: 16,
 	},
 	addPostButton: {
@@ -135,7 +128,7 @@ const styles = StyleSheet.create({
 		width: 30,
 		height: 30,
 		zIndex: -1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		borderRadius: '50%',
 	},
 });

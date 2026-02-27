@@ -1,8 +1,8 @@
-import { BodyInputProps } from '@/types/components';
-import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { StyleSheet, View } from 'react-native';
+
 import ValidationInput from '@/components/ui/inputs/ValidationInput';
+import { BodyInputProps } from '@/types/components';
 
 const BodyInput = ({
 	body,
@@ -23,7 +23,7 @@ const BodyInput = ({
 				value={body}
 				onChangeText={setBody}
 				onBlur={onBlur}
-				placeholder='내용을 입력하세요.'
+				placeholder="내용을 입력하세요."
 				inputStyle={[inputStyle, styles.textarea]}
 				multiline
 				errorMessageContainerStyle={{
@@ -31,7 +31,7 @@ const BodyInput = ({
 					marginBottom: 8,
 				}}
 				errorMessage={errorMessage}
-				testID='bodyInput'
+				testID="bodyInput"
 			/>
 		</View>
 	);

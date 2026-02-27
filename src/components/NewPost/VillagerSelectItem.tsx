@@ -1,10 +1,10 @@
-import React from 'react';
+import { memo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import HighlightMatchText from '@/components/ui/HighlightMatchText';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
-import { Colors } from '@/constants/Color';
 import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
 import { VillagerSelectItemProps } from '@/types/components';
 
 export const VILLAGER_ITEM_HEIGHT = 53;
@@ -38,7 +38,7 @@ const VillagerSelectItem = ({
 	);
 };
 
-export default React.memo(VillagerSelectItem, (prevProps, nextProps) => {
+export default memo<VillagerSelectItemProps>(VillagerSelectItem, (prevProps, nextProps) => {
 	return (
 		prevProps.villager.id === nextProps.villager.id &&
 		prevProps.searchInput === nextProps.searchInput
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
 		aspectRatio: '1/1',
 		alignItems: 'center',
 		padding: 8,
-		backgroundColor: Colors.base,
+		backgroundColor: Colors.bg.secondary,
 		borderRadius: 12,
 	},
 	imageContainer: {
@@ -70,12 +70,12 @@ const styles = StyleSheet.create({
 	name: {
 		fontWeight: FontWeights.semibold,
 		fontSize: FontSizes.sm,
-		color: Colors.font_dark_gray,
+		color: Colors.text.secondary,
 		textAlign: 'center',
 	},
 	highlight: {
 		fontWeight: FontWeights.bold,
-		color: Colors.primary,
+		color: Colors.brand.primary,
 		fontSize: FontSizes.sm,
 	},
 });

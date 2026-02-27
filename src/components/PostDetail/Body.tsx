@@ -1,7 +1,8 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes } from '@/constants/Typography';
-import { BodyProps } from '@/types/components';
 import { StyleSheet, Text, View } from 'react-native';
+
+import { FontSizes } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { BodyProps } from '@/types/components';
 
 const Body = ({ body, containerStyle }: BodyProps) => {
 	return (
@@ -16,7 +17,7 @@ export default Body;
 const styles = StyleSheet.create({
 	body: {
 		fontSize: FontSizes.md,
-		color: Colors.font_dark_gray,
+		color: Colors.text.secondary,
 		lineHeight: 26,
 	},
 });

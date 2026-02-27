@@ -1,10 +1,11 @@
+import { useCallback, useState } from 'react';
+
 import { showToast } from '@/components/ui/Toast';
 import { createReport } from '@/firebase/services/reportService';
 import { useUserInfo } from '@/stores/auth';
 import { ReportUserParams } from '@/types/components';
 import { CreateReportRequest, ReportTarget } from '@/types/report';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
-import { useCallback, useState } from 'react';
 
 export const useReportUser = () => {
 	const userInfo = useUserInfo();

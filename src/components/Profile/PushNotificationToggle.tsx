@@ -1,5 +1,5 @@
 import * as Notifications from 'expo-notifications';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AppState, Linking, StyleSheet, Switch, View } from 'react-native';
 
 const PushNotificationToggle = () => {

@@ -1,9 +1,10 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes } from '@/constants/Typography';
-import { ChatInputProps } from '@/types/components';
 import { FontAwesome6 } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
+
+import { FontSizes } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { ChatInputProps } from '@/types/components';
 
 const ChatInput = ({ disabled, onSubmit, onImagePress }: ChatInputProps) => {
 	const [chatInput, setChatInput] = useState('');
@@ -21,13 +22,13 @@ const ChatInput = ({ disabled, onSubmit, onImagePress }: ChatInputProps) => {
 			<Pressable
 				style={[
 					styles.imageButtonContainer,
-					{ backgroundColor: disabled ? Colors.icon_gray : Colors.primary },
+					{ backgroundColor: disabled ? Colors.icon.default : Colors.brand.primary },
 				]}
 				onPress={onImagePress}
 				disabled={disabled}
 				testID="chatImageButton"
 			>
-				<FontAwesome6 name="paperclip" size={18} color="white" />
+				<FontAwesome6 name="paperclip" size={18} color={Colors.text.inverse} />
 			</Pressable>
 
 			{/* 텍스트 인풋 */}
@@ -36,14 +37,14 @@ const ChatInput = ({ disabled, onSubmit, onImagePress }: ChatInputProps) => {
 				value={chatInput}
 				onChangeText={setChatInput}
 				placeholder={disabled ? '메세지를 보낼 수 없습니다.' : '메세지 보내기'}
-				placeholderTextColor={Colors.font_gray}
+				placeholderTextColor={Colors.text.tertiary}
 				multiline
 				scrollEnabled
 				enterKeyHint="send"
 				editable={!disabled}
 				testID="chatInput"
 			/>
-			
+
 			{/* 전송 버튼 */}
 			<Pressable
 				style={styles.iconContainer}
@@ -54,7 +55,7 @@ const ChatInput = ({ disabled, onSubmit, onImagePress }: ChatInputProps) => {
 				<FontAwesome6
 					name="circle-arrow-up"
 					size={28}
-					color={disabled ? Colors.icon_gray : Colors.primary}
+					color={disabled ? Colors.icon.default : Colors.brand.primary}
 				/>
 			</Pressable>
 		</View>
@@ -66,21 +67,21 @@ export default ChatInput;
 const styles = StyleSheet.create({
 	inputContainer: {
 		flexDirection: 'row',
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		alignItems: 'center',
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 	},
 	inputText: {
 		flex: 1,
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
-		backgroundColor: Colors.base,
+		borderColor: Colors.border.default,
+		backgroundColor: Colors.bg.secondary,
 		borderRadius: 20,
 		paddingVertical: 10,
 		paddingHorizontal: 16,
 		margin: 8,
 		fontSize: FontSizes.md,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		minHeight: 42,
 		maxHeight: 90,
 	},

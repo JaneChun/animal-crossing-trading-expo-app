@@ -1,8 +1,8 @@
-import { TitleInputProps } from '@/types/components';
-import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { View } from 'react-native';
+
 import ValidationInput from '@/components/ui/inputs/ValidationInput';
+import { TitleInputProps } from '@/types/components';
 
 const TitleInput = ({
 	title,
@@ -23,7 +23,7 @@ const TitleInput = ({
 			<ValidationInput
 				value={title}
 				onChangeText={setTitle}
-				placeholder='제목'
+				placeholder="제목"
 				onBlur={onBlur}
 				inputStyle={inputStyle}
 				errorMessageContainerStyle={{
@@ -31,7 +31,7 @@ const TitleInput = ({
 					marginBottom: 8,
 				}}
 				errorMessage={errorMessage}
-				testID='titleInput'
+				testID="titleInput"
 			/>
 		</View>
 	);

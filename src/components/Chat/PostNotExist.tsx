@@ -1,13 +1,13 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
 import { Feather } from '@expo/vector-icons';
-import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
 
 const PostNotExist = () => {
 	return (
 		<View style={styles.container}>
-			<Feather name='alert-circle' color={Colors.font_gray} size={16} />
+			<Feather name="alert-circle" color={Colors.text.tertiary} size={16} />
 			<Text style={styles.invalidPostText}>게시글을 찾을 수 없습니다.</Text>
 		</View>
 	);
@@ -22,14 +22,14 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingHorizontal: 16,
 		height: 70,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		borderWidth: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		borderRadius: 8,
 		gap: 6,
 	},
 	invalidPostText: {
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		alignSelf: 'center',
 		fontWeight: FontWeights.regular,
 		fontSize: FontSizes.sm,

@@ -1,4 +1,3 @@
-import { db } from '@/config/firebase';
 import {
 	DocumentData,
 	Query,
@@ -11,6 +10,8 @@ import {
 	setDoc,
 	updateDoc,
 } from 'firebase/firestore';
+
+import { db } from '@/config/firebase';
 import { deleteObjectFromStorage } from '@/firebase/services/imageService';
 
 export const getDocFromFirestore = async ({
@@ -70,9 +71,7 @@ export const deleteDocFromFirestore = async ({
 	await deleteDoc(docRef);
 
 	// 2. Storage에서 이미지 삭제
-	await Promise.all(
-		images.map((imageUrl: string) => deleteObjectFromStorage(imageUrl)),
-	);
+	await Promise.all(images.map((imageUrl: string) => deleteObjectFromStorage(imageUrl)));
 };
 
 export async function updateDocToFirestore({
@@ -89,7 +88,7 @@ export async function updateDocToFirestore({
 
 export const queryDocs = async <T extends DocumentData>(
 	q: Query<DocumentData>,
-): Promise<Array<T & { id: string }>> => {
+): Promise<(T & { id: string })[]> => {
 	const querySnapshot = await getDocs(q);
 
 	if (querySnapshot.empty) return [];

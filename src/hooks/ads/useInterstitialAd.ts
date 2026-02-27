@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { InterstitialAd, AdEventType } from 'react-native-google-mobile-ads';
+
 import { AD_UNIT_IDS } from '@/constants/ads';
 
 export const useInterstitialAd = () => {

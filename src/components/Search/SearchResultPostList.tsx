@@ -1,10 +1,11 @@
-import { Colors } from '@/constants/Color';
-import { useSearchPosts } from '@/hooks/post/query/useSearchPosts';
-import { Collection, PostWithCreatorInfo } from '@/types/post';
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { FlatList, StyleProp, StyleSheet, Text, ViewStyle } from 'react-native';
+
 import PostUnit, { POST_UNIT_HEIGHT } from '@/components/Home/PostUnit';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
+import { useSearchPosts } from '@/hooks/post/query/useSearchPosts';
+import { Colors } from '@/theme/Color';
+import { Collection, PostWithCreatorInfo } from '@/types/post';
 
 type SearchResultPostListProps = {
 	collectionName: Collection;
@@ -17,26 +18,17 @@ const SearchResultPostList = ({
 	keyword,
 	containerStyle,
 }: SearchResultPostListProps) => {
-	const {
-		data,
-		isLoading,
-		error,
-		hasNextPage,
-		fetchNextPage,
-		isFetchingNextPage,
-		refetch,
-		isFetching,
-		status,
-	} = useSearchPosts({
-		collectionName,
-		keyword,
-	});
+	const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage, refetch, isFetching } =
+		useSearchPosts({
+			collectionName,
+			keyword,
+		});
 
 	const flatListData = data?.pages.flat() ?? [];
 
 	const renderPostUnit = useCallback(
-		({ item }: { item: PostWithCreatorInfo<Collection> }) => (
-			<PostUnit post={item} collectionName={collectionName} />
+		({ item, index }: { item: PostWithCreatorInfo<Collection>; index: number }) => (
+			<PostUnit post={item} collectionName={collectionName} index={index} />
 		),
 		[collectionName],
 	);
@@ -88,7 +80,7 @@ const SearchResultPostList = ({
 const styles = StyleSheet.create({
 	endText: {
 		textAlign: 'center',
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		marginVertical: 16,
 	},
 });

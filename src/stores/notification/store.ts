@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+
 import { NotificationStore } from './types';
 
 export const useNotificationStore = create<NotificationStore>((set) => ({

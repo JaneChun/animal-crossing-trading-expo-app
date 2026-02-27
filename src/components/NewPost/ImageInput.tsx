@@ -1,13 +1,14 @@
-import { MAX_IMAGES } from '@/constants/post';
-import { useImagePicker } from '@/hooks/shared/useImagePicker';
-import { ImageInputProps } from '@/types/components';
 import { ImagePickerAsset } from 'expo-image-picker';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+
 import AddImageButton from '@/components/ui/AddImageButton';
 import ImagePreview from '@/components/ui/ImagePreview';
 import { showToast } from '@/components/ui/Toast';
+import { MAX_IMAGES } from '@/constants/post';
+import { useImagePicker } from '@/hooks/shared/useImagePicker';
+import { ImageInputProps } from '@/types/components';
 import { compressImages } from '@/utilities/compressImage';
 
 const ImageInput = ({ images, setImages, containerStyle, labelStyle }: ImageInputProps) => {
@@ -25,7 +26,7 @@ const ImageInput = ({ images, setImages, containerStyle, labelStyle }: ImageInpu
 		if (!newImages || newImages.length === 0) {
 			return;
 		}
-		
+
 		setIsLoading(true);
 		try {
 			const compressed = await compressImages(newImages);

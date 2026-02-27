@@ -1,7 +1,7 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes } from '@/constants/Typography';
-import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+import { FontSizes } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
 
 const ReadAllButton = ({ onPress }: { onPress: () => void }) => {
 	return (
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-end',
 	},
 	text: {
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontSize: FontSizes.xs,
 	},
 });

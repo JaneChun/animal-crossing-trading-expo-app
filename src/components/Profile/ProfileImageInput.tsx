@@ -1,12 +1,14 @@
-import { Colors } from '@/constants/Color';
-import { useImagePicker } from '@/hooks/shared/useImagePicker';
-import { ProfileImageInputProps } from '@/types/components';
-import { compressImage } from '@/utilities/compressImage';
-import { isLocalImage } from '@/utilities/typeGuards/imageGuards';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo } from '@expo/vector-icons';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
+
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import { useImagePicker } from '@/hooks/shared/useImagePicker';
+import { Colors } from '@/theme/Color';
+import { ProfileImageInputProps } from '@/types/components';
+import { compressImage } from '@/utilities/compressImage';
+import { isLocalImage } from '@/utilities/typeGuards/imageGuards';
+import emptyProfileImage from '@assets/images/empty_profile_image.png';
 
 const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 	const { pickImage } = useImagePicker({ multiple: false });
@@ -52,13 +54,13 @@ const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 		>
 			<ImageWithFallback
 				uri={image?.uri}
-				fallbackSource={require('../../../assets/images/empty_profile_image.png')}
+				fallbackSource={emptyProfileImage}
 				style={styles.image}
 			/>
 
 			<View style={[styles.image, styles.imageEditIconContainer]}>
 				<View style={styles.imageEditIcon}>
-					<Entypo name="camera" size={16} color={Colors.font_gray} />
+					<Entypo name="camera" size={16} color={Colors.text.tertiary} />
 				</View>
 			</View>
 		</TouchableOpacity>
@@ -79,7 +81,7 @@ const styles = StyleSheet.create({
 		borderRadius: 50,
 	},
 	emptyImage: {
-		backgroundColor: Colors.border_gray,
+		backgroundColor: Colors.border.default,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
@@ -92,7 +94,7 @@ const styles = StyleSheet.create({
 		width: 25,
 		height: 25,
 		borderRadius: 10,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},

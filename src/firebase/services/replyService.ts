@@ -1,10 +1,3 @@
-import { db } from '@/config/firebase';
-import { Notification } from '@/types/notification';
-import { Collection } from '@/types/post';
-import { CreateReplyRequest, Reply, UpdateReplyRequest } from '@/types/reply';
-import { PublicUserInfo } from '@/types/user';
-import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
-import { sanitize } from '@/utilities/sanitize';
 import {
 	collection,
 	deleteDoc,
@@ -16,8 +9,17 @@ import {
 	updateDoc,
 	writeBatch,
 } from 'firebase/firestore';
+
+import { db } from '@/config/firebase';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import { getDocFromFirestore } from '@/firebase/core/firestoreService';
+import { Notification } from '@/types/notification';
+import { Collection } from '@/types/post';
+import { CreateReplyRequest, Reply, UpdateReplyRequest } from '@/types/reply';
+import { PublicUserInfo } from '@/types/user';
+import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
+import { sanitize } from '@/utilities/sanitize';
+
 import { getPublicUserInfos } from './userService';
 
 export const fetchAndPopulateUsers = async <T extends Reply, U>(q: Query<DocumentData>) => {
@@ -33,11 +35,12 @@ export const fetchAndPopulateUsers = async <T extends Reply, U>(q: Query<Documen
 			return { id, ...docData } as unknown as T;
 		});
 
-		const uniqueCreatorIds: string[] = [...new Set(data.map((item) => item.creatorId))] as string[];
+		const uniqueCreatorIds: string[] = [
+			...new Set(data.map((item) => item.creatorId)),
+		] as string[];
 
-		const publicUserInfos: Record<string, PublicUserInfo> = await getPublicUserInfos(
-			uniqueCreatorIds,
-		);
+		const publicUserInfos: Record<string, PublicUserInfo> =
+			await getPublicUserInfos(uniqueCreatorIds);
 
 		const populatedData: U[] = data.map((item) => {
 			const userInfo = publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);
@@ -74,7 +77,9 @@ export const createReply = async ({
 		const batch = writeBatch(db);
 
 		// 1. 답글 문서 추가
-		const replyRef = doc(collection(db, collectionName, postId, 'Comments', commentId, 'Replies'));
+		const replyRef = doc(
+			collection(db, collectionName, postId, 'Comments', commentId, 'Replies'),
+		);
 
 		const cleanData: CreateReplyRequest = { ...requestData };
 		cleanData.body = sanitize(cleanData.body);

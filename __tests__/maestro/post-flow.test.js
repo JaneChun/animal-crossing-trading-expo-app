@@ -1,7 +1,16 @@
 const { execSync } = require('child_process');
 const path = require('path');
-const { setupTestUser, checkPostExists, TEST_USER_A } = require('@/__tests__/firebase-utils/test-helpers');
-const { cleanupTestUser, deleteDocumentsByField } = require('@/__tests__/firebase-utils/cleanup-test-data');
+
+const {
+	cleanupTestUser,
+	deleteDocumentsByField,
+} = require('@/__tests__/firebase-utils/cleanup-test-data');
+const {
+	setupTestUser,
+	checkPostExists,
+	TEST_USER_A,
+} = require('@/__tests__/firebase-utils/test-helpers');
+
 const { runMaestroTest } = require('./maestro-helper');
 
 describe('게시글 전체 플로우 테스트', () => {

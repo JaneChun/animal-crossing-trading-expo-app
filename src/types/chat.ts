@@ -1,5 +1,6 @@
 import { Timestamp } from 'firebase/firestore';
 import { IMessage } from 'react-native-gifted-chat';
+
 import { Collection } from './post';
 import { PublicUserInfo } from './user';
 

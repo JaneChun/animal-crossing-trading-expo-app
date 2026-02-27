@@ -1,5 +1,5 @@
-const path = require('path');
 const { execSync } = require('child_process');
+const path = require('path');
 
 const maestroPath = path.join(__dirname, '../../.maestro');
 

@@ -1,7 +1,8 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { LayoutProps } from '@/types/components';
 import { StyleSheet, Text, View } from 'react-native';
+
+import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { LayoutProps } from '@/types/components';
 
 // const { width } = Dimensions.get('window');
 // const isIphoneMini = width <= 375;
@@ -36,7 +37,7 @@ export default Layout;
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	header: {
 		paddingHorizontal: PADDING,
@@ -50,6 +51,6 @@ const styles = StyleSheet.create({
 		fontSize: FontSizes.xl,
 		fontWeight: FontWeights.bold,
 		marginBottom: 8,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 	},
 });

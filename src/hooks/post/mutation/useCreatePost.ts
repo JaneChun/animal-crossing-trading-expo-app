@@ -1,6 +1,7 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { createPost } from '@/firebase/services/postService';
 import { Collection, CreatePostRequest } from '@/types/post';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useCreatePost = <C extends Collection>(collectionName: C) => {
 	const queryClient = useQueryClient();

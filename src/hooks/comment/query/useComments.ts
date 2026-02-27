@@ -1,9 +1,10 @@
+import { useQuery } from '@tanstack/react-query';
+import { collection, orderBy, query } from 'firebase/firestore';
+
 import { db } from '@/config/firebase';
 import { fetchAndPopulateUsers } from '@/firebase/services/commentService';
 import { Comment, CommentWithCreatorInfo } from '@/types/comment';
 import { Collection } from '@/types/post';
-import { useQuery } from '@tanstack/react-query';
-import { collection, orderBy, query } from 'firebase/firestore';
 
 const fetchComments = async (
 	collectionName: Collection,
@@ -14,9 +15,7 @@ const fetchComments = async (
 		orderBy('createdAt', 'asc'),
 	);
 
-	const { data } = await fetchAndPopulateUsers<Comment, CommentWithCreatorInfo>(
-		q,
-	);
+	const { data } = await fetchAndPopulateUsers<Comment, CommentWithCreatorInfo>(q);
 
 	return data;
 };

@@ -1,13 +1,9 @@
-import React from 'react';
 import FastImage from 'react-native-fast-image';
 
+import bellImage from '@assets/images/bell.webp';
+
 const Bell = ({ style }: { style: any }) => {
-	return (
-		<FastImage
-			source={require('../../../../assets/images/bell.webp')}
-			style={style}
-		/>
-	);
+	return <FastImage source={bellImage} style={style} />;
 };
 
 export default Bell;

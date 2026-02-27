@@ -1,12 +1,15 @@
+import { User } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
+
 import { functions } from '@/config/firebase';
-import { AuthProvider, AuthStateManager, LoginResult } from '@/types';
 import {
 	clearUserSession,
 	executeWithLoading,
 	handleSuccessfulLogin,
 	signOutFromFirebase,
 } from '@/stores/auth/utils/session';
+
+import { AuthProvider, AuthStateManager, LoginResult } from '../types';
 
 /**
  * 모든 소셜 로그인 provider들이 상속받는 기본 클래스
@@ -35,7 +38,7 @@ export abstract class BaseAuthProvider implements AuthProvider {
 	 * @returns 로그인 결과 (성공여부, 신규 사용자여부, 이메일)
 	 */
 	protected async executeLogin(
-		providerLogin: () => Promise<{ user: any; email: string } | null>,
+		providerLogin: () => Promise<{ user: User; email: string } | null>,
 	): Promise<LoginResult> {
 		let isNewUser = false;
 		let userEmail = '';
@@ -76,9 +79,7 @@ export abstract class BaseAuthProvider implements AuthProvider {
 	 * @param providerLogout - 각 provider별 로그아웃 함수 (optional)
 	 * @returns 로그아웃 성공 여부
 	 */
-	protected async executeLogout(
-		providerLogout?: () => Promise<void>,
-	): Promise<boolean> {
+	protected async executeLogout(providerLogout?: () => Promise<void>): Promise<boolean> {
 		// 현재 로그인한 사용자가 있는지 확인
 		const userInfo = this.stateManager.getUserInfo();
 		if (!userInfo) {
@@ -127,10 +128,7 @@ export abstract class BaseAuthProvider implements AuthProvider {
 		const isSuccess = await executeWithLoading(
 			async () => {
 				// 1. Firebase Cloud Function을 통해 사용자 데이터 삭제
-				await httpsCallable(
-					functions,
-					'deleteUserAndArchive',
-				)({ uid: userInfo.uid });
+				await httpsCallable(functions, 'deleteUserAndArchive')({ uid: userInfo.uid });
 
 				// 2. provider별 회원탈퇴 (토큰 삭제 등)
 				if (providerDeleteAccount) {

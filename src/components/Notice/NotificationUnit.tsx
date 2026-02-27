@@ -1,16 +1,16 @@
-import { Colors } from '@/constants/Color';
+import { FontAwesome } from '@expo/vector-icons';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
+import Reanimated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
+
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useDeleteNotification } from '@/hooks/notification/query/mutation/useDeleteNotification';
+import { Colors } from '@/theme/Color';
 import { NotificationUnitProp } from '@/types/components';
 import { Collection } from '@/types/post';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToPost } from '@/utilities/navigationHelpers';
-import { FontAwesome } from '@expo/vector-icons';
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import Reanimated, { SharedValue, useAnimatedStyle } from 'react-native-reanimated';
 
 const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 	const {
@@ -56,7 +56,7 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 		return (
 			<Reanimated.View style={[styles.rightActionContainer, animatedStyle]}>
 				<Pressable style={styles.rightActionButton} onPress={() => deleteNotification()}>
-					<FontAwesome name='trash' color='white' size={24} />
+					<FontAwesome name="trash" color={Colors.text.inverse} size={24} />
 				</Pressable>
 			</Reanimated.View>
 		);
@@ -111,14 +111,14 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 24,
 		paddingVertical: 12,
 		borderBottomWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		gap: 16,
 	},
 	unreadBackground: {
-		backgroundColor: Colors.base,
+		backgroundColor: Colors.bg.secondary,
 	},
 	readBackground: {
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	thumbnailContainer: {
 		flexShrink: 0,
@@ -127,27 +127,27 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	title: {
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontWeight: FontWeights.regular,
 		marginBottom: 4,
 	},
 	highlight: {
-		color: Colors.font_black,
+		color: Colors.text.primary,
 		// fontWeight: FontWeights.semibold,
 	},
 	body: {
 		marginTop: 4,
 		fontSize: FontSizes.sm,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 	},
 	date: {
 		marginTop: 6,
 		fontSize: FontSizes.xs,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		textAlign: 'right',
 	},
 	rightActionContainer: {
-		backgroundColor: Colors.badge_red,
+		backgroundColor: Colors.badge.red,
 		width: 80,
 	},
 	rightActionButton: {

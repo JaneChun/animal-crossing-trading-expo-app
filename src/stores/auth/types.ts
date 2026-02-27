@@ -28,11 +28,6 @@ export interface AuthProvider {
 	deleteAccount: (uid: string) => Promise<boolean>;
 }
 
-export interface AuthStorageData {
-	uid: string;
-	[key: string]: any;
-}
-
 export interface ProviderSDKConfig {
 	kakao: {
 		iosKey: string;

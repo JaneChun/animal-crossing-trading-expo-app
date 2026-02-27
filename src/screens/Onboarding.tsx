@@ -1,11 +1,4 @@
-import Slide from '@/components/Onboarding/Slide';
-import PageIndicator from '@/components/PageIndicator';
-import Button from '@/components/ui/Button';
-import { ONBOARDING_DATA, OnboardingStep } from '@/constants/onboardingData';
-import { useOnboardingStore } from '@/stores/onboarding/store';
-import { saveOnboardingAsCompleted } from '@/stores/onboarding/utils/storage';
-import { replaceToHome } from '@/utilities/navigationHelpers';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import {
 	Dimensions,
 	FlatList,
@@ -16,12 +9,23 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import Slide from '@/components/Onboarding/Slide';
+import PageIndicator from '@/components/PageIndicator';
+import Button from '@/components/ui/Button';
+import { ONBOARDING_DATA, OnboardingStep } from '@/constants/onboardingData';
+import { useOnboardingStore } from '@/stores/onboarding/store';
+import { saveOnboardingAsCompleted } from '@/stores/onboarding/utils/storage';
+import { Colors } from '@/theme/Color';
+import { replaceToHome } from '@/utilities/navigationHelpers';
+
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const Onboarding = () => {
 	const currentStep = useOnboardingStore((state) => state.currentStep);
 	const setCurrentStep = useOnboardingStore((state) => state.setCurrentStep);
-	const setHasCompletedOnboarding = useOnboardingStore((state) => state.setHasCompletedOnboarding);
+	const setHasCompletedOnboarding = useOnboardingStore(
+		(state) => state.setHasCompletedOnboarding,
+	);
 
 	const flatListRef = useRef<FlatList>(null);
 	const currentData = ONBOARDING_DATA[currentStep] || ONBOARDING_DATA[0];
@@ -79,7 +83,7 @@ const Onboarding = () => {
 				<PageIndicator totalPages={ONBOARDING_DATA.length} currentIndex={currentStep} />
 
 				{/* 버튼  */}
-				<Button onPress={handleNext} color='mint' size='lg2' style={styles.button}>
+				<Button onPress={handleNext} color="mint" size="lg2" style={styles.button}>
 					{currentData.buttonText}
 				</Button>
 			</View>
@@ -90,7 +94,7 @@ const Onboarding = () => {
 const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	container: {
 		flex: 1,

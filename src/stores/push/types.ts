@@ -13,6 +13,4 @@ export interface PushNotificationActions {
 	resetStore: () => void;
 }
 
-export interface PushNotificationStore
-	extends PushNotificationState,
-		PushNotificationActions {}
+export interface PushNotificationStore extends PushNotificationState, PushNotificationActions {}

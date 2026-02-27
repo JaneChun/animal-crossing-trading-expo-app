@@ -1,9 +1,11 @@
-import { ImagePreviewProps } from '@/types/components';
-import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import ImageWithFallback from './ImageWithFallback';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '@/constants/Color';
+import { Pressable, StyleSheet, View } from 'react-native';
+
+import { Colors } from '@/theme/Color';
+import { ImagePreviewProps } from '@/types/components';
+import notFoundImage from '@assets/images/image-not-found.png';
+
+import ImageWithFallback from './ImageWithFallback';
 
 const ImagePreview = ({ uri, onDelete }: ImagePreviewProps) => {
 	return (
@@ -16,14 +18,14 @@ const ImagePreview = ({ uri, onDelete }: ImagePreviewProps) => {
 				<Ionicons
 					name="close-circle"
 					size={20}
-					color={Colors.font_gray}
+					color={Colors.text.tertiary}
 					style={styles.deleteButtonIcon}
 				/>
 				<View style={styles.deleteButtonBackground} />
 			</Pressable>
 			<ImageWithFallback
 				uri={uri}
-				fallbackSource={require('../../../assets/images/image-not-found.png')}
+				fallbackSource={notFoundImage}
 				style={styles.imageContainer}
 			/>
 		</View>
@@ -57,6 +59,6 @@ const styles = StyleSheet.create({
 		top: 2,
 		right: 2,
 		borderRadius: 10,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 });

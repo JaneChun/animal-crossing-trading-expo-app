@@ -1,14 +1,14 @@
-import { db } from '@/config/firebase';
-import { SendChatMessageParams } from '@/types/chat';
-import { CreateReviewParams } from '@/types/review';
 import { collection, limit, query, Timestamp, where } from 'firebase/firestore';
+
+import { db } from '@/config/firebase';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import { addDocToFirestore, queryDocs } from '@/firebase/core/firestoreService';
+import { SendChatMessageParams } from '@/types/chat';
+import { CreateReviewParams } from '@/types/review';
+
 import { sendMessage } from './chatService';
 
-export const createReview = async (
-	requestData: CreateReviewParams,
-): Promise<string> => {
+export const createReview = async (requestData: CreateReviewParams): Promise<string> => {
 	return firestoreRequest('리뷰 생성', async () => {
 		const createdId = await addDocToFirestore({
 			directory: 'Reviews',
@@ -22,11 +22,7 @@ export const createReview = async (
 	});
 };
 
-export const getReviewBySenderId = async (
-	postId: string,
-	chatId: string,
-	senderId: string,
-) => {
+export const getReviewBySenderId = async (postId: string, chatId: string, senderId: string) => {
 	try {
 		const q = query(
 			collection(db, 'Reviews'),

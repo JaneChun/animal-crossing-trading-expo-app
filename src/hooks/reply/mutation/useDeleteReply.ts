@@ -1,6 +1,7 @@
+import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { deleteReply } from '@/firebase/services/replyService';
 import { Collection, PaginatedPosts } from '@/types/post';
-import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useDeleteReply = (
 	collectionName: Collection,

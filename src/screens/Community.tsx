@@ -1,3 +1,6 @@
+import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useCallback, useState } from 'react';
+
 import PostList from '@/components/Home/PostList';
 import SearchIcon from '@/components/Search/SearchIcon';
 import Categories from '@/components/ui/Categories';
@@ -6,8 +9,6 @@ import { CATEGORIES } from '@/constants/post';
 import { useCurrentTab } from '@/hooks/shared/useCurrentTab';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { Category, CategoryItem, Tab } from '@/types/post';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
-import { useCallback, useState } from 'react';
 
 const Community = () => {
 	const setActiveTab = useActiveTabStore((state) => state.setActiveTab);
@@ -22,7 +23,7 @@ const Community = () => {
 	);
 
 	return (
-		<Layout title='커뮤니티' headerRightComponent={<SearchIcon />}>
+		<Layout title="커뮤니티" headerRightComponent={<SearchIcon />}>
 			<Categories<Category, CategoryItem>
 				categories={CATEGORIES}
 				category={category}
@@ -31,7 +32,7 @@ const Community = () => {
 			/>
 
 			<PostList
-				collectionName='Communities'
+				collectionName="Communities"
 				filter={{ category }}
 				isAddPostButtonVisible
 				containerStyle={{ paddingHorizontal: PADDING }}

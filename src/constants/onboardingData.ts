@@ -18,7 +18,8 @@ export const ONBOARDING_DATA: OnboardingStep[] = [
 		step: 1,
 		image: require('../../assets/images/onboarding/comment.webp'), // 댓글에 채팅하기 버튼 활성화 스크린샷
 		title: '댓글이 달리면 \n채팅하기 버튼이 나타나요',
-		description: '글 작성자에게만 채팅하기 버튼이 나타나 원하는 상대와 채팅을 시작할 수 있어요.',
+		description:
+			'글 작성자에게만 채팅하기 버튼이 나타나 원하는 상대와 채팅을 시작할 수 있어요.',
 		buttonText: '다음',
 	},
 	{

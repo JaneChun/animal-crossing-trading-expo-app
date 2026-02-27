@@ -1,20 +1,21 @@
-import { Colors } from '@/constants/Color';
+import { FontAwesome } from '@expo/vector-icons';
+import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+import ActionSheetButton from '@/components/ui/ActionSheetButton';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import { showToast } from '@/components/ui/Toast';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { usePostContext } from '@/hooks/post/usePostContext';
 import { useDeleteReply } from '@/hooks/reply/mutation/useDeleteReply';
 import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useUserInfo } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
 import { ReplyUnitProps } from '@/types/components';
 import { Collection } from '@/types/post';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToUserProfile } from '@/utilities/navigationHelpers';
-import { FontAwesome } from '@expo/vector-icons';
-import React from 'react';
-import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ActionSheetButton from '@/components/ui/ActionSheetButton';
-import ImageWithFallback from '@/components/ui/ImageWithFallback';
-import { showToast } from '@/components/ui/Toast';
+import emptyProfileImage from '@assets/images/empty_profile_image.png';
 
 const ReplyUnit = ({
 	postId,
@@ -88,7 +89,7 @@ const ReplyUnit = ({
 						label: '삭제',
 						onPress: handleDeleteReply,
 					},
-			  ]
+				]
 			: [
 					{
 						label: isBlockedByMe ? '차단 해제' : '차단',
@@ -98,7 +99,7 @@ const ReplyUnit = ({
 						label: '신고',
 						onPress: () => onReportClick({ commentId: id, reporteeId: creatorId }),
 					},
-			  ]),
+				]),
 		{ label: '취소', onPress: () => {} },
 	].filter(Boolean) as { label: string; onPress: () => void }[];
 
@@ -108,7 +109,7 @@ const ReplyUnit = ({
 			<Pressable onPress={onPressUserProfile}>
 				<ImageWithFallback
 					uri={creatorPhotoURL}
-					fallbackSource={require('../../../assets/images/empty_profile_image.png')}
+					fallbackSource={emptyProfileImage}
 					style={styles.profileImage}
 				/>
 			</Pressable>
@@ -121,16 +122,26 @@ const ReplyUnit = ({
 						<Pressable onPress={onPressUserProfile}>
 							<Text style={styles.creatorDisplayNameText}>{creatorDisplayName}</Text>
 						</Pressable>
-						{postCreatorId === creatorId && <Text style={styles.authorTag}>작성자</Text>}
+						{postCreatorId === creatorId && (
+							<Text style={styles.authorTag}>작성자</Text>
+						)}
 					</View>
 					{/* 액션 시트 버튼 */}
 					<View style={styles.actionContainer}>
-						{userInfo && <ActionSheetButton color={Colors.font_gray} size={14} options={options} />}
+						{userInfo && (
+							<ActionSheetButton
+								color={Colors.text.tertiary}
+								size={14}
+								options={options}
+							/>
+						)}
 					</View>
 				</View>
 
 				{/* 섬 이름, 작성 시간 */}
-				<Text style={styles.infoText}>{`${creatorIslandName} · ${elapsedTime(createdAt)}`}</Text>
+				<Text
+					style={styles.infoText}
+				>{`${creatorIslandName} · ${elapsedTime(createdAt)}`}</Text>
 
 				{/* 바디 */}
 				<Text style={styles.replyBody}>
@@ -153,7 +164,10 @@ const ReplyUnit = ({
 							}
 						>
 							<View style={styles.replyIconContainer}>
-								<FontAwesome name='reply' style={[styles.replyText, styles.replyIcon]} />
+								<FontAwesome
+									name="reply"
+									style={[styles.replyText, styles.replyIcon]}
+								/>
 							</View>
 							<Text style={styles.replyText}>답글 달기</Text>
 						</TouchableOpacity>
@@ -190,11 +204,11 @@ const styles = StyleSheet.create({
 	creatorDisplayNameText: {
 		fontSize: FontSizes.sm,
 		fontWeight: FontWeights.semibold,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 	},
 	authorTag: {
-		backgroundColor: Colors.primary_background,
-		color: Colors.primary_text,
+		backgroundColor: Colors.bg.primaryBrand,
+		color: Colors.text.primaryBrand,
 		fontSize: FontSizes.xs,
 		padding: 4,
 		borderRadius: 4,
@@ -206,18 +220,18 @@ const styles = StyleSheet.create({
 	},
 	infoText: {
 		fontSize: FontSizes.xs,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		marginBottom: 6,
 	},
 	replyBody: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.regular,
-		color: Colors.font_dark_gray,
+		color: Colors.text.secondary,
 		lineHeight: 22,
 	},
 	mentionTag: {
 		fontSize: FontSizes.md,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontWeight: FontWeights.semibold,
 	},
 	replyFooter: {
@@ -236,11 +250,11 @@ const styles = StyleSheet.create({
 		transform: [{ rotateX: '180deg' }, { rotateY: '180deg' }],
 	},
 	replyIcon: {
-		color: Colors.icon_gray,
+		color: Colors.icon.default,
 	},
 	replyText: {
 		fontSize: FontSizes.xs,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontWeight: FontWeights.regular,
 	},
 });

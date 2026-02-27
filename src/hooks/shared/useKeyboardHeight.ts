@@ -8,10 +8,8 @@ export const useKeyboardHeight = () => {
 	const [keyboardHeight, setKeyboardHeight] = useState<number>(0);
 
 	useEffect(() => {
-		const showEvent =
-			Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
-		const hideEvent =
-			Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+		const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+		const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
 
 		const onKeyboardShow = (e: any) => {
 			const finalHeight =

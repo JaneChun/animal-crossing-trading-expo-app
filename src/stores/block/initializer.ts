@@ -1,13 +1,14 @@
-import { db } from '@/config/firebase';
-import { useUserInfo } from '@/stores/auth';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { useEffect } from 'react';
+
+import { db } from '@/config/firebase';
+import { useUserInfo } from '@/stores/auth';
+
 import { useBlockStore } from './store';
 
 export const useBlockSubscriptionInitializer = () => {
 	const userInfo = useUserInfo();
-	const { setBlockedUsers, setBlockedBy, setIsLoading, clearBlocks } =
-		useBlockStore();
+	const { setBlockedUsers, setBlockedBy, setIsLoading, clearBlocks } = useBlockStore();
 
 	useEffect(() => {
 		// 로그아웃 상태면 초기화

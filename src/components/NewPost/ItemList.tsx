@@ -1,6 +1,8 @@
-import { ItemListProps } from '@/types/components';
 import { Text, TouchableOpacity, View } from 'react-native';
+
 import Total from '@/components/PostDetail/Total';
+import { ItemListProps } from '@/types/components';
+
 import EditableItem from './EditableItem.';
 
 const ItemList = ({
@@ -15,10 +17,7 @@ const ItemList = ({
 			<Text style={labelStyle}>아이템 ({cart?.length})</Text>
 
 			{cart.map((item) => (
-				<TouchableOpacity
-					key={item.id}
-					onPress={() => handleEditItemPress(item)}
-				>
+				<TouchableOpacity key={item.id} onPress={() => handleEditItemPress(item)}>
 					<EditableItem item={item} onDeleteItem={deleteItemFromCart} />
 				</TouchableOpacity>
 			))}

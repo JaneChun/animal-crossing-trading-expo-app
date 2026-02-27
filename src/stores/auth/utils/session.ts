@@ -1,10 +1,13 @@
+import { User } from 'firebase/auth';
+
+import { auth } from '@/config/firebase';
+import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import { updateLastLogin } from '@/firebase/services/authService';
 import { getUserInfo } from '@/firebase/services/userService';
 import { UserInfo } from '@/types/user';
-import { auth } from '@/config/firebase';
-import { AuthStateManager } from '@/types';
+
 import { clearUserStorage, saveUserToStorage } from './storage';
-import firestoreRequest from '@/firebase/core/firebaseInterceptor';
+import { AuthStateManager } from '../types';
 
 // 로딩 상태 관리 wrapper
 export const executeWithLoading = async <T>(
@@ -25,7 +28,7 @@ export const executeWithLoading = async <T>(
 
 // 로그인 성공 후 처리
 export const handleSuccessfulLogin = async (
-	user: any,
+	user: User,
 	stateManager: AuthStateManager,
 ): Promise<{ isNewUser: boolean }> => {
 	const userInfo = await getUserInfo(user.uid);
@@ -52,9 +55,7 @@ export const updateUserSession = async (
 };
 
 // 사용자 세션 초기화
-export const clearUserSession = async (
-	stateManager: AuthStateManager,
-): Promise<void> => {
+export const clearUserSession = async (stateManager: AuthStateManager): Promise<void> => {
 	stateManager.setUserInfo(null);
 	await clearUserStorage();
 };

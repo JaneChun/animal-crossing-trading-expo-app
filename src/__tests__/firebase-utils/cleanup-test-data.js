@@ -6,14 +6,20 @@ async function deleteDocumentById(collectionName, id) {
 		console.log(`Firestore ${collectionName} 컬렉션: id=${id} 문서 삭제 완료`);
 		return true;
 	} catch (error) {
-		console.error(`Firestore ${collectionName} 컬렉션: id=${id} 문서 삭제 실패:`, error.message);
+		console.error(
+			`Firestore ${collectionName} 컬렉션: id=${id} 문서 삭제 실패:`,
+			error.message,
+		);
 		throw error;
 	}
 }
 
 async function deleteDocumentsByField(collectionName, fieldName, fieldValue) {
 	try {
-		const snapshot = await db.collection(collectionName).where(fieldName, '==', fieldValue).get();
+		const snapshot = await db
+			.collection(collectionName)
+			.where(fieldName, '==', fieldValue)
+			.get();
 
 		if (snapshot.empty) {
 			return 0;
@@ -25,7 +31,9 @@ async function deleteDocumentsByField(collectionName, fieldName, fieldValue) {
 		});
 
 		await batch.commit();
-		console.log(`Firestore ${collectionName} 컬렉션: ${fieldName}=${fieldValue} 문서 삭제 완료`);
+		console.log(
+			`Firestore ${collectionName} 컬렉션: ${fieldName}=${fieldValue} 문서 삭제 완료`,
+		);
 		return snapshot.size;
 	} catch (error) {
 		console.error(

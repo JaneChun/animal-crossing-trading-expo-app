@@ -1,6 +1,7 @@
+import { StyleSheet, Text, View } from 'react-native';
+
 import { FontWeights } from '@/constants/Typography';
 import { TitleProps } from '@/types/components';
-import { StyleSheet, Text, View } from 'react-native';
 
 const Title = ({ title, containerStyle }: TitleProps) => {
 	return (

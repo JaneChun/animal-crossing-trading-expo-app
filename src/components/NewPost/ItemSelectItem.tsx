@@ -1,9 +1,10 @@
-import { Colors } from '@/constants/Color';
-import { ItemSelectItemProps } from '@/types/components';
-import React from 'react';
+import { memo } from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+
 import HighlightMatchText from '@/components/ui/HighlightMatchText';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import { Colors } from '@/theme/Color';
+import { ItemSelectItemProps } from '@/types/components';
 
 export const ITEM_HEIGHT = 53;
 
@@ -14,8 +15,8 @@ const ItemSelectItem = ({ item, searchInput, addItemToCart, index }: ItemSelectI
 			onPress={() => addItemToCart(item)}
 			testID={index === 0 ? 'firstItemSelectItem' : `itemSelectItem-${index}`}
 		>
-			<ImageWithFallback uri={item?.imageUrl} style={styles.itemImage} priority='high' />
-			<Text numberOfLines={1} ellipsizeMode='tail' style={styles.itemTextContainer}>
+			<ImageWithFallback uri={item?.imageUrl} style={styles.itemImage} priority="high" />
+			<Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemTextContainer}>
 				{HighlightMatchText({
 					text: item.name,
 					keyword: searchInput,
@@ -28,8 +29,10 @@ const ItemSelectItem = ({ item, searchInput, addItemToCart, index }: ItemSelectI
 	);
 };
 
-export default React.memo(ItemSelectItem, (prevProps, nextProps) => {
-	return prevProps.item.id === nextProps.item.id && prevProps.searchInput === nextProps.searchInput;
+export default memo(ItemSelectItem, (prevProps, nextProps) => {
+	return (
+		prevProps.item.id === nextProps.item.id && prevProps.searchInput === nextProps.searchInput
+	);
 });
 
 const styles = StyleSheet.create({
@@ -39,7 +42,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 6,
 		height: ITEM_HEIGHT,
 		borderBottomWidth: 1,
-		borderBottomColor: Colors.border_gray,
+		borderBottomColor: Colors.border.default,
 	},
 	itemImage: {
 		width: 40,
@@ -53,10 +56,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	itemColorText: {
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 	},
 	highlight: {
 		fontWeight: 800,
-		color: Colors.primary,
+		color: Colors.brand.primary,
 	},
 });

@@ -1,10 +1,12 @@
-import { ImageCarouselProps } from '@/types/components';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Dimensions, Pressable, StyleSheet, View } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
+
 import ImageViewerModal from '@/components/ui/ImageViewerModal';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
-import { Colors } from '@/constants/Color';
+import { Colors } from '@/theme/Color';
+import { ImageCarouselProps } from '@/types/components';
+import notFoundImage from '@assets/images/image-not-found.png';
 
 const { width } = Dimensions.get('window');
 
@@ -28,7 +30,7 @@ const ImageCarousel = ({ images, containerStyle }: ImageCarouselProps) => {
 						<Pressable onPress={() => handleImagePress(index)}>
 							<ImageWithFallback
 								uri={item as string}
-								fallbackSource={require('../../../assets/images/image-not-found.png')}
+								fallbackSource={notFoundImage}
 								style={styles.image}
 							/>
 						</Pressable>
@@ -46,7 +48,7 @@ const ImageCarousel = ({ images, containerStyle }: ImageCarouselProps) => {
 					dotStyle={{
 						width: 8,
 						height: 8,
-						backgroundColor: Colors.primary,
+						backgroundColor: Colors.brand.primary,
 					}}
 					inactiveDotOpacity={0.4}
 					inactiveDotScale={0.8}

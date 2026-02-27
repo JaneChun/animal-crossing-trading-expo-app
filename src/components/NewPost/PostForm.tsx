@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 
 import DropdownInput from '@/components/ui/inputs/DropdownInput';
 import { PADDING } from '@/components/ui/layout/Layout';
-import { Colors } from '@/constants/Color';
 import { COMMUNITY_TYPES } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
 import { PostFormProps } from '@/types/components';
 import { MarketType } from '@/types/post';
 
@@ -35,10 +35,10 @@ const PostForm = ({
 
 	// 분양/입양 타입이 아닐 때 villagers 초기화
 	useEffect(() => {
-		if (currentType !== 'giveaway' && currentType !== 'adopt') {
+		if (isCommunity && currentType !== 'giveaway' && currentType !== 'adopt') {
 			setValue('villagers', []);
 		}
-	}, [currentType, setValue]);
+	}, [isCommunity, currentType, setValue]);
 
 	const dropdownOptions = COMMUNITY_TYPES.map(({ KR, EN }) => ({
 		text: KR,
@@ -169,14 +169,14 @@ export default PostForm;
 
 const styles = StyleSheet.create({
 	inputContainer: {
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 		borderBottomWidth: 1,
 		marginBottom: 16,
 	},
 	label: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.semibold,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 		marginBottom: 12,
 	},
 	input: {

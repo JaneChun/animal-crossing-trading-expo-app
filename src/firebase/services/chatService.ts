@@ -1,14 +1,4 @@
-import { db } from '@/config/firebase';
-import {
-	Chat,
-	ChatWithReceiverInfo,
-	CreateChatRoomParams,
-	LeaveChatRoomParams,
-	MarkMessageAsReadParams,
-	SendChatMessageParams,
-} from '@/types/chat';
-import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
-import { sanitize } from '@/utilities/sanitize';
+import { QueryClient } from '@tanstack/react-query';
 import {
 	addDoc,
 	arrayRemove,
@@ -24,8 +14,20 @@ import {
 	where,
 	writeBatch,
 } from 'firebase/firestore';
+
+import { db } from '@/config/firebase';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
-import { QueryClient } from '@tanstack/react-query';
+import {
+	Chat,
+	ChatWithReceiverInfo,
+	CreateChatRoomParams,
+	LeaveChatRoomParams,
+	MarkMessageAsReadParams,
+	SendChatMessageParams,
+} from '@/types/chat';
+import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
+import { sanitize } from '@/utilities/sanitize';
+
 import { getCachedPublicUserInfos } from './cachedUserService';
 
 export const generateChatId = (user1: string, user2: string): string => {

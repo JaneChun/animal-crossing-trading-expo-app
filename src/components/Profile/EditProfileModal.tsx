@@ -1,6 +1,18 @@
+import { FontAwesome } from '@expo/vector-icons';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ImagePickerAsset } from 'expo-image-picker';
+import { useEffect } from 'react';
+import { Controller, FormProvider } from 'react-hook-form';
+import { StyleSheet, Text, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
 import ProfileImageInput from '@/components/Profile/ProfileImageInput';
+import Button from '@/components/ui/Button';
+import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
+import { PADDING } from '@/components/ui/layout/Layout';
+import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
-import { Colors } from '@/constants/Color';
 import { FontSizes } from '@/constants/Typography';
 import { updateDocToFirestore } from '@/firebase/core/firestoreService';
 import {
@@ -10,20 +22,10 @@ import {
 } from '@/firebase/services/imageService';
 import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
 import { useAuthStore, useUserInfo } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
 import { EditProfileModalProps } from '@/types/components';
 import { UserInfo } from '@/types/user';
-import { FontAwesome } from '@expo/vector-icons';
-import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ImagePickerAsset } from 'expo-image-picker';
-import React, { useEffect } from 'react';
-import { Controller, FormProvider } from 'react-hook-form';
-import { StyleSheet, Text, View } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import Button from '@/components/ui/Button';
-import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
-import { PADDING } from '@/components/ui/layout/Layout';
-import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
+
 import NameInput from './NameInput';
 
 const EditProfileModal = ({
@@ -77,7 +79,7 @@ const EditProfileModal = ({
 	const onSubmit = async () => {
 		if (!userInfo || !isValid) return;
 
-		let requestData: Record<string, string> = {};
+		const requestData: Record<string, string> = {};
 		let uploadedImageUrl: string = '';
 
 		try {
@@ -156,10 +158,10 @@ const EditProfileModal = ({
 	const submitButton = (
 		<Button
 			disabled={!isValid || isUploading}
-			color='white'
-			size='md2'
+			color="white"
+			size="md2"
 			onPress={handleSubmit(onSubmit, onError)}
-			testID='submitProfileButton'
+			testID="submitProfileButton"
 		>
 			완료
 		</Button>
@@ -175,7 +177,7 @@ const EditProfileModal = ({
 				isVisible={isVisible}
 				onClose={handleClose}
 				heightRatio={0.9}
-				title='프로필 수정'
+				title="프로필 수정"
 				rightButton={submitButton}
 				bodyStyle={styles.bottomSheetBodyStyle}
 			>
@@ -184,7 +186,7 @@ const EditProfileModal = ({
 						{/* 이미지 */}
 						<Controller
 							control={control}
-							name='image'
+							name="image"
 							render={({ field: { value, onChange } }) => (
 								<ProfileImageInput image={value} setImage={onChange} />
 							)}
@@ -194,35 +196,35 @@ const EditProfileModal = ({
 						<View style={styles.info}>
 							<Controller
 								control={control}
-								name='displayName'
+								name="displayName"
 								render={({ field: { value, onChange } }) => (
 									<NameInput
-										type='displayName'
+										type="displayName"
 										value={value}
 										onChangeText={onChange}
-										label='닉네임'
-										placeholder='닉네임을 입력해주세요.'
+										label="닉네임"
+										placeholder="닉네임을 입력해주세요."
 										InputComponent={BottomSheetTextInput}
 									/>
 								)}
 							/>
 							<Controller
 								control={control}
-								name='islandName'
+								name="islandName"
 								render={({ field: { value, onChange } }) => (
 									<NameInput
-										type='islandName'
+										type="islandName"
 										value={value}
 										onChangeText={onChange}
-										label='섬 이름'
-										placeholder='섬 이름을 입력해주세요.'
+										label="섬 이름"
+										placeholder="섬 이름을 입력해주세요."
 										InputComponent={BottomSheetTextInput}
 									/>
 								)}
 							/>
 
 							<View style={styles.messageContainer}>
-								<FontAwesome name='leaf' color={Colors.primary} size={14} />
+								<FontAwesome name="leaf" color={Colors.brand.primary} size={14} />
 								<Text style={styles.infoText}>
 									닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
 								</Text>
@@ -246,7 +248,7 @@ const styles = StyleSheet.create({
 	screen: {
 		flex: 1,
 		paddingRight: PADDING,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	container: {
 		flex: 1,
@@ -262,7 +264,7 @@ const styles = StyleSheet.create({
 		gap: 8,
 	},
 	infoText: {
-		color: Colors.primary,
+		color: Colors.brand.primary,
 		fontSize: FontSizes.sm,
 		marginBottom: 16,
 	},

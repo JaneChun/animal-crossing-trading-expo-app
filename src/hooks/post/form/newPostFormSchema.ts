@@ -22,9 +22,7 @@ const CartItemSchema = z.object({
 	name: z.string(),
 	quantity: z.number(),
 	price: z.number(),
-	unit: z
-		.enum(CURRENCY_OPTIONS.map((item) => item.EN) as [CurrencyOption, ...CurrencyOption[]])
-		.default('mileticket'),
+	unit: z.enum(CURRENCY_OPTIONS.map((item) => item.EN) as [CurrencyOption, ...CurrencyOption[]]),
 });
 
 const ImageTypeSchema = z.object({
@@ -38,6 +36,7 @@ const MarketFormSchema = z.object({
 	cart: z.array(CartItemSchema),
 	images: z.optional(z.never()), // 금지
 	originalImageUrls: z.optional(z.never()), // 금지
+	villagers: z.optional(z.never()), // 금지
 	...CommonFields,
 });
 
@@ -47,7 +46,7 @@ const CommunityFormSchema = z.object({
 	type: z.enum(COMMUNITY_TYPES.map((item) => item.EN) as [CommunityType, ...CommunityType[]]),
 	images: z.array(ImageTypeSchema),
 	originalImageUrls: z.array(z.string()).optional(),
-	villagers: z.array(z.string()).max(MAX_VILLAGERS).default([]),
+	villagers: z.array(z.string()).max(MAX_VILLAGERS),
 	cart: z.optional(z.never()), // 금지
 	...CommonFields,
 });

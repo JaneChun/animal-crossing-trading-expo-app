@@ -1,26 +1,24 @@
-import { Colors } from '@/constants/Color';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import Button from '@/components/ui/Button';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { blockUser, unblockUser } from '@/firebase/services/blockService';
 import { useUserInfo } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
 import { BlockedUser } from '@/types/user';
 import { navigateToUserProfile } from '@/utilities/navigationHelpers';
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Button from '@/components/ui/Button';
-import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import emptyProfileImage from '@assets/images/empty_profile_image.png';
 
 type BlockedUserUnitProps = {
 	blockedUserInfo: BlockedUser;
 	onToggleBlock: (uid: string, newBlockedState: boolean) => void;
 };
 
-const BlockedUserUnit = ({
-	blockedUserInfo,
-	onToggleBlock,
-}: BlockedUserUnitProps) => {
+const BlockedUserUnit = ({ blockedUserInfo, onToggleBlock }: BlockedUserUnitProps) => {
 	const userInfo = useUserInfo();
-	const { uid, displayName, islandName, photoURL, isBlocked } = blockedUserInfo;
+	const { uid, displayName, islandName, isBlocked } = blockedUserInfo;
 
 	const handlePress = async () => {
 		if (!userInfo) return;
@@ -47,7 +45,7 @@ const BlockedUserUnit = ({
 			<View style={styles.header}>
 				<ImageWithFallback
 					uri={blockedUserInfo?.photoURL}
-					fallbackSource={require('../../../assets/images/empty_profile_image.png')}
+					fallbackSource={emptyProfileImage}
 					style={styles.profileImage}
 				/>
 			</View>
@@ -59,7 +57,7 @@ const BlockedUserUnit = ({
 			</View>
 			<View style={styles.footer}>
 				<Button
-					size='md2'
+					size="md2"
 					color={isBlocked ? 'red' : 'redWhite'}
 					style={{ width: 90 }}
 					onPress={handlePress}
@@ -80,7 +78,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 24,
 		paddingVertical: 12,
 		borderBottomWidth: 1,
-		borderBottomColor: Colors.border_gray,
+		borderBottomColor: Colors.border.default,
 	},
 	header: {},
 	body: {
@@ -97,13 +95,13 @@ const styles = StyleSheet.create({
 	displayName: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.semibold,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 	},
 	islandName: {
 		flex: 1,
 		marginTop: 4,
 		fontSize: FontSizes.sm,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontWeight: FontWeights.light,
 	},
 });

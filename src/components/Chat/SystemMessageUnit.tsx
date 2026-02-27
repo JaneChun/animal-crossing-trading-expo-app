@@ -1,6 +1,8 @@
+import { StyleSheet, View } from 'react-native';
+
 import { usePostDetail } from '@/hooks/post/query/usePostDetail';
 import { SystemIMessage } from '@/types/chat';
-import { StyleSheet, View } from 'react-native';
+
 import PostNotExist from './PostNotExist';
 import PostSummary from './PostSummary';
 import PostSummaryLoading from './PostSummaryLoading';

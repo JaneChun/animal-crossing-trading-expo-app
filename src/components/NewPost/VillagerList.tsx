@@ -1,11 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
-import { Colors } from '@/constants/Color';
 import { MAX_VILLAGERS } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
 import { VillagerListProps } from '@/types/components';
 
 const VillagerList = ({
@@ -35,7 +34,7 @@ const VillagerList = ({
 							onPress={() => deleteVillager(villager.id)}
 							hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
 						>
-							<Ionicons name="close-circle" size={20} color={Colors.font_gray} />
+							<Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
 						</TouchableOpacity>
 						{/* 이미지 */}
 						<View style={styles.imageContainer}>
@@ -59,7 +58,7 @@ const VillagerList = ({
 						onPress={openAddVillagerModal}
 						testID="addVillagerButton"
 					>
-						<Ionicons name="add" size={32} color={Colors.font_gray} />
+						<Ionicons name="add" size={32} color={Colors.text.tertiary} />
 					</TouchableOpacity>
 				)}
 			</ScrollView>
@@ -81,10 +80,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingVertical: 12,
 		paddingHorizontal: 16,
-		backgroundColor: Colors.base,
+		backgroundColor: Colors.bg.secondary,
 		borderRadius: 12,
 		borderWidth: 1,
-		borderColor: Colors.border_gray,
+		borderColor: Colors.border.default,
 	},
 	imageContainer: {
 		position: 'relative',
@@ -103,7 +102,7 @@ const styles = StyleSheet.create({
 		marginTop: 4,
 		fontSize: FontSizes.sm,
 		fontWeight: FontWeights.semibold,
-		color: Colors.font_dark_gray,
+		color: Colors.text.secondary,
 		textAlign: 'center',
 	},
 	addButton: {
@@ -111,8 +110,8 @@ const styles = StyleSheet.create({
 		height: 60,
 		borderRadius: 30,
 		borderWidth: 1,
-		backgroundColor: Colors.base,
-		borderColor: Colors.base,
+		backgroundColor: Colors.bg.secondary,
+		borderColor: Colors.bg.secondary,
 		justifyContent: 'center',
 		alignItems: 'center',
 		marginVertical: 'auto',

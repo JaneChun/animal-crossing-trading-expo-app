@@ -1,9 +1,12 @@
+import { useCallback, useEffect, useRef } from 'react';
+
+import { REALTIME_MESSAGE_LIMIT, LOAD_MORE_PAGE_SIZE } from '@/constants/chat';
 import { useUserInfo } from '@/stores/auth';
 import { Message } from '@/types/chat';
 import { formatIMessages } from '@/utilities/formatIMessages';
-import { useCallback, useEffect, useRef } from 'react';
-import { useRealtimeMessages } from './firebase/useRealtimeMessages';
+
 import { useLoadMoreMessages } from './firebase/useLoadMoreMessages';
+import { useRealtimeMessages } from './firebase/useRealtimeMessages';
 import { useLeaveChatRoom } from './mutation/useLeaveChatRoom';
 import {
 	useMarkAllUnreadAsRead,
@@ -11,7 +14,6 @@ import {
 } from './mutation/useMarkMessagesAsRead';
 import { useSendMessage } from './mutation/useSendMessage';
 import { useReceiverInfo } from './query/useReceiverInfo';
-import { REALTIME_MESSAGE_LIMIT, LOAD_MORE_PAGE_SIZE } from '@/constants/chat';
 
 export const useChatRoom = ({
 	chatId,

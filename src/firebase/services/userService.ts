@@ -1,3 +1,6 @@
+import { collection, doc, query, setDoc, where } from 'firebase/firestore';
+
+import { db } from '@/config/firebase';
 import {
 	DEFAULT_USER_DISPLAY_NAME,
 	DEFAULT_USER_ISLAND_NAME,
@@ -5,16 +8,14 @@ import {
 	DEFAULT_USER_REPORT,
 	DEFAULT_USER_REVIEW,
 } from '@/constants/defaultUserInfo';
-import { db } from '@/config/firebase';
-import { PublicUserInfo, UserInfo } from '@/types/user';
-import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
-import { collection, doc, query, setDoc, where } from 'firebase/firestore';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import {
 	getDocFromFirestore,
 	queryDocs,
 	updateDocToFirestore,
 } from '@/firebase/core/firestoreService';
+import { PublicUserInfo, UserInfo } from '@/types/user';
+import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 
 export const getUserInfo = async (uid: string): Promise<UserInfo | null> => {
 	return firestoreRequest('나의 정보 조회', async () => {
@@ -43,9 +44,7 @@ export const saveUserInfo = async (
 	});
 };
 
-export const getPublicUserInfo = async (
-	creatorId: string,
-): Promise<PublicUserInfo> => {
+export const getPublicUserInfo = async (creatorId: string): Promise<PublicUserInfo> => {
 	try {
 		return firestoreRequest('유저 정보 조회', async () => {
 			const docData = await getDocFromFirestore({
@@ -137,13 +136,7 @@ export const savePushTokenToFirestore = async ({
 	});
 };
 
-export const setActiveChatRoom = async ({
-	userId,
-	chatId,
-}: {
-	userId: string;
-	chatId: string;
-}) => {
+export const setActiveChatRoom = async ({ userId, chatId }: { userId: string; chatId: string }) => {
 	await updateDocToFirestore({
 		id: userId,
 		collection: 'Users',

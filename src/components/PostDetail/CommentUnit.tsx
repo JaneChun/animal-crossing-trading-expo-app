@@ -1,4 +1,9 @@
-import { Colors } from '@/constants/Color';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+import ActionSheetButton from '@/components/ui/ActionSheetButton';
+import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import { showToast } from '@/components/ui/Toast';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { generateChatId } from '@/firebase/services/chatService';
@@ -6,6 +11,7 @@ import { useDeleteComment } from '@/hooks/comment/mutation/useDeleteComment';
 import { useReplies } from '@/hooks/reply/query/useReplies';
 import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useUserInfo } from '@/stores/auth';
+import { Colors } from '@/theme/Color';
 import { CreateChatRoomParams, SendChatMessageParams } from '@/types/chat';
 import { CommentUnitProps } from '@/types/components';
 import { Collection } from '@/types/post';
@@ -13,12 +19,8 @@ import { ReplyWithCreatorInfo } from '@/types/reply';
 import { createSystemMessage } from '@/utilities/createSystemMessage';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToChatRoom, navigateToUserProfile } from '@/utilities/navigationHelpers';
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
-import React from 'react';
-import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import ActionSheetButton from '@/components/ui/ActionSheetButton';
-import ImageWithFallback from '@/components/ui/ImageWithFallback';
-import { showToast } from '@/components/ui/Toast';
+import emptyProfileImage from '@assets/images/empty_profile_image.png';
+
 import ReplyUnit from './ReplyUnit';
 
 const CommentUnit = ({
@@ -142,7 +144,7 @@ const CommentUnit = ({
 						label: '삭제',
 						onPress: handleDeleteComment,
 					},
-			  ]
+				]
 			: [
 					{
 						label: isBlockedByMe ? '차단 해제' : '차단',
@@ -152,7 +154,7 @@ const CommentUnit = ({
 						label: '신고',
 						onPress: () => onReportClick({ commentId: id, reporteeId: creatorId }),
 					},
-			  ]),
+				]),
 		{ label: '취소', onPress: () => {} },
 	].filter(Boolean) as { label: string; onPress: () => void }[];
 
@@ -162,7 +164,7 @@ const CommentUnit = ({
 			<Pressable onPress={onPressUserProfile}>
 				<ImageWithFallback
 					uri={creatorPhotoURL}
-					fallbackSource={require('../../../assets/images/empty_profile_image.png')}
+					fallbackSource={emptyProfileImage}
 					style={styles.profileImage}
 				/>
 			</Pressable>
@@ -175,16 +177,26 @@ const CommentUnit = ({
 						<Pressable onPress={onPressUserProfile}>
 							<Text style={styles.creatorDisplayNameText}>{creatorDisplayName}</Text>
 						</Pressable>
-						{postCreatorId === creatorId && <Text style={styles.authorTag}>작성자</Text>}
+						{postCreatorId === creatorId && (
+							<Text style={styles.authorTag}>작성자</Text>
+						)}
 					</View>
 					{/* 액션 시트 버튼 */}
 					<View style={styles.actionContainer}>
-						{userInfo && <ActionSheetButton color={Colors.font_gray} size={14} options={options} />}
+						{userInfo && (
+							<ActionSheetButton
+								color={Colors.text.tertiary}
+								size={14}
+								options={options}
+							/>
+						)}
 					</View>
 				</View>
 
 				{/* 섬 이름, 작성 시간 */}
-				<Text style={styles.infoText}>{`${creatorIslandName} · ${elapsedTime(createdAt)}`}</Text>
+				<Text
+					style={styles.infoText}
+				>{`${creatorIslandName} · ${elapsedTime(createdAt)}`}</Text>
 
 				{/* 바디 */}
 				<Text style={styles.commentBody}>{body}</Text>
@@ -204,7 +216,10 @@ const CommentUnit = ({
 							}
 						>
 							<View style={styles.replyIconContainer}>
-								<FontAwesome name='reply' style={[styles.replyText, styles.replyIcon]} />
+								<FontAwesome
+									name="reply"
+									style={[styles.replyText, styles.replyIcon]}
+								/>
 							</View>
 							<Text style={styles.replyText}>답글 달기</Text>
 						</TouchableOpacity>
@@ -223,10 +238,14 @@ const CommentUnit = ({
 										receiverId: creatorId,
 									})
 								}
-								testID='startChatButton'
+								testID="startChatButton"
 							>
 								<Text style={styles.chatText}>채팅하기</Text>
-								<AntDesign name='arrowright' color={Colors.primary} size={14} />
+								<AntDesign
+									name="arrowright"
+									color={Colors.brand.primary}
+									size={14}
+								/>
 							</TouchableOpacity>
 						)}
 				</View>
@@ -242,8 +261,10 @@ const CommentUnit = ({
 								commentId={id}
 								mentionTag={
 									id !== reply.parentId
-										? replies.find(({ id: replyId }: { id: string }) => replyId === reply.parentId)
-												?.creatorDisplayName || ''
+										? replies.find(
+												({ id: replyId }: { id: string }) =>
+													replyId === reply.parentId,
+											)?.creatorDisplayName || ''
 										: undefined
 								}
 								onReportClick={onReportClick}
@@ -287,11 +308,11 @@ const styles = StyleSheet.create({
 	creatorDisplayNameText: {
 		fontSize: FontSizes.sm,
 		fontWeight: FontWeights.semibold,
-		color: Colors.font_black,
+		color: Colors.text.primary,
 	},
 	authorTag: {
-		backgroundColor: Colors.primary_background,
-		color: Colors.primary_text,
+		backgroundColor: Colors.bg.primaryBrand,
+		color: Colors.text.primaryBrand,
 		fontSize: FontSizes.xs,
 		padding: 4,
 		borderRadius: 4,
@@ -303,13 +324,13 @@ const styles = StyleSheet.create({
 	},
 	infoText: {
 		fontSize: FontSizes.xs,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		marginBottom: 6,
 	},
 	commentBody: {
 		fontSize: FontSizes.md,
 		fontWeight: FontWeights.regular,
-		color: Colors.font_dark_gray,
+		color: Colors.text.secondary,
 		lineHeight: 24,
 	},
 	commentFooter: {
@@ -329,11 +350,11 @@ const styles = StyleSheet.create({
 		transform: [{ rotateX: '180deg' }, { rotateY: '180deg' }],
 	},
 	replyIcon: {
-		color: Colors.icon_gray,
+		color: Colors.icon.default,
 	},
 	replyText: {
 		fontSize: FontSizes.xs,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontWeight: FontWeights.regular,
 	},
 	chatButtonContainer: {
@@ -342,14 +363,14 @@ const styles = StyleSheet.create({
 		gap: 4,
 		paddingVertical: 10,
 		paddingHorizontal: 14,
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 		borderRadius: 50,
 		borderWidth: 1,
-		borderColor: Colors.primary,
+		borderColor: Colors.brand.primary,
 	},
 	chatText: {
 		fontSize: FontSizes.sm,
-		color: Colors.primary,
+		color: Colors.brand.primary,
 		fontWeight: FontWeights.semibold,
 	},
 	repliesContainer: {},

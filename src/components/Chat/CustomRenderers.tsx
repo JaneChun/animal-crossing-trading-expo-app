@@ -1,13 +1,14 @@
+import { FontAwesome5 } from '@expo/vector-icons';
+import { StyleSheet, View } from 'react-native';
+
 import DateSeparator from '@/components/Chat/DateSeparator';
 import ImageMessageUnit from '@/components/Chat/ImageMessageUnit';
 import MessageUnit from '@/components/Chat/MessageUnit';
 import SystemMessageUnit from '@/components/Chat/SystemMessageUnit';
-import { Colors } from '@/constants/Color';
+import { Colors } from '@/theme/Color';
 import { ExtendedIMessage } from '@/types/chat';
-import { ChatInputProps } from '@/types/components';
 import { isReviewMessage, isSystemMessage } from '@/utilities/typeGuards/messageGuards';
-import { FontAwesome5 } from '@expo/vector-icons';
-import { StyleSheet, View } from 'react-native';
+
 import ChatInput from './ChatInput';
 import ReviewMessageUnit from './ReviewMessageUnit';
 
@@ -68,13 +69,7 @@ export const renderComposer = ({
 	onSend: (text: string) => void;
 	onImagePress: () => void;
 }) => {
-	return (
-		<ChatInput
-			disabled={disabled}
-			onSubmit={onSend}
-			onImagePress={onImagePress}
-		/>
-	);
+	return <ChatInput disabled={disabled} onSubmit={onSend} onImagePress={onImagePress} />;
 };
 
 export const renderScrollToBottomComponent = () => (
@@ -88,12 +83,12 @@ const styles = StyleSheet.create({
 		width: '100%',
 		height: '100%',
 		borderRadius: '50%',
-		// backgroundColor: Colors.primary,
+		// backgroundColor: Colors.brand.primary,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
 	downIcon: {
 		// color: 'white',
-		color: Colors.primary,
+		color: Colors.brand.primary,
 	},
 });

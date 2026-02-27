@@ -1,7 +1,8 @@
+import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { createReply } from '@/firebase/services/replyService';
 import { Collection, PaginatedPosts } from '@/types/post';
 import { CreateReplyRequest } from '@/types/reply';
-import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useCreateReply = (collectionName: Collection, postId: string) => {
 	const queryClient = useQueryClient();
@@ -35,7 +36,9 @@ export const useCreateReply = (collectionName: Collection, postId: string) => {
 						pages: oldData.pages.map((page) => ({
 							...page,
 							data: page.data.map((post) =>
-								post.id === postId ? { ...post, commentCount: post.commentCount + 1 } : post,
+								post.id === postId
+									? { ...post, commentCount: post.commentCount + 1 }
+									: post,
 							),
 						})),
 					};

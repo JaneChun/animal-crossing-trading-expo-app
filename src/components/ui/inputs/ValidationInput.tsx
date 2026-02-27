@@ -1,8 +1,9 @@
-import { Colors } from '@/constants/Color';
-import { FontSizes } from '@/constants/Typography';
-import { ValidationInputProp } from '@/types/components';
 import { FontAwesome6 } from '@expo/vector-icons';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
+
+import { FontSizes } from '@/constants/Typography';
+import { Colors } from '@/theme/Color';
+import { ValidationInputProp } from '@/types/components';
 
 const ValidationInput = ({
 	inputStyle,
@@ -15,14 +16,12 @@ const ValidationInput = ({
 		<>
 			<InputComponent
 				{...props}
-				placeholderTextColor={Colors.font_gray}
+				placeholderTextColor={Colors.text.tertiary}
 				style={[inputStyle, errorMessage ? { borderColor: 'red' } : null]}
 			/>
 			{errorMessage ? (
-				<View
-					style={[errorMessageContainerStyle, styles.errorMessageContainer]}
-				>
-					<FontAwesome6 name='circle-exclamation' color='red' size={12} />
+				<View style={[errorMessageContainerStyle, styles.errorMessageContainer]}>
+					<FontAwesome6 name="circle-exclamation" color="red" size={12} />
 					<Text style={styles.errorMessage}>{errorMessage}</Text>
 				</View>
 			) : null}
@@ -37,7 +36,7 @@ const styles = StyleSheet.create({
 		position: 'absolute',
 		bottom: 8,
 		lineHeight: 20,
-		color: Colors.font_gray,
+		color: Colors.text.tertiary,
 		fontSize: FontSizes.sm,
 	},
 	errorMessageContainer: {
@@ -47,7 +46,7 @@ const styles = StyleSheet.create({
 		marginTop: 6,
 	},
 	errorMessage: {
-		color: Colors.badge_red,
+		color: Colors.badge.red,
 		fontSize: FontSizes.xs,
 	},
 });

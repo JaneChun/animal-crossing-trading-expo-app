@@ -1,12 +1,12 @@
 import { StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
+import { Colors } from '@/theme/Color';
+import spinnerImage from '@assets/images/spinner.gif';
+
 const InlineLoadingIndicator = () => (
 	<View style={styles.inlineLoadingContainer}>
-		<FastImage
-			source={require('../../../../assets/images/spinner.gif')}
-			style={{ height: 100, width: 100 }}
-		/>
+		<FastImage source={spinnerImage} style={{ height: 100, width: 100 }} />
 	</View>
 );
 
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: 'white',
+		backgroundColor: Colors.bg.primary,
 	},
 	inlineLoadingContainer: {
 		justifyContent: 'center',
