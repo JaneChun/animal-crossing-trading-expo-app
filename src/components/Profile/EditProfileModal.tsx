@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { useEffect } from 'react';
 import { Controller, FormProvider } from 'react-hook-form';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import ProfileImageInput from '@/components/Profile/ProfileImageInput';
@@ -27,7 +27,6 @@ import { EditProfileModalProps } from '@/types/components';
 import { UserInfo } from '@/types/user';
 
 import NameInput from './NameInput';
-import { TouchableOpacity, Image } from 'react-native';
 import { FRUIT_IMAGES } from '@/constants/profile';
 import ErrorMessage from '../ui/ErrorMessage';
 

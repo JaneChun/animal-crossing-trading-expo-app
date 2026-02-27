@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { StyleProp, View, ViewStyle } from 'react-native';
+import { View } from 'react-native';
 
 import { Entypo } from '@expo/vector-icons';
 import { Colors } from '@/theme';

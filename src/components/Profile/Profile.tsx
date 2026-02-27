@@ -1,4 +1,4 @@
-import { AntDesign, Feather, MaterialIcons } from '@expo/vector-icons';
+import { Feather, MaterialIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
@@ -9,7 +9,6 @@ import { ProfileProps } from '@/types/components';
 import emptyProfileImage from '@assets/images/empty_profile_image.png';
 import islandBackgroundImage from '@assets/images/profile/island_background.webp';
 
-import Button from '../ui/Button';
 import ChevronStrip from '../ui/Icons/ChevronStrip';
 import Island from '../ui/Icons/Island';
 import { FRUIT_IMAGES, FRUIT_NAMES } from '@/constants/profile';
@@ -92,7 +91,7 @@ const Profile = ({
 
 						{/* Name */}
 						<View style={styles.nameRow}>
-							<Text style={styles.displayName}>{profileInfo.displayName}</Text>
+							<Text style={styles.displayName}>{profileInfo?.displayName}</Text>
 							{profileInfo?.review?.badgeGranted && (
 								<MaterialIcons
 									name="verified"
