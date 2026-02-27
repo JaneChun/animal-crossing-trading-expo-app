@@ -40,7 +40,7 @@ const NameInput = ({
 const styles = StyleSheet.create({
 	inputContainer: {
 		width: '100%',
-		marginBottom: 24,
+		marginBottom: 18,
 	},
 	label: {
 		fontSize: FontSizes.md,

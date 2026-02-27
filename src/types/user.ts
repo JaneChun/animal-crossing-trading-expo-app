@@ -8,7 +8,13 @@ export interface PublicUserInfo {
 	pushToken?: string;
 	review?: UserReview;
 	report?: UserReport;
+	fruit?: Fruit;
+	titleFirst?: string;
+	titleLast?: string;
+	bio?: string;
 }
+
+export type Fruit = 'apple' | 'cherry' | 'orange' | 'peach' | 'pear';
 
 export type UserReview = {
 	total: number;
