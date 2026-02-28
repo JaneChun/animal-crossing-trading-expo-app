@@ -12,11 +12,11 @@ import { db } from '@/config/firebase';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import {
 	addDocToFirestore,
-	deleteDocFromFirestore,
 	getDocFromFirestore,
 	queryDocs,
 	updateDocToFirestore,
 } from '@/firebase/core/firestoreService';
+import { deleteObjectFromStorage } from '@/firebase/services/imageService';
 import { Collection, CreatePostRequest, Post, PostDoc, UpdatePostRequest } from '@/types/post';
 import { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
@@ -184,7 +184,25 @@ export const deletePost = async <C extends Collection>(
 	return firestoreRequest(
 		'게시글 삭제',
 		async () => {
-			await deleteDocFromFirestore({ id: postId, collection: collectionName });
+			// 커뮤니티 게시글인 경우 이미지 삭제
+			if (collectionName === 'Communities') {
+				const post = await getPost(collectionName, postId);
+				if (post && 'images' in post && post.images.length > 0) {
+					await Promise.all(
+						post.images.map((imageUrl: string) => deleteObjectFromStorage(imageUrl)),
+					);
+				}
+			}
+
+			// soft delete
+			await updateDocToFirestore({
+				collection: collectionName,
+				id: postId,
+				requestData: {
+					status: 'deleted',
+					deletedAt: Timestamp.now(),
+				},
+			});
 		},
 		{ throwOnError: true },
 	);

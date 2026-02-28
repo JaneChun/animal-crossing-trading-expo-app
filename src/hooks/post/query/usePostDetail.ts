@@ -9,7 +9,8 @@ const fetchPostDetail = async <C extends Collection>(
 	id: string,
 ): Promise<PostWithCreatorInfo<C> | null> => {
 	const post = await getPost(collectionName, id);
-	if (!post) return null;
+	// 숨김/삭제된 게시글은 조회하지 않음
+	if (!post || post.status === 'hidden' || post.status === 'deleted') return null;
 
 	const userInfo = await getPublicUserInfo(post.creatorId);
 
