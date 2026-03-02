@@ -12,7 +12,6 @@ import { db } from '@/config/firebase';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import {
 	addDocToFirestore,
-	deleteDocFromFirestore,
 	getDocFromFirestore,
 	queryDocs,
 	updateDocToFirestore,
@@ -184,7 +183,15 @@ export const deletePost = async <C extends Collection>(
 	return firestoreRequest(
 		'게시글 삭제',
 		async () => {
-			await deleteDocFromFirestore({ id: postId, collection: collectionName });
+			// 소프트 삭제: 상태만 변경
+			await updateDocToFirestore({
+				collection: collectionName,
+				id: postId,
+				requestData: {
+					status: 'deleted',
+					deletedAt: Timestamp.now(),
+				},
+			});
 		},
 		{ throwOnError: true },
 	);

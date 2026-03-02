@@ -69,6 +69,7 @@ export type PostWithCreatorInfo<C extends Collection> = PostMap[C] & CreatorInfo
 // Firestore용 PostDoc
 export type PostDoc<C extends Collection> = Post<C> & {
 	updatedAt?: Timestamp;
+	deletedAt?: Timestamp;
 };
 
 export interface CreatorInfo {

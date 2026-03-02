@@ -9,6 +9,7 @@ export const useDeletePost = <C extends Collection>(collectionName: C, postId: s
 	return useMutation({
 		mutationFn: () => deletePost(collectionName, postId),
 		onSuccess: () => {
+			queryClient.removeQueries({ queryKey: ['postDetail', collectionName, postId] });
 			queryClient.invalidateQueries({ queryKey: ['posts', collectionName] });
 		},
 	});
