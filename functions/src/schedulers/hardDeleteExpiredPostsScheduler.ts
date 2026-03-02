@@ -1,5 +1,16 @@
+import * as admin from 'firebase-admin';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { db } from '../utils/common';
+
+/**
+ * Firebase Storage 다운로드 URL에서 파일 경로를 추출
+ * URL 형식: https://firebasestorage.googleapis.com/v0/b/{bucket}/o/{encoded_path}?alt=media&token={token}
+ */
+function extractStoragePath(downloadUrl: string): string | null {
+	const match = downloadUrl.match(/\/o\/(.+?)\?/);
+	if (!match) return null;
+	return decodeURIComponent(match[1]);
+}
 
 /**
  * 매일 한국 시간 새벽 4시에 실행되는 스케줄러 함수
@@ -35,10 +46,27 @@ export const hardDeleteExpiredPostsScheduler = onSchedule(
 
 				console.log(`${collectionName}: 하드 삭제 대상 문서 수 ${snapshot.size}개`);
 
+				const bucket = admin.storage().bucket();
+
 				let currentBatch = db.batch();
 				let operationCount = 0;
 
 				for (const doc of snapshot.docs) {
+					// 게시글의 Storage 이미지 삭제
+					const images: string[] = doc.data().images ?? [];
+					for (const url of images) {
+						try {
+							const path = extractStoragePath(url);
+							if (!path) {
+								console.warn(`유효하지 않은 Storage URL (건너뜀): ${url}`);
+								continue;
+							}
+							await bucket.file(path).delete();
+						} catch (error) {
+							console.error(`이미지 삭제 실패: ${url}`, error);
+						}
+					}
+
 					// 1. Comments 서브컬렉션 조회 및 삭제
 					const commentsSnap = await doc.ref.collection('Comments').get();
 					for (const commentDoc of commentsSnap.docs) {
