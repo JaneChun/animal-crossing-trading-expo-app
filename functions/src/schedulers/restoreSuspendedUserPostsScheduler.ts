@@ -1,4 +1,5 @@
 import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { db } from '../utils/common';
 import { restoreUserPostsAfterSuspension } from '../triggers/reports';
 
 /**
@@ -14,7 +15,6 @@ export const restoreSuspendedUserPostsScheduler = onSchedule(
 		console.log('게시글 복구 스케줄러 시작');
 
 		try {
-			const db = require('../utils/common').db;
 			const now = new Date();
 
 			// 정지 기간이 만료된 사용자들 조회

@@ -1,4 +1,5 @@
 import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { db } from '../utils/common';
 
 /**
  * 매일 한국 시간 새벽 4시에 실행되는 스케줄러 함수
@@ -13,7 +14,6 @@ export const hardDeleteExpiredPostsScheduler = onSchedule(
 		console.log('만료된 삭제 게시글 하드 삭제 스케줄러 시작');
 
 		try {
-			const db = require('../utils/common').db;
 			// Date 객체 생성 및 30일 빼기
 			const thirtyDaysAgo = new Date();
 			thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
