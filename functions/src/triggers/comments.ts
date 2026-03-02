@@ -6,10 +6,7 @@ import { db } from '../utils/common';
  * @param collection - 컬렉션 이름
  * @param postId - 게시글 ID
  */
-export async function handleCommentCreated(
-	collection: string,
-	postId: string,
-): Promise<void> {
+export async function handleCommentCreated(collection: string, postId: string): Promise<void> {
 	const postRef = db.doc(`${collection}/${postId}`);
 
 	try {
@@ -26,13 +23,15 @@ export async function handleCommentCreated(
  * @param collection - 컬렉션 이름
  * @param postId - 게시글 ID
  */
-export async function handleCommentDeleted(
-	collection: string,
-	postId: string,
-): Promise<void> {
+export async function handleCommentDeleted(collection: string, postId: string): Promise<void> {
 	const postRef = db.doc(`${collection}/${postId}`);
 
 	try {
+		// 하드 삭제 스케줄러가 댓글을 batch delete할 때 이 트리거가 발동되므로,
+		// 이미 소프트 삭제된 게시글이면 불필요한 commentCount 감소를 방지
+		const postSnap = await postRef.get();
+		if (!postSnap.exists || postSnap.data()?.status === 'deleted') return;
+
 		await postRef.update({
 			commentCount: FieldValue.increment(-1),
 		});
