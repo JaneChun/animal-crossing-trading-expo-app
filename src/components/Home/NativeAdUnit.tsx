@@ -10,7 +10,7 @@ const NativeAdUnit = () => {
 	const { nativeAd, isLoading, error } = useNativeAd();
 
 	if (isLoading || error || !nativeAd) {
-		return <View style={styles.container} />;
+		return null;
 	}
 
 	return (

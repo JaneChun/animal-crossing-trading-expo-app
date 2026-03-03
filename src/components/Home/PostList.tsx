@@ -18,7 +18,7 @@ import {
 } from '@/utilities/navigationHelpers';
 
 import NativeAdUnit from './NativeAdUnit';
-import PostUnit, { POST_UNIT_HEIGHT } from './PostUnit';
+import PostUnit from './PostUnit';
 
 // ─── 리스트 아이템 타입 (게시글 | 광고) ─────────────────────────────────────────────
 type PostItem = {
@@ -97,15 +97,6 @@ const PostList = ({
 		return item.type === 'ad' ? item.id : item.data.id;
 	}, []);
 
-	const getItemLayout = useCallback(
-		(_data: any, index: number) => ({
-			length: POST_UNIT_HEIGHT,
-			offset: POST_UNIT_HEIGHT * index,
-			index,
-		}),
-		[],
-	);
-
 	const fetchNext = useCallback(() => {
 		if (hasNextPage && !isFetchingNextPage) {
 			fetchNextPage();
@@ -130,7 +121,6 @@ const PostList = ({
 				style={containerStyle}
 				initialNumToRender={15}
 				maxToRenderPerBatch={15}
-				getItemLayout={getItemLayout}
 				onEndReached={fetchNext}
 				onEndReachedThreshold={0.5}
 				onRefresh={refetch}
