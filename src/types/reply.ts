@@ -25,3 +25,9 @@ export type CreateReplyRequest = {
 export type UpdateReplyRequest = {
 	body: string;
 };
+
+export type HandleReplyClickParams = {
+	commentId: string;
+	parentId: string;
+	parentDisplayName: string;
+};

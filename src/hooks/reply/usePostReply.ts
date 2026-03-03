@@ -6,7 +6,7 @@ import { useCreateReply } from '@/hooks/reply/mutation/useCreateReply';
 import { useUpdateReply } from '@/hooks/reply/mutation/useUpdateReply';
 import { useUserInfo } from '@/stores/auth';
 import { Collection } from '@/types/post';
-import { CreateReplyRequest, UpdateReplyRequest } from '@/types/reply';
+import { CreateReplyRequest, HandleReplyClickParams, UpdateReplyRequest } from '@/types/reply';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
 
 export const usePostReply = (collectionName: Collection, postId: string) => {
@@ -67,11 +67,7 @@ export const usePostReply = (collectionName: Collection, postId: string) => {
 		commentId: targetCommentId,
 		parentId: targetParentId,
 		parentDisplayName: targetParentDisplayName,
-	}: {
-		commentId: string;
-		parentId: string;
-		parentDisplayName: string;
-	}) => {
+	}: HandleReplyClickParams) => {
 		setIsReplyMode(true);
 		setCommentId(targetCommentId);
 		setParentId(targetParentId);

@@ -34,6 +34,7 @@ import { useUserInfo } from '@/stores/auth';
 import { Colors } from '@/theme/Color';
 import { PostDetailRouteProp } from '@/types/navigation';
 import { Collection, CommunityType, MarketType } from '@/types/post';
+import { HandleReplyClickParams } from '@/types/reply';
 import { navigateToEditPost } from '@/utilities/navigationHelpers';
 import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
 
@@ -84,7 +85,7 @@ const PostDetail = () => {
 		isRepliesLoading,
 	} = usePostReply(collectionName as Collection, id);
 
-	const handleReplyClickWithFocus = (params: any) => {
+	const handleReplyClickWithFocus = (params: HandleReplyClickParams) => {
 		originalHandleReplyClick(params);
 		setTimeout(() => {
 			commentInputRef.current?.focus();
