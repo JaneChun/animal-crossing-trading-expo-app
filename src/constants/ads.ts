@@ -18,7 +18,3 @@ export const AD_UNIT_IDS = {
 	INTERSTITIAL: IDS.INTERSTITIAL_IOS,
 	NATIVE: IDS.NATIVE_IOS,
 };
-
-// ─── 광고 표시 간격 ─────────────────────────────────────────────────────────────────
-/** 네이티브 광고가 삽입되는 게시글 간격 */
-export const NATIVE_AD_INTERVAL = 10;

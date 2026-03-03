@@ -64,6 +64,17 @@ export type ThumabnailProps = {
 
 export type ItemThumabnailProps = ThumabnailProps & { itemLength?: number };
 
+// PostList Item (post, ad)
+type PostItem = {
+	type: 'post';
+	data: PostWithCreatorInfo<Collection>;
+};
+type AdItem = {
+	type: 'ad';
+	id: string;
+};
+export type ListItem = PostItem | AdItem;
+
 // NewPost/
 export interface PostFormProps {
 	collectionName: Collection;

@@ -5,48 +5,20 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showLongToast, showToast } from '@/components/ui/Toast';
 import { auth } from '@/config/firebase';
-import { NATIVE_AD_INTERVAL } from '@/constants/ads';
 import { useInfinitePosts } from '@/hooks/post/query/useInfinitePosts';
+import { useAdConfig } from '@/stores/ads';
 import { useUserInfo } from '@/stores/auth';
 import { Colors } from '@/theme/Color';
-import { PostListProps } from '@/types/components';
-import { Collection, PostWithCreatorInfo } from '@/types/post';
+import type { ListItem, PostListProps } from '@/types/components';
 import {
 	navigateToLogin,
 	navigateToMyProfile,
 	navigateToNewPost,
 } from '@/utilities/navigationHelpers';
+import { insertAds } from '@/utilities/insertAds';
 
 import NativeAdUnit from './NativeAdUnit';
 import PostUnit from './PostUnit';
-
-// ─── 리스트 아이템 타입 (게시글 | 광고) ─────────────────────────────────────────────
-type PostItem = {
-	type: 'post';
-	data: PostWithCreatorInfo<Collection>;
-};
-
-type AdItem = {
-	type: 'ad';
-	id: string;
-};
-
-type ListItem = PostItem | AdItem;
-
-/** 게시글 배열에 NATIVE_AD_INTERVAL 간격으로 광고 플레이스홀더를 삽입 */
-const insertAds = (posts: PostWithCreatorInfo<Collection>[]): ListItem[] => {
-	const result: ListItem[] = [];
-
-	for (let i = 0; i < posts.length; i++) {
-		// NATIVE_AD_INTERVAL개마다 광고 삽입 (첫 번째 광고는 10번째 게시글 뒤)
-		if (i > 0 && i % NATIVE_AD_INTERVAL === 0) {
-			result.push({ type: 'ad', id: `ad-${i}` });
-		}
-		result.push({ type: 'post', data: posts[i] });
-	}
-
-	return result;
-};
 
 const PostList = ({
 	collectionName,
@@ -55,8 +27,9 @@ const PostList = ({
 	containerStyle,
 }: PostListProps) => {
 	const userInfo = useUserInfo();
+	const { isNativeAdsEnabled, nativeAdInterval } = useAdConfig();
 	const {
-		data: posts,
+		data: posts = [],
 		isLoading,
 		hasNextPage,
 		fetchNextPage,
@@ -65,7 +38,12 @@ const PostList = ({
 		isFetching,
 	} = useInfinitePosts(collectionName, filter);
 
-	const listData = useMemo(() => insertAds(posts ?? []), [posts]);
+	const listData = useMemo(() => {
+		if (!isNativeAdsEnabled) {
+			return posts.map((data) => ({ type: 'post' as const, data }));
+		}
+		return insertAds(posts, nativeAdInterval);
+	}, [posts, isNativeAdsEnabled, nativeAdInterval]);
 
 	const onPressAddPostButton = () => {
 		if (!userInfo || !auth.currentUser) {

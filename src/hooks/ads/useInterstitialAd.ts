@@ -3,7 +3,7 @@ import { InterstitialAd, AdEventType } from 'react-native-google-mobile-ads';
 
 import { AD_UNIT_IDS } from '@/constants/ads';
 
-export const useInterstitialAd = () => {
+export const useInterstitialAd = (enabled: boolean) => {
 	const [isLoaded, setIsLoaded] = useState(false);
 	const adRef = useRef<InterstitialAd | null>(null);
 	const cleanupRef = useRef<(() => void) | null>(null);
@@ -44,9 +44,11 @@ export const useInterstitialAd = () => {
 	}, []);
 
 	useEffect(() => {
+		if (!enabled) return;
+
 		loadAd();
 		return () => cleanupRef.current?.();
-	}, [loadAd]);
+	}, [enabled, loadAd]);
 
 	const showAd = useCallback((): Promise<void> => {
 		return new Promise((resolve) => {

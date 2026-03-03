@@ -3,6 +3,10 @@ import { useEffect } from 'react';
 import { Platform } from 'react-native';
 import mobileAds from 'react-native-google-mobile-ads';
 
+import { fetchAdConfig } from '@/firebase/services/adService';
+
+import { useAdStore } from './store';
+
 const requestTrackingPermission = async (): Promise<void> => {
 	const { status } = await requestTrackingPermissionsAsync();
 	if (__DEV__) {
@@ -13,6 +17,8 @@ const requestTrackingPermission = async (): Promise<void> => {
 export const useAdMobInitializer = () => {
 	useEffect(() => {
 		const initializeAds = async () => {
+			const { setAdConfig } = useAdStore.getState();
+
 			// 1. ATT 권한 요청 (iOS만)
 			if (Platform.OS === 'ios') {
 				try {
@@ -24,7 +30,11 @@ export const useAdMobInitializer = () => {
 				}
 			}
 
-			// 2. AdMob SDK 초기화
+			// 2. 광고 설정 로드
+			const adConfig = await fetchAdConfig();
+			setAdConfig(adConfig);
+
+			// 3. AdMob SDK 초기화
 			try {
 				await mobileAds().initialize();
 
