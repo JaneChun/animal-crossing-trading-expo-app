@@ -1,7 +1,7 @@
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { deleteComment } from '@/firebase/services/commentService';
-import { Collection, PaginatedPosts } from '@/types/post';
+import { Collection, PaginatedPosts, PostWithCreatorInfo } from '@/types/post';
 
 export const useDeleteComment = (collectionName: Collection, postId: string, commentId: string) => {
 	const queryClient = useQueryClient();
@@ -39,13 +39,16 @@ export const useDeleteComment = (collectionName: Collection, postId: string, com
 			);
 
 			// 2. 게시글 상세 데이터에서도 commentCount 감소
-			queryClient.setQueryData(['postDetail', collectionName, postId], (oldData: any) => {
-				if (!oldData) return oldData;
-				return {
-					...oldData,
-					commentCount: Math.max(0, oldData.commentCount - totalDecrement),
-				};
-			});
+			queryClient.setQueryData(
+				['postDetail', collectionName, postId],
+				(oldData: PostWithCreatorInfo<Collection> | undefined) => {
+					if (!oldData) return oldData;
+					return {
+						...oldData,
+						commentCount: Math.max(0, oldData.commentCount - totalDecrement),
+					};
+				},
+			);
 
 			// 3. 댓글 목록 갱신
 			queryClient.invalidateQueries({
