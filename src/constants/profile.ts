@@ -1,11 +1,17 @@
+import fruitApple from '@assets/images/profile/apple.png';
+import fruitCherry from '@assets/images/profile/cherry.png';
+import fruitOrange from '@assets/images/profile/orange.png';
+import fruitPeach from '@assets/images/profile/peach.png';
+import fruitPear from '@assets/images/profile/pear.png';
+
 export const PUBLIC_USER_INFO_STALE_TIME = 30 * 60 * 1000;
 
 export const FRUIT_IMAGES = {
-	apple: require('@assets/images/profile/apple.png'),
-	cherry: require('@assets/images/profile/cherry.png'),
-	orange: require('@assets/images/profile/orange.png'),
-	peach: require('@assets/images/profile/peach.png'),
-	pear: require('@assets/images/profile/pear.png'),
+	apple: fruitApple,
+	cherry: fruitCherry,
+	orange: fruitOrange,
+	peach: fruitPeach,
+	pear: fruitPear,
 };
 
 export const FRUIT_NAMES = {
