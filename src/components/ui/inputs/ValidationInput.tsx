@@ -1,8 +1,10 @@
+import { StyleSheet, TextInput } from 'react-native';
+
+import { FontSizes } from '@/constants/Typography';
 import { Colors } from '@/theme/Color';
 import { ValidationInputProp } from '@/types/components';
+
 import ErrorMessage from '../ErrorMessage';
-import { StyleSheet, TextInput } from 'react-native';
-import { FontSizes } from '@/constants/Typography';
 
 const ValidationInput = ({
 	inputStyle,

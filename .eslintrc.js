@@ -2,31 +2,37 @@ module.exports = {
 	extends: [
 		'expo',
 		'eslint:recommended',
-		'plugin:react/recommended',
-		'plugin:react/jsx-runtime',
-		'plugin:react-hooks/recommended',
 		'plugin:@typescript-eslint/recommended',
-		'plugin:import/errors',
-		'plugin:import/warnings',
+		'plugin:react-hooks/recommended',
+		'plugin:import/recommended',
 		'plugin:import/typescript',
-		'plugin:prettier/recommended',
+		'prettier',
 	],
+	plugins: ['unused-imports', 'import'],
 	env: {
 		browser: true,
 		es2021: true,
 		node: true,
-		jest: true, // Jest 환경 활성화 (describe, test, expect 등)
+		jest: true,
 	},
-	plugins: ['unused-imports', 'import', 'react-hooks', '@typescript-eslint'],
 	settings: {
 		'import/resolver': {
 			typescript: {
 				alwaysTryTypes: true,
 			},
 		},
+		react: {
+			version: 'detect',
+		},
 	},
 	rules: {
+		// 1. 불필요한 룰 삭제 및 수정
 		'react/prop-types': 'off',
+		'react/react-in-jsx-scope': 'off', // React 17+ 환경 대응
+
+		// 2. Unused Imports (충돌 방지 설정)
+		'no-unused-vars': 'off', // 기본 룰 끄기
+		'@typescript-eslint/no-unused-vars': 'off', // TS 룰 끄기 (unused-imports가 담당)
 		'unused-imports/no-unused-imports': 'error', // 사용하지 않는 import 삭제
 		'unused-imports/no-unused-vars': [
 			'warn',
@@ -37,6 +43,8 @@ module.exports = {
 				argsIgnorePattern: '^_',
 			},
 		],
+
+		// 3. Import Order
 		'import/order': [
 			'error',
 			{
@@ -46,28 +54,22 @@ module.exports = {
 					'internal', // 내부 모듈 (alias 경로)
 					['parent', 'sibling', 'index'], // 상대 경로 import
 					'type',
-					'unknown',
+					'object',
 				],
 				'newlines-between': 'always', // 그룹 간 줄바꿈
 				alphabetize: { order: 'asc', caseInsensitive: true }, // 알파벳 정렬
 			},
 		],
-		'react-hooks/rules-of-hooks': 'error',
-		'react-hooks/exhaustive-deps': 'warn',
 	},
 	overrides: [
 		{
 			files: ['**/__tests__/**', '**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}'],
 			rules: {
-				// 테스트 환경에서는 require 사용 허용
 				'@typescript-eslint/no-require-imports': 'off',
-				// 테스트 mock 데이터에서 any 타입 허용
 				'@typescript-eslint/no-explicit-any': 'off',
-				// 테스트 헬퍼에서 미사용 변수 경고로 완화
-				'@typescript-eslint/no-unused-vars': 'warn',
-				'unused-imports/no-unused-vars': 'off',
+				'unused-imports/no-unused-vars': 'off', // 테스트에선 유연하게 적용
 			},
 		},
 	],
-	ignorePatterns: ['/dist/*'], // dist 폴더 무시
+	ignorePatterns: ['/dist/*', '.expo/*', 'node_modules/*', 'functions/*'],
 };

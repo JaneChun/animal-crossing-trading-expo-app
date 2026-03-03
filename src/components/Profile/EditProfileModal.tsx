@@ -13,6 +13,7 @@ import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
+import { FRUIT_IMAGES } from '@/constants/profile';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { updateDocToFirestore } from '@/firebase/core/firestoreService';
 import {
@@ -27,7 +28,6 @@ import { EditProfileModalProps } from '@/types/components';
 import { UserInfo } from '@/types/user';
 
 import NameInput from './NameInput';
-import { FRUIT_IMAGES } from '@/constants/profile';
 import ErrorMessage from '../ui/ErrorMessage';
 
 const EditProfileModal = ({

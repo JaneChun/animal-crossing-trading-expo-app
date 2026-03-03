@@ -4,6 +4,7 @@ import { NativeAdView, NativeAsset, NativeAssetType } from 'react-native-google-
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useNativeAd } from '@/hooks/ads/useNativeAd';
 import { Colors } from '@/theme/Color';
+
 import { POST_UNIT_HEIGHT } from './PostUnit';
 
 const NativeAdUnit = () => {

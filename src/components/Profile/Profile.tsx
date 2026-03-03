@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-nativ
 import FastImage from 'react-native-fast-image';
 
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import { FRUIT_IMAGES, FRUIT_NAMES } from '@/constants/profile';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { Colors } from '@/theme/Color';
 import { ProfileProps } from '@/types/components';
@@ -11,7 +12,6 @@ import islandBackgroundImage from '@assets/images/profile/island_background.webp
 
 import ChevronStrip from '../ui/Icons/ChevronStrip';
 import Island from '../ui/Icons/Island';
-import { FRUIT_IMAGES, FRUIT_NAMES } from '@/constants/profile';
 
 const Profile = ({
 	profileInfo,
