@@ -30,11 +30,7 @@ export const useAdMobInitializer = () => {
 				}
 			}
 
-			// 2. 광고 설정 로드
-			const adConfig = await fetchAdConfig();
-			setAdConfig(adConfig);
-
-			// 3. AdMob SDK 초기화
+			// 2. AdMob SDK 초기화
 			try {
 				await mobileAds().initialize();
 
@@ -46,6 +42,10 @@ export const useAdMobInitializer = () => {
 					console.warn('AdMob initialization failed:', error);
 				}
 			}
+
+			// 3. 광고 설정 로드
+			const adConfig = await fetchAdConfig();
+			setAdConfig(adConfig);
 		};
 
 		initializeAds();
