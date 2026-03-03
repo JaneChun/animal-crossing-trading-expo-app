@@ -20,8 +20,8 @@ export const useNativeAd = () => {
 		try {
 			// 네이티브 광고 요청 생성
 			const ad = await NativeAd.createForAdRequest(AD_UNIT_IDS.NATIVE);
-			adRef.current = ad;
-			setNativeAd(ad);
+			adRef.current = ad; // cleanup용 (항상 최신 값 참조)
+			setNativeAd(ad); // 렌더링용 (화면에 광고 표시)
 		} catch (err) {
 			if (__DEV__) console.warn('Native ad load error:', err);
 			setError(err instanceof Error ? err : new Error('Failed to load native ad'));
@@ -36,8 +36,8 @@ export const useNativeAd = () => {
 
 		return () => {
 			// 컴포넌트 언마운트 시 광고 정리
-			adRef.current?.destroy();
-			adRef.current = null;
+			adRef.current?.destroy(); // 네이티브 메모리 해제
+			adRef.current = null; // JS 참조 해제
 		};
 	}, [loadAd]);
 

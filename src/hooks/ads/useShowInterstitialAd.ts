@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { useAdConfig } from '@/stores/ads';
 import { useInterstitialAd } from './useInterstitialAd';
 
 /**
@@ -7,7 +8,8 @@ import { useInterstitialAd } from './useInterstitialAd';
  * 광고 로드/표시를 추상화하고, 표시 전략을 제어합니다.
  */
 export const useShowInterstitialAd = () => {
-	const { isLoaded, showAd } = useInterstitialAd();
+	const { isInterstitialAdsEnabled } = useAdConfig();
+	const { isLoaded, showAd } = useInterstitialAd(isInterstitialAdsEnabled);
 
 	/**
 	 * 광고 표시를 시도합니다.
