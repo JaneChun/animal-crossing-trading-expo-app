@@ -34,7 +34,7 @@ const SearchResultPostList = ({
 	);
 
 	const getItemLayout = useCallback(
-		(_data: any, index: number) => ({
+		(_data: ArrayLike<PostWithCreatorInfo<Collection>> | null | undefined, index: number) => ({
 			length: POST_UNIT_HEIGHT,
 			offset: POST_UNIT_HEIGHT * index,
 			index,

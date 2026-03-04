@@ -42,7 +42,7 @@ const ItemSelect = ({ cart, addItemToCart, containerStyle, labelStyle }: ItemSel
 	);
 
 	const getItemLayout = useCallback(
-		(data: any, index: number) => ({
+		(_data: ArrayLike<Item> | null | undefined, index: number) => ({
 			length: ITEM_HEIGHT,
 			offset: ITEM_HEIGHT * index,
 			index,

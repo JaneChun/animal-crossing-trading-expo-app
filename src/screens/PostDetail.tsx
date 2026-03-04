@@ -47,6 +47,7 @@ const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
 	const { id = '', collectionName = '', notificationId = '' } = route.params;
 
+	// KeyboardAwareFlatList의 ref 타입이 FlatList와 호환되지 않아 제네릭 타입으로 선언
 	const flatListRef = useRef<FlatList>(null);
 	const commentInputRef = useRef<CommentInputRef>(null);
 	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
@@ -192,6 +193,7 @@ const PostDetail = () => {
 					}
 				>
 					<KeyboardAwareFlatList
+						// @ts-expect-error
 						ref={flatListRef}
 						data={[]}
 						renderItem={null}

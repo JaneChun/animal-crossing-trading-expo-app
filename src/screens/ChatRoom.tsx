@@ -1,7 +1,7 @@
 import { useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { useEffect, useRef, useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -102,7 +102,9 @@ const ChatRoom = () => {
 
 	const insets = useSafeAreaInsets();
 	const keyboardHeight = useKeyboardHeight();
-	const giftedChatRef = useRef<any>(null);
+	// GiftedChat의 messageContainerRef는 내부적으로 FlatList를 사용하지만
+	// 라이브러리 타입 정의가 불완전하여 제네릭 타입으로 선언
+	const giftedChatRef = useRef<FlatList<IMessage>>(null);
 
 	// 새 메시지가 도착했을 때만 맨 아래로 스크롤 (과거 메시지 로드 시에는 스크롤 위치 유지)
 	// messages는 desc 순서(최신이 [0])이므로, 최신 메시지 ID가 바뀔 때만 실행
@@ -224,6 +226,7 @@ const ChatRoom = () => {
 								</View>
 							)}
 							<GiftedChat
+								// @ts-expect-error
 								messageContainerRef={giftedChatRef}
 								messages={messages}
 								user={{ _id: userInfo!.uid }}
