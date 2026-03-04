@@ -1,7 +1,7 @@
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { createReply } from '@/firebase/services/replyService';
-import { Collection, PaginatedPosts } from '@/types/post';
+import { Collection, PaginatedPosts, PostWithCreatorInfo } from '@/types/post';
 import { CreateReplyRequest } from '@/types/reply';
 
 export const useCreateReply = (collectionName: Collection, postId: string) => {
@@ -46,13 +46,16 @@ export const useCreateReply = (collectionName: Collection, postId: string) => {
 			);
 
 			// 2. 게시글 상세 데이터에서도 commentCount 증가
-			queryClient.setQueryData(['postDetail', collectionName, postId], (oldData: any) => {
-				if (!oldData) return oldData;
-				return {
-					...oldData,
-					commentCount: oldData.commentCount + 1,
-				};
-			});
+			queryClient.setQueryData(
+				['postDetail', collectionName, postId],
+				(oldData: PostWithCreatorInfo<Collection> | undefined) => {
+					if (!oldData) return oldData;
+					return {
+						...oldData,
+						commentCount: oldData.commentCount + 1,
+					};
+				},
+			);
 
 			// 3. 답글 목록 갱신
 			queryClient.invalidateQueries({

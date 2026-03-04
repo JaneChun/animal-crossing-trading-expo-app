@@ -9,16 +9,17 @@ import { useInfinitePosts } from '@/hooks/post/query/useInfinitePosts';
 import { useAdConfig } from '@/stores/ads';
 import { useUserInfo } from '@/stores/auth';
 import { Colors } from '@/theme/Color';
-import type { ListItem, PostListProps } from '@/types/components';
+import { insertAds } from '@/utilities/insertAds';
 import {
 	navigateToLogin,
 	navigateToMyProfile,
 	navigateToNewPost,
 } from '@/utilities/navigationHelpers';
-import { insertAds } from '@/utilities/insertAds';
 
 import NativeAdUnit from './NativeAdUnit';
 import PostUnit from './PostUnit';
+
+import type { ListItem, PostListProps } from '@/types/components';
 
 const PostList = ({
 	collectionName,

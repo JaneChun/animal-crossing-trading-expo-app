@@ -12,7 +12,6 @@ const testUsers = [
 		islandName: '꿈의섬',
 		lastLogin: new Date(),
 		oauthType: 'apple',
-		photoURL: 'https://via.placeholder.com/150',
 		report: {
 			recent30Days: 0,
 			suspendUntil: null,
@@ -35,7 +34,6 @@ const testUsers = [
 		islandName: '행복섬',
 		lastLogin: new Date(Date.now() - 3600000), // 1시간 전
 		oauthType: 'kakao',
-		photoURL: 'https://via.placeholder.com/150',
 		report: {
 			recent30Days: 0,
 			suspendUntil: null,
@@ -58,7 +56,6 @@ const testUsers = [
 		islandName: '평화섬',
 		lastLogin: new Date(Date.now() - 7200000), // 2시간 전
 		oauthType: 'naver',
-		photoURL: 'https://via.placeholder.com/150',
 		report: {
 			recent30Days: 0,
 			suspendUntil: null,

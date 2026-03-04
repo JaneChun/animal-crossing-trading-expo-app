@@ -96,7 +96,7 @@ export const uploadObjectToStorage = async ({
 };
 
 export const deleteObjectFromStorage = async (imageUrl: string): Promise<void> => {
-	return firestoreRequest('Storage 이미지 삭제', async () => {
+	await firestoreRequest('Storage 이미지 삭제', async () => {
 		const imageRef = ref(storage, imageUrl);
 		await deleteObject(imageRef);
 	});

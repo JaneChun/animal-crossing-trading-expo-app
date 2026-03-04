@@ -10,9 +10,9 @@ const fetchReplies = async (collectionName: Collection, postId: string, commentI
 	const repliesRef = collection(db, collectionName, postId, 'Comments', commentId, 'Replies');
 	const q = query(repliesRef, orderBy('createdAt', 'asc'));
 
-	const { data } = await fetchAndPopulateUsers<Reply, ReplyWithCreatorInfo>(q);
+	const result = await fetchAndPopulateUsers<Reply, ReplyWithCreatorInfo>(q);
 
-	return data;
+	return result?.data ?? [];
 };
 
 export const useReplies = ({

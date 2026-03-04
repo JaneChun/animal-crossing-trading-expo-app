@@ -1,4 +1,8 @@
-import BottomSheet, { BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet';
+import BottomSheet, {
+	BottomSheetBackdrop,
+	BottomSheetBackdropProps,
+	BottomSheetView,
+} from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 import { StyleProp, StyleSheet, Text, useWindowDimensions, View, ViewStyle } from 'react-native';
@@ -49,7 +53,7 @@ const CustomBottomSheet = ({
 	);
 
 	const renderBackdrop = useCallback(
-		(props: any) => (
+		(props: BottomSheetBackdropProps) => (
 			<BottomSheetBackdrop
 				{...props}
 				appearsOnIndex={0}

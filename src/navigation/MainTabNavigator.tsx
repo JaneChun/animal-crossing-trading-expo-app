@@ -14,16 +14,8 @@ import ProfileStackNavigator from './ProfileStackNavigator';
 
 const MainTab = createBottomTabNavigator();
 
-const getTabBarIcon =
-	(name: string, IconComponent: any, size = 24) =>
-	// eslint-disable-next-line react/display-name
-	({ focused }: { focused: boolean }) => (
-		<IconComponent
-			name={name}
-			size={size}
-			color={focused ? Colors.brand.primary : Colors.text.secondary}
-		/>
-	);
+const getIconColor = (focused: boolean) =>
+	focused ? Colors.brand.primary : Colors.text.secondary;
 
 const MainTabNavigator = () => {
 	const userInfo = useUserInfo();
@@ -48,7 +40,9 @@ const MainTabNavigator = () => {
 				component={HomeStackNavigator}
 				options={{
 					title: '마켓',
-					tabBarIcon: getTabBarIcon('home', Entypo),
+					tabBarIcon: ({ focused }) => (
+						<Entypo name="home" size={24} color={getIconColor(focused)} />
+					),
 				}}
 			/>
 			<MainTab.Screen
@@ -56,7 +50,9 @@ const MainTabNavigator = () => {
 				component={CommunityStackNavigator}
 				options={{
 					title: '커뮤니티',
-					tabBarIcon: getTabBarIcon('article', MaterialIcons, 26),
+					tabBarIcon: ({ focused }) => (
+						<MaterialIcons name="article" size={26} color={getIconColor(focused)} />
+					),
 				}}
 			/>
 			<MainTab.Screen
@@ -64,7 +60,9 @@ const MainTabNavigator = () => {
 				component={NoticeStackNavigator}
 				options={{
 					title: '알림',
-					tabBarIcon: getTabBarIcon('bell', Entypo),
+					tabBarIcon: ({ focused }) => (
+						<Entypo name="bell" size={24} color={getIconColor(focused)} />
+					),
 					tabBarBadge: unreadNotificationCount > 0 ? unreadNotificationCount : undefined,
 					tabBarBadgeStyle: {
 						marginTop: 8,
@@ -76,7 +74,9 @@ const MainTabNavigator = () => {
 				component={ChatStackNavigator}
 				options={{
 					title: '채팅',
-					tabBarIcon: getTabBarIcon('chat', MaterialCommunityIcons),
+					tabBarIcon: ({ focused }) => (
+						<MaterialCommunityIcons name="chat" size={24} color={getIconColor(focused)} />
+					),
 					tabBarBadge: unreadChatCount > 0 ? unreadChatCount : undefined,
 					tabBarBadgeStyle: {
 						marginTop: 8,
@@ -88,10 +88,12 @@ const MainTabNavigator = () => {
 				component={ProfileStackNavigator}
 				options={{
 					title: userInfo ? '프로필' : '로그인',
-					tabBarIcon: getTabBarIcon(
-						userInfo ? 'user-large' : 'login',
-						userInfo ? FontAwesome6 : Entypo,
-					),
+					tabBarIcon: ({ focused }) =>
+						userInfo ? (
+							<FontAwesome6 name="user-large" size={24} color={getIconColor(focused)} />
+						) : (
+							<Entypo name="login" size={24} color={getIconColor(focused)} />
+						),
 				}}
 			/>
 		</MainTab.Navigator>

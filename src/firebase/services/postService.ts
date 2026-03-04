@@ -17,7 +17,7 @@ import {
 	updateDocToFirestore,
 } from '@/firebase/core/firestoreService';
 import { Collection, CreatePostRequest, Post, PostDoc, UpdatePostRequest } from '@/types/post';
-import { PublicUserInfo } from '@/types/user';
+import type { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { sanitize } from '@/utilities/sanitize';
 import { toPost } from '@/utilities/toPost';
@@ -45,7 +45,7 @@ export const fetchAndPopulateUsers = async <C extends Collection, T extends Post
 			await getPublicUserInfos(uniqueCreatorIds);
 
 		const populatedData: U[] = data.map((item) => {
-			const userInfo = publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);
+			const userInfo = publicUserInfos[item.creatorId] ?? getDefaultUserInfo(item.creatorId);
 
 			return {
 				...item,
@@ -79,7 +79,7 @@ export const getPost = async <C extends Collection>(
 };
 
 export const getPosts = async (postIds: string[]): Promise<Record<string, Post<Collection>>> => {
-	return firestoreRequest('게시글 목록 조회', async () => {
+	const result = await firestoreRequest('게시글 목록 조회', async () => {
 		if (postIds.length === 0) return {};
 
 		const collections: Collection[] = ['Boards', 'Communities'];
@@ -110,6 +110,8 @@ export const getPosts = async (postIds: string[]): Promise<Record<string, Post<C
 		// 게시물 정보를 ID로 매핑하여 반환
 		return postsMap;
 	});
+
+	return result ?? {};
 };
 
 export const createPost = async <C extends Collection>({

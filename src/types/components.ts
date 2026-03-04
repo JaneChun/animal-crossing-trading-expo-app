@@ -11,10 +11,12 @@ import {
 	ViewStyle,
 } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { DayProps } from 'react-native-gifted-chat';
 
 import { ICON_MAP } from '@/components/ui/EmptyIndicator';
 import { OnboardingStep } from '@/constants/onboardingData';
 
+import { ExtendedIMessage } from './chat';
 import { CommentWithCreatorInfo } from './comment';
 import { PopulatedNotification } from './notification';
 import {
@@ -31,6 +33,7 @@ import { ReplyWithCreatorInfo } from './reply';
 import { ReportCategory } from './report';
 import { OauthType, PublicUserInfo } from './user';
 import { Villager } from './villager';
+import { ImageStyle } from 'react-native-fast-image';
 
 // Home/
 export type PostListProps = {
@@ -392,6 +395,13 @@ export type ChatInputProps = {
 	onImagePress: () => void;
 };
 
+// GiftedChat는 런타임에 currentMessage/nextMessage를 전달하지만 DayProps 공식 타입에는 미포함.
+// 라이브러리 업그레이드 시 이 필드가 제거될 수 있으므로 주의 필요.
+export interface RenderDayProps extends DayProps {
+	currentMessage?: ExtendedIMessage;
+	nextMessage?: ExtendedIMessage;
+}
+
 // ui/
 export type ButtonColor = 'mint' | 'white' | 'gray' | 'red' | 'redWhite';
 export type ButtonSize = 'sm' | 'md' | 'md2' | 'lg' | 'lg2';
@@ -479,7 +489,7 @@ export interface ImageWithFallbackProps {
 	uri?: string; // 원격 이미지
 	localSource?: number; // 로컬 이미지
 	fallbackSource?: number;
-	style?: any;
+	style?: StyleProp<ImageStyle>;
 	priority?: ImagePriority;
 	resizeMode?: 'contain' | 'cover' | 'stretch' | 'center';
 }
@@ -507,7 +517,7 @@ type IconType = keyof typeof ICON_MAP;
 
 export type EmptyIndicatorProps = {
 	iconType?: IconType;
-	iconName?: any;
+	iconName?: string;
 	message: string;
 };
 

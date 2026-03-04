@@ -80,7 +80,7 @@ export const createChatRoom = async ({
 	postId,
 	user1,
 	user2,
-}: CreateChatRoomParams): Promise<string | undefined> => {
+}: CreateChatRoomParams): Promise<string | null> => {
 	return firestoreRequest('채팅방 생성', async () => {
 		const chatId = generateChatId(user1, user2);
 
@@ -124,7 +124,7 @@ export const createChatRoom = async ({
 };
 
 const rejoinChatRoom = async ({ chatId }: { chatId: string }): Promise<void> => {
-	return firestoreRequest('채팅방 재입장', async () => {
+	await firestoreRequest('채팅방 재입장', async () => {
 		const chatRef = doc(db, 'Chats', chatId);
 		const chatDoc = await getDoc(chatRef);
 
@@ -147,7 +147,7 @@ export const sendMessage = async ({
 	message,
 	imageUrl,
 }: SendChatMessageParams): Promise<void> => {
-	return firestoreRequest('메세지 전송', async () => {
+	await firestoreRequest('메세지 전송', async () => {
 		if (!chatId || !senderId || !receiverId) return;
 		if (!message.trim() && !imageUrl) return;
 
@@ -174,7 +174,7 @@ export const sendMessage = async ({
 };
 
 export const leaveChatRoom = async ({ chatId, userId }: LeaveChatRoomParams): Promise<void> => {
-	return firestoreRequest('채팅방 나가기', async () => {
+	await firestoreRequest('채팅방 나가기', async () => {
 		const chatRef = doc(db, 'Chats', chatId);
 
 		await updateDoc(chatRef, {
@@ -191,7 +191,7 @@ export const markAllUnreadMessagesAsRead = async ({
 	chatId: string;
 	userId: string;
 }): Promise<void> => {
-	return firestoreRequest('전체 안읽은 메세지 읽음 처리', async () => {
+	await firestoreRequest('전체 안읽은 메세지 읽음 처리', async () => {
 		const messagesRef = collection(db, `Chats/${chatId}/Messages`);
 		const q = query(messagesRef, where('isReadBy', 'not-in', [userId]));
 		const querySnapshot = await getDocs(q);
@@ -228,7 +228,7 @@ export const markMessagesAsReadByIds = async ({
 	userId,
 	unreadMessageIds,
 }: MarkMessageAsReadParams): Promise<void> => {
-	return firestoreRequest('메세지 읽음 처리', async () => {
+	await firestoreRequest('메세지 읽음 처리', async () => {
 		if (unreadMessageIds.length === 0) return;
 
 		const batch = writeBatch(db);

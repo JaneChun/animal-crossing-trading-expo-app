@@ -27,16 +27,16 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 	}
 
 	// UI 렌더링 중 에러가 발생 시 호출
-	static getDerivedStateFromError(error: any): ErrorBoundaryState {
+	static getDerivedStateFromError(error: Error): ErrorBoundaryState {
 		return {
 			hasError: true,
 			errorMessage: error.message,
-			errorStack: error.stack,
+			errorStack: error.stack ?? null,
 		};
 	}
 
 	// 에러 발생 시 실행되는 메서드 (로그 출력)
-	componentDidCatch(error: any, errorInfo: any) {
+	componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
 		console.error('Error caught by ErrorBoundary:', `%c ${error}`, errorInfo);
 	}
 

@@ -15,11 +15,6 @@ const ReviewMessageUnit = ({ message }: { message: ReviewIMessage }) => {
 
 	const { postId, chatId } = message.reviewPayload;
 
-	if (!postId || !chatId) {
-		console.log('ReviewIMessage: postId 또는 chatId가 없습니다.');
-		return null;
-	}
-
 	const userInfo = useUserInfo();
 
 	const { data: receiverInfo } = useReceiverInfo(chatId);
@@ -40,7 +35,7 @@ const ReviewMessageUnit = ({ message }: { message: ReviewIMessage }) => {
 		};
 
 		fetchReview();
-	}, [chatId, postId, receiverId]);
+	}, [chatId, postId, senderId]);
 
 	const sendReview = async (receivedReview: ReviewValue) => {
 		if (isReviewed || !receiverId || !senderId) return;
@@ -57,9 +52,12 @@ const ReviewMessageUnit = ({ message }: { message: ReviewIMessage }) => {
 
 		setLocalReview(receivedReview);
 		setIsReviewed(true);
-
-		// TODO: 유저 정보 수정
 	};
+
+	if (!postId || !chatId) {
+		console.log('ReviewIMessage: postId 또는 chatId가 없습니다.');
+		return null;
+	}
 
 	return (
 		<View style={styles.container}>

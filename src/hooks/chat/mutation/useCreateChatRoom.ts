@@ -8,8 +8,8 @@ export const useCreateChatRoom = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: ({ collectionName, postId, user1, user2 }: CreateChatRoomParams) => {
-			const chatId = createChatRoom({ collectionName, postId, user1, user2 });
+		mutationFn: async ({ collectionName, postId, user1, user2 }: CreateChatRoomParams) => {
+			const chatId = await createChatRoom({ collectionName, postId, user1, user2 });
 			return chatId;
 		},
 		onSuccess: (_, variables) => {

@@ -3,6 +3,7 @@ import { ImagePickerAsset } from 'expo-image-picker';
 import { useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
+import { AnimatedList } from 'react-native-gifted-chat/lib/MessageContainer';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { renderComposer, renderDay, renderMessage } from '@/components/Chat/CustomRenderers';
@@ -25,7 +26,7 @@ import { useReportUser } from '@/hooks/shared/useReportUser';
 import { goBack } from '@/navigation/RootNavigation';
 import { useBlockStore } from '@/stores/block';
 import { Colors } from '@/theme/Color';
-import { Message } from '@/types/chat';
+import { ExtendedIMessage, Message } from '@/types/chat';
 import { ChatRoomRouteProp } from '@/types/navigation';
 import { compressImage } from '@/utilities/compressImage';
 import { convertSendParamsToMessage } from '@/utilities/convertSendParamsToMessage';
@@ -102,7 +103,7 @@ const ChatRoom = () => {
 
 	const insets = useSafeAreaInsets();
 	const keyboardHeight = useKeyboardHeight();
-	const giftedChatRef = useRef<any>(null);
+	const giftedChatRef = useRef<AnimatedList<ExtendedIMessage>>(null);
 
 	// 새 메시지가 도착했을 때만 맨 아래로 스크롤 (과거 메시지 로드 시에는 스크롤 위치 유지)
 	// messages는 desc 순서(최신이 [0])이므로, 최신 메시지 ID가 바뀔 때만 실행

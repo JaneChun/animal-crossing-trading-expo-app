@@ -56,12 +56,8 @@ export const fetchPostsByCursor = async <C extends Collection>({
 	lastDoc = null,
 }: FirestoreQueryParams): Promise<PaginatedPosts<C>> => {
 	const q = getFirestoreQuery({ collectionName, filter, lastDoc });
-	const { data, lastDoc: _lastDoc } = await fetchAndPopulateUsers<
-		C,
-		Post<C>,
-		PostWithCreatorInfo<C>
-	>(q);
-	return { data, lastDoc: _lastDoc };
+	const result = await fetchAndPopulateUsers<C, Post<C>, PostWithCreatorInfo<C>>(q);
+	return result ?? { data: [], lastDoc: null };
 };
 
 export const useInfinitePosts = <C extends Collection>(collectionName: C, filter?: Filter) => {

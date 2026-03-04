@@ -1,8 +1,9 @@
-import FastImage from 'react-native-fast-image';
+import { StyleProp } from 'react-native';
+import FastImage, { ImageStyle } from 'react-native-fast-image';
 
 import naverRoundImage from '@assets/images/naver_round.png';
 
-const Naver = ({ style }: { style: any }) => {
+const Naver = ({ style }: { style: StyleProp<ImageStyle> }) => {
 	return <FastImage source={naverRoundImage} style={style} />;
 };
 

@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { useAdConfig } from '@/stores/ads';
+
 import { useInterstitialAd } from './useInterstitialAd';
 
 /**

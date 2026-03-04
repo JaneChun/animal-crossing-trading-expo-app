@@ -3,7 +3,7 @@ import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { useEffect } from 'react';
-import { Controller, FormProvider } from 'react-hook-form';
+import { Controller, FieldErrors, FormProvider } from 'react-hook-form';
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -13,6 +13,7 @@ import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
+import { FRUIT_IMAGES } from '@/constants/profile';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { updateDocToFirestore } from '@/firebase/core/firestoreService';
 import {
@@ -24,10 +25,9 @@ import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
 import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { Colors } from '@/theme/Color';
 import { EditProfileModalProps } from '@/types/components';
-import { UserInfo } from '@/types/user';
+import { Fruit, UserInfo } from '@/types/user';
 
 import NameInput from './NameInput';
-import { FRUIT_IMAGES } from '@/constants/profile';
 import ErrorMessage from '../ui/ErrorMessage';
 
 const EditProfileModal = ({
@@ -181,7 +181,7 @@ const EditProfileModal = ({
 		}
 	};
 
-	const onError = (e: any) => {
+	const onError = (e: FieldErrors) => {
 		console.log(e);
 	};
 
@@ -257,20 +257,25 @@ const EditProfileModal = ({
 							<View style={styles.inputContainer}>
 								<Text style={styles.label}>과일</Text>
 								<View style={styles.fruitContainer}>
-									{Object.entries(FRUIT_IMAGES).map(([name, imageUrl]) => (
-										<TouchableOpacity
-											key={name}
-											onPress={() =>
-												setValue('fruit', fruit === name ? '' : name)
-											}
-											style={[
-												styles.fruitItem,
-												fruit === name && styles.selectedFruitItem,
-											]}
-										>
-											<Image source={imageUrl} style={styles.fruitImage} />
-										</TouchableOpacity>
-									))}
+									{(Object.entries(FRUIT_IMAGES) as [Fruit, number][]).map(
+										([name, imageUrl]) => (
+											<TouchableOpacity
+												key={name}
+												onPress={() =>
+													setValue('fruit', fruit === name ? '' : name)
+												}
+												style={[
+													styles.fruitItem,
+													fruit === name && styles.selectedFruitItem,
+												]}
+											>
+												<Image
+													source={imageUrl}
+													style={styles.fruitImage}
+												/>
+											</TouchableOpacity>
+										),
+									)}
 								</View>
 							</View>
 

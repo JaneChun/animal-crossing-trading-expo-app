@@ -2,7 +2,6 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
 import { useRef, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -34,6 +33,7 @@ import { useUserInfo } from '@/stores/auth';
 import { Colors } from '@/theme/Color';
 import { PostDetailRouteProp } from '@/types/navigation';
 import { Collection, CommunityType, MarketType } from '@/types/post';
+import { HandleReplyClickParams } from '@/types/reply';
 import { navigateToEditPost } from '@/utilities/navigationHelpers';
 import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
 
@@ -46,7 +46,7 @@ const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
 	const { id = '', collectionName = '', notificationId = '' } = route.params;
 
-	const flatListRef = useRef<FlatList>(null);
+	const flatListRef = useRef<KeyboardAwareFlatList>(null);
 	const commentInputRef = useRef<CommentInputRef>(null);
 	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
 
@@ -84,7 +84,7 @@ const PostDetail = () => {
 		isRepliesLoading,
 	} = usePostReply(collectionName as Collection, id);
 
-	const handleReplyClickWithFocus = (params: any) => {
+	const handleReplyClickWithFocus = (params: HandleReplyClickParams) => {
 		originalHandleReplyClick(params);
 		setTimeout(() => {
 			commentInputRef.current?.focus();
@@ -160,7 +160,7 @@ const PostDetail = () => {
 
 	const scrollToBottom = () => {
 		if (shouldScroll) {
-			flatListRef.current?.scrollToEnd({ animated: false });
+			flatListRef.current?.scrollToEnd(false);
 			setShouldScroll(false);
 		}
 	};

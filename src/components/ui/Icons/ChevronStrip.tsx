@@ -1,7 +1,7 @@
-import React, { memo } from 'react';
+import { Entypo } from '@expo/vector-icons';
+import { memo } from 'react';
 import { View } from 'react-native';
 
-import { Entypo } from '@expo/vector-icons';
 import { Colors } from '@/theme';
 
 const ChevronStrip = () => {

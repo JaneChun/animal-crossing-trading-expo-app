@@ -15,9 +15,9 @@ const fetchComments = async (
 		orderBy('createdAt', 'asc'),
 	);
 
-	const { data } = await fetchAndPopulateUsers<Comment, CommentWithCreatorInfo>(q);
+	const result = await fetchAndPopulateUsers<Comment, CommentWithCreatorInfo>(q);
 
-	return data;
+	return result?.data ?? [];
 };
 
 const useComments = (collectionName: Collection, postId: string) => {
