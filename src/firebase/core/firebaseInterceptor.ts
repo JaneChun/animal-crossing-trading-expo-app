@@ -45,5 +45,4 @@ async function firestoreRequest<T>(
 	}
 }
 
-export { firestoreRequest };
 export default firestoreRequest;
