@@ -11,6 +11,7 @@ import { isReviewMessage, isSystemMessage } from '@/utilities/typeGuards/message
 
 import ChatInput from './ChatInput';
 import ReviewMessageUnit from './ReviewMessageUnit';
+import { RenderDayProps } from '@/types/components';
 
 export const renderMessage = ({ currentMessage }: { currentMessage: ExtendedIMessage }) => {
 	// 시스템 메시지 (게시글 정보)
@@ -32,24 +33,24 @@ export const renderMessage = ({ currentMessage }: { currentMessage: ExtendedIMes
 	return <MessageUnit message={currentMessage} />;
 };
 
-export const renderDay = (props: any) => {
+export const renderDay = (props: RenderDayProps) => {
 	const { currentMessage, nextMessage } = props;
 
+	if (!currentMessage?.createdAt || !nextMessage?.createdAt) return null;
+
 	const currentDate =
-		currentMessage?.createdAt instanceof Date
+		currentMessage.createdAt instanceof Date
 			? currentMessage.createdAt
-			: new Date(currentMessage?.createdAt);
+			: new Date(currentMessage.createdAt);
 
 	const nextDate =
-		nextMessage?.createdAt instanceof Date
+		nextMessage.createdAt instanceof Date
 			? nextMessage.createdAt
-			: new Date(nextMessage?.createdAt);
+			: new Date(nextMessage.createdAt);
 
-	if (!nextDate) return null;
+	const isSameDay = currentDate.toDateString() === nextDate.toDateString();
 
-	const isDifferentDay = currentDate.toDateString() === nextDate.toDateString();
-
-	if (!isDifferentDay) return null;
+	if (isSameDay) return null;
 
 	const formattedDate = currentDate.toLocaleDateString('ko-KR', {
 		year: 'numeric',
