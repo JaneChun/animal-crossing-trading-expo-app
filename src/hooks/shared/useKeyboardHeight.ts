@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Keyboard, Platform } from 'react-native';
+import { Keyboard, KeyboardEvent, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export const useKeyboardHeight = () => {
@@ -11,7 +11,7 @@ export const useKeyboardHeight = () => {
 		const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
 		const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
 
-		const onKeyboardShow = (e: any) => {
+		const onKeyboardShow = (e: KeyboardEvent) => {
 			const finalHeight =
 				e.endCoordinates.height - (Platform.OS === 'ios' ? insets.bottom : 0);
 			setKeyboardHeight(finalHeight);

@@ -26,7 +26,8 @@ const EmptyIndicator = ({
 	iconName = 'information-outline',
 	message,
 }: EmptyIndicatorProps) => {
-	const IconComponent = ICON_MAP[iconType];
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const IconComponent = ICON_MAP[iconType] as React.ComponentType<any>;
 
 	return (
 		<View style={styles.emptyContainer}>
