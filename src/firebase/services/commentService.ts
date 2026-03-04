@@ -16,7 +16,6 @@ import { getDocFromFirestore } from '@/firebase/core/firestoreService';
 import { Comment, CreateCommentRequest, UpdateCommentRequest } from '@/types/comment';
 import { Notification } from '@/types/notification';
 import { Collection } from '@/types/post';
-import { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { sanitize } from '@/utilities/sanitize';
 
@@ -39,11 +38,10 @@ export const fetchAndPopulateUsers = async <T extends Comment, U>(q: Query<Docum
 			...new Set(data.map((item) => item.creatorId)),
 		] as string[];
 
-		const publicUserInfos: Record<string, PublicUserInfo> =
-			await getPublicUserInfos(uniqueCreatorIds);
+		const publicUserInfos = await getPublicUserInfos(uniqueCreatorIds);
 
 		const populatedData: U[] = data.map((item) => {
-			const userInfo = publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);
+			const userInfo = publicUserInfos[item.creatorId] ?? getDefaultUserInfo(item.creatorId);
 
 			return {
 				...item,
@@ -71,7 +69,7 @@ export const createComment = async ({
 	requestData: CreateCommentRequest;
 	userId: string;
 }): Promise<void> => {
-	return firestoreRequest('댓글 작성', async () => {
+	await firestoreRequest('댓글 작성', async () => {
 		const batch = writeBatch(db);
 
 		// 1. 댓글 문서 추가
@@ -132,7 +130,7 @@ export const updateComment = async ({
 	commentId: string;
 	requestData: UpdateCommentRequest;
 }): Promise<void> => {
-	return firestoreRequest('댓글 수정', async () => {
+	await firestoreRequest('댓글 수정', async () => {
 		const commentRef = doc(db, collectionName, postId, 'Comments', commentId);
 
 		const cleanData: UpdateCommentRequest = { ...requestData };
@@ -150,25 +148,36 @@ export const deleteComment = async (
 	postId: string,
 	commentId: string,
 ): Promise<{ replyCount: number }> => {
-	return firestoreRequest('댓글 삭제', async () => {
-		const batch = writeBatch(db);
+	return firestoreRequest(
+		'댓글 삭제',
+		async () => {
+			const batch = writeBatch(db);
 
-		// 1. 답글 개수 조회 및 삭제
-		const repliesRef = collection(db, collectionName, postId, 'Comments', commentId, 'Replies');
-		const repliesSnapshot = await getDocs(repliesRef);
-		const replyCount = repliesSnapshot.size;
+			// 1. 답글 개수 조회 및 삭제
+			const repliesRef = collection(
+				db,
+				collectionName,
+				postId,
+				'Comments',
+				commentId,
+				'Replies',
+			);
+			const repliesSnapshot = await getDocs(repliesRef);
+			const replyCount = repliesSnapshot.size;
 
-		// 모든 답글 삭제
-		repliesSnapshot.docs.forEach((replyDoc) => {
-			batch.delete(replyDoc.ref);
-		});
+			// 모든 답글 삭제
+			repliesSnapshot.docs.forEach((replyDoc) => {
+				batch.delete(replyDoc.ref);
+			});
 
-		// 2. 댓글 삭제
-		const commentRef = doc(db, collectionName, postId, 'Comments', commentId);
-		batch.delete(commentRef);
+			// 2. 댓글 삭제
+			const commentRef = doc(db, collectionName, postId, 'Comments', commentId);
+			batch.delete(commentRef);
 
-		await batch.commit();
+			await batch.commit();
 
-		return { replyCount };
-	});
+			return { replyCount };
+		},
+		{ throwOnError: true },
+	);
 };

@@ -4,7 +4,7 @@ import { db } from '@/config/firebase';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 
 export const reportError = async (errorMessage: string, errorStack: string): Promise<void> => {
-	return firestoreRequest('에러 리포트', async () => {
+	await firestoreRequest('에러 리포트', async () => {
 		await addDoc(collection(db, 'Errors'), {
 			message: errorMessage,
 			stack: errorStack,

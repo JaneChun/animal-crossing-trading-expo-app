@@ -50,10 +50,9 @@ export const useSearchPosts = <C extends Collection>({
 		const uniqueCreatorIds: string[] = Array.from(
 			new Set(data.map((item: Post<C>) => item.creatorId)),
 		);
-		const publicUserInfos: Record<string, PublicUserInfo> =
-			await getPublicUserInfos(uniqueCreatorIds);
+		const publicUserInfos = await getPublicUserInfos(uniqueCreatorIds);
 		const populatedData: PostWithCreatorInfo<C>[] = data.map((item: Post<C>) => {
-			const userInfo = publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);
+			const userInfo = publicUserInfos[item.creatorId] ?? getDefaultUserInfo(item.creatorId);
 
 			return {
 				...item,

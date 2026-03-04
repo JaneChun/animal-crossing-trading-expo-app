@@ -36,7 +36,7 @@ export const addDocToFirestore = async ({
 	requestData,
 }: {
 	directory: string;
-	requestData: any;
+	requestData: DocumentData;
 }): Promise<string> => {
 	const docRef = await addDoc(collection(db, directory), requestData);
 	return docRef.id;
@@ -49,7 +49,7 @@ export const setDocToFirestore = async ({
 }: {
 	directory: string;
 	id: string;
-	requestData: any;
+	requestData: DocumentData;
 }): Promise<void> => {
 	await setDoc(doc(db, directory, id), requestData);
 };
@@ -81,7 +81,7 @@ export async function updateDocToFirestore({
 }: {
 	id: string;
 	collection: string;
-	requestData: any;
+	requestData: DocumentData;
 }): Promise<void> {
 	await updateDoc(doc(db, collection, id), requestData);
 }

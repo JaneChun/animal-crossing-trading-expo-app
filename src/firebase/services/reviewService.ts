@@ -8,17 +8,15 @@ import { CreateReviewParams } from '@/types/review';
 
 import { sendMessage } from './chatService';
 
-export const createReview = async (requestData: CreateReviewParams): Promise<string> => {
-	return firestoreRequest('리뷰 생성', async () => {
-		const createdId = await addDocToFirestore({
+export const createReview = async (requestData: CreateReviewParams): Promise<void> => {
+	await firestoreRequest('리뷰 생성', async () => {
+		await addDocToFirestore({
 			directory: 'Reviews',
 			requestData: {
 				...requestData,
 				createdAt: Timestamp.now(),
 			},
 		});
-
-		return createdId;
 	});
 };
 

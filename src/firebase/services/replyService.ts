@@ -43,7 +43,7 @@ export const fetchAndPopulateUsers = async <T extends Reply, U>(q: Query<Documen
 			await getPublicUserInfos(uniqueCreatorIds);
 
 		const populatedData: U[] = data.map((item) => {
-			const userInfo = publicUserInfos[item.creatorId] || getDefaultUserInfo(item.creatorId);
+			const userInfo = publicUserInfos[item.creatorId] ?? getDefaultUserInfo(item.creatorId);
 
 			return {
 				...item,
@@ -73,7 +73,7 @@ export const createReply = async ({
 	requestData: CreateReplyRequest;
 	userId: string;
 }): Promise<void> => {
-	return firestoreRequest('답글 작성', async () => {
+	await firestoreRequest('답글 작성', async () => {
 		const batch = writeBatch(db);
 
 		// 1. 답글 문서 추가
@@ -134,7 +134,7 @@ export const updateReply = async ({
 	replyId: string;
 	requestData: UpdateReplyRequest;
 }): Promise<void> => {
-	return firestoreRequest('답글 수정', async () => {
+	await firestoreRequest('답글 수정', async () => {
 		const replyRef = doc(db, collectionName, postId, 'Comments', commentId, 'Replies', replyId);
 
 		const cleanData: UpdateReplyRequest = { ...requestData };
@@ -153,7 +153,7 @@ export const deleteReply = async (
 	commentId: string,
 	replyId: string,
 ): Promise<void> => {
-	return firestoreRequest('답글 삭제', async () => {
+	await firestoreRequest('답글 삭제', async () => {
 		const replyRef = doc(db, collectionName, postId, 'Comments', commentId, 'Replies', replyId);
 		await deleteDoc(replyRef);
 	});

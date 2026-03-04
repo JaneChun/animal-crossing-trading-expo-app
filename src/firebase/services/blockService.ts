@@ -9,8 +9,8 @@ export const blockUser = async ({
 }: {
 	userId: string;
 	targetUserId: string;
-}) => {
-	return firestoreRequest('사용자 차단', async () => {
+}): Promise<void> => {
+	await firestoreRequest('사용자 차단', async () => {
 		// Users/{userId}/BlockedUsers 서브컬렉션
 		const blockedUserDocRef = doc(db, 'Users', userId, 'BlockedUsers', targetUserId);
 
@@ -26,8 +26,8 @@ export const unblockUser = async ({
 }: {
 	userId: string;
 	targetUserId: string;
-}) => {
-	return firestoreRequest('사용자 차단 해제', async () => {
+}): Promise<void> => {
+	await firestoreRequest('사용자 차단 해제', async () => {
 		const blockedUserDocRef = doc(db, 'Users', userId, 'BlockedUsers', targetUserId);
 
 		await deleteDoc(blockedUserDocRef);
