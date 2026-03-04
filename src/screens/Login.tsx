@@ -33,8 +33,15 @@ const Login = () => {
 		if (loginResult.isSuccess) {
 			// 신규 유저
 			if (loginResult.isNewUser) {
+				const uid = auth.currentUser?.uid;
+				if (!uid) {
+					console.error('로그인 성공 후 uid를 찾을 수 없습니다.');
+					showToast('error', '로그인 중 오류가 발생했습니다.');
+					return;
+				}
+
 				navigateToAgreeToTermsAndConditions({
-					uid: auth.currentUser?.uid!,
+					uid,
 					oauthType,
 					email: loginResult.email ?? '',
 				});

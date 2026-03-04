@@ -12,6 +12,24 @@ import { Collection } from '@/types/post';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToPost } from '@/utilities/navigationHelpers';
 
+// Swipeable이 스와이프될 때 보여줄 삭제 버튼을 생성
+const RightAction = ({ drag, onDelete }: { drag: SharedValue<number>; onDelete: () => void }) => {
+	// 스와이프 시 드래그한 거리(drag.value)에 따라 삭제 버튼 위치 조정
+	const animatedStyle = useAnimatedStyle(() => {
+		return {
+			transform: [{ translateX: drag.value + 80 }],
+		};
+	}, [drag]);
+
+	return (
+		<Reanimated.View style={[styles.rightActionContainer, animatedStyle]}>
+			<Pressable style={styles.rightActionButton} onPress={onDelete}>
+				<FontAwesome name="trash" color={Colors.text.inverse} size={24} />
+			</Pressable>
+		</Reanimated.View>
+	);
+};
+
 const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 	const {
 		id,
@@ -44,23 +62,9 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 		else navigateToPost({ postId, collectionName, notificationId: id });
 	};
 
-	// Swipeable이 스와이프될 때 보여줄 삭제 버튼을 생성
-	const renderRightAction = (prog: SharedValue<number>, drag: SharedValue<number>) => {
-		// 스와이프 시 드래그한 거리(drag.value)에 따라 삭제 버튼 위치 조정
-		const animatedStyle = useAnimatedStyle(() => {
-			return {
-				transform: [{ translateX: drag.value + 80 }],
-			};
-		}, [drag]);
-
-		return (
-			<Reanimated.View style={[styles.rightActionContainer, animatedStyle]}>
-				<Pressable style={styles.rightActionButton} onPress={() => deleteNotification()}>
-					<FontAwesome name="trash" color={Colors.text.inverse} size={24} />
-				</Pressable>
-			</Reanimated.View>
-		);
-	};
+	const renderRightAction = (_prog: SharedValue<number>, drag: SharedValue<number>) => (
+		<RightAction drag={drag} onDelete={deleteNotification} />
+	);
 
 	if (!post) return null;
 

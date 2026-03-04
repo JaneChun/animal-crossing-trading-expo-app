@@ -93,7 +93,11 @@ export function useBlockUser({
 
 	// 현재 상태에 따라 block/unblock 자동 호출
 	const toggleBlock = useCallback(() => {
-		isBlockedByMe ? handleUnblockUser() : handleBlockUser();
+		if (isBlockedByMe) {
+			handleUnblockUser();
+		} else {
+			handleBlockUser();
+		}
 	}, [isBlockedByMe, handleBlockUser, handleUnblockUser]);
 
 	return {
