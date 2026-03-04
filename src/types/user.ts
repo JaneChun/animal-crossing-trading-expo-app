@@ -1,4 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
+import { FRUIT_IMAGES } from '@/constants/profile';
 
 export interface PublicUserInfo {
 	uid: string;
@@ -14,7 +15,7 @@ export interface PublicUserInfo {
 	bio?: string;
 }
 
-export type Fruit = 'apple' | 'cherry' | 'orange' | 'peach' | 'pear';
+export type Fruit = keyof typeof FRUIT_IMAGES;
 
 export type UserReview = {
 	total: number;

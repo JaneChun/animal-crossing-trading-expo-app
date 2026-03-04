@@ -12,7 +12,7 @@ export const FRUIT_IMAGES = {
 	orange: fruitOrange,
 	peach: fruitPeach,
 	pear: fruitPear,
-};
+} as const;
 
 export const FRUIT_NAMES = {
 	apple: '사과',
