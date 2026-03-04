@@ -1,4 +1,4 @@
-import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
@@ -30,6 +30,20 @@ const Profile = ({
 				<View style={styles.headerLine} />
 				<Text style={styles.headerText}>PASSPORT</Text>
 				<View style={styles.headerLine} />
+
+				{isMyProfile && (
+					<TouchableOpacity
+						onPress={openEditProfileModal}
+						style={styles.editButton}
+						hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+					>
+						<MaterialCommunityIcons
+							name="lead-pencil"
+							size={20}
+							color={Colors.brand.primary}
+						/>
+					</TouchableOpacity>
+				)}
 			</View>
 
 			{/* Passport Content Body */}
@@ -108,17 +122,8 @@ const Profile = ({
 			</View>
 
 			{/* Footer */}
-			<View style={[styles.footer, { alignItems: isMyProfile ? 'center' : 'flex-end' }]}>
-				{isMyProfile ? (
-					<TouchableOpacity
-						onPress={openEditProfileModal}
-						hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-					>
-						<Feather name="edit-3" size={24} color={Colors.brand.primary} />
-					</TouchableOpacity>
-				) : (
-					<ChevronStrip />
-				)}
+			<View style={styles.footer}>
+				<ChevronStrip />
 			</View>
 		</View>
 	);
@@ -157,6 +162,13 @@ const styles = StyleSheet.create({
 		fontSize: FontSizes.sm,
 		color: Colors.text.tertiary,
 		fontWeight: FontWeights.medium,
+	},
+	editButton: {
+		position: 'absolute',
+		top: 0,
+		bottom: 0,
+		right: 16,
+		justifyContent: 'center',
 	},
 	body: {
 		zIndex: -2,
@@ -286,6 +298,7 @@ const styles = StyleSheet.create({
 		height: 50,
 		flexDirection: 'row',
 		justifyContent: 'flex-end',
+		alignItems: 'flex-end',
 		paddingHorizontal: 20,
 		backgroundColor: Colors.bg.primary,
 	},
