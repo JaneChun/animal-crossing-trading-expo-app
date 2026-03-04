@@ -2,7 +2,6 @@ import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
 import { useRef, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -47,8 +46,7 @@ const PostDetail = () => {
 	const route = useRoute<PostDetailRouteProp>();
 	const { id = '', collectionName = '', notificationId = '' } = route.params;
 
-	// KeyboardAwareFlatList의 ref 타입이 FlatList와 호환되지 않아 제네릭 타입으로 선언
-	const flatListRef = useRef<FlatList>(null);
+	const flatListRef = useRef<KeyboardAwareFlatList>(null);
 	const commentInputRef = useRef<CommentInputRef>(null);
 	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
 
@@ -162,7 +160,7 @@ const PostDetail = () => {
 
 	const scrollToBottom = () => {
 		if (shouldScroll) {
-			flatListRef.current?.scrollToEnd({ animated: false });
+			flatListRef.current?.scrollToEnd(false);
 			setShouldScroll(false);
 		}
 	};
@@ -193,7 +191,6 @@ const PostDetail = () => {
 					}
 				>
 					<KeyboardAwareFlatList
-						// @ts-expect-error
 						ref={flatListRef}
 						data={[]}
 						renderItem={null}
