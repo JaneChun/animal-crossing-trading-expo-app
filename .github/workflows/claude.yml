@@ -38,6 +38,18 @@ jobs:
               uses: anthropics/claude-code-action@v1
               with:
                   anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+                  prompt: |
+                      Review this pull request.
+
+                      Focus on:
+                      - correctness
+                      - edge cases
+                      - performance
+                      - security
+                      - code readability
+                      - maintainability improvements
+
+                      Provide actionable suggestions.
 
                   # Optional: Customize the trigger phrase (default: @claude)
                   # trigger_phrase: "/claude"
