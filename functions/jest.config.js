@@ -2,9 +2,8 @@
  * Jest 설정 파일
  * Firebase Functions 테스트 환경 구성
  */
-import type { Config } from 'jest';
 
-const config: Config = {
+const config = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	roots: ['<rootDir>/__tests__'],

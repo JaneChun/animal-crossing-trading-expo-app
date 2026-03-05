@@ -21,7 +21,7 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                  node-version: 20
+                  node-version: 22
                   cache: npm
 
             - name: Install dependencies
@@ -41,7 +41,7 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                  node-version: 20
+                  node-version: 22
                   cache: npm
                   cache-dependency-path: functions/package-lock.json
 
@@ -64,7 +64,7 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                  node-version: 20
+                  node-version: 22
                   cache: npm
 
             - name: Install dependencies
@@ -84,7 +84,7 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                  node-version: 20
+                  node-version: 22
                   cache: npm
                   cache-dependency-path: functions/package-lock.json
 
@@ -108,7 +108,7 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                  node-version: 20
+                  node-version: 22
                   cache: npm
                   cache-dependency-path: functions/package-lock.json
 
@@ -132,13 +132,21 @@ jobs:
 
             - uses: actions/setup-node@v4
               with:
-                  node-version: 20
+                  node-version: 22
                   cache: npm
                   cache-dependency-path: functions/package-lock.json
+
+            # Firestore emulator가 필요로 하는 Java 21 설치
+            - name: Setup Java
+              uses: actions/setup-java@v4
+              with:
+                  distribution: temurin
+                  java-version: 21
 
             - name: Install dependencies
               run: npm ci
               working-directory: functions
 
-            - name: Run tests
-              run: npm test
+            - name: Run tests with emulator
+              run: npx firebase emulators:exec --project ${{ secrets.FIREBASE_PROJECT_ID }} "npm test"
+              working-directory: functions
