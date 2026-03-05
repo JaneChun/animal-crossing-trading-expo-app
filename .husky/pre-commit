@@ -1,0 +1,8 @@
+# 1. 스테이징된 파일들 린트 실행
+npx lint-staged
+
+# 2. 전체 프로젝트 타입 체크
+npm run typecheck
+
+# (필요 시 주석 해제)
+# npm run typecheck:functions
