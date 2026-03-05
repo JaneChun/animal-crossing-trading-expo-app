@@ -11,5 +11,6 @@ export const useCachedPublicUserInfo = (userId: string | null | undefined) => {
 		queryFn: () => getPublicUserInfo(userId!),
 		enabled: !!userId,
 		staleTime: PUBLIC_USER_INFO_STALE_TIME,
+		refetchInterval: PUBLIC_USER_INFO_STALE_TIME,
 	});
 };

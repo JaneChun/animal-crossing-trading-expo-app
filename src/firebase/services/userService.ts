@@ -62,6 +62,10 @@ export const getPublicUserInfo = async (creatorId: string): Promise<PublicUserIn
 			photoURL: docData.photoURL || DEFAULT_USER_PHOTO_URL,
 			review: docData.review || DEFAULT_USER_REVIEW,
 			report: docData.report || DEFAULT_USER_REPORT,
+			fruit: docData.fruit,
+			titleFirst: docData.titleFirst,
+			titleLast: docData.titleLast,
+			bio: docData.bio,
 		};
 
 		return userInfo;
