@@ -1,4 +1,5 @@
 import { Timestamp } from 'firebase/firestore';
+
 import { FRUIT_IMAGES } from '@/constants/profile';
 
 export interface PublicUserInfo {

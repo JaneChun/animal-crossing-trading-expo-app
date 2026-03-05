@@ -1,4 +1,5 @@
 import { Alert } from 'react-native';
+
 import { FirebaseError } from './types';
 
 const ERROR_MESSAGES = {

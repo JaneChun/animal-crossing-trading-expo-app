@@ -7,11 +7,11 @@ import MessageUnit from '@/components/Chat/MessageUnit';
 import SystemMessageUnit from '@/components/Chat/SystemMessageUnit';
 import { Colors } from '@/theme/Color';
 import { ExtendedIMessage } from '@/types/chat';
+import { RenderDayProps } from '@/types/components';
 import { isReviewMessage, isSystemMessage } from '@/utilities/typeGuards/messageGuards';
 
 import ChatInput from './ChatInput';
 import ReviewMessageUnit from './ReviewMessageUnit';
-import { RenderDayProps } from '@/types/components';
 
 export const renderMessage = ({ currentMessage }: { currentMessage: ExtendedIMessage }) => {
 	// 시스템 메시지 (게시글 정보)
