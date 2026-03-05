@@ -10,6 +10,7 @@ import {
 	TextStyle,
 	ViewStyle,
 } from 'react-native';
+import { ImageStyle } from 'react-native-fast-image';
 import { ScrollView } from 'react-native-gesture-handler';
 import { DayProps } from 'react-native-gifted-chat';
 
@@ -33,7 +34,6 @@ import { ReplyWithCreatorInfo } from './reply';
 import { ReportCategory } from './report';
 import { OauthType, PublicUserInfo } from './user';
 import { Villager } from './villager';
-import { ImageStyle } from 'react-native-fast-image';
 
 // Home/
 export type PostListProps = {

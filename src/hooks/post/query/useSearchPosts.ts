@@ -3,7 +3,6 @@ import { Timestamp } from 'firebase/firestore';
 
 import { searchClient } from '@/config/firebase';
 import { getPublicUserInfos } from '@/firebase/services/userService';
-import { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { toPost } from '@/utilities/toPost'; // Import toPost
 

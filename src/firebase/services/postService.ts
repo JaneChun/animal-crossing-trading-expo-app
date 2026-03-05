@@ -17,12 +17,13 @@ import {
 	updateDocToFirestore,
 } from '@/firebase/core/firestoreService';
 import { Collection, CreatePostRequest, Post, PostDoc, UpdatePostRequest } from '@/types/post';
-import type { PublicUserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { sanitize } from '@/utilities/sanitize';
 import { toPost } from '@/utilities/toPost';
 
 import { chunkArray, getPublicUserInfos } from './userService';
+
+import type { PublicUserInfo } from '@/types/user';
 
 export const fetchAndPopulateUsers = async <C extends Collection, T extends Post<C>, U>(
 	q: Query<DocumentData>,
