@@ -13,10 +13,7 @@ jest.mock('../../src/utils/common', () => ({
 	db,
 }));
 
-import {
-	handleCommentCreated,
-	handleCommentDeleted,
-} from '../../src/triggers/comments';
+import { handleCommentCreated, handleCommentDeleted } from '../../src/triggers/comments';
 
 describe('댓글 카운터 처리 통합 테스트', () => {
 	const boardsCollection = 'Boards';
@@ -175,9 +172,7 @@ describe('댓글 카운터 처리 통합 테스트', () => {
 				 * Firestore의 update()는 존재하지 않는 문서에 대해 NOT_FOUND 에러를 발생시킴
 				 * 하지만 에러는 catch되어 로그만 남기고 처리가 완료됨
 				 */
-				const consoleErrorSpy = jest
-					.spyOn(console, 'error')
-					.mockImplementation(() => {});
+				const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
 				const nonExistentPostId = 'non_existent_post';
 
@@ -193,10 +188,7 @@ describe('댓글 카운터 처리 통합 테스트', () => {
 				);
 
 				// 문서가 생성되지 않았는지 확인
-				const postDoc = await db
-					.collection(boardsCollection)
-					.doc(nonExistentPostId)
-					.get();
+				const postDoc = await db.collection(boardsCollection).doc(nonExistentPostId).get();
 				expect(postDoc.exists).toBe(false);
 
 				consoleErrorSpy.mockRestore();
@@ -283,31 +275,48 @@ describe('댓글 카운터 처리 통합 테스트', () => {
 			});
 		});
 
-		describe('에러 시나리오', () => {
-			it('존재하지 않는 게시글의 댓글 삭제 시도 시 에러를 로그하고 문서는 생성되지 않아야 한다', async () => {
-				const consoleErrorSpy = jest
-					.spyOn(console, 'error')
-					.mockImplementation(() => {});
+		describe('예외 시나리오', () => {
+			it('존재하지 않는 게시글의 댓글 삭제 시도 시 에러 없이 무시되고 문서는 생성되지 않아야 한다', async () => {
+				const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
 				const nonExistentPostId = 'non_existent_post_delete';
 
-				// 존재하지 않는 게시글의 댓글 삭제 시도
+				// 존재하지 않는 게시글의 댓글 삭제 시도 (early return 발생)
 				await expect(
 					handleCommentDeleted(boardsCollection, nonExistentPostId),
 				).resolves.not.toThrow();
 
-				// 에러가 로그되었는지 확인
-				expect(consoleErrorSpy).toHaveBeenCalledWith(
-					`댓글 수 감소 실패 ${boardsCollection}/${nonExistentPostId}`,
-					expect.any(Error),
-				);
+				// 에러가 로그되지 않았는지 확인 (조용히 반환)
+				expect(consoleErrorSpy).not.toHaveBeenCalled();
 
 				// 문서가 생성되지 않았는지 확인
-				const postDoc = await db
-					.collection(boardsCollection)
-					.doc(nonExistentPostId)
-					.get();
+				const postDoc = await db.collection(boardsCollection).doc(nonExistentPostId).get();
 				expect(postDoc.exists).toBe(false);
+
+				consoleErrorSpy.mockRestore();
+			});
+
+			it('status가 deleted인 게시글의 댓글 삭제 시도 시 commentCount가 감소하지 않아야 한다', async () => {
+				// 초기 게시글 생성 (commentCount: 5, status: 'deleted')
+				await db.collection(boardsCollection).doc(postId).set({
+					title: '테스트 게시글',
+					commentCount: 5,
+					status: 'deleted',
+				});
+
+				const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+				// 댓글 삭제 처리 (early return 발생)
+				await handleCommentDeleted(boardsCollection, postId);
+
+				// commentCount 감소하지 않았는지 확인
+				const postDoc = await db.collection(boardsCollection).doc(postId).get();
+				const postData = postDoc.data();
+
+				expect(postData?.commentCount).toBe(5);
+
+				// 에러가 로그되지 않았는지 확인
+				expect(consoleErrorSpy).not.toHaveBeenCalled();
 
 				consoleErrorSpy.mockRestore();
 			});
@@ -402,12 +411,8 @@ describe('댓글 카운터 처리 통합 테스트', () => {
 
 			// 50개 생성, 30개 삭제를 동시에 처리
 			const operations = [
-				...Array.from({ length: 50 }, () =>
-					handleCommentCreated(boardsCollection, postId),
-				),
-				...Array.from({ length: 30 }, () =>
-					handleCommentDeleted(boardsCollection, postId),
-				),
+				...Array.from({ length: 50 }, () => handleCommentCreated(boardsCollection, postId)),
+				...Array.from({ length: 30 }, () => handleCommentDeleted(boardsCollection, postId)),
 			];
 
 			await Promise.all(operations);

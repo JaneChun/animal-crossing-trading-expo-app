@@ -13,10 +13,7 @@ jest.mock('../../src/utils/common', () => ({
 	db,
 }));
 
-import {
-	handleReplyCreated,
-	handleReplyDeleted,
-} from '../../src/triggers/replies';
+import { handleReplyCreated, handleReplyDeleted } from '../../src/triggers/replies';
 
 describe('답글 생성/삭제 처리 통합 테스트', () => {
 	const boardsPostId = 'test_board_post_123';
@@ -97,10 +94,7 @@ describe('답글 생성/삭제 처리 통합 테스트', () => {
 
 				await handleReplyCreated('Communities', communitiesPostId);
 
-				const postDoc = await db
-					.collection('Communities')
-					.doc(communitiesPostId)
-					.get();
+				const postDoc = await db.collection('Communities').doc(communitiesPostId).get();
 				const postData = postDoc.data();
 
 				expect(postData?.commentCount).toBe(1);
@@ -109,9 +103,7 @@ describe('답글 생성/삭제 처리 통합 테스트', () => {
 
 		describe('에러 처리', () => {
 			it('존재하지 않는 게시글에 답글 생성 시 에러를 로그하고 계속 진행해야 한다', async () => {
-				const consoleErrorSpy = jest
-					.spyOn(console, 'error')
-					.mockImplementation(() => {});
+				const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
 				// 존재하지 않는 게시글 ID로 호출
 				await expect(
@@ -201,32 +193,56 @@ describe('답글 생성/삭제 처리 통합 테스트', () => {
 
 				await handleReplyDeleted('Communities', communitiesPostId);
 
-				const postDoc = await db
-					.collection('Communities')
-					.doc(communitiesPostId)
-					.get();
+				const postDoc = await db.collection('Communities').doc(communitiesPostId).get();
 				const postData = postDoc.data();
 
 				expect(postData?.commentCount).toBe(2);
 			});
 		});
 
-		describe('에러 처리', () => {
-			it('존재하지 않는 게시글에서 답글 삭제 시 에러를 로그하고 계속 진행해야 한다', async () => {
-				const consoleErrorSpy = jest
-					.spyOn(console, 'error')
-					.mockImplementation(() => {});
+		describe('예외 처리', () => {
+			it('존재하지 않는 게시글의 답글 삭제 시도 시 에러 없이 무시되고 문서는 생성되지 않아야 한다', async () => {
+				const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
-				// 존재하지 않는 게시글 ID로 호출
+				const nonExistentPostId = 'non_existent_post';
+
+				// 존재하지 않는 게시글 ID로 호출 (early return 발생)
 				await expect(
-					handleReplyDeleted('Boards', 'non_existent_post'),
+					handleReplyDeleted('Boards', nonExistentPostId),
 				).resolves.not.toThrow();
 
-				// 에러가 로그되었는지 확인
-				expect(consoleErrorSpy).toHaveBeenCalledWith(
-					'댓글 수 감소 실패 Boards/non_existent_post',
-					expect.any(Error),
-				);
+				// 에러가 로그되지 않았는지 확인 (조용히 반환)
+				expect(consoleErrorSpy).not.toHaveBeenCalled();
+
+				// 문서가 생성되지 않았는지 확인
+				const postDoc = await db.collection('Boards').doc(nonExistentPostId).get();
+				expect(postDoc.exists).toBe(false);
+
+				consoleErrorSpy.mockRestore();
+			});
+
+			it('status가 deleted인 게시글의 답글 삭제 시도 시 commentCount가 감소하지 않아야 한다', async () => {
+				// 초기 게시글 생성 (commentCount: 5, status: 'deleted')
+				await db.collection('Boards').doc(boardsPostId).set({
+					title: '테스트 게시글',
+					body: '게시글 내용입니다.',
+					commentCount: 5,
+					status: 'deleted',
+				});
+
+				const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+				// 답글 삭제 처리 (early return 발생)
+				await handleReplyDeleted('Boards', boardsPostId);
+
+				// commentCount 감소하지 않았는지 확인
+				const postDoc = await db.collection('Boards').doc(boardsPostId).get();
+				const postData = postDoc.data();
+
+				expect(postData?.commentCount).toBe(5);
+
+				// 에러가 로그되지 않았는지 확인
+				expect(consoleErrorSpy).not.toHaveBeenCalled();
 
 				consoleErrorSpy.mockRestore();
 			});
