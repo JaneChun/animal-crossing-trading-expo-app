@@ -1,3 +1,4 @@
+import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { useEffect, useRef, useState } from 'react';
@@ -78,8 +79,10 @@ const ChatRoom = () => {
 	const { mutateAsync: createChatRoomAsync } = useCreateChatRoom();
 
 	// 이미지 전송
-	const { pickImage } = useImagePicker({ multiple: false });
+	const { pickImage, takePhoto } = useImagePicker({ multiple: false });
 	const { mutate: sendImageMessage } = useSendImageMessage();
+
+	const { showActionSheetWithOptions } = useActionSheet();
 
 	useChatPresence(chatId);
 
@@ -156,14 +159,28 @@ const ChatRoom = () => {
 		});
 	};
 
-	const handleImagePress = async () => {
-		if (!userInfo?.uid || !receiverInfo?.uid || isBlockedByMe || amIBlockedBy) return;
-
-		const images = await pickImage(1);
+	const processImage = async (images: ImagePickerAsset[] | null) => {
 		if (!images || images.length === 0) return;
 
 		const compressed = await compressImage(images[0]);
 		setConfirmImage(compressed);
+	};
+
+	const handleImagePress = () => {
+		if (!userInfo?.uid || !receiverInfo?.uid || isBlockedByMe || amIBlockedBy) return;
+
+		const options = ['카메라로 촬영', '앨범에서 선택', '취소'];
+		const cancelButtonIndex = 2;
+
+		showActionSheetWithOptions({ options, cancelButtonIndex }, async (selectedIndex) => {
+			if (selectedIndex === 0) {
+				const images = await takePhoto();
+				await processImage(images);
+			} else if (selectedIndex === 1) {
+				const images = await pickImage(1);
+				await processImage(images);
+			}
+		});
 	};
 
 	const handleImageSendConfirm = async () => {
