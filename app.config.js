@@ -4,7 +4,7 @@ export default {
 	expo: {
 		name: '모동숲 마켓',
 		slug: 'animal-crossing-trading-app',
-		version: '1.6.0',
+		version: '1.7.0',
 		orientation: 'portrait',
 		icon: './assets/images/app_icon.jpg',
 		scheme: 'animal-crossing-trading-app',
@@ -74,6 +74,8 @@ export default {
 				{
 					photosPermission:
 						'프로필 사진 및 게시글 이미지 첨부 기능을 제공하기 위해 사진 보관함 접근 권한이 필요합니다. 이 권한은 설정에서 언제든 변경할 수 있습니다.',
+					cameraPermission:
+						'채팅에서 사진을 촬영하여 전송하기 위해 카메라 접근 권한이 필요합니다. 이 권한은 설정에서 언제든 변경할 수 있습니다.',
 				},
 			],
 			[

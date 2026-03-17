@@ -1,6 +1,8 @@
 import {
 	ImagePickerAsset,
+	launchCameraAsync,
 	launchImageLibraryAsync,
+	useCameraPermissions,
 	useMediaLibraryPermissions,
 } from 'expo-image-picker';
 
@@ -9,8 +11,9 @@ import { UseImagePickerOptions } from '@/types/image';
 
 export const useImagePicker = (options: UseImagePickerOptions = { multiple: false }) => {
 	const [, requestPermission, getPermission] = useMediaLibraryPermissions();
+	const [, requestCameraPermission, getCameraPermission] = useCameraPermissions();
 
-	const verifyPermissions = async (): Promise<boolean> => {
+	const verifyPhotosPermissions = async (): Promise<boolean> => {
 		let currentPermission = await getPermission();
 		if (currentPermission.status === 'undetermined') {
 			currentPermission = await requestPermission();
@@ -22,8 +25,20 @@ export const useImagePicker = (options: UseImagePickerOptions = { multiple: fals
 		return currentPermission.status === 'granted';
 	};
 
+	const verifyCameraPermissions = async (): Promise<boolean> => {
+		let currentPermission = await getCameraPermission();
+		if (currentPermission.status === 'undetermined') {
+			currentPermission = await requestCameraPermission();
+		}
+		if (currentPermission.status === 'denied') {
+			showToast('warn', '카메라를 사용하려면 카메라 접근 권한이 필요합니다.');
+			return false;
+		}
+		return currentPermission.status === 'granted';
+	};
+
 	const pickImage = async (selectionLimit: number) => {
-		const hasPermission = await verifyPermissions();
+		const hasPermission = await verifyPhotosPermissions();
 		if (!hasPermission) return null;
 
 		const limit =
@@ -49,5 +64,20 @@ export const useImagePicker = (options: UseImagePickerOptions = { multiple: fals
 		return result.assets as ImagePickerAsset[];
 	};
 
-	return { pickImage };
+	const takePhoto = async () => {
+		const hasPermission = await verifyCameraPermissions();
+		if (!hasPermission) return null;
+
+		const result = await launchCameraAsync({
+			mediaTypes: 'images',
+			aspect: [1, 1],
+			quality: 1,
+		});
+
+		if (result.canceled) return null;
+
+		return result.assets as ImagePickerAsset[];
+	};
+
+	return { pickImage, takePhoto };
 };
