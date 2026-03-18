@@ -1,0 +1,446 @@
+# Instincts generated from https://github.com/JaneChun/animal-crossing-trading-expo-app
+# Generated: 2026-03-18T02:34:55.568Z
+# Version: 2.0
+
+---
+id: animal-crossing-trading-expo-app-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: refactor, fix, feat, chore, perf
+
+## Evidence
+
+- 200 commits analyzed
+- Detected conventional commit pattern
+- Examples: feat: 채팅방에서 카메라 촬영으로 이미지 전송 기능 추가, fix: 프로필 특정 정보 미표시 오류 수정
+
+---
+id: animal-crossing-trading-expo-app-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Commit Length
+
+## Action
+
+Keep commit messages concise (under 50 characters)
+
+## Evidence
+
+- Average commit message length: 46 chars
+- Based on 200 commits
+
+---
+id: animal-crossing-trading-expo-app-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Naming Files
+
+## Action
+
+Use camelCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: camelCase
+
+---
+id: animal-crossing-trading-expo-app-import-alias
+trigger: "when importing modules"
+confidence: 0.85
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Import Alias
+
+## Action
+
+Use path aliases (@/, ~/) instead of relative imports
+
+## Evidence
+
+- Import analysis shows alias pattern
+- Example: import { x } from '@/lib/x'
+
+---
+id: animal-crossing-trading-expo-app-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: animal-crossing-trading-expo-app-arch-type-based
+trigger: "when adding new code"
+confidence: 0.8
+domain: architecture
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Arch Type Based
+
+## Action
+
+Place code in the appropriate type folder (components/, services/, utils/, etc.)
+
+## Evidence
+
+- Type-based module organization detected
+- Folders: __tests__, components, config, constants, firebase
+
+---
+id: animal-crossing-trading-expo-app-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: animal-crossing-trading-expo-app-test-framework
+trigger: "when writing tests"
+confidence: 0.9
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Test Framework
+
+## Action
+
+Use jest as the test framework
+
+## Evidence
+
+- Test framework detected: jest
+- File pattern: *.test.ts
+
+---
+id: animal-crossing-trading-expo-app-test-naming
+trigger: "when creating a test file"
+confidence: 0.85
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Test Naming
+
+## Action
+
+Name test files using the pattern: *.test.ts
+
+## Evidence
+
+- File pattern: *.test.ts
+- Consistent across test files
+
+---
+id: animal-crossing-trading-expo-app-test-mocking
+trigger: "when mocking dependencies in tests"
+confidence: 0.75
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Test Mocking
+
+## Action
+
+Use jest.mock for mocking
+
+## Evidence
+
+- Mocking pattern detected: jest.mock
+- Consistent across test files
+
+---
+id: animal-crossing-trading-expo-app-test-types
+trigger: "when planning tests for a feature"
+confidence: 0.7
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Test Types
+
+## Action
+
+Write unit, integration tests to match project standards
+
+## Evidence
+
+- Test types detected: unit, integration
+- Coverage config: no
+
+---
+id: animal-crossing-trading-expo-app-workflow-feature-development
+trigger: "when implementing a new feature"
+confidence: 0.7
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Workflow Feature Development
+
+## Action
+
+Follow the feature-development workflow:
+1. Add feature implementation
+2. Add tests for feature
+3. Update documentation
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~4x per month
+- Files: src/components/home/*, src/constants/*, src/hooks/ads/*
+
+---
+id: animal-crossing-trading-expo-app-workflow-refactoring
+trigger: "when refactoring code"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Workflow Refactoring
+
+## Action
+
+Follow the refactoring workflow:
+1. Ensure tests pass before refactor
+2. Refactor code structure
+3. Verify tests still pass
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~11x per month
+- Files: src/**/*
+
+---
+id: animal-crossing-trading-expo-app-workflow-feature-development-with-shared-hooks-and-screens
+trigger: "when doing feature development with shared hooks and screens"
+confidence: 0.55
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Workflow Feature Development With Shared Hooks And Screens
+
+## Action
+
+Follow the feature-development-with-shared-hooks-and-screens workflow:
+1. Update or create a shared hook in src/hooks/shared/
+2. Update or create a screen in src/screens/
+3. Update app.config.js if permissions or app metadata are needed
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~1x per month
+- Files: src/hooks/shared/*.ts, src/screens/*.tsx, app.config.js
+
+---
+id: animal-crossing-trading-expo-app-workflow-ci-cd-workflow-setup-or-update
+trigger: "when doing ci cd workflow setup or update"
+confidence: 0.55
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Workflow Ci Cd Workflow Setup Or Update
+
+## Action
+
+Follow the ci-cd-workflow-setup-or-update workflow:
+1. Create or update .github/workflows/*.yml for CI/CD pipelines
+2. Add or update .husky/* for git hooks
+3. Add or update commitlint.config.js
+4. Update package.json and package-lock.json for dependencies
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~1x per month
+- Files: .github/workflows/*.yml, .husky/*, commitlint.config.js
+
+---
+id: animal-crossing-trading-expo-app-workflow-firebase-functions-feature-or-scheduler
+trigger: "when doing firebase functions feature or scheduler"
+confidence: 0.55
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Workflow Firebase Functions Feature Or Scheduler
+
+## Action
+
+Follow the firebase-functions-feature-or-scheduler workflow:
+1. Create or update function in functions/src/schedulers/ or functions/src/triggers/
+2. Update functions/src/index.ts to register new schedulers/triggers
+3. Update src/firebase/services/* for service logic
+4. Update src/hooks/post/* or related hooks for frontend sync
+5. Update src/types/* if data shape changes
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~1x per month
+- Files: functions/src/schedulers/*.ts, functions/src/triggers/*.ts, functions/src/index.ts
+
+---
+id: animal-crossing-trading-expo-app-workflow-refactor-any-to-specific-types
+trigger: "when doing refactor any to specific types"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Workflow Refactor Any To Specific Types
+
+## Action
+
+Follow the refactor-any-to-specific-types workflow:
+1. Identify usages of 'any' in components, hooks, or types
+2. Replace 'any' with specific types or extract new types in src/types/
+3. Update all affected files to use the new types
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: src/components/**/*.tsx, src/hooks/**/*.ts, src/types/**/*.ts
+
+---
+id: animal-crossing-trading-expo-app-workflow-admob-native-ad-feature
+trigger: "when doing admob native ad feature"
+confidence: 0.55
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Workflow Admob Native Ad Feature
+
+## Action
+
+Follow the admob-native-ad-feature workflow:
+1. Update or create ad-related components in src/components/Home/
+2. Update or create ad-related hooks in src/hooks/ads/
+3. Update ad constants in src/constants/ads.ts
+4. Update Firestore rules or ad service if ad config is dynamic
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~1x per month
+- Files: src/components/Home/NativeAdUnit.tsx, src/components/Home/PostList.tsx, src/constants/ads.ts
+
+---
+id: animal-crossing-trading-expo-app-workflow-profile-feature-or-design-update
+trigger: "when doing profile feature or design update"
+confidence: 0.55
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Workflow Profile Feature Or Design Update
+
+## Action
+
+Follow the profile-feature-or-design-update workflow:
+1. Update or create profile components in src/components/Profile/
+2. Update or create hooks in src/hooks/profile/
+3. Update constants in src/constants/profile.ts
+4. Update types in src/types/user.ts
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~1x per month
+- Files: src/components/Profile/*.tsx, src/hooks/profile/**/*.ts, src/constants/profile.ts
+
+---
+id: animal-crossing-trading-expo-app-workflow-fix-or-refactor-single-service-or-component
+trigger: "when doing fix or refactor single service or component"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Workflow Fix Or Refactor Single Service Or Component
+
+## Action
+
+Follow the fix-or-refactor-single-service-or-component workflow:
+1. Identify the file with the issue
+2. Make the fix or refactor
+3. Commit only the affected file
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: src/firebase/services/*.ts, src/components/**/*.tsx, src/hooks/**/*.ts
+
