@@ -1,0 +1,6 @@
+interface:
+  display_name: "Animal Crossing Trading Expo App"
+  short_description: "Repo-specific patterns and workflows for animal-crossing-trading-expo-app"
+  default_prompt: "Use the animal-crossing-trading-expo-app repo skill to follow existing architecture, testing, and workflow conventions."
+policy:
+  allow_implicit_invocation: true
