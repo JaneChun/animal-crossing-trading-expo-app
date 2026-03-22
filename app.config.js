@@ -4,7 +4,7 @@ export default {
 	expo: {
 		name: '모동숲 마켓',
 		slug: 'animal-crossing-trading-app',
-		version: '1.7.0',
+		version: '1.7.1',
 		orientation: 'portrait',
 		icon: './assets/images/app_icon.jpg',
 		scheme: 'animal-crossing-trading-app',
@@ -92,6 +92,7 @@ export default {
 					iosAppId: process.env.EXPO_PUBLIC_ADMOB_IOS_APP_ID,
 					userTrackingUsageDescription:
 						'맞춤형 광고 제공을 위해 기기 식별자에 접근합니다. 설정에서 언제든 변경할 수 있습니다.',
+					skAdNetworkItems: ['wzmmz9fp6w.skadnetwork', '22mmun2rn5.skadnetwork'],
 				},
 			],
 		],
