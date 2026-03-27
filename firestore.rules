@@ -17,13 +17,25 @@ service cloud.firestore {
     }
     
     // Items
-    match /Items/{ItemId} {
+    match /Items/{itemId} {
+      allow read: if true; // 누구나
+      allow create, update, delete: if false; // 불가능
+    }
+
+    // CatalogItems
+    match /CatalogItems/{catalogItemId} {
+      allow read: if true; // 누구나
+      allow create, update, delete: if false; // 불가능
+    }
+
+    // CatalogItemsVariants
+    match /CatalogItems/{catalogItemId}/variants/{variantId} {
       allow read: if true; // 누구나
       allow create, update, delete: if false; // 불가능
     }
 
     // Villagers
-    match /Villagers/{VillagerId} {
+    match /Villagers/{villagerId} {
       allow read: if true; // 누구나
       allow create, update, delete: if false; // 불가능
     }

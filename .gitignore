@@ -52,3 +52,4 @@ functions/lib/
 todo.ini
 
 .claude/*
+.omc/*
