@@ -17,6 +17,7 @@ import { DayProps } from 'react-native-gifted-chat';
 import { ICON_MAP } from '@/components/ui/EmptyIndicator';
 import { OnboardingStep } from '@/constants/onboardingData';
 
+import { CatalogItem } from './catalog';
 import { ExtendedIMessage } from './chat';
 import { CommentWithCreatorInfo } from './comment';
 import { PopulatedNotification } from './notification';
@@ -140,10 +141,10 @@ export type ItemSelectProps = {
 };
 
 export type ItemSelectItemProps = {
-	item: Item;
+	item: CatalogItem;
 	searchInput: string;
 	index: number;
-	addItemToCart: (item: Item) => void;
+	onSelect: (item: CatalogItem) => void;
 };
 
 export type EditableItemProps = {
