@@ -51,5 +51,10 @@ functions/lib/
 
 todo.ini
 
+# claude
 .claude/*
 .omc/*
+
+# firebase export
+scripts/*
+emulator-data/*

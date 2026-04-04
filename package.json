@@ -25,6 +25,7 @@
 		"deploy:rules:firestore": "firebase deploy --only firestore:rules",
 		"deploy:rules:storage": "firebase deploy --only storage",
 		"emulator:start": "firebase emulators:start",
+		"emulator:start-with-data": "firebase emulators:start --import ./emulator-data --export-on-exit",
 		"emulator:stop": "pkill -f 'firebase emulators' || true && lsof -ti:4000,4400,4401,4500,4501,8080,9099,5001,9199 | xargs kill -9 2>/dev/null || true && echo 'Firebase emulators stopped'",
 		"emulator:seed": "node scripts/seed-test-data.js",
 		"postinstall": "patch-package",
