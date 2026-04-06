@@ -1,7 +1,8 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { searchClient } from '@/config/firebase';
-import { Item, ItemCategory } from '@/types/post';
+import { CatalogItem } from '@/types/catalog';
+import { ItemCategory } from '@/types/post';
 
 const PAGE_SIZE = 20;
 
@@ -16,13 +17,13 @@ const searchItemsByCursor = async ({
 }: {
 	filter: ItemFilter;
 	pageParam: number;
-}): Promise<Item[]> => {
+}): Promise<CatalogItem[]> => {
 	const { category = '', keyword = '' } = filter;
 
-	const { results } = await searchClient.searchForHits<Item>({
+	const { results } = await searchClient.searchForHits<CatalogItem>({
 		requests: [
 			{
-				indexName: 'Items',
+				indexName: 'CatalogItems',
 				query: keyword,
 				page: pageParam, // 시작 페이지 번호
 				hitsPerPage: PAGE_SIZE,
@@ -39,9 +40,9 @@ const searchItemsByCursor = async ({
 
 export const useSearchItems = (category?: ItemCategory, keyword?: string) => {
 	return useInfiniteQuery<
-		Item[],
+		CatalogItem[],
 		Error,
-		Item[],
+		CatalogItem[],
 		[string, ItemCategory | undefined, string | undefined]
 	>({
 		queryKey: ['items', category, keyword],

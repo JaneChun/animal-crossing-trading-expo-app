@@ -1,31 +1,53 @@
+import { Feather } from '@expo/vector-icons';
 import { memo } from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import HighlightMatchText from '@/components/ui/HighlightMatchText';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import { isArtworkWithFake } from '@/constants/post';
 import { Colors } from '@/theme/Color';
 import { ItemSelectItemProps } from '@/types/components';
 
 export const ITEM_HEIGHT = 53;
 
-const ItemSelectItem = ({ item, searchInput, addItemToCart, index }: ItemSelectItemProps) => {
+const ItemSelectItem = ({ item, searchInput, onSelect, index }: ItemSelectItemProps) => {
+	const hasVariants = !!(item.bodyTitle || item.patternTitle);
+
+	let displayName = item.name;
+	if (item.category === 'Artwork') {
+		if (isArtworkWithFake(item)) {
+			const genuine = item.attributes.genuine;
+			if (genuine === 'Yes') {
+				displayName += ' (진품)';
+			} else if (genuine === 'No') {
+				displayName += ' (가품)';
+			}
+		}
+	}
+
 	return (
-		<TouchableOpacity
-			style={styles.item}
-			onPress={() => addItemToCart(item)}
-			testID={index === 0 ? 'firstItemSelectItem' : `itemSelectItem-${index}`}
-		>
-			<ImageWithFallback uri={item?.imageUrl} style={styles.itemImage} priority="high" />
-			<Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemTextContainer}>
-				{HighlightMatchText({
-					text: item.name,
-					keyword: searchInput,
-					textStyle: {},
-					highlightTextStyle: styles.highlight,
-				})}
-				<Text style={styles.itemColorText}>{item.color && ` (${item.color})`}</Text>
-			</Text>
-		</TouchableOpacity>
+		<View style={styles.container}>
+			<TouchableOpacity
+				style={styles.item}
+				onPress={() => onSelect(item)}
+				testID={index === 0 ? 'firstItemSelectItem' : `itemSelectItem-${index}`}
+			>
+				<ImageWithFallback uri={item?.imageUrl} style={styles.itemImage} priority="high" />
+				<View style={styles.itemTextContainer}>
+					<Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemNameText}>
+						{HighlightMatchText({
+							text: displayName,
+							keyword: searchInput,
+							textStyle: {},
+							highlightTextStyle: styles.highlight,
+						})}
+					</Text>
+				</View>
+				{hasVariants && (
+					<Feather name="chevron-right" size={20} color={Colors.text.tertiary} />
+				)}
+			</TouchableOpacity>
+		</View>
 	);
 };
 
@@ -36,10 +58,12 @@ export default memo(ItemSelectItem, (prevProps, nextProps) => {
 });
 
 const styles = StyleSheet.create({
+	container: {
+		paddingHorizontal: 24,
+	},
 	item: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		paddingHorizontal: 6,
 		height: ITEM_HEIGHT,
 		borderBottomWidth: 1,
 		borderBottomColor: Colors.border.default,
@@ -47,16 +71,17 @@ const styles = StyleSheet.create({
 	itemImage: {
 		width: 40,
 		height: 40,
-		borderRadius: 20,
+		borderRadius: 12,
 		marginRight: 12,
 	},
 	itemTextContainer: {
-		fontSize: 16,
 		flexDirection: 'row',
 		flex: 1,
+		alignItems: 'center',
 	},
-	itemColorText: {
-		color: Colors.text.tertiary,
+	itemNameText: {
+		fontSize: 16,
+		flex: 1,
 	},
 	highlight: {
 		fontWeight: 800,

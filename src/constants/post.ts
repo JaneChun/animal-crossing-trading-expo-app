@@ -1,3 +1,4 @@
+import { ArtworkCatalogItem, CatalogItem } from '@/types/catalog';
 import { CategoryItem } from '@/types/post';
 
 export const MARKET_TYPES = [
@@ -36,15 +37,14 @@ export const TAB_COLLECTION_CONFIG = {
 
 export const ITEM_CATEGORIES = [
 	{ KR: '전체', EN: 'All' },
-	{ KR: '가구', EN: 'Houswares' },
+	{ KR: '가구', EN: 'Housewares' },
 	{ KR: '잡화', EN: 'Miscellaneous' },
 	{ KR: '벽걸이', EN: 'Wallmounted' },
 	{ KR: '레시피', EN: 'Recipes' },
-	// { KR: '요리', EN: 'Food' },
-	{ KR: '모자', EN: 'Headwear' },
+	{ KR: '모자', EN: 'Headwears' },
 	{ KR: '상의', EN: 'Tops' },
 	{ KR: '하의', EN: 'Bottoms' },
-	{ KR: '원피스', EN: 'DressUp' },
+	{ KR: '원피스', EN: 'DressUps' },
 	{ KR: '양말', EN: 'Socks' },
 	{ KR: '가방', EN: 'Bags' },
 	{ KR: '신발', EN: 'Shoes' },
@@ -55,7 +55,7 @@ export const ITEM_CATEGORIES = [
 	{ KR: '바닥', EN: 'Floors' },
 	{ KR: '러그', EN: 'Rugs' },
 	{ KR: '음악', EN: 'Music' },
-	{ KR: '토용', EN: 'Gyriods' },
+	{ KR: '토용', EN: 'Gyroids' },
 	{ KR: '사진', EN: 'Photos' },
 	{ KR: '포스터', EN: 'Posters' },
 	{ KR: '도구', EN: 'Tools' },
@@ -129,3 +129,37 @@ export const VILLAGER_PERSONALITIES = [
 export const MAX_COMMENT_LENGTH = 1000;
 export const MAX_IMAGES = 10;
 export const MAX_VILLAGERS = 10;
+
+export const ARTWORKS_WITH_FAKES = [
+	'아카데믹한 명화',
+	'대단한 명화',
+	'태고의 조각',
+	'용감한 명화',
+	'아름다운 조각',
+	'섬세한 명화',
+	'유명한 명화',
+	'늠름한 조각',
+	'절제된 명화',
+	'단서가 되는 조각',
+	'재미있는 명화',
+	'모성이 느껴지는 조각',
+	'예쁜 명화',
+	'신비로운 조각',
+	'침착한 명화',
+	'듬직한 조각',
+	'돌 머리의 조각',
+	'씩씩한 명화',
+	'뛰어난 명화',
+	'아늑한 명화',
+	'엄숙한 명화',
+	'어마어마한 조각',
+	'거룩한 조각',
+	'무사의 조각',
+	'혼란스러운 명화의 왼쪽',
+	'혼란스러운 명화의 오른쪽',
+	'근사한 명화',
+];
+
+export function isArtworkWithFake(item: CatalogItem): item is ArtworkCatalogItem {
+	return ARTWORKS_WITH_FAKES.includes(item.name);
+}
