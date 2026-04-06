@@ -14,8 +14,7 @@ export const ProfileFormSchema = z.object({
 	islandName: z
 		.string()
 		.min(2, '섬 이름을 입력해주세요.')
-		.max(10, '섬 이름은 최대 10자까지 입력 가능합니다.')
-		.regex(/^[a-zA-Z0-9가-힣\s]+$/, '섬 이름은 한글, 영문, 숫자만 가능합니다.')
+		.max(11, '섬 이름은 최대 11자까지 입력 가능합니다.')
 		.refine((name) => !cenkor(name).filtered, {
 			message: '섬 이름에 부적절한 단어가 포함되어 있습니다.',
 		})
