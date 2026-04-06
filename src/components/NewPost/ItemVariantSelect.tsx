@@ -19,65 +19,73 @@ interface ItemVariantSelectProps {
 const ItemVariantSelect = ({ item, onBack, onSelect }: ItemVariantSelectProps) => {
 	const { data: variants, isLoading } = useItemVariants(item.id);
 
+	const localVariants = useMemo(() => {
+		if (!variants || !item.bodyTitle) return variants ?? [];
+
+		const firstVariant = variants.find((v) => v.variantId === '0_0');
+		if (!firstVariant) return variants;
+
+		return [
+			{
+				id: `${item.id}_any`,
+				variantId: '0_0',
+				body: '색상 무관',
+				pattern: null,
+				imageUrl: firstVariant.imageUrl,
+			},
+			...variants,
+		];
+	}, [variants, item.id, item.bodyTitle]);
+
 	const [selectedBody, setSelectedBody] = useState<string | null>(null);
-	const [selectedPattern, setSelectedPattern] = useState<string | null>(null);
 	const [activeTab, setActiveTab] = useState<'body' | 'pattern'>(
 		item.bodyTitle ? 'body' : 'pattern',
 	);
 
 	const bodyOptions = useMemo(() => {
-		if (!variants || !item.bodyTitle) return [];
-		// 중복 body 제거
-		const uniqueMap = new Map<string, string>();
-		variants.forEach((v) => {
-			if (v.body && !uniqueMap.has(v.body)) {
-				// X_0 패턴(가장 첫번째)를 썸네일로 사용
-				uniqueMap.set(v.body, v.imageUrl);
-			}
-		});
-		return Array.from(uniqueMap.entries()).map(([body, imageUrl]) => ({
-			label: body,
-			imageUrl,
-		}));
-	}, [variants, item.bodyTitle]);
+		if (!item.bodyTitle) return [];
+
+		// variantId가 x_0인 것만 사용 (각 body의 첫 번째 패턴을 썸네일로)
+		// variantId: '0_0'인 색상 무관이 정렬 시 자연스럽게 맨 앞에 위치
+		return localVariants
+			.filter((v) => v.variantId.endsWith('_0'))
+			.sort((a, b) => a.variantId.localeCompare(b.variantId))
+			.map(({ body, imageUrl }) => ({ label: body ?? '', imageUrl }));
+	}, [localVariants, item.bodyTitle]);
 
 	const patternOptions = useMemo(() => {
-		if (!variants || !item.patternTitle) return [];
+		if (!item.patternTitle) return [];
 
-		// 바디가 있다면 선택된 바디에 해당하는 패턴만
-		const filtered = item.bodyTitle
-			? variants.filter((v) => v.body === selectedBody)
-			: variants;
+		const filtered = localVariants
+			.filter((v) => v.body === selectedBody)
+			.sort((a, b) => a.variantId.localeCompare(b.variantId))
+			.map(({ pattern, imageUrl }) => ({
+				label: pattern ?? '',
+				imageUrl,
+			}));
 
-		return filtered.map(({ pattern, imageUrl }) => ({ label: pattern ?? '', imageUrl }));
-	}, [variants, item.patternTitle, selectedBody, item.bodyTitle]);
+		return filtered;
+	}, [localVariants, item.patternTitle, selectedBody]);
 
 	const handleSelectBody = (option: string) => {
 		setSelectedBody(option);
-		if (item.patternTitle) {
-			setSelectedPattern(null);
+		if (item.patternTitle && option !== '색상 무관') {
 			setActiveTab('pattern');
 		} else {
-			// 바디만 있으면 바로 확정
 			handleFinalSelect(option, null);
 		}
 	};
 
 	const handleSelectPattern = (option: string) => {
-		setSelectedPattern(option);
 		handleFinalSelect(selectedBody, option);
 	};
 
 	const handleFinalSelect = (body: string | null, pattern: string | null) => {
-		if (!variants) return;
-		const finalVariant = variants.find(
-			(v) =>
-				(item.bodyTitle ? v.body === body : true) &&
-				(item.patternTitle ? v.pattern === pattern : true),
-		);
-		if (finalVariant) {
-			onSelect(finalVariant);
-		}
+		if (!localVariants.length) return;
+
+		const finalVariant = localVariants.find((v) => v.body === body && v.pattern === pattern);
+
+		if (finalVariant) onSelect(finalVariant);
 	};
 
 	const handleBack = useCallback(() => {

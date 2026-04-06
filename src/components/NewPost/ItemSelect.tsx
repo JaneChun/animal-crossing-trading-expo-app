@@ -6,7 +6,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import Categories from '@/components/ui/Categories';
 import SearchInput from '@/components/ui/inputs/SearchInput';
 import InlineLoadingIndicator from '@/components/ui/loading/InlineLoadingIndicator';
-import { ITEM_CATEGORIES } from '@/constants/post';
+import { isArtworkWithFake, ITEM_CATEGORIES } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useSearchItems } from '@/hooks/item/query/useSearchItems';
 import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
@@ -18,7 +18,7 @@ import { ItemCategory, ItemCategoryItem } from '@/types/post';
 import ItemSelectItem, { ITEM_HEIGHT } from './ItemSelectItem';
 import ItemVariantSelect from './ItemVariantSelect';
 
-const ItemSelect = ({ cart, addItemToCart, containerStyle }: ItemSelectProps) => {
+const ItemSelect = ({ addItemToCart, containerStyle }: ItemSelectProps) => {
 	const [category, setCategory] = useState<ItemCategory>('All');
 	const [searchInput, setSearchInput] = useState<string>('');
 	const debouncedKeyword = useDebouncedValue(searchInput, 300);
@@ -38,12 +38,28 @@ const ItemSelect = ({ cart, addItemToCart, containerStyle }: ItemSelectProps) =>
 				// 변형이 있으면 variant 선택 화면으로 전환
 				setSelectedCatalogItem(item);
 			} else {
+				let colorStr: string | undefined = undefined;
+
+				if (item.category === 'Artwork') {
+					if (isArtworkWithFake(item)) {
+						const genuine = item.attributes.genuine;
+						if (genuine === 'Yes') {
+							colorStr = '진품';
+						} else if (genuine === 'No') {
+							colorStr = '가품';
+						}
+					}
+				} else if (item.category === 'Recipes') {
+					colorStr = '레시피';
+				}
+
 				// 변형이 없으면 바로 추가
 				addItemToCart({
 					id: item.id,
 					category: item.category,
 					imageUrl: item.imageUrl,
 					name: item.name,
+					color: colorStr,
 				});
 			}
 		},
