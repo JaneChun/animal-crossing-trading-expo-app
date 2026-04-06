@@ -111,7 +111,7 @@ const ItemVariantSelect = ({ item, onBack, onSelect }: ItemVariantSelectProps) =
 					</Text>
 				</TouchableOpacity>
 				<Text style={styles.headerTitle} numberOfLines={1}>
-					{item[`${activeTab}Title`]}
+					{activeTab === 'body' ? item.bodyTitle : item.patternTitle}
 				</Text>
 			</View>
 

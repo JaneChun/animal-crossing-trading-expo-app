@@ -177,7 +177,7 @@ export interface RugsAttributes extends _WithInteriorBase {
 
 // ═══════════════════════════════════════════════════════════
 //  Group C: 의류
-//  Tops / Bottoms / Dress-Ups / Headwears / Accessories
+//  Tops / Bottoms / DressUps / Headwears / Accessories
 //  Socks / Shoes / Bags / Umbrellas / Clothing Other
 // ═══════════════════════════════════════════════════════════
 
@@ -357,7 +357,7 @@ export type FloorsCatalogItem = _CatalogItemOf<'Floors', FloorsAttributes>;
 export type RugsCatalogItem = _CatalogItemOf<'Rugs', RugsAttributes>;
 export type TopsCatalogItem = _CatalogItemOf<'Tops', TopsAttributes>;
 export type BottomsCatalogItem = _CatalogItemOf<'Bottoms', BottomsAttributes>;
-export type DressUpsCatalogItem = _CatalogItemOf<'Dress-Ups', DressUpsAttributes>;
+export type DressUpsCatalogItem = _CatalogItemOf<'DressUps', DressUpsAttributes>;
 export type HeadwearsCatalogItem = _CatalogItemOf<'Headwears', HeadwearsAttributes>;
 export type AccessoriesCatalogItem = _CatalogItemOf<'Accessories', AccessoriesAttributes>;
 export type SocksCatalogItem = _CatalogItemOf<'Socks', SocksAttributes>;
