@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import Total from '@/components/PostDetail/Total';
 import { ItemListProps } from '@/types/components';
 
-import EditableItem from './EditableItem.';
+import EditableItem from './EditableItem';
 
 const ItemList = ({
 	cart,

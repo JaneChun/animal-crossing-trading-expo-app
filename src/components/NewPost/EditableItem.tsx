@@ -19,7 +19,6 @@ const EditableItem = ({ item, readonly = false, onDeleteItem }: EditableItemProp
 			{/* 이미지 */}
 			<ImageWithFallback uri={item.imageUrl} style={styles.image} />
 
-			{/* 본문 */}
 			<View style={styles.body}>
 				<Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">
 					{item.name}
@@ -80,7 +79,7 @@ const styles = StyleSheet.create({
 	image: {
 		width: 30,
 		height: 30,
-		borderRadius: 15,
+		borderRadius: 8,
 		marginRight: 12,
 	},
 	name: {
