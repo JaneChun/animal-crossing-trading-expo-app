@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
 	},
 	thumbnail: {
 		flexShrink: 0,
+		alignSelf: 'flex-end',
 	},
 	title: {
 		flexShrink: 1,
