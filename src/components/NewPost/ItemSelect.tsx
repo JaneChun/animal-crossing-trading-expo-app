@@ -38,19 +38,17 @@ const ItemSelect = ({ addItemToCart, containerStyle }: ItemSelectProps) => {
 				// 변형이 있으면 variant 선택 화면으로 전환
 				setSelectedCatalogItem(item);
 			} else {
-				let colorStr: string | undefined = undefined;
+				let description: string | undefined = undefined;
 
-				if (item.category === 'Artwork') {
-					if (isArtworkWithFake(item)) {
-						const genuine = item.attributes.genuine;
-						if (genuine === 'Yes') {
-							colorStr = '진품';
-						} else if (genuine === 'No') {
-							colorStr = '가품';
-						}
+				if (item.category === 'Artwork' && isArtworkWithFake(item)) {
+					const genuine = item.attributes.genuine;
+					if (genuine === 'Yes') {
+						description = '진품';
+					} else if (genuine === 'No') {
+						description = '가품';
 					}
 				} else if (item.category === 'Recipes') {
-					colorStr = '레시피';
+					description = '레시피';
 				}
 
 				// 변형이 없으면 바로 추가
@@ -59,7 +57,7 @@ const ItemSelect = ({ addItemToCart, containerStyle }: ItemSelectProps) => {
 					category: item.category,
 					imageUrl: item.imageUrl,
 					name: item.name,
-					color: colorStr,
+					...(description && { color: description }),
 				});
 			}
 		},
@@ -80,7 +78,7 @@ const ItemSelect = ({ addItemToCart, containerStyle }: ItemSelectProps) => {
 				category: selectedCatalogItem.category,
 				imageUrl: variant.imageUrl,
 				name: selectedCatalogItem.name,
-				color,
+				...(color && { color }),
 			});
 
 			backToList(); // 추가 후 리스트로 전환
