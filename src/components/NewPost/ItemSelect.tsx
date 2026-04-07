@@ -5,7 +5,6 @@ import { FlatList } from 'react-native-gesture-handler';
 
 import Categories from '@/components/ui/Categories';
 import SearchInput from '@/components/ui/inputs/SearchInput';
-import InlineLoadingIndicator from '@/components/ui/loading/InlineLoadingIndicator';
 import { isArtworkWithFake, ITEM_CATEGORIES } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useSearchItems } from '@/hooks/item/query/useSearchItems';
@@ -16,6 +15,7 @@ import { ItemSelectProps } from '@/types/components';
 import { ItemCategory, ItemCategoryItem } from '@/types/post';
 
 import ItemSelectItem, { ITEM_HEIGHT } from './ItemSelectItem';
+import ItemSelectSkeleton from './ItemSelectSkeleton';
 import ItemVariantSelect from './ItemVariantSelect';
 
 const ItemSelect = ({ addItemToCart, containerStyle }: ItemSelectProps) => {
@@ -151,7 +151,7 @@ const ItemSelect = ({ addItemToCart, containerStyle }: ItemSelectProps) => {
 				{category && (
 					<View style={styles.listContainer}>
 						{isLoading ? (
-							<InlineLoadingIndicator />
+							<ItemSelectSkeleton />
 						) : (
 							<FlatList
 								data={items}
