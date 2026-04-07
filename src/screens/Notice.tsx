@@ -1,4 +1,5 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { useCallback } from 'react';
 
 import NoticeList from '@/components/Notice/NoticeList';
 import TabBarLabel from '@/components/Notice/TabBarLabel';
@@ -24,6 +25,16 @@ const Notice = () => {
 		({ isRead }: { isRead: boolean }) => !isRead,
 	);
 
+	const MarketTab = useCallback(
+		() => <NoticeList notifications={marketNotifications} collectionName="Boards" />,
+		[marketNotifications],
+	);
+
+	const CommunityTab = useCallback(
+		() => <NoticeList notifications={communityNotifications} collectionName="Communities" />,
+		[communityNotifications],
+	);
+
 	return (
 		<Layout title="알림">
 			<Tab.Navigator
@@ -42,21 +53,14 @@ const Notice = () => {
 			>
 				<Tab.Screen
 					name="마켓"
-					children={() => (
-						<NoticeList notifications={marketNotifications} collectionName="Boards" />
-					)}
+					component={MarketTab}
 					options={{
 						tabBarLabel: () => <TabBarLabel label="마켓" hasUnread={hasUnreadMarket} />,
 					}}
 				/>
 				<Tab.Screen
 					name="커뮤니티"
-					children={() => (
-						<NoticeList
-							notifications={communityNotifications}
-							collectionName="Communities"
-						/>
-					)}
+					component={CommunityTab}
 					options={{
 						tabBarLabel: () => (
 							<TabBarLabel label="커뮤니티" hasUnread={hasUnreadCommunity} />
