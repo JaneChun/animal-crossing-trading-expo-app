@@ -331,6 +331,7 @@ export type NotificationUnitProp = {
 
 export type NoticeTabProps = {
 	notifications: PopulatedNotification[];
+	collectionName: Collection;
 };
 
 export type TabBarLabelProps = {

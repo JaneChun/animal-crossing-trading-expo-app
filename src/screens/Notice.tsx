@@ -1,7 +1,6 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
-import CommunityNotices from '@/components/Notice/CommunityNotices';
-import MarketNotices from '@/components/Notice/MarketNotices';
+import NoticeList from '@/components/Notice/NoticeList';
 import TabBarLabel from '@/components/Notice/TabBarLabel';
 import Layout from '@/components/ui/layout/Layout';
 import { FontSizes, FontWeights } from '@/constants/Typography';
@@ -43,14 +42,21 @@ const Notice = () => {
 			>
 				<Tab.Screen
 					name="마켓"
-					children={() => <MarketNotices notifications={marketNotifications} />}
+					children={() => (
+						<NoticeList notifications={marketNotifications} collectionName="Boards" />
+					)}
 					options={{
 						tabBarLabel: () => <TabBarLabel label="마켓" hasUnread={hasUnreadMarket} />,
 					}}
 				/>
 				<Tab.Screen
 					name="커뮤니티"
-					children={() => <CommunityNotices notifications={communityNotifications} />}
+					children={() => (
+						<NoticeList
+							notifications={communityNotifications}
+							collectionName="Communities"
+						/>
+					)}
 					options={{
 						tabBarLabel: () => (
 							<TabBarLabel label="커뮤니티" hasUnread={hasUnreadCommunity} />
