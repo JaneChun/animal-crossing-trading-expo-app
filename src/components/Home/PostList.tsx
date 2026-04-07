@@ -2,7 +2,6 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { useCallback, useMemo } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showLongToast, showToast } from '@/components/ui/Toast';
 import { auth } from '@/config/firebase';
 import { useInfinitePosts } from '@/hooks/post/query/useInfinitePosts';
@@ -17,6 +16,7 @@ import {
 } from '@/utilities/navigationHelpers';
 
 import NativeAdUnit from './NativeAdUnit';
+import PostListSkeleton from './PostListSkeleton';
 import PostUnit from './PostUnit';
 
 import type { ListItem, PostListProps } from '@/types/components';
@@ -88,7 +88,7 @@ const PostList = ({
 	}, [hasNextPage]);
 
 	if (isLoading) {
-		return <LoadingIndicator />;
+		return <PostListSkeleton />;
 	}
 
 	return (

@@ -1,8 +1,8 @@
 import { useCallback, useMemo } from 'react';
 import { FlatList, StyleProp, StyleSheet, Text, ViewStyle } from 'react-native';
 
+import PostListSkeleton from '@/components/Home/PostListSkeleton';
 import PostUnit, { POST_UNIT_HEIGHT } from '@/components/Home/PostUnit';
-import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { useSearchPosts } from '@/hooks/post/query/useSearchPosts';
 import { Colors } from '@/theme/Color';
 import { Collection, PostWithCreatorInfo } from '@/types/post';
@@ -54,7 +54,7 @@ const SearchResultPostList = ({
 	}, [hasNextPage]);
 
 	if (isLoading) {
-		return <LoadingIndicator />;
+		return <PostListSkeleton />;
 	}
 
 	return (
