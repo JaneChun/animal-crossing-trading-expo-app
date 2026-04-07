@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
@@ -12,21 +13,24 @@ import NotificationListSkeleton from './NotificationListSkeleton';
 import NotificationUnit from './NotificationUnit';
 import ReadAllButton from './ReadAllButton';
 
-const CommunityNotices = ({ notifications }: NoticeTabProps) => {
+const NoticeList = ({ notifications, collectionName }: NoticeTabProps) => {
 	const { mutate: markAllAsRead } = useMarkAllAsRead();
 	const isLoading = useNotificationStore((state) => state.isLoading);
 
-	const renderNotificationItem = ({ item }: { item: PopulatedNotification }) => {
-		return <NotificationUnit item={item} collectionName="Communities" />;
-	};
+	const renderNotificationItem = useCallback(
+		({ item }: { item: PopulatedNotification }) => {
+			return <NotificationUnit item={item} collectionName={collectionName} />;
+		},
+		[collectionName],
+	);
 
-	const readAllNotifications = () => {
+	const readAllNotifications = useCallback(() => {
 		const unReadNotificationIds = notifications
 			.filter(({ isRead }) => !isRead)
 			.map(({ id }) => id);
 
 		markAllAsRead(unReadNotificationIds);
-	};
+	}, [notifications, markAllAsRead]);
 
 	if (isLoading) {
 		return <NotificationListSkeleton />;
@@ -54,7 +58,7 @@ const CommunityNotices = ({ notifications }: NoticeTabProps) => {
 	);
 };
 
-export default CommunityNotices;
+export default NoticeList;
 
 const styles = StyleSheet.create({
 	container: {

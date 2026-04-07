@@ -23,6 +23,11 @@ export const useVersionCheck = (): UseVersionCheckReturn => {
 	const wasModalVisibleWhenBackgrounded = useRef(false);
 
 	const performVersionCheck = async ({ showLoading = true } = {}) => {
+		if (__DEV__) {
+			if (showLoading) setIsLoading(false);
+			return;
+		}
+
 		try {
 			if (showLoading) setIsLoading(true);
 			setError(null);

@@ -15,16 +15,17 @@ const VariantOptionList = ({ options, onSelect }: VariantOptionListProps) => {
 		<View style={styles.listContainer}>
 			{options.map((opt) => {
 				return (
-					<TouchableOpacity
-						key={opt.label}
-						style={styles.container}
-						onPress={() => onSelect(opt.label)}
-					>
-						<ImageWithFallback uri={opt.imageUrl} style={styles.image} />
-						<Text style={styles.name} numberOfLines={1}>
-							{opt.label}
-						</Text>
-					</TouchableOpacity>
+					<View key={opt.label} style={styles.wrapper}>
+						<TouchableOpacity
+							style={styles.container}
+							onPress={() => onSelect(opt.label)}
+						>
+							<ImageWithFallback uri={opt.imageUrl} style={styles.image} />
+							<Text style={styles.name} numberOfLines={1}>
+								{opt.label}
+							</Text>
+						</TouchableOpacity>
+					</View>
 				);
 			})}
 		</View>
@@ -39,14 +40,18 @@ const styles = StyleSheet.create({
 		gap: 16,
 		paddingHorizontal: 12,
 	},
+	wrapper: {
+		width: '47%',
+		aspectRatio: 1,
+	},
 	container: {
-		width: '47%', // 2열
-		aspectRatio: 1, // 1:1 비율
+		flex: 1,
 		backgroundColor: Colors.bg.secondary,
 		borderRadius: 20,
 		alignItems: 'center',
 		justifyContent: 'center',
 		paddingVertical: 16,
+		overflow: 'hidden',
 	},
 	image: {
 		width: 90,

@@ -1,12 +1,13 @@
 import { useFocusEffect, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import { useCallback, useEffect, useState } from 'react';
-import { Image, Keyboard, View } from 'react-native';
+import { Image, Keyboard, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import ReportModal from '@/components/PostDetail/ReportModal';
 import EditProfileModal from '@/components/Profile/EditProfileModal';
 import MyPosts from '@/components/Profile/MyPosts';
 import ProfileBox from '@/components/Profile/Profile';
+import ProfileSkeleton from '@/components/Profile/ProfileSkeleton';
 import SettingIcon from '@/components/Profile/SettingIcon';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import ImageViewerModal from '@/components/ui/ImageViewerModal';
@@ -106,7 +107,19 @@ const Profile = () => {
 		setIsViewerOpen(true);
 	};
 
-	if (!profileInfo || isUploading || (targetUserId && isLoadingProfile)) {
+	// 남의 프로필 → skeleton
+	if (targetUserId && isLoadingProfile) {
+		return (
+			<Layout title="프로필">
+				<View style={styles.profileBoxContainer}>
+					<ProfileSkeleton />
+				</View>
+			</Layout>
+		);
+	}
+
+	// 내 프로필 → LoadingIndicator (auth 초기화 or 이미지 업로드 중)
+	if (!profileInfo || isUploading) {
 		return <LoadingIndicator />;
 	}
 
@@ -117,7 +130,7 @@ const Profile = () => {
 					data={[]}
 					renderItem={null}
 					ListHeaderComponent={
-						<View style={{ paddingHorizontal: PADDING }}>
+						<View style={styles.profileBoxContainer}>
 							<ProfileBox
 								profileInfo={profileInfo}
 								isMyProfile={isMyProfile}
@@ -166,3 +179,9 @@ const Profile = () => {
 };
 
 export default Profile;
+
+const styles = StyleSheet.create({
+	profileBoxContainer: {
+		paddingHorizontal: PADDING,
+	},
+});
