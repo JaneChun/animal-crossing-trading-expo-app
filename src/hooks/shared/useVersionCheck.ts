@@ -45,7 +45,7 @@ export const useVersionCheck = (): UseVersionCheckReturn => {
 		if (isLoading) return;
 
 		if (updateInfo?.isUpdateRequired) {
-			setIsUpdateModalVisible(true);
+			// setIsUpdateModalVisible(true);
 		} else {
 			setIsUpdateModalVisible(false);
 		}

@@ -183,7 +183,8 @@ const RootStackNavigator = () => {
 			<UpdateModal
 				// 강제 업데이트인 경우 표시 or 선택적 업데이트인 경우 온보딩 완료한 경우에만 표시
 				isVisible={
-					isUpdateModalVisible && (updateInfo?.isForceUpdate || hasCompletedOnboarding)
+					false
+					// isUpdateModalVisible && (updateInfo?.isForceUpdate || hasCompletedOnboarding)
 				}
 				isForceUpdate={updateInfo?.isForceUpdate || false}
 				messages={updateInfo?.messages || []}

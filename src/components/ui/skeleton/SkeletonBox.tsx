@@ -1,7 +1,8 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { LayoutChangeEvent, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import Animated, {
+	cancelAnimation,
 	Easing,
 	useAnimatedStyle,
 	useSharedValue,
@@ -23,13 +24,16 @@ const SHIMMER_RATIO = 0.4;
 const MIN_SHIMMER_WIDTH = 60;
 
 const SkeletonBox = ({ width, height, borderRadius = 4, style }: Props) => {
-	const translateX = useSharedValue(0);
+	const translateX = useSharedValue(-MIN_SHIMMER_WIDTH);
 	const [containerWidth, setContainerWidth] = useState(0);
 
-	const shimmerWidth =
-		containerWidth > 0
-			? Math.max(MIN_SHIMMER_WIDTH, containerWidth * SHIMMER_RATIO)
-			: MIN_SHIMMER_WIDTH;
+	const shimmerWidth = useMemo(
+		() =>
+			containerWidth > 0
+				? Math.max(MIN_SHIMMER_WIDTH, containerWidth * SHIMMER_RATIO)
+				: MIN_SHIMMER_WIDTH,
+		[containerWidth],
+	);
 
 	const handleLayout = (e: LayoutChangeEvent) => {
 		setContainerWidth(e.nativeEvent.layout.width);
@@ -38,14 +42,14 @@ const SkeletonBox = ({ width, height, borderRadius = 4, style }: Props) => {
 	useEffect(() => {
 		if (containerWidth === 0) return;
 
-		const shimmerW = Math.max(MIN_SHIMMER_WIDTH, containerWidth * SHIMMER_RATIO);
-		translateX.value = -shimmerW;
+		translateX.value = -shimmerWidth;
 		translateX.value = withRepeat(
 			withTiming(containerWidth, { duration: DURATION, easing: Easing.linear }),
 			-1,
 			false,
 		);
-	}, [containerWidth, translateX]);
+		return () => cancelAnimation(translateX);
+	}, [containerWidth, shimmerWidth, translateX]);
 
 	const animatedStyle = useAnimatedStyle(() => ({
 		transform: [{ translateX: translateX.value }],
