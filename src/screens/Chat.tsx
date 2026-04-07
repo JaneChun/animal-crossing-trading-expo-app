@@ -1,9 +1,9 @@
 import { FlatList } from 'react-native';
 
+import ChatListSkeleton from '@/components/Chat/ChatListSkeleton';
 import ChatUnit from '@/components/Chat/ChatUnit';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import Layout from '@/components/ui/layout/Layout';
-import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { useUserInfo } from '@/stores/auth';
 import { useChatStore } from '@/stores/chat';
 import { ChatWithReceiverInfo } from '@/types/chat';
@@ -17,13 +17,11 @@ const Chat = () => {
 		return <ChatUnit {...item} />;
 	};
 
-	if (isLoading) {
-		return <LoadingIndicator />;
-	}
-
 	return (
 		<Layout title="채팅">
-			{!userInfo || chats.length === 0 ? (
+			{isLoading ? (
+				<ChatListSkeleton />
+			) : !userInfo || chats.length === 0 ? (
 				<EmptyIndicator
 					iconType="MaterialCommunityIcons"
 					iconName="message-processing-outline"
