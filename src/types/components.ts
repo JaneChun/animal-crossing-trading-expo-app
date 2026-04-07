@@ -235,6 +235,7 @@ export type CommentsListProps = {
 	chatRoomIds: string[];
 	collectionName: Collection;
 	containerStyle?: ViewStyle;
+	isCommentsLoading: boolean;
 	onReportClick: (params: OpenReportModalParams) => void;
 	onEditCommentClick: (params: OpenEditCommentModalParams) => void;
 	onReplyClick: (params: OnReplyClickParams) => void;

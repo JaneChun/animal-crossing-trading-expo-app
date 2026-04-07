@@ -2,13 +2,13 @@ import { StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
-import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { useMarkAllAsRead } from '@/hooks/notification/query/mutation/useMarkAllAsRead';
 import { useNotificationStore } from '@/stores/notification';
 import { Colors } from '@/theme/Color';
 import { NoticeTabProps } from '@/types/components';
 import { PopulatedNotification } from '@/types/notification';
 
+import NotificationListSkeleton from './NotificationListSkeleton';
 import NotificationUnit from './NotificationUnit';
 import ReadAllButton from './ReadAllButton';
 
@@ -20,7 +20,7 @@ const CommunityNotices = ({ notifications }: NoticeTabProps) => {
 		return <NotificationUnit item={item} collectionName="Communities" />;
 	};
 
-	const readAllNotifications = async () => {
+	const readAllNotifications = () => {
 		const unReadNotificationIds = notifications
 			.filter(({ isRead }) => !isRead)
 			.map(({ id }) => id);
@@ -29,7 +29,7 @@ const CommunityNotices = ({ notifications }: NoticeTabProps) => {
 	};
 
 	if (isLoading) {
-		return <LoadingIndicator />;
+		return <NotificationListSkeleton />;
 	}
 
 	return (

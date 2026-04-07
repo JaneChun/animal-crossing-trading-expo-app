@@ -14,6 +14,7 @@ import CreatedAt from '@/components/PostDetail/CreatedAt';
 import EditCommentModal from '@/components/PostDetail/EditCommentModal';
 import ImageCarousel from '@/components/PostDetail/ImageCarousel';
 import ItemSummaryList from '@/components/PostDetail/ItemSummaryList';
+import PostDetailSkeleton from '@/components/PostDetail/PostDetailSkeleton';
 import ReportModal from '@/components/PostDetail/ReportModal';
 import Title from '@/components/PostDetail/Title';
 import Total from '@/components/PostDetail/Total';
@@ -22,7 +23,6 @@ import VillagerSummaryList from '@/components/PostDetail/VillagerSummaryList';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
-import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { usePost } from '@/hooks/post/usePost';
 import { usePostComment } from '@/hooks/post/usePostComment';
 import { usePostReply } from '@/hooks/reply/usePostReply';
@@ -165,8 +165,14 @@ const PostDetail = () => {
 		}
 	};
 
-	if (isPostLoading || isCommentsLoading || isRepliesLoading) {
-		return <LoadingIndicator />;
+	if (isPostLoading) {
+		return (
+			<SafeAreaView style={styles.screen} edges={['bottom']}>
+				<LayoutWithHeader>
+					<PostDetailSkeleton />
+				</LayoutWithHeader>
+			</SafeAreaView>
+		);
 	}
 
 	if (!post || !collectionName) {
@@ -269,6 +275,7 @@ const PostDetail = () => {
 									postId={post.id}
 									postCreatorId={post.creatorId}
 									postCommentCount={post.commentCount}
+									isCommentsLoading={isCommentsLoading || isRepliesLoading}
 									comments={comments}
 									chatRoomIds={
 										isBoardPost(post, collectionName) ? post.chatRoomIds : []
