@@ -8,7 +8,7 @@ import { Colors } from '@/theme/Color';
 import { CatalogItem, CatalogVariant } from '@/types/catalog';
 
 import VariantOptionList from './VariantOptionList';
-import InlineLoadingIndicator from '../ui/loading/InlineLoadingIndicator';
+import VariantOptionListSkeleton from './VariantOptionListSkeleton';
 
 interface ItemVariantSelectProps {
 	item: CatalogItem;
@@ -117,9 +117,7 @@ const ItemVariantSelect = ({ item, onBack, onSelect }: ItemVariantSelectProps) =
 
 			{/* Body */}
 			{isLoading ? (
-				<View style={styles.loadingContainer}>
-					<InlineLoadingIndicator />
-				</View>
+				<VariantOptionListSkeleton />
 			) : (
 				<ScrollView style={styles.content} contentContainerStyle={styles.contentContainer}>
 					{activeTab === 'body' && item.bodyTitle && (
@@ -170,11 +168,6 @@ const styles = StyleSheet.create({
 		color: Colors.text.primary,
 		textAlign: 'center',
 		paddingHorizontal: 120, // 좌우 텍스트 겹침 방지
-	},
-	loadingContainer: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
 	},
 	content: {
 		flex: 1,
