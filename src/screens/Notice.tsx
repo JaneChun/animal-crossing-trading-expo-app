@@ -1,5 +1,4 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { useCallback } from 'react';
 
 import NoticeList from '@/components/Notice/NoticeList';
 import TabBarLabel from '@/components/Notice/TabBarLabel';
@@ -9,30 +8,33 @@ import { useNotificationStore } from '@/stores/notification';
 import { Colors } from '@/theme/Color';
 import { Collection } from '@/types/post';
 
-const Notice = () => {
-	const Tab = createMaterialTopTabNavigator();
-	const notifications = useNotificationStore((state) => state.notifications);
+const Tab = createMaterialTopTabNavigator();
 
+const MarketTab = () => {
+	const notifications = useNotificationStore((state) => state.notifications);
 	const marketNotifications = notifications.filter(
 		({ type }: { type: Collection }) => type === 'Boards',
 	);
+	return <NoticeList notifications={marketNotifications} collectionName="Boards" />;
+};
+
+const CommunityTab = () => {
+	const notifications = useNotificationStore((state) => state.notifications);
 	const communityNotifications = notifications.filter(
 		({ type }: { type: Collection }) => type === 'Communities',
 	);
+	return <NoticeList notifications={communityNotifications} collectionName="Communities" />;
+};
 
-	const hasUnreadMarket = marketNotifications.some(({ isRead }: { isRead: boolean }) => !isRead);
-	const hasUnreadCommunity = communityNotifications.some(
-		({ isRead }: { isRead: boolean }) => !isRead,
+const Notice = () => {
+	const notifications = useNotificationStore((state) => state.notifications);
+
+	const hasUnreadMarket = notifications.some(
+		({ type, isRead }: { type: Collection; isRead: boolean }) => type === 'Boards' && !isRead,
 	);
-
-	const MarketTab = useCallback(
-		() => <NoticeList notifications={marketNotifications} collectionName="Boards" />,
-		[marketNotifications],
-	);
-
-	const CommunityTab = useCallback(
-		() => <NoticeList notifications={communityNotifications} collectionName="Communities" />,
-		[communityNotifications],
+	const hasUnreadCommunity = notifications.some(
+		({ type, isRead }: { type: Collection; isRead: boolean }) =>
+			type === 'Communities' && !isRead,
 	);
 
 	return (
