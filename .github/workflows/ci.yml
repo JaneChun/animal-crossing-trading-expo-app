@@ -143,6 +143,59 @@ jobs:
               working-directory: functions
 
     # ──────────────────────────────────────
+    # Claude PR 코드 리뷰
+    # ──────────────────────────────────────
+    claude-review:
+        name: 🤖 Claude Code Review
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            pull-requests: write
+        if: github.event.pull_request.draft == false
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Install Claude Code
+              run: npm install -g @anthropic-ai/claude-code
+
+            - name: Get PR diff
+              run: git diff origin/${{ github.base_ref }}...HEAD > /tmp/pr.diff
+
+            - name: Run Claude review
+              env:
+                  ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+              run: |
+                  claude \
+                    --allowedTools "Read,Glob,Grep,Bash" \
+                    -p "Review the PR diff at /tmp/pr.diff as a senior React Native developer. Read the file first using the Read tool, then provide your review. Output in English.
+
+                  Focus on:
+                  - React Native / Expo rendering issues (unnecessary re-renders, missing useEffect deps)
+                  - Zustand / React Query state management mistakes
+                  - Firebase misuse (Firestore, Realtime DB, Auth)
+                  - Missing async error handling
+                  - Memory leaks (uncleared listeners or subscriptions)
+                  - TypeScript type safety issues
+                  - Security concerns (XSS, secret leakage)
+
+                  Output guidelines:
+                  - Mention file path and code context for each issue
+                  - Separate **Must Fix** from **Suggestions**
+                  - Ignore formatting-only issues unless they cause bugs
+                  - If no issues found, write a short overall summary" > /tmp/review.md
+
+            - name: Post PR comment
+              env:
+                  GH_TOKEN: ${{ github.token }}
+              run: |
+                  gh pr comment ${{ github.event.pull_request.number }} \
+                    --body "## 🤖 Claude Code Review
+
+                  $(cat /tmp/review.md)"
+
+    # ──────────────────────────────────────
     # Functions 단위 테스트 (항상 실행)
     # ──────────────────────────────────────
     test-functions:
