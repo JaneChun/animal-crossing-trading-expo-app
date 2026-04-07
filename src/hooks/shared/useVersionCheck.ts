@@ -23,6 +23,11 @@ export const useVersionCheck = (): UseVersionCheckReturn => {
 	const wasModalVisibleWhenBackgrounded = useRef(false);
 
 	const performVersionCheck = async ({ showLoading = true } = {}) => {
+		if (__DEV__) {
+			if (showLoading) setIsLoading(false);
+			return;
+		}
+
 		try {
 			if (showLoading) setIsLoading(true);
 			setError(null);
@@ -45,7 +50,7 @@ export const useVersionCheck = (): UseVersionCheckReturn => {
 		if (isLoading) return;
 
 		if (updateInfo?.isUpdateRequired) {
-			// setIsUpdateModalVisible(true);
+			setIsUpdateModalVisible(true);
 		} else {
 			setIsUpdateModalVisible(false);
 		}
