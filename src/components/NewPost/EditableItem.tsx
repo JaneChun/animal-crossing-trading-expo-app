@@ -46,7 +46,11 @@ const EditableItem = ({ item, readonly = false, onDeleteItem }: EditableItemProp
 			</View>
 
 			{!readonly && onDeleteItem && (
-				<TouchableOpacity style={styles.deleteButton} onPress={() => onDeleteItem(item.id)}>
+				<TouchableOpacity
+					style={styles.deleteButton}
+					hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+					onPress={() => onDeleteItem(item.id)}
+				>
 					<FontAwesome6 name="circle-minus" size={22} color={Colors.brand.primary} />
 				</TouchableOpacity>
 			)}
