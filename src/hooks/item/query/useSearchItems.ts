@@ -4,7 +4,7 @@ import { searchClient } from '@/config/firebase';
 import { CatalogItem } from '@/types/catalog';
 import { ItemCategory } from '@/types/post';
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 30;
 
 interface ItemFilter {
 	category?: ItemCategory;
