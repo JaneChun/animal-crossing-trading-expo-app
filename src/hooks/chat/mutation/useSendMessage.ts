@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { showToast } from '@/components/ui/Toast';
 import { sendMessage } from '@/firebase/services/chatService';
 import { SendChatMessageParams } from '@/types/chat';
+import { logMessageSend } from '@/utilities/analytics';
 
 export const useSendMessage = () => {
 	return useMutation({
@@ -13,6 +14,9 @@ export const useSendMessage = () => {
 				receiverId,
 				message,
 			}),
+		onSuccess: () => {
+			logMessageSend('text');
+		},
 		onError: () => {
 			showToast('error', '메세지 전송 중 오류가 발생했습니다.');
 		},

@@ -2,6 +2,7 @@ import NaverLogin from '@react-native-seoul/naver-login';
 
 import { auth } from '@/config/firebase';
 import { loginWithNaver } from '@/firebase/services/authService';
+import { logLogin, logSignUp } from '@/utilities/analytics';
 
 import { BaseAuthProvider } from './base';
 import { LoginResult } from '../types';
@@ -9,10 +10,17 @@ import { LoginResult } from '../types';
 export class NaverAuthProvider extends BaseAuthProvider {
 	// 네이버 전용 로그인 구현
 	async login(): Promise<LoginResult> {
-		return this.executeLogin(async () => {
-			const result = await loginWithNaver();
-			return result;
-		});
+		const result = await this.executeLogin(() => loginWithNaver());
+
+		if (result.isSuccess) {
+			if (result.isNewUser) {
+				logSignUp('naver');
+			} else {
+				logLogin('naver');
+			}
+		}
+
+		return result;
 	}
 
 	// 네이버 전용 로그아웃 구현

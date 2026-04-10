@@ -5,6 +5,7 @@ import { showToast } from '@/components/ui/Toast';
 import { sendMessage } from '@/firebase/services/chatService';
 import { uploadObjectToStorage } from '@/firebase/services/imageService';
 import { SendChatMessageParams } from '@/types/chat';
+import { logMessageSend } from '@/utilities/analytics';
 
 type SendImageMessageParams = Pick<SendChatMessageParams, 'chatId' | 'senderId' | 'receiverId'> & {
 	image: ImagePickerAsset;
@@ -28,6 +29,9 @@ export const useSendImageMessage = () => {
 				message: '',
 				imageUrl,
 			});
+		},
+		onSuccess: () => {
+			logMessageSend('image');
 		},
 		onError: () => {
 			showToast('error', '이미지 전송 중 오류가 발생했습니다.');

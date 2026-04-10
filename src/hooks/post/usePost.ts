@@ -1,11 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { showToast } from '@/components/ui/Toast';
 import { sendReviewSystemMessage } from '@/firebase/services/reviewService';
 import { useMarkAsRead } from '@/hooks/notification/query/mutation/useMarkAsRead';
 import { goBack } from '@/navigation/RootNavigation';
 import { Collection } from '@/types/post';
-import { isBoardPost } from '@/utilities/typeGuards/postTypeGuards';
+import { logPostMarkDone, logPostView } from '@/utilities/analytics';
+import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
 
 import { useDeletePost } from './mutation/useDeletePost';
 import { useUpdatePost } from './mutation/useUpdatePost';
@@ -28,7 +29,19 @@ export const usePost = (collectionName: Collection, id: string, notificationId: 
 		if (notificationId) {
 			markAsRead(notificationId);
 		}
-	}, [notificationId]);
+	}, [notificationId, markAsRead]);
+
+	// 게시글 조회 이벤트 (최초 1회만)
+	const hasLoggedView = useRef(false);
+	useEffect(() => {
+		if (!post || hasLoggedView.current) return;
+		hasLoggedView.current = true;
+		if (isBoardPost(post, collectionName)) {
+			logPostView({ post_type: 'Boards', trade_type: post.type });
+		} else if (isCommunityPost(post, collectionName)) {
+			logPostView({ post_type: 'Communities', category: post.type });
+		}
+	}, [collectionName, post]);
 
 	const onConfirmDeletePost = async () => {
 		deletePost(undefined, {
@@ -63,6 +76,7 @@ export const usePost = (collectionName: Collection, id: string, notificationId: 
 			},
 			{
 				onSuccess: () => {
+					logPostMarkDone();
 					// showToast('success', '거래 완료 처리되었습니다.');
 				},
 				onError: () => {
