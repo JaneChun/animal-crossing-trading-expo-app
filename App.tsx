@@ -2,7 +2,7 @@ import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { LinkingOptions, NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as Linking from 'expo-linking';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -25,7 +25,7 @@ import { useOnboardingInitializer } from '@/stores/onboarding/initializer';
 import { usePushNotificationInitializer } from '@/stores/push';
 import { Colors } from '@/theme/Color';
 import { RootStackParamList } from '@/types/navigation';
-import { logAppOpen, logScreenView } from '@/utilities/analytics';
+import { logScreenView } from '@/utilities/analytics';
 
 if (__DEV__) {
 	import('./src/config/reactotron').then(() => console.log('🔧 Reactotron Config Loaded'));
@@ -66,10 +66,6 @@ export default function App() {
 	useOnlineManager();
 	useAppState();
 	useAppLifecycle();
-
-	useEffect(() => {
-		logAppOpen('cold_start');
-	}, []);
 
 	return (
 		// <StrictMode>
