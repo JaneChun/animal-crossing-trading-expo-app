@@ -1,11 +1,12 @@
 import analytics from '@react-native-firebase/analytics';
 
 import { Collection, CommunityType, MarketType } from '@/types/post';
+import { ReportCategory } from '@/types/report';
 
 type LoginMethod = 'naver' | 'apple';
 type MessageType = 'text' | 'image';
 type CommentType = 'comment' | 'reply';
-type InteractionSource = 'post_detail' | 'chat_room' | 'profile';
+export type InteractionSource = 'post' | 'comment' | 'chat_room' | 'profile';
 
 const log = (name: string, params?: Record<string, unknown>) => {
 	if (__DEV__) {
@@ -64,3 +65,10 @@ export const logProfileUpdate = (updated_fields: string[]) =>
 // P1 — 알림
 export const logNotificationClick = (post_type: Collection) =>
 	log('notification_click', { post_type });
+
+// P1 — 사용자 안전
+export const logUserBlock = (source: InteractionSource) => log('user_block', { source });
+
+export const logUserReport = (source: InteractionSource, category: ReportCategory) =>
+	log('user_report', { source, category });
+

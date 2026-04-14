@@ -5,14 +5,17 @@ import { showToast } from '@/components/ui/Toast';
 import { blockUser, unblockUser } from '@/firebase/services/blockService';
 import { useUserInfo } from '@/stores/auth';
 import { useBlockStore } from '@/stores/block';
+import { InteractionSource, logUserBlock } from '@/utilities/analytics';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
 
 export function useBlockUser({
 	targetUserId,
 	targetUserDisplayName,
+	source,
 }: {
 	targetUserId?: string;
 	targetUserDisplayName?: string;
+	source?: InteractionSource;
 }) {
 	const userInfo = useUserInfo();
 	const blockedUsers = useBlockStore((state) => state.blockedUsers);
@@ -48,6 +51,7 @@ export function useBlockUser({
 							userId: userInfo.uid,
 							targetUserId,
 						});
+						if (source) logUserBlock(source);
 						showToast('success', `${targetUserDisplayName}님을 차단했어요.`);
 					},
 				},

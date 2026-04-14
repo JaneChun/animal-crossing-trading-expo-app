@@ -94,6 +94,7 @@ const ChatRoom = () => {
 	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({
 		targetUserId: receiverInfo?.uid,
 		targetUserDisplayName: receiverInfo?.displayName,
+		source: 'chat_room',
 	});
 	const blockedBy = useBlockStore((state) => state.blockedBy);
 	const amIBlockedBy = blockedBy.some((uid) => uid === receiverInfo?.uid);

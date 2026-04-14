@@ -5,6 +5,7 @@ import { createReport } from '@/firebase/services/reportService';
 import { useUserInfo } from '@/stores/auth';
 import { ReportUserParams } from '@/types/components';
 import { CreateReportRequest, ReportTarget } from '@/types/report';
+import { InteractionSource, logUserReport } from '@/utilities/analytics';
 import { navigateToLogin } from '@/utilities/navigationHelpers';
 
 export const useReportUser = () => {
@@ -52,6 +53,14 @@ export const useReportUser = () => {
 				};
 
 				await createReport(payload);
+				const reportSource: InteractionSource = reportTarget.chatId
+					? 'chat_room'
+					: reportTarget.commentId
+						? 'comment'
+						: reportTarget.postId
+							? 'post'
+							: 'profile';
+				logUserReport(reportSource, category);
 				showToast('success', '신고가 접수되었습니다.');
 			} catch (e) {
 				console.error(e);

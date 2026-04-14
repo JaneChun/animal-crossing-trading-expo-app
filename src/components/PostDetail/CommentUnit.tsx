@@ -54,6 +54,7 @@ const CommentUnit = ({
 	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({
 		targetUserId: creatorId,
 		targetUserDisplayName: creatorDisplayName,
+		source: 'comment',
 	});
 
 	// 댓글 삭제
