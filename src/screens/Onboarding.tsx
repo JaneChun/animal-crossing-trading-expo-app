@@ -16,6 +16,7 @@ import { ONBOARDING_DATA, OnboardingStep } from '@/constants/onboardingData';
 import { useOnboardingStore } from '@/stores/onboarding/store';
 import { saveOnboardingAsCompleted } from '@/stores/onboarding/utils/storage';
 import { Colors } from '@/theme/Color';
+import { logOnboardingComplete } from '@/utilities/analytics';
 import { replaceToHome } from '@/utilities/navigationHelpers';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -44,6 +45,7 @@ const Onboarding = () => {
 	};
 
 	const handleCompleteOnboarding = async () => {
+		logOnboardingComplete();
 		await saveOnboardingAsCompleted();
 		setHasCompletedOnboarding(true);
 

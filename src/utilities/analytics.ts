@@ -72,3 +72,31 @@ export const logUserBlock = (source: InteractionSource) => log('user_block', { s
 export const logUserReport = (source: InteractionSource, category: ReportCategory) =>
 	log('user_report', { source, category });
 
+// push_notification으로 앱이 열린 경우 background_resume 중복 로깅 방지
+export const notificationOpenedApp = { current: false };
+
+// R0 — 앱 재방문 빈도
+export const logAppOpen = (source: 'cold_start' | 'push_notification' | 'background_resume') =>
+	log('app_open_custom', { source });
+
+// R0 — 온보딩 → 회원가입 전환율
+export const logOnboardingComplete = () => log('onboarding_complete');
+
+// R0 — 첫 댓글 수신 (플랫폼 활성도 체감)
+export const logFirstCommentReceived = (post_age_seconds: number, post_type: Collection) =>
+	log('first_comment_received', { post_age_seconds, post_type });
+
+// R1 — 세션 길이
+export const logSessionEnd = (session_duration_seconds: number) =>
+	log('session_end', { session_duration_seconds });
+
+// R1 — 피드 아이템 클릭 깊이
+export const logFeedItemClick = (tab: Collection, index: number) =>
+	log('feed_item_click', { tab, index });
+
+// 화면 전환
+export const logScreenView = (screenName: string, screenClass?: string) =>
+	log('screen_view', {
+		screen_name: screenName,
+		screen_class: screenClass ?? screenName,
+	});

@@ -11,6 +11,7 @@ import { FontSizes, FontWeights } from '@/constants/Typography';
 import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { Colors } from '@/theme/Color';
+import { logLogout } from '@/utilities/analytics';
 import {
 	navigateToDeleteAccount,
 	navigateToSocialAccountCheck,
@@ -40,6 +41,7 @@ const Account = () => {
 		else if (userInfo.oauthType === 'apple') isSuccess = await appleLogout();
 
 		if (isSuccess) {
+			logLogout();
 			backToProfile();
 			showToast('success', '로그아웃되었습니다.');
 		} else {
