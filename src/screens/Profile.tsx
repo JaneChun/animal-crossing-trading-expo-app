@@ -66,7 +66,7 @@ const Profile = () => {
 	useEffect(() => {
 		if (!profileInfo) return;
 		logProfileView(isMyProfile);
-	}, [profileInfo?.uid, isMyProfile]);
+	}, [profileInfo?.uid]);
 
 	const resolvedEmptyProfileImage = Image.resolveAssetSource(emptyProfileImage);
 
