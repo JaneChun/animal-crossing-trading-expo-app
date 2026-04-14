@@ -9,7 +9,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 
 import { toastConfig } from '@/components/ui/Toast';
-import { logScreenView } from '@/config/analytics';
+import { useAppLifecycle } from '@/hooks/shared/useAppLifecycle';
 import { useAppState } from '@/hooks/shared/useAppState';
 import { useOnlineManager } from '@/hooks/shared/useOnlineManager';
 import { useSuspensionGuard } from '@/hooks/shared/useSuspensionGuard';
@@ -25,6 +25,7 @@ import { useOnboardingInitializer } from '@/stores/onboarding/initializer';
 import { usePushNotificationInitializer } from '@/stores/push';
 import { Colors } from '@/theme/Color';
 import { RootStackParamList } from '@/types/navigation';
+import { logScreenView } from '@/utilities/analytics';
 
 if (__DEV__) {
 	import('./src/config/reactotron').then(() => console.log('🔧 Reactotron Config Loaded'));
@@ -64,6 +65,7 @@ export default function App() {
 
 	useOnlineManager();
 	useAppState();
+	useAppLifecycle();
 
 	return (
 		// <StrictMode>
@@ -98,7 +100,7 @@ function AppContent() {
 									prevRouteNameRef.current !== currentRouteName &&
 									currentRouteName
 								) {
-									logScreenView(currentRouteName).catch(() => {}); // Analytics 실패 무시
+									logScreenView(currentRouteName);
 								}
 								prevRouteNameRef.current = currentRouteName;
 							}}

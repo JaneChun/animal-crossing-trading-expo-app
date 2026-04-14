@@ -99,6 +99,7 @@ const PostDetail = () => {
 	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({
 		targetUserId: post?.creatorId,
 		targetUserDisplayName: post?.creatorDisplayName,
+		source: 'post',
 	});
 
 	// 주민 정보 (CommunityPost만 해당)

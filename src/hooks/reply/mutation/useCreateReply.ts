@@ -3,6 +3,7 @@ import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query
 import { createReply } from '@/firebase/services/replyService';
 import { Collection, PaginatedPosts, PostWithCreatorInfo } from '@/types/post';
 import { CreateReplyRequest } from '@/types/reply';
+import { logCommentCreate } from '@/utilities/analytics';
 
 export const useCreateReply = (collectionName: Collection, postId: string) => {
 	const queryClient = useQueryClient();
@@ -25,6 +26,8 @@ export const useCreateReply = (collectionName: Collection, postId: string) => {
 				userId,
 			}),
 		onSuccess: () => {
+			logCommentCreate('reply');
+
 			// 1. Optimistic Update: posts 쿼리 데이터에서 commentCount 즉시 증가
 			queryClient.setQueryData<InfiniteData<PaginatedPosts<typeof collectionName>>>(
 				['posts', collectionName],

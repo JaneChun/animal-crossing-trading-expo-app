@@ -23,6 +23,7 @@ import { useUserInfo } from '@/stores/auth';
 import { Colors } from '@/theme/Color';
 import { ProfileRouteProp, RootStackNavigation } from '@/types/navigation';
 import { Tab } from '@/types/post';
+import { logProfileView } from '@/utilities/analytics';
 import emptyProfileImage from '@assets/images/empty_profile_image.png';
 
 const Profile = () => {
@@ -54,11 +55,18 @@ const Profile = () => {
 	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({
 		targetUserId: profileInfo?.uid,
 		targetUserDisplayName: profileInfo?.displayName,
+		source: 'profile',
 	});
 
 	const { isLoading: isUploading, setIsLoading: setIsUploading } = useLoading();
 
 	const isMyProfile: boolean = (userInfo && userInfo.uid === profileInfo?.uid) ?? false;
+
+	// 프로필 조회 이벤트 (uid가 변경될 때만 실행)
+	useEffect(() => {
+		if (!profileInfo) return;
+		logProfileView(isMyProfile);
+	}, [profileInfo?.uid]);
 
 	const resolvedEmptyProfileImage = Image.resolveAssetSource(emptyProfileImage);
 
@@ -90,7 +98,7 @@ const Profile = () => {
 									});
 								},
 							},
-							{ label: '취소', onPress: () => {} },
+							{ label: '취소', onPress: () => { } },
 						]}
 					/>
 				),

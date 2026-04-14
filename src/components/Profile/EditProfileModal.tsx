@@ -26,6 +26,7 @@ import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { Colors } from '@/theme/Color';
 import { EditProfileModalProps } from '@/types/components';
 import { Fruit, UserInfo } from '@/types/user';
+import { logProfileUpdate } from '@/utilities/analytics';
 
 import NameInput from './NameInput';
 import ErrorMessage from '../ui/ErrorMessage';
@@ -159,6 +160,7 @@ const EditProfileModal = ({
 					collection: 'Users',
 					requestData,
 				});
+				logProfileUpdate(Object.keys(requestData));
 
 				const newUserInfo: UserInfo = {
 					...userInfo,

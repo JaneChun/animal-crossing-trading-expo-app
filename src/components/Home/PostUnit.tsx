@@ -8,6 +8,7 @@ import { FontSizes, FontWeights } from '@/constants/Typography';
 import { Colors } from '@/theme/Color';
 import { PostUnitProps } from '@/types/components';
 import { Collection } from '@/types/post';
+import { logFeedItemClick } from '@/utilities/analytics';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToPost } from '@/utilities/navigationHelpers';
 import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
@@ -17,11 +18,18 @@ import MarketTypeBadge from './MarketTypeBadge';
 
 export const POST_UNIT_HEIGHT = 95;
 
-const PostUnit = <C extends Collection>({ post, collectionName, index }: PostUnitProps<C>) => {
+const PostUnit = <C extends Collection>({
+	post,
+	collectionName,
+	index,
+}: PostUnitProps<C>) => {
 	return (
 		<Pressable
 			style={styles.container}
-			onPress={() => navigateToPost({ postId: post.id, collectionName })}
+			onPress={() => {
+				logFeedItemClick(collectionName, index);
+				navigateToPost({ postId: post.id, collectionName });
+			}}
 			testID={index === 0 ? 'firstPostUnit' : `postUnit-${index}`}
 		>
 			<>

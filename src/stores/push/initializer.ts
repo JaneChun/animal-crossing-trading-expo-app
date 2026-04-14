@@ -2,6 +2,7 @@ import * as ExpoNotifications from 'expo-notifications';
 import { useEffect } from 'react';
 import { Alert, Linking } from 'react-native';
 
+import { logAppOpen, notificationOpenedApp } from '@/utilities/analytics';
 import { registerForPushNotificationsAsync } from '@/utilities/registerForPushNotificationsAsync';
 
 import { usePushNotificationStore } from './store';
@@ -38,6 +39,9 @@ export const usePushNotificationInitializer = () => {
 		// 사용자가 알림을 탭했을 때 처리하는 리스너
 		const responseListener = ExpoNotifications.addNotificationResponseReceivedListener(
 			async (response) => {
+				notificationOpenedApp.current = true;
+				logAppOpen('push_notification');
+
 				const { url } = response.notification.request.content.data;
 				if (!url) return;
 

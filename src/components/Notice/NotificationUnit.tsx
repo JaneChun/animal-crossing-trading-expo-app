@@ -9,6 +9,7 @@ import { useDeleteNotification } from '@/hooks/notification/query/mutation/useDe
 import { Colors } from '@/theme/Color';
 import { NotificationUnitProp } from '@/types/components';
 import { Collection } from '@/types/post';
+import { logNotificationClick } from '@/utilities/analytics';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { navigateToPost } from '@/utilities/navigationHelpers';
 
@@ -58,6 +59,7 @@ const NotificationUnit = ({ item, collectionName }: NotificationUnitProp) => {
 		collectionName: Collection;
 		postId: string;
 	}) => {
+		logNotificationClick(type);
 		if (isRead) navigateToPost({ postId, collectionName });
 		else navigateToPost({ postId, collectionName, notificationId: id });
 	};

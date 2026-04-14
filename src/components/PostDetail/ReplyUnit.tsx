@@ -41,6 +41,7 @@ const ReplyUnit = ({
 	const { isBlockedByMe, toggleBlock: onToggleBlock } = useBlockUser({
 		targetUserId: creatorId,
 		targetUserDisplayName: creatorDisplayName,
+		source: 'comment',
 	});
 
 	// 답글 삭제
