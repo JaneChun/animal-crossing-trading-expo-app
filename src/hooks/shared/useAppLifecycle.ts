@@ -34,7 +34,7 @@ export const useAppLifecycle = () => {
 				notificationOpenedApp.current = false;
 
 			// 앱이 백그라운드로 갈 때, 세션 시간 기록
-			} else if (nextState === 'background' || nextState === 'inactive') {
+			} else if (nextState === 'background') {
 				const duration = Math.floor((Date.now() - sessionStartRef.current) / 1000);
 				logSessionEnd(duration);
 			}
