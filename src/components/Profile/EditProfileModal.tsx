@@ -26,6 +26,7 @@ import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { Colors } from '@/theme/Color';
 import { EditProfileModalProps } from '@/types/components';
 import { Fruit, UserInfo } from '@/types/user';
+import { logProfileUpdate } from '@/utilities/analytics';
 
 import NameInput from './NameInput';
 import ErrorMessage from '../ui/ErrorMessage';
@@ -154,6 +155,7 @@ const EditProfileModal = ({
 
 			// 수정사항 있을 때만 firestore 업데이트
 			if (Object.keys(requestData).length > 0) {
+				logProfileUpdate(Object.keys(requestData));
 				await updateDocToFirestore({
 					id: userInfo.uid,
 					collection: 'Users',

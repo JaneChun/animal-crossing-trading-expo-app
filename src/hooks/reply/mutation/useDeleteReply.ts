@@ -2,6 +2,7 @@ import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query
 
 import { deleteReply } from '@/firebase/services/replyService';
 import { Collection, PaginatedPosts, PostWithCreatorInfo } from '@/types/post';
+import { logCommentDelete } from '@/utilities/analytics';
 
 export const useDeleteReply = (
 	collectionName: Collection,
@@ -14,6 +15,8 @@ export const useDeleteReply = (
 	return useMutation({
 		mutationFn: () => deleteReply(collectionName, postId, commentId, replyId),
 		onSuccess: () => {
+			logCommentDelete('reply');
+
 			// 1. Optimistic Update: posts 쿼리 데이터에서 commentCount 즉시 감소
 			queryClient.setQueryData<InfiniteData<PaginatedPosts<typeof collectionName>>>(
 				['posts', collectionName],

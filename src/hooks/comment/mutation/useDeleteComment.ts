@@ -2,6 +2,7 @@ import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query
 
 import { deleteComment } from '@/firebase/services/commentService';
 import { Collection, PaginatedPosts, PostWithCreatorInfo } from '@/types/post';
+import { logCommentDelete } from '@/utilities/analytics';
 
 export const useDeleteComment = (collectionName: Collection, postId: string, commentId: string) => {
 	const queryClient = useQueryClient();
@@ -9,6 +10,8 @@ export const useDeleteComment = (collectionName: Collection, postId: string, com
 	return useMutation({
 		mutationFn: () => deleteComment(collectionName, postId, commentId),
 		onSuccess: ({ replyCount }) => {
+			logCommentDelete('comment');
+
 			// 댓글 1개 + 답글 개수만큼 총 댓글 수 감소
 			const totalDecrement = 1 + replyCount;
 
