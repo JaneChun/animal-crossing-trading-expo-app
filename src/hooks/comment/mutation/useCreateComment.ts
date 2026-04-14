@@ -32,9 +32,11 @@ export const useCreateComment = ({
 				postId,
 			]);
 			if (cached && cached.commentCount === 0) {
-				const postAgeSeconds = Math.floor(
-					(Date.now() - cached.createdAt.toMillis()) / 1000,
-				);
+				const createdAtMs =
+					typeof cached.createdAt?.toMillis === 'function'
+						? cached.createdAt.toMillis()
+						: (cached.createdAt as unknown as { seconds: number }).seconds * 1000;
+				const postAgeSeconds = Math.floor((Date.now() - createdAtMs) / 1000);
 				logFirstCommentReceived(postAgeSeconds, collectionName);
 			}
 
