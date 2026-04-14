@@ -8,7 +8,9 @@ type MessageType = 'text' | 'image';
 type CommentType = 'comment' | 'reply';
 export type InteractionSource = 'post' | 'comment' | 'chat_room' | 'profile';
 
-const log = (name: string, params?: Record<string, unknown>) => {
+type AnalyticsParams = Record<string, string | number | boolean>;
+
+const log = (name: string, params?: AnalyticsParams) => {
 	if (__DEV__) {
 		console.log('[Analytics]', name, params);
 		return;
