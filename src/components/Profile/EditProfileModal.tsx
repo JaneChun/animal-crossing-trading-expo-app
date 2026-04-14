@@ -155,12 +155,12 @@ const EditProfileModal = ({
 
 			// 수정사항 있을 때만 firestore 업데이트
 			if (Object.keys(requestData).length > 0) {
-				logProfileUpdate(Object.keys(requestData));
 				await updateDocToFirestore({
 					id: userInfo.uid,
 					collection: 'Users',
 					requestData,
 				});
+				logProfileUpdate(Object.keys(requestData));
 
 				const newUserInfo: UserInfo = {
 					...userInfo,
