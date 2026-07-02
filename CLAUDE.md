@@ -1,808 +1,259 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with this repository.
 
-## Project Context
+## 프로젝트 개요
 
-### 프로젝트 소개
-- **앱 이름**: 모동숲 마켓 (Animal Crossing Trading Market)
-- **상태**: iOS App Store 출시 중 (v1.5.0) | Android 출시 예정
-- **개발자**: 프론트엔드 개발자 1인 개발 (1-2년 개발)
-- **사용자**: 한국 모여봐요 동물의 숲 플레이어 50-500명
+"모동숲 마켓"(Animal Crossing Trading Market)은 한국 모여봐요 동물의 숲 플레이어를 위한 아이템 거래 마켓플레이스 모바일 앱이다.
 
-### 왜 만들었나
-한국 동물의 숲 커뮤니티에 전용 거래 플랫폼이 없었음. 기존에는 네이버 카페를 사용했으나, 전용 앱 + 내장 아이템 DB + 실시간 채팅이 차별점.
+Expo(SDK 52) 기반 React Native 앱이며, Firebase를 백엔드로 실시간 채팅·소셜 로그인·푸시 알림·Algolia 검색을 제공한다.
 
-### 디자인 철학
-- **UX/UI**: 당근마켓 스타일 (깔끔, 미니멀, 기능적)
-- **비주얼 테마**: 동물의 숲 게임 감성 (귀여운, 따뜻한 디자인)
+현재 버전 1.8.1(`app.config.js`), iOS App Store 출시 중이며 Android 지원 예정.
 
-### 현재 목표 (우선순위)
-1. 사용자 확대
-2. 코드 품질 개선 (리팩토링, 테스트)
-3. 신규 기능 추가
-4. Android 지원
+저장소는 앱(`src/`)과 Firebase Cloud Functions(`functions/`) 두 개의 npm 프로젝트로 구성된 폴리레포 구조다.
 
-### 계획된 신규 기능
-- Skeleton UI (로딩 상태 개선)
-- 끌어올리기 (당근마켓 스타일 게시글 범프)
-- 읽은 글 표시 (네이버카페/커뮤니티앱 스타일)
-- 텍스트 복사 기능 (채팅/댓글/게시글)
-- 하이퍼링크 표시
-- 아이템 평균 판매가/구매가 표시
-- 나눔 카테고리 추가
-- 마이페이지 개선 (여권 올리기, 주민목록)
-- 아이템/주민 데이터 상세 보기
-- 최근 검색어 저장
+## 개발 명령어
 
-### 주요 제약사항
-- **Firebase 비용**: 사용자 증가에 따른 비용 관리 필요
-- **테스트 부재**: 인프라는 준비되어 있으나 테스트 미작성
-- **TypeScript 타입 안정성**: 일부 영역에서 타입 정의 부족
-- **1인 개발**: 제한된 개발 시간
+모든 스크립트 근거는 `package.json`(앱)과 `functions/package.json`(functions).
 
-### 수익화
-- 광고 기반 수익화 계획 (아직 미구현)
-
-### 장기 비전
-- 한국 동물의 숲 거래 앱 1위
-
----
-
-## Project Overview
-
-This is "모동숲 마켓" (Animal Crossing Trading Market) - a React Native mobile app built with Expo that serves as a trading marketplace for Animal Crossing: New Horizons items for Korean users. The app features real-time chat, social authentication, push notifications, and comprehensive trading functionality.
-
-## Common Development Commands
-
-### Development
-
+### 앱 (루트)
 ```bash
-npm run dev              # Start development server with dev client
-npm run ios              # Run on iOS simulator
-npm run android          # Run on Android emulator
+npm run dev              # expo start --dev-client
+npm run dev:emulator     # Firebase 에뮬레이터 연동 모드로 dev 서버 실행
+npm run ios              # expo run:ios
+npm run android          # expo run:android
+npm run lint             # eslint .
+npm run lint:fix         # eslint . --fix
+npm run typecheck        # tsc --noEmit (앱)
+npm run test             # jest — 현재 maestro 프로젝트만 실행됨 (아래 '테스트 전략' 참고)
+npm run test:e2e         # jest --selectProjects maestro --runInBand
 ```
 
-### Building
-
+### 빌드 / 배포 (EAS + Firebase)
 ```bash
-npm run build:ios:dev    # Build development iOS
-npm run build:android:dev  # Build development Android
-npm run build:ios        # Build production iOS
-npm run build:android    # Build production Android
+npm run build:ios              # eas build --profile production --platform ios
+npm run build:ios:dev          # eas build --profile development --platform ios
+npm run build:android          # eas build --profile production --platform android
+npm run deploy:app             # eas submit -p ios --latest
+npm run deploy:functions       # firebase deploy --only functions
+npm run deploy:rules:firestore # firebase deploy --only firestore:rules
+npm run deploy:rules:storage   # firebase deploy --only storage
 ```
 
-### Testing and Linting
-
+### Firebase 에뮬레이터
 ```bash
-npm run test             # Run Jest tests with watch mode
-npm run lint             # Run ESLint
+npm run emulator:start            # firebase emulators:start
+npm run emulator:start-with-data  # 데이터 import + 종료 시 export
+npm run emulator:stop             # 프로세스 kill + 포트(4000,8080,9099,5001,9199 등) 정리
+npm run emulator:seed             # node scripts/seed-test-data.js
 ```
 
-### Firebase Functions
-
+### Functions (`functions/`, 별도 프로젝트)
 ```bash
-cd functions
-npm run serve            # Start local Firebase emulator
-npm run deploy           # Deploy functions to Firebase (within functions/)
-npm run deploy:functions # Deploy functions from project root
+npm --prefix functions run build       # tsc
+npm --prefix functions run lint        # eslint --ext .js,.ts .
+npm --prefix functions run typecheck   # tsc --noEmit
+npm --prefix functions test            # jest (에뮬레이터 필요, 아래 참고)
+npm --prefix functions run test:coverage
 ```
 
-### Firebase Emulator (Development)
+## 아키텍처
 
-```bash
-# 에뮬레이터 시작 (Auth, Functions - Java 설치 시 Firestore 추가 가능)
-npm run emulator:start
+### 핵심 기술 스택 (버전은 `package.json` 기준)
+- **React Native 0.76.9 + Expo SDK 52** — New Architecture 활성화(`app.config.js`의 `newArchEnabled: true`)
+- **Firebase 10.14.1 (JS SDK)** — Auth, Firestore, Functions, Storage
+- **@react-native-firebase/app·analytics 23.x** — 네이티브 Analytics
+- **Zustand 5** — 전역 상태
+- **@tanstack/react-query 5** — 서버 상태/캐싱
+- **React Navigation 7** — 네이티브 스택 + 바텀 탭 + top tabs
+- **React Hook Form 7 + Zod 3** — 폼/검증
+- **algoliasearch 5** — 전체 텍스트 검색
+- **소셜 로그인** — @react-native-kakao, @react-native-seoul/naver-login, expo-apple-authentication
+- **react-native-google-mobile-ads** — AdMob
 
-# 에뮬레이터와 함께 앱 개발 시작
-npm run dev:emulator
+### 디렉토리 구조
+```
+src/
+├── components/     # 기능별 UI 컴포넌트 (Home/, Chat/, PostDetail/, NewPost/, ui/ 등)
+├── screens/        # 화면 컴포넌트 (Home, PostDetail, NewPost, ChatRoom, Login 등)
+├── navigation/     # 네비게이터 + RootNavigation.ts(navigationRef)
+├── hooks/          # 도메인별 훅 (post/, chat/, item/, villager/, shared/ 등)
+├── stores/         # Zustand 스토어 (auth/, chat/, block/, notification/, push/, ads/, onboarding/)
+├── firebase/
+│   ├── core/       # firestoreService, firebaseInterceptor, errorMessages, types
+│   └── services/   # 도메인별 서비스 (postService, userService, chatService 등 15개)
+├── types/          # 도메인 타입 정의 (post.ts, user.ts, components.ts 등)
+├── theme/          # Color, Spacing, Typography, BorderRadius, Shadow
+├── constants/      # 앱 상수
+├── config/         # firebase.ts(초기화), reactotron.ts
+└── utilities/      # 헬퍼 (analytics 등)
 
-# 에뮬레이터 중지
-npm run emulator:stop
+functions/src/      # Cloud Functions: auth/, notifications/, triggers/, schedulers/, utils/
+__tests__/maestro/  # Maestro E2E 오케스트레이션 (Jest로 순서 제어)
+.maestro/           # Maestro flow YAML (auth/, posts/, trade/, profile/)
 ```
 
-### Deploy
+### 상태 관리 매핑
+| 종류 | 도구 → 위치 |
+|------|-------------|
+| 서버 상태 | React Query → `src/hooks/{domain}/query`, `mutation` |
+| 전역 상태 | Zustand → `src/stores/{domain}/` |
+| 폼 상태 | React Hook Form + Zod → `src/hooks/{domain}/form/` |
+| URL/딥링크 | React Navigation `linking` → `App.tsx` |
 
-```bash
-npm run deploy:app              # Submit latest iOS build to App Store
-npm run deploy:functions        # Deploy Firebase Cloud Functions
-npm run deploy:rules:firestore  # Deploy Firestore security rules
-npm run deploy:rules:storage    # Deploy Storage security rules
+### 진입점 Provider 중첩 (`App.tsx`)
+```
+QueryClientProvider
+└─ AppContent
+   └─ ErrorBoundary
+      └─ ActionSheetProvider
+         └─ GestureHandlerRootView
+            └─ SafeAreaProvider
+               └─ NavigationContainer (linking, onStateChange→logScreenView)
+                  └─ SafeAreaView
+                     └─ RootStackNavigator
 ```
 
-## Architecture Overview
+**초기화 훅 실행 순서 (중요, `App.tsx`)**
 
-### Core Technologies
+- `App`에서 다음 순서로 실행: `useAuthInitializer` → `useAdMobInitializer` → `usePushNotificationInitializer` → `useBlockSubscriptionInitializer` → `useOnboardingInitializer` → `useSuspensionGuard` → `useOnlineManager`/`useAppState`/`useAppLifecycle`.
+- `useNotificationSubscriptionInitializer`·`useChatSubscriptionInitializer`는 `QueryClientProvider` 하위인 `AppContent`에서 실행됨 (React Query 컨텍스트 의존).
+- 새 구독/초기화 훅 추가 시 인증 이후 순서와 Provider 위치를 지켜야 함.
 
-- **React Native** (0.76.6) with **Expo SDK** (52) - New Architecture enabled
-- **Firebase** - Backend services (Auth, Firestore, Functions, Storage, Realtime Database)
-- **Zustand** - Global state management
-- **React Query** (TanStack Query v5) - Server state management and caching
-- **React Navigation** v7 - Navigation with deep linking support
-- **React Hook Form + Zod** - Form validation
+### 이 프로젝트만의 필수 패턴 / 함정
 
-### Project Structure
+**Firestore 요청은 `firestoreRequest` 인터셉터로 래핑** (`src/firebase/core/firebaseInterceptor.ts`).
 
-```
-src/                    # All application source code
-├── __tests__/          # Unit tests (Maestro E2E tests at root)
-├── components/         # UI components organized by feature
-│   ├── Block/          # User blocking components
-│   ├── Chat/           # Chat and messaging
-│   ├── Community/      # Community features
-│   ├── Home/           # Home screen components
-│   ├── NewPost/        # Post creation
-│   ├── PostDetail/     # Post detail view
-│   ├── Profile/        # User profile
-│   ├── Search/         # Search functionality
-│   └── ui/             # Reusable UI components
-├── screens/            # Screen components
-├── navigation/         # Navigation setup
-├── hooks/              # Custom hooks organized by feature
-├── stores/             # Zustand state stores
-├── firebase/           # Firebase services
-│   ├── core/           # Core Firebase utilities
-│   └── services/       # Firebase service layer
-├── types/              # TypeScript definitions
-├── utilities/          # Helper functions
-├── constants/          # App constants and configuration
-├── config/             # App configuration
-│   ├── firebase.ts     # Firebase initialization (formerly fbase.js)
-│   └── reactotron.ts   # Reactotron dev configuration
-└── declarations.d.ts   # Module declarations
-
-__tests__/maestro/      # Maestro E2E tests (root level)
-functions/              # Firebase Cloud Functions
-assets/                 # Static assets (images, fonts, etc.)
-App.tsx                 # Root app component (Expo entry point)
-```
-
-### Key Features & Patterns
-
-#### Authentication System
-
-- **Social Login**: Kakao, Naver, Apple authentication via Firebase
-- **Custom Naver Integration**: Custom token exchange via Firebase Functions due to library limitations
-- **Session Management**: AsyncStorage persistence with Zustand
-
-#### Real-time Features
-
-- **Chat System**: Firebase Realtime Database with Gifted Chat UI
-- **Push Notifications**: Expo Notifications + Firebase Cloud Messaging with deep linking
-- **Presence System**: Track active chat room to prevent duplicate notifications
-
-#### Data Management
-
-- **Firestore Chunking**: Custom hooks to overcome 10-item limit in `where in` queries
-- **Infinite Scroll**: React Query's `useInfiniteQuery` for posts and items
-- **Image Handling**: Expo Image Picker with Firebase Storage and compression
-
-#### Search & Discovery
-
-- **Algolia Integration**: Full-text search for posts and items
-- **Item Database**: Comprehensive Animal Crossing item catalog
-- **Filtering System**: Advanced search with multiple criteria
-
-#### User Safety
-
-- **Blocking System**: User blocking across posts, comments, and chat
-- **Reporting**: Content and user reporting functionality
-- **Profanity Filter**: Korean profanity filtering with `cenkor` library
-
-### State Management Architecture
-
-#### Zustand Stores
-
-- **AuthStore**: User authentication and profile
-- **ChatStore**: Chat state and active room tracking
-- **NotificationStore**: Push notification management
-- **BlockStore**: User blocking state
-
-#### React Query Patterns
-
-- **Chunked Queries**: Handle large ID arrays by splitting into 10-item chunks
-- **Optimistic Updates**: Immediate UI updates with rollback on failure
-- **Infinite Queries**: Cursor-based pagination for posts and items
-
-### Firebase Architecture
-
-#### Services (`src/firebase/services/`)
-
-- **authService**: Social login implementations
-- **userService**: User profile management
-- **postService**: Trading post CRUD operations
-- **chatService**: Real-time messaging
-- **notificationService**: Push notification handling
-
-#### Cloud Functions (`functions/`)
-
-- **Custom Auth**: Naver login token exchange
-- **Notification Triggers**: Automated push notifications
-- **Admin Utilities**: Data management and cleanup
-
-### Navigation Structure
-
-- **Root Stack**: Main navigation container with auth flow
-- **Tab Navigator**: Bottom tabs for Home, Community, Profile, Chat, Notice
-- **Deep Linking**: Support for notification and chat deep links
-- **Scheme**: `animal-crossing-trading-app://`
-
-### Development Notes
-
-#### Testing
-
-- **Jest**: Test runner with `jest-expo` preset
-- **No existing tests**: Infrastructure ready but tests not yet implemented
-
-#### Build Configuration
-
-- **EAS Build**: Configured for development, preview, and production
-- **Bundle ID**: `com.janechun.animalcrossingtradingapp`
-- **New Architecture**: Enabled for both platforms
-
-#### Environment Variables
-
-- Kakao Native App Key
-- EAS Project ID
-- Firebase configuration (handled by Firebase SDK)
-
-#### Known Limitations
-
-- **Naver Login**: Requires custom Firebase Function due to library limitations
-- **Firestore Queries**: 10-item limit on `where in` queries (handled with chunking)
-- **iOS Permissions**: Camera and photo library access required for image features
-- **Platform Support**: Currently developed primarily for iOS - Android compatibility and platform-specific features need to be addressed for full cross-platform support
-
----
-
-## 🔧 프로젝트 리팩토링 및 테스트 코드 작성 요청사항
-
-### 1. 코드 리팩토링 우선순위
-
-#### 높음 (Critical)
-
-- **보안 강화**: Firebase 규칙 검토 및 사용자 입력 검증 강화
-- **에러 핸들링**: 네트워크 오류, Firebase 오류에 대한 일관된 처리
-- **메모리 누수 방지**: 컴포넌트 언마운트 시 리스너 정리
-- **Korean 텍스트 처리**: 욕설 필터링 및 텍스트 검증 개선
-
-#### 중간 (Important)
-
-- **코드 중복 제거**:
-  - Firebase service 호출 패턴 통일
-  - 공통 UI 컴포넌트 추출 (로딩 상태, 에러 상태)
-  - 이미지 처리 로직 통합
-- **성능 최적화**:
-  - React Query 캐싱 전략 개선
-  - 이미지 지연 로딩 및 압축 최적화
-  - Firestore 쿼리 효율화
-- **타입 안정성**:
-  - Firebase 데이터 타입 정의 강화
-  - API 응답 타입 검증
-  - Zustand store 타입 개선
-
-#### 낮음 (Nice to have)
-
-- **코드 스타일 통일**: ESLint 규칙 강화 및 Prettier 설정
-- **컴포넌트 구조 개선**: 더 작은 단위로 분할
-- **커스텀 훅 최적화**: 재사용성 개선
-
-### 2. 테스트 코드 작성 계획
-
-#### 단위 테스트 (Unit Tests)
-
-```
-src/__tests__/
-├── components/
-│   ├── ui/              # 재사용 가능한 UI 컴포넌트 테스트
-│   ├── Chat/            # 채팅 컴포넌트 테스트
-│   └── PostDetail/      # 게시글 상세 컴포넌트 테스트
-├── hooks/
-│   ├── useAuth.test.ts          # 인증 훅 테스트
-│   ├── useInfiniteQuery.test.ts # 무한 스크롤 훅 테스트
-│   └── useFirestore.test.ts     # Firestore 훅 테스트
-├── stores/
-│   ├── authStore.test.ts        # 인증 스토어 테스트
-│   ├── chatStore.test.ts        # 채팅 스토어 테스트
-│   └── blockStore.test.ts       # 차단 스토어 테스트
-├── utilities/
-│   ├── validation.test.ts       # 검증 유틸리티 테스트
-│   ├── textFilter.test.ts       # 텍스트 필터링 테스트
-│   └── imageUtils.test.ts       # 이미지 처리 테스트
-└── firebase/
-    └── services/
-        ├── authService.test.ts      # 인증 서비스 테스트
-        ├── postService.test.ts      # 게시글 서비스 테스트
-        └── chatService.test.ts      # 채팅 서비스 테스트
-```
-
-#### 통합 테스트 (Integration Tests)
-
-- **인증 플로우**: 소셜 로그인 → 프로필 설정 → 로그아웃
-- **게시글 작성**: 이미지 업로드 → 게시글 생성 → 목록 표시
-- **채팅 시스템**: 채팅방 생성 → 메시지 송수신 → 알림 처리
-- **검색 기능**: Algolia 검색 → 결과 필터링 → 상세 조회
-
-#### E2E 테스트 (Detox)
-
-- **주요 사용자 여정**:
-  - 회원가입 → 첫 게시글 작성 → 다른 사용자와 채팅
-  - 아이템 검색 → 관심 게시글 저장 → 거래 채팅
-  - 프로필 설정 → 알림 설정 → 사용자 차단
-
-### 3. 테스트 환경 설정
-
-#### Firebase 에뮬레이터 통합
-
-```bash
-# Firebase 에뮬레이터 설정
-firebase emulators:start --only firestore,auth,functions,storage
-
-# 테스트 실행
-npm run test                 # 단위 테스트
-npm run test:integration     # 통합 테스트
-npm run test:e2e            # E2E 테스트
-npm run test:coverage       # 커버리지 리포트
-```
-
-#### 목표 커버리지
-
-- **전체 코드 커버리지**: 80% 이상
-- **중요 비즈니스 로직**: 95% 이상
-- **UI 컴포넌트**: 70% 이상
-- **Firebase 서비스**: 90% 이상
-
-### 4. 품질 향상 요청사항
-
-#### 코드 품질 도구
-
-- **ESLint**: React Native, TypeScript 규칙 강화
-- **Prettier**: 코드 포맷팅 자동화
-- **Husky**: 커밋 전 린트 및 테스트 실행
-- **TypeScript**: strict 모드 적용
-
-#### 성능 모니터링
-
-- **React Native Performance**: 렌더링 최적화
-- **Firebase Performance**: 네트워크 요청 모니터링
-- **Bundle Analyzer**: 번들 크기 최적화
-
-#### 접근성 (Accessibility)
-
-- **Screen Reader**: 한국어 스크린 리더 지원
-- **색상 대비**: WCAG 2.1 AA 준수
-- **터치 영역**: 최소 44pt 크기 보장
-
-### 5. 특별 고려사항
-
-#### 한국 사용자 맞춤
-
-- **한글 입력 처리**: 조합 문자 처리 및 검증
-- **한국어 욕설 필터**: cenkor 라이브러리 테스트 강화
-- **시간대 처리**: KST 기준 시간 표시
-
-#### Animal Crossing 컨텍스트
-
-- **아이템 데이터**: 정확한 아이템 정보 검증
-- **거래 시스템**: 사기 방지 로직 테스트
-- **커뮤니티 기능**: 건전한 커뮤니티 유지 기능
-
-### 6. 결과물 요청사항
-
-#### 코드 리팩토링 결과물
-
-- 리팩토링된 전체 코드베이스
-- 성능 개선 보고서
-- 타입 안정성 강화 리포트
-- 보안 검토 및 개선사항 문서
-
-#### 테스트 코드 결과물
-
-- 포괄적인 테스트 스위트
-- 테스트 커버리지 리포트
-- CI/CD 파이프라인 통합
-- 테스트 실행 및 유지보수 가이드
-
-#### 문서화
-
-- 업데이트된 README.md
-- API 문서 (Firebase Functions)
-- 컴포넌트 스토리북 (선택사항)
-- 개발자 온보딩 가이드
-
----
-
-## 개발 환경 설정
-
-### 로컬 개발 (Firebase Emulator)
-
-1. **에뮬레이터 환경 설정**:
-   ```bash
-   # 에뮬레이터 시작
-   npm run emulator:start
-   
-   # 새 터미널에서 앱 시작 (에뮬레이터 모드)
-   npm run dev:emulator
-   ```
-
-2. **에뮬레이터 UI 접근**: http://localhost:4000
-   - Auth: http://localhost:9099
-   - Functions: http://localhost:5001
-
-3. **Java 설치 (Firestore 에뮬레이터 사용 시 필요)**:
-   ```bash
-   # macOS
-   brew install openjdk@11
-   
-   # 환경 변수 설정
-   export JAVA_HOME=/opt/homebrew/opt/openjdk@11
-   ```
-
-### 환경 변수 관리
-
-- **프로덕션**: `.env` 파일 사용
-- **로컬 개발**: `.env.local` 파일 사용 (에뮬레이터 설정)
-- **중요**: `.env.local`은 Git에 커밋하지 않음
-
-### 보안 주의사항
-
-1. **Firebase 보안 규칙**: Console에서 로컬 파일로 이전 권장
-2. **민감한 정보**: 환경 변수로 관리, 소스코드에 하드코딩 금지
-3. **에뮬레이터**: 개발용으로만 사용, 프로덕션 데이터와 분리
-
-When working with this codebase, always consider the Korean user base and Animal Crossing context when implementing features. The app uses comprehensive error handling, loading states, and user feedback patterns throughout.
-
-**리팩토링 시 특별히 주의할 점**: 기존 사용자 데이터 호환성 유지, 실시간 채팅 기능 안정성, 그리고 한국어 텍스트 처리의 정확성을 보장해야 합니다.
-
----
-
-# 📚 Extracted Coding Patterns & Best Practices
-
-*This section was automatically generated by analyzing 200+ git commits and the codebase structure.*
-
-## Commit Conventions
-
-이 프로젝트는 **Conventional Commits** 형식을 사용하며, 한국어로 작성됩니다:
-
-### Commit Type Distribution (최근 200개 커밋 분석)
-- `refactor:` (55) - 코드 리팩토링 (가장 많이 사용)
-- `feat:` (44) - 새로운 기능 추가
-- `fix:` (39) - 버그 수정
-- `chore:` (32) - 빌드/설정 관련 작업
-- `style:` (8) - 스타일 변경
-- `test:` (7) - 테스트 관련
-- `perf:` (1) - 성능 개선
-
-### Commit Message Format
-```
-<type>: <한국어 설명>
-
-# Examples:
-feat: 분양/입양 게시글 작성 시 주민 선택 기능 추가
-fix: 온보딩 중 업데이트 모달 노출 방지
-refactor: useVillagersByIds 훅 분리 및 useVillagerState 개선
-chore: 앱 버전 1.2.2에서 1.4.0으로 업데이트
-style: VillagerSelectItem 패딩 수정
-test: Maestro로 게시글 CRUD E2E 테스트 코드 작성
-```
-
-### Key Insights
-- **Refactor-first culture**: 리팩토링이 가장 많이 사용되는 커밋 타입으로, 코드 품질에 대한 높은 관심을 보임
-- **Korean language**: 모든 커밋 메시지는 한국어로 작성
-- **Detailed descriptions**: 단순히 "버그 수정"이 아닌 구체적인 설명 제공
-
-## Workflow Patterns
-
-### Pattern 1: Adding a New Feature (Domain-Driven)
-
-이 프로젝트는 도메인 중심 개발 패턴을 따릅니다.
-
-**Example: Adding Villager Selection Feature**
-
-1. **Types First** - Define data structures
-   ```typescript
-   // src/types/villager.ts
-   export type Villager = { ... }
-   ```
-
-2. **Constants** - Add related constants
-   ```typescript
-   // src/constants/post.ts
-   export const VILLAGER_CATEGORIES = { ... }
-   ```
-
-3. **Hooks (Query)** - Data fetching
-   ```typescript
-   // src/hooks/villager/query/useVillagers.ts
-   // src/hooks/villager/query/useSearchVillagers.ts
-   // src/hooks/villager/query/useVillagersByIds.ts
-   ```
-
-4. **Hooks (Form)** - Form state management
-   ```typescript
-   // src/hooks/post/form/useVillagerState.ts
-   // src/hooks/post/form/newPostFormSchema.ts
-   ```
-
-5. **Components** - UI components
-   ```typescript
-   // src/components/NewPost/VillagerSelect.tsx
-   // src/components/NewPost/VillagerSelectItem.tsx
-   // src/components/NewPost/VillagerList.tsx
-   // src/components/PostDetail/VillagerSummaryList.tsx
-   ```
-
-6. **Screens** - Integrate into screens
-   ```typescript
-   // src/screens/NewPost.tsx
-   // src/screens/PostDetail.tsx
-   ```
-
-7. **Backend Rules** - Update Firestore rules
-   ```
-   // firestore.rules
-   ```
-
-8. **Testing** - Add E2E tests
-   ```javascript
-   // __tests__/maestro/villager-selection.test.js
-   ```
-
-**Commit Sequence:**
-```bash
-feat: Villager 타입 및 상수 정의 추가
-feat: 주민 목록 조회를 위한 useVillagers 훅 및 Firestore 규칙 추가
-feat: 분양/입양 게시글 작성 시 주민 선택 기능 추가
-refactor: useVillagersByIds 훅 분리 및 useVillagerState 개선
-feat: 게시글 상세에서 분양/입양 주민 정보 표시
-style: NewPost 폼 UI 개선
-```
-
-### Pattern 2: Hook Organization
-
-Hooks are organized by domain, then by type:
-
-```
-src/hooks/{domain}/
-  ├── query/              # Data fetching hooks
-  │   ├── useInfinite{Domain}.ts
-  │   ├── use{Domain}ById.ts
-  │   ├── use{Domain}sByIds.ts
-  │   └── useSearch{Domain}.ts
-  ├── mutation/           # Data mutation hooks
-  │   ├── useCreate{Domain}.ts
-  │   ├── useUpdate{Domain}.ts
-  │   └── useDelete{Domain}.ts
-  └── form/               # Form state hooks
-      ├── use{Domain}State.ts
-      └── {domain}FormSchema.ts
-```
-
-**Existing Domains:**
-- `chat/` - Chat functionality
-- `comment/` - Comment operations
-- `firebase/` - Firebase utilities
-- `item/` - Item management
-- `notification/` - Notifications
-- `post/` - Post operations (most complex: has query/, form/, mutation/)
-- `profile/` - Profile management
-- `reply/` - Reply operations
-- `shared/` - Shared utilities (15 items)
-- `villager/` - Villager features
-
-### Pattern 3: Zustand Store Structure
-
-Each store follows a modular structure:
-
-```
-src/stores/{domain}/
-  ├── store.ts         # Store definition
-  ├── types.ts         # Type definitions
-  ├── index.ts         # Public API (exports store + hooks)
-  ├── initializer.ts   # Initialization logic
-  ├── providers/       # Domain-specific providers (optional)
-  └── utils/           # Domain-specific utilities (optional)
-```
-
-**Example: Auth Store**
-```typescript
-// src/stores/auth/store.ts
-export const useAuthStore = create<AuthState>((set) => ({ ... }))
-
-// src/stores/auth/types.ts
-export type AuthState = { ... }
-
-// src/stores/auth/index.ts
-export * from './store'
-export * from './types'
-
-// src/stores/auth/initializer.ts
-export const initializeAuth = async () => { ... }
-
-// src/stores/auth/providers/
-// - kakao.ts, naver.ts, apple.ts
-
-// src/stores/auth/utils/
-// - storage.ts, session.ts
-```
-
-### Pattern 4: React Query Patterns
-
-**Query Hooks Location:**
-```
-src/hooks/{domain}/query/
-  - useInfinite{Domain}.ts    # Infinite scroll
-  - use{Domain}ById.ts         # Single item
-  - use{Domain}sByIds.ts       # Multiple items (chunked)
-  - useSearch{Domain}.ts       # Search queries
-```
-
-**Common Patterns:**
-
-1. **Infinite Queries** - 무한 스크롤
-   ```typescript
-   useInfiniteQuery({
-     queryKey: ['posts', filters],
-     queryFn: ({ pageParam }) => fetchPosts(pageParam),
-     getNextPageParam: (lastPage) => lastPage.nextCursor,
-   })
-   ```
-
-2. **Chunked Queries** - Firestore `in` 쿼리 10개 제한 우회
-   ```typescript
-   // src/hooks/villager/query/useVillagersByIds.ts
-   // 1. Chunk array into groups of 10
-   // 2. Execute parallel queries with useQueries
-   // 3. Merge results
-   // 4. IMPORTANT: Reorder to match original villagerIds order
-   ```
-
-3. **Algolia Search** - 전체 텍스트 검색
-   ```typescript
-   useInfiniteQuery({
-     queryKey: ['search', 'villagers', searchText],
-     queryFn: ({ pageParam }) => searchAlgolia(searchText, pageParam),
-   })
-   ```
-
-### Pattern 5: Hook Refactoring
-
-훅 개선은 이 프로젝트에서 자주 발생하는 작업입니다 (55 refactor commits).
-
-**Common Refactoring Patterns:**
-
-1. **Query Optimization** - Firestore 쿼리 최적화
-2. **Cache Management** - React Query 캐시 전략 개선
-3. **Hook Splitting** - 복잡한 훅을 작은 단위로 분리
-4. **Algolia Integration** - 검색 기능을 Algolia로 전환
-5. **Type Improvements** - 타입 안정성 강화
-
-## Naming Conventions
-
-| Type | Convention | Examples |
-|------|-----------|----------|
-| **Hooks** | `use` + PascalCase | `useVillagers`, `useSearchItems`, `useNewPostForm` |
-| **Screens** | PascalCase | `PostDetail`, `NewPost`, `ChatRoom`, `Profile` |
-| **Components** | PascalCase | `VillagerSelectItem`, `PostForm`, `CommunityThumbnail` |
-| **Stores** | PascalCase + `Store` | `AuthStore`, `ChatStore`, `NotificationStore` |
-| **Types** | PascalCase | `Villager`, `Post`, `User`, `ChatMessage` |
-| **Files** | lowercase or PascalCase | `firebase.ts`, `Color.ts`, `PostDetail.tsx` |
-
-## Critical Technical Patterns
-
-### Firestore 'in' Query Chunking
-
-**Problem**: Firebase limits `where(field, 'in', array)` queries to 10 items maximum.
-
-**Solution**: Implement chunking pattern with React Query's `useQueries`:
+첫 인자는 로그용 이름이고, `options.throwOnError`에 따라 반환 타입이 갈린다(오버로드). DEV에서 Reactotron으로 결과 로깅.
 
 ```typescript
-export const useVillagersByIds = (villagerIds: string[]) => {
-  // 1. Chunk array into groups of 10
-  const chunks = chunkArray(villagerIds, 10);
+// 시그니처 (첫 인자 = 로그용 이름)
+firestoreRequest(name, operation, { throwOnError: true }): Promise<T>   // 실패 시 throw
+firestoreRequest(name, operation): Promise<T | null>                   // 실패 시 Alert 후 null
 
-  // 2. Execute parallel queries
-  const queries = useQueries({
-    queries: chunks.map(chunk => ({
-      queryKey: ['villagers', 'byIds', chunk],
-      queryFn: () => getVillagersByIds(chunk),
-    })),
-  });
+// null 방식 (userService.ts: getUserInfo) — 호출부에서 ?? 폴백과 함께 사용
+return firestoreRequest('나의 정보 조회', async () => {
+  const docData = await getDocFromFirestore({ collection: 'Users', id: uid });
+  return docData ? ({ uid: docData.id, ...docData } as UserInfo) : null;
+});
 
-  // 3. Merge results
-  const allVillagers = queries.flatMap(q => q.data ?? []);
-
-  // 4. CRITICAL: Reorder to match original villagerIds
-  const orderedVillagers = villagerIds
-    .map(id => allVillagers.find(v => v.id === id))
-    .filter(Boolean);
-
-  return orderedVillagers;
-};
+// throw 방식 (commentService.ts: deleteComment) — mutation에서 에러를 상위로 전파
+return firestoreRequest(
+  '댓글 삭제',
+  async () => {
+    /* batch.delete(...) */
+    await batch.commit();
+    return { replyCount };
+  },
+  { throwOnError: true },
+);
 ```
 
-**Key Points:**
-- Always chunk arrays larger than 10 items
-- Use `useQueries` for parallel execution
-- **Always reorder** results to match original array order (critical for UI)
-- Handle loading and error states from multiple queries
+**Firestore `in` 쿼리 10개 제한 우회는 서비스 레이어에서** (훅이 아님).
 
-### React Query Caching Strategy
+`chunkArray(ids, 10)`로 나눠 `Promise.all`로 병렬 조회 후 `flat`으로 병합. 예: `userService.ts:78`(`getPublicUserInfos`), `postService.ts:91`.
 
 ```typescript
-// Frequently accessed data
-staleTime: 5 * 60 * 1000, // 5 minutes
-
-// User-specific data
-staleTime: 1 * 60 * 1000, // 1 minute
-
-// Search results
-staleTime: 30 * 1000, // 30 seconds
+// src/firebase/services/userService.ts: getPublicUserInfos
+const chunks = chunkArray(creatorIds, 10);          // 10개씩 분할
+const chunkResults = await Promise.all(             // 청크별 병렬 조회
+  chunks.map((chunk) =>
+    queryDocs(query(usersRef, where('__name__', 'in', chunk))),
+  ),
+);
+// chunkResults.flat() 후 { [uid]: PublicUserInfo } 형태로 병합해 반환
 ```
 
-## Testing Strategy
+기타 함정:
 
-### Maestro E2E Tests
+- **Firebase 초기화는 `src/config/firebase.ts`에서만.**
+  - 에뮬레이터 연결은 `EXPO_PUBLIC_USE_FIREBASE_EMULATOR === 'true' && __DEV__`일 때만.
+  - `getReactNativePersistence`는 타입 미제공이라 `@ts-expect-error` 필요.
+- **SplashScreen.hideAsync()는 `App.tsx`에서만 호출** (훅 내부에서 호출 금지).
+- **`.npmrc`에 `legacy-peer-deps=true`** — 의존성 설치 시 peer 충돌을 무시. CI도 `npm ci`로 이를 전제함.
+- **`patch-package` 사용** — `postinstall`에서 `patches/`의 패치 적용. 라이브러리 직접 수정 대신 패치로 관리.
+- **`overrides`로 `query-string` 6.14.1 고정** (`package.json`).
 
-```
-__tests__/maestro/
-  ├── auth-flow.test.js        # 회원가입, 로그인, 로그아웃, 탈퇴
-  ├── post-crud.test.js        # 게시글 CRUD
-  ├── trading-flow.test.js     # 거래 전체 플로우
-  └── profile.test.js          # 프로필 수정
-```
+## 코드 스타일
 
-**Testing Pattern:**
-1. Add `testID` props to components for E2E testing
-2. Use custom test sequencer for test order control
-3. Firebase Functions have separate unit/integration tests
+- **Prettier** (`.prettierrc`): 탭 들여쓰기(`useTabs: true`), `tabWidth: 4`, `singleQuote: true`, `trailingComma: "all"`, `semi: true`, `printWidth: 100`.
+- **ESLint** (`.eslintrc.js`): `expo` + `@typescript-eslint/recommended` + `react-hooks/recommended` + `import/recommended` + `prettier` 확장.
+  - `unused-imports/no-unused-imports: error` — 미사용 import는 에러(자동 제거 대상).
+  - 미사용 변수는 warn, `_` 접두사는 예외.
+  - `import/order: error` — builtin→external→internal→상대→type 순, 그룹 간 빈 줄, 알파벳 정렬.
+  - `react/react-in-jsx-scope: off`, `react/prop-types: off`.
+  - 테스트 파일(`__tests__`, `*.test.*`)은 `no-explicit-any`, unused-vars 완화.
+  - `functions/`는 lint 대상에서 제외(`ignorePatterns`) — functions는 자체 ESLint 사용.
+- **TypeScript** (`tsconfig.json`): `strict: true`, 경로 alias `@/* → ./src/*`, `@assets/* → ./assets/*`. `functions`는 exclude(별도 tsconfig).
+- 커밋 시 `pre-commit` 훅이 `lint-staged`(변경 파일 `eslint --fix`) + `npm run typecheck` 실행(`.husky/pre-commit`).
 
-**When adding features**: Always add `testID` props for Maestro:
-```tsx
-<Button testID="submit-post-button">Submit</Button>
-<TextInput testID="post-title-input" />
-<View testID="villager-list">...</View>
-```
+## 테스트 전략
 
-## Most Changed Files (High Activity Areas)
+- **앱 단위 테스트는 현재 없음**
+  - `jest.config.js`에 `maestro` 프로젝트만 정의되어 있어 `npm test`는 Maestro E2E 오케스트레이션만 실행한다.
+  - `src/__tests__/`에는 테스트가 아니라 Firebase 시드/정리 유틸만 있음.
+- **E2E: Maestro**
+  - flow는 `.maestro/*.yaml`, Jest 러너는 `__tests__/maestro/*.test.js`가 순서(`maestro-sequencer.js`: auth-flow → post-flow → trade-flow)를 제어.
+  - 새 기능 추가 시 컴포넌트에 `testID` prop 부여.
+- **Functions 테스트가 실제 자동화 테스트의 중심**
+  - `functions/__tests__/`에 auth 단위 테스트(`*.test.ts`)와 트리거 통합 테스트(`*.integration.test.ts`)가 있음.
+  - 에뮬레이터 위에서 실행(`firebase emulators:exec ... "npm test"`), Java 필요(CI는 Java 21).
 
-이 파일들은 가장 자주 변경되므로 특별한 주의가 필요합니다:
+## 중요 패턴
 
-1. `src/types/components.ts` (20회) - Component type definitions
-2. `src/screens/PostDetail.tsx` (17회) - Post detail screen
-3. `package.json` (17회) - Dependencies
-4. `src/screens/NewPost.tsx` (12회) - Post creation
-5. `src/screens/ChatRoom.tsx` (11회) - Chat functionality
-6. `src/navigation/RootStackNavigator.tsx` (10회) - Navigation
+### 도메인 중심 훅 구조
+훅은 도메인별 → 타입별로 배치: `src/hooks/{domain}/{query|mutation|form}/`.
 
-## Performance Optimization
+예: `src/hooks/post/query/useInfinitePosts.ts`, `src/hooks/post/form/newPostFormSchema.ts`.
 
-### Firestore Query Optimization
-- Use `where(__name__, in)` for batch queries
-- Limit `in` queries to 10 items (Firebase limitation)
-- Implement chunking for larger datasets
-- Reorder results to match original array order
+### Zustand 스토어 모듈 구조
+각 스토어는 `store.ts`, `types.ts`, `index.ts`, `initializer.ts`를 갖고, 필요 시 `providers/`, `utils/`를 둔다(예: `src/stores/auth/`).
 
-### Image Optimization
-- Compress before upload
-- Use Expo Image for efficient rendering
-- Lazy load images in lists
+초기화는 `App.tsx`에서 `use{Domain}Initializer` 훅으로 호출.
 
-## Key Takeaways for Development
+### React Query 기본 설정 (`App.tsx`)
+`staleTime: 5분`, `gcTime: 10분`, `retry: 1`.
 
-When working on this codebase:
+무한 스크롤은 `useInfiniteQuery`(예: `useInfinitePosts.ts`), 검색은 Algolia 쿼리 훅(`useSearchPosts.ts`, `useSearchItems.ts`).
 
-1. **Always use Korean** for commit messages and user-facing text
-2. **Follow domain-driven structure**: Group by feature (post, villager, chat) then by type (query, form, mutation)
-3. **Refactor proactively**: This team values code quality highly (55 refactor commits)
-4. **Use React Query patterns**: Infinite queries, chunked queries, Algolia integration
-5. **Organize stores modularly**: Each store has store.ts, types.ts, index.ts, initializer.ts
-6. **Add testID for E2E**: Maestro tests require testID props
-7. **Handle Firestore limitations**: Chunk arrays for `in` queries (10 item limit)
-8. **Korean context matters**: Profanity filtering, timezone, language processing
-9. **Firebase emulator for local dev**: Never test directly on production
-10. **Security first**: Always update Firestore rules when adding new features
+### 게시글 상태 필터
+게시글 조회 시 `where('status', 'not-in', ['hidden', 'deleted'])`로 숨김/삭제 게시글 제외(`useInfinitePosts.ts`).
 
----
+## 환경 설정
 
-*Note: Instinct files for continuous learning have been generated in `.claude/instincts/`*
+- **Node 22** (CI `setup-node`, `functions` engines). 패키지 매니저는 npm.
+- **최초 설정**: `npm install`(루트) → `cd functions && npm install`.
+  - `postinstall`이 patch-package 실행, `prepare`가 husky 설치.
+- **환경 변수** (`.env`, git 미추적):
+  - Firebase: `EXPO_PUBLIC_API_KEY`, `EXPO_PUBLIC_AUTH_DOMAIN`, `EXPO_PUBLIC_PROJECT_ID`, `EXPO_PUBLIC_STORAGE_BUCKET`, `EXPO_PUBLIC_MESSAGING_SENDER_ID`, `EXPO_PUBLIC_APP_ID`, `EXPO_PUBLIC_MEASUREMENT_ID`
+  - Algolia: `EXPO_PUBLIC_ALGOLIA_APP_ID`, `EXPO_PUBLIC_ALGOLIA_SEARCH_KEY`
+  - 소셜: `EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY`, `EXPO_PUBLIC_NAVER_CLIENT_ID`, `EXPO_PUBLIC_NAVER_SECRET` 등
+  - AdMob/EAS: `EXPO_PUBLIC_ADMOB_IOS_APP_ID`, `EXPO_PUBLIC_EAS_PROJECT_ID`, `GOOGLE_SERVICE_INFO_PLIST`
+- **에뮬레이터용 변수는 `.env.local`** (git 미추적): `EXPO_PUBLIC_USE_FIREBASE_EMULATOR`, `EXPO_PUBLIC_FIREBASE_*_EMULATOR_HOST`.
+- `GoogleService-Info.plist`, `google-services.json`은 git 미추적(`.gitignore`).
+
+## Git 워크플로우
+
+- **커밋 컨벤션**: Conventional Commits, 한국어 메시지.
+  - 허용 타입: `feat, design, fix, chore, docs, perf, ci, style, refactor` (`commitlint.config.js` — `design`이 커스텀 타입).
+  - `commit-msg` 훅에서 commitlint 검증.
+- **브랜치 전략**: 접두사 기반 작업 브랜치(`feat/`, `fix/`, `ci/`, `design/` 등).
+  - PR 대상 브랜치는 **master** (`.github/workflows/ci.yml`의 `pull_request.branches: [master]`).
+- **CI** (`ci.yml`, PR→master 트리거):
+  - 앱 Lint + TypeCheck는 항상 실행.
+  - functions Lint/TypeCheck/Build는 `functions/**` 변경 시에만.
+  - functions 테스트는 항상(Java 21 + 에뮬레이터).
+  - Claude 자동 코드 리뷰 job 포함.
+- 커밋은 사용자가 직접 수행(자동 커밋 금지). PR/커밋 메시지에 AI 출처 표기 금지.
+
+## 추가 사항
+
+- **응답 언어**: 한국어. 사용자 대면 텍스트·커밋 메시지도 한국어.
+- **톤**: 간결하고 직접적인 격식체, 핵심 위주.
+- **도메인 주의사항**:
+  - 한국어 욕설 필터(`cenkor`), KST 시간 처리, 동물의 숲 아이템/주민 데이터 정확성.
+  - 실시간 채팅 안정성과 기존 사용자 데이터 호환성 유지.
+- **작업 원칙**:
+  - 리스너/구독은 언마운트 시 정리(메모리 누수 방지).
+  - 새 기능은 Firestore 규칙(`firestore.rules`) 업데이트 동반.
+  - 3개 이상 파일 또는 구조 변경은 계획을 먼저 공유 후 진행.
