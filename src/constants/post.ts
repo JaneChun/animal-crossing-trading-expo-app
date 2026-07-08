@@ -129,6 +129,7 @@ export const VILLAGER_PERSONALITIES = [
 export const MAX_COMMENT_LENGTH = 1000;
 export const MAX_IMAGES = 10;
 export const MAX_VILLAGERS = 10;
+export const MAX_CART_ITEMS = 50;
 
 export const ARTWORKS_WITH_FAKES = [
 	'아카데믹한 명화',

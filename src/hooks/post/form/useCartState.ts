@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 
 import { showToast } from '@/components/ui/Toast';
+import { MAX_CART_ITEMS } from '@/constants/post';
 import { CartItem, Item } from '@/types/post';
 
 import { NewPostFormValues } from './newPostFormSchema';
@@ -50,6 +51,11 @@ export const useCartState = (
 
 			if (isAlreadyAdded) {
 				showToast('warn', '이미 추가된 아이템이에요.');
+				return;
+			}
+
+			if (cart.length >= MAX_CART_ITEMS) {
+				showToast('warn', `아이템은 최대 ${MAX_CART_ITEMS}개까지 추가할 수 있어요.`);
 				return;
 			}
 
