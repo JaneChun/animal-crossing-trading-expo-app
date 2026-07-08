@@ -4,26 +4,15 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import HighlightMatchText from '@/components/ui/HighlightMatchText';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
-import { isArtworkWithFake } from '@/constants/post';
 import { Colors } from '@/theme/Color';
 import { ItemSelectItemProps } from '@/types/components';
+import { getCatalogItemDisplayName } from '@/utilities/catalogItemToItem';
 
 export const ITEM_HEIGHT = 53;
 
 const ItemSelectItem = ({ item, searchInput, onSelect, index }: ItemSelectItemProps) => {
 	const hasVariants = !!(item.bodyTitle || item.patternTitle);
-
-	let displayName = item.name;
-	if (item.category === 'Artwork') {
-		if (isArtworkWithFake(item)) {
-			const genuine = item.attributes.genuine;
-			if (genuine === 'Yes') {
-				displayName += ' (진품)';
-			} else if (genuine === 'No') {
-				displayName += ' (가품)';
-			}
-		}
-	}
+	const displayName = getCatalogItemDisplayName(item);
 
 	return (
 		<View style={styles.container}>

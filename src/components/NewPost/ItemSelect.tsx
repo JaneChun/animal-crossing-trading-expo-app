@@ -5,7 +5,7 @@ import { FlatList } from 'react-native-gesture-handler';
 
 import Categories from '@/components/ui/Categories';
 import SearchInput from '@/components/ui/inputs/SearchInput';
-import { isArtworkWithFake, ITEM_CATEGORIES } from '@/constants/post';
+import { ITEM_CATEGORIES } from '@/constants/post';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useSearchItems } from '@/hooks/item/query/useSearchItems';
 import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
@@ -13,6 +13,7 @@ import { Colors } from '@/theme/Color';
 import { CatalogItem, CatalogVariant } from '@/types/catalog';
 import { ItemSelectProps } from '@/types/components';
 import { ItemCategory, ItemCategoryItem } from '@/types/post';
+import { catalogItemToItem, catalogVariantToItem } from '@/utilities/catalogItemToItem';
 
 import ItemSelectItem, { ITEM_HEIGHT } from './ItemSelectItem';
 import ItemSelectSkeleton from './ItemSelectSkeleton';
@@ -38,27 +39,8 @@ const ItemSelect = ({ addItemToCart, containerStyle }: ItemSelectProps) => {
 				// 변형이 있으면 variant 선택 화면으로 전환
 				setSelectedCatalogItem(item);
 			} else {
-				let description: string | undefined = undefined;
-
-				if (item.category === 'Artwork' && isArtworkWithFake(item)) {
-					const genuine = item.attributes.genuine;
-					if (genuine === 'Yes') {
-						description = '진품';
-					} else if (genuine === 'No') {
-						description = '가품';
-					}
-				} else if (item.category === 'Recipes') {
-					description = '레시피';
-				}
-
 				// 변형이 없으면 바로 추가
-				addItemToCart({
-					id: item.id,
-					category: item.category,
-					imageUrl: item.imageUrl,
-					name: item.name,
-					...(description && { color: description }),
-				});
+				addItemToCart(catalogItemToItem(item));
 			}
 		},
 		[addItemToCart],
@@ -70,16 +52,8 @@ const ItemSelect = ({ addItemToCart, containerStyle }: ItemSelectProps) => {
 		(variant: CatalogVariant) => {
 			if (!selectedCatalogItem) return;
 
-			const variantTokens = [variant.body, variant.pattern].filter(Boolean);
-			const color = variantTokens.length > 0 ? variantTokens.join(', ') : undefined;
-
-			addItemToCart({
-				id: variant.id,
-				category: selectedCatalogItem.category,
-				imageUrl: variant.imageUrl,
-				name: selectedCatalogItem.name,
-				...(color && { color }),
-			});
+			// 변형 추가
+			addItemToCart(catalogVariantToItem(selectedCatalogItem, variant));
 
 			backToList(); // 추가 후 리스트로 전환
 		},
