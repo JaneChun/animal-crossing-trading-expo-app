@@ -162,7 +162,6 @@ const ItemSelect = ({ addItemToCart, containerStyle }: ItemSelectProps) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingBottom: 60,
 	},
 	header: {
 		paddingHorizontal: 24,

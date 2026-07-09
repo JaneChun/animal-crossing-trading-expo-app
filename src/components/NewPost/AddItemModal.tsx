@@ -5,13 +5,7 @@ import { AddItemModalProps } from '@/types/components';
 
 import ItemSelect from './ItemSelect';
 
-const AddItemModal = ({
-	cart,
-	addItemToCart,
-	isVisible,
-	onClose,
-	initialKeyword,
-}: AddItemModalProps) => {
+const AddItemModal = ({ cart, addItemToCart, isVisible, onClose }: AddItemModalProps) => {
 	return (
 		<CustomBottomSheet
 			bodyStyle={styles.container}
@@ -19,11 +13,7 @@ const AddItemModal = ({
 			onClose={onClose}
 			snapPoints={['95%', '100%']}
 		>
-			<ItemSelect
-				cart={cart}
-				addItemToCart={addItemToCart}
-				initialKeyword={initialKeyword}
-			/>
+			<ItemSelect cart={cart} addItemToCart={addItemToCart} />
 		</CustomBottomSheet>
 	);
 };
@@ -33,6 +23,6 @@ export default AddItemModal;
 const styles = StyleSheet.create({
 	container: {
 		padding: 0,
-		paddingBottom: 30
+		paddingBottom: 30,
 	},
 });

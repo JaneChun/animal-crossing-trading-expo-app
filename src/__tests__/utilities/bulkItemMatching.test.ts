@@ -15,7 +15,7 @@ const catalogItem = (overrides: Partial<CatalogItem> & { id: string; name: strin
 		bodyTitle: null,
 		patternTitle: null,
 		attributes: {},
-	} as unknown as CatalogItem);
+	}) as unknown as CatalogItem;
 
 describe('bulkItemMatching', () => {
 	it('normalizes compact Korean item text', () => {
@@ -24,18 +24,11 @@ describe('bulkItemMatching', () => {
 	});
 
 	it('builds cleaned terms from trading-list suffixes', () => {
-		expect(buildCleanedSearchTerms('생선건조대 (물고기) 1개 - 25마일')).toEqual([
-			'생선건조대',
-			'생선건조대 물고기',
-		]);
+		expect(buildCleanedSearchTerms('생선건조대 (물고기) 1개 - 25마일')).toEqual(['생선건조대']);
 		expect(buildCleanedSearchTerms('물고기컨테이너 (오렌지) 1개 - 1마일')).toEqual([
 			'물고기컨테이너',
-			'물고기컨테이너 오렌지',
 		]);
-		expect(buildCleanedSearchTerms('페인트통 (세피아 컬러) 1개 - 1마일')).toEqual([
-			'페인트통',
-			'페인트통 세피아 컬러',
-		]);
+		expect(buildCleanedSearchTerms('페인트통 (세피아 컬러) 1개 - 1마일')).toEqual(['페인트통']);
 	});
 
 	it('classifies a unique original exact match as found', () => {
@@ -59,7 +52,11 @@ describe('bulkItemMatching', () => {
 			source: 'original',
 			hits: [
 				catalogItem({ id: 'bamboo-box', name: '대나무 깜짝 상자', category: 'Housewares' }),
-				catalogItem({ id: 'bamboo-box-recipe', name: '대나무 깜짝 상자', category: 'Recipes' }),
+				catalogItem({
+					id: 'bamboo-box-recipe',
+					name: '대나무 깜짝 상자',
+					category: 'Recipes',
+				}),
 			],
 		});
 
@@ -72,7 +69,7 @@ describe('bulkItemMatching', () => {
 		}
 	});
 
-	it('classifies cleaned matches as needsReview even with one candidate', () => {
+	it('classifies a single cleaned candidate as found', () => {
 		const result = classifyCatalogHits({
 			line: '요트 (대미지) 1개 - 5마일',
 			searchTerm: '요트',
@@ -80,7 +77,24 @@ describe('bulkItemMatching', () => {
 			hits: [catalogItem({ id: 'yacht', name: '요트' })],
 		});
 
-		expect(result.status).toBe('needsReview');
+		expect(result.status).toBe('found');
+		if (result.status === 'found') {
+			expect(result.item.id).toBe('yacht');
+		}
+	});
+
+	it('classifies a single non-exact hit as found', () => {
+		const result = classifyCatalogHits({
+			line: '사과의자',
+			searchTerm: '사과의자',
+			source: 'original',
+			hits: [catalogItem({ id: 'apple-chair', name: '사과 의자' })],
+		});
+
+		expect(result.status).toBe('found');
+		if (result.status === 'found') {
+			expect(result.item.id).toBe('apple-chair');
+		}
 	});
 
 	it('classifies empty hits as failed', () => {
