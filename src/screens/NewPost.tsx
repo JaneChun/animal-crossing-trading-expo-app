@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import AddItemModal from '@/components/NewPost/AddItemModal';
 import AddVillagerModal from '@/components/NewPost/AddVillagerModal';
-import BulkAddItemModal from '@/components/NewPost/BulkAddItemModal';
+import BulkAddItemModal from '@/components/NewPost/BulkAddItem/BulkAddItemModal';
 import EditItemModal from '@/components/NewPost/EditItemModal';
 import PostForm from '@/components/NewPost/PostForm';
 import Button from '@/components/ui/Button';

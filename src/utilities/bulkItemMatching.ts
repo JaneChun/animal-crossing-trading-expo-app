@@ -1,45 +1,10 @@
+import { MAX_REVIEW_CANDIDATES } from '@/constants/post';
+import {
+	type BulkLineMatchResult,
+	type CatalogItemCandidate,
+	type ClassifyCatalogHitsParams,
+} from '@/types/bulkItemMatching';
 import { CatalogItem } from '@/types/catalog';
-
-export const MAX_REVIEW_CANDIDATES = 2;
-
-export type MatchSource = 'original' | 'cleaned';
-
-export type CatalogItemCandidate = {
-	id: string;
-	name: string;
-	category: string;
-	imageUrl: string;
-	item: CatalogItem;
-};
-
-export type FoundLineMatchResult = {
-	line: string;
-	status: 'found';
-	item: CatalogItem;
-};
-
-export type NeedsReviewLineMatchResult = {
-	line: string;
-	status: 'needsReview';
-	searchTerm: string;
-	source: MatchSource;
-	candidates: CatalogItemCandidate[];
-};
-
-export type FailedLineMatchResult = {
-	line: string;
-	status: 'failed';
-};
-
-export type BulkLineMatchResult =
-	FoundLineMatchResult | NeedsReviewLineMatchResult | FailedLineMatchResult;
-
-export type ClassifyCatalogHitsParams = {
-	line: string;
-	searchTerm: string;
-	source: MatchSource;
-	hits: CatalogItem[];
-};
 
 const REGEX = {
 	MULTI_SPACE: /\s+/g,
