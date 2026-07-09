@@ -2,6 +2,18 @@ module.exports = {
 	testSequencer: './__tests__/maestro/maestro-sequencer.js',
 	projects: [
 		{
+			displayName: 'unit',
+			testEnvironment: 'node',
+			testMatch: ['<rootDir>/src/__tests__/**/*.test.ts', '<rootDir>/src/__tests__/**/*.test.tsx'],
+			moduleNameMapper: {
+				'^@/(.*)$': '<rootDir>/src/$1',
+				'^@assets/(.*)$': '<rootDir>/assets/$1',
+			},
+			transform: {
+				'^.+\\.tsx?$': '<rootDir>/jest.ts-transformer.js',
+			},
+		},
+		{
 			displayName: 'maestro',
 			testEnvironment: 'node',
 			rootDir: '.',
