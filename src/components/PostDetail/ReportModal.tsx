@@ -26,7 +26,6 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 	};
 
 	const handleBack = () => {
-		console.log('back');
 		setStep(1);
 	};
 
@@ -41,7 +40,7 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 			isVisible={isVisible}
 			onClose={onClose}
 			title="신고하기"
-			heightRatio={0.6}
+			snapPoints={['60%']}
 			rightButton={
 				step === 1 ? (
 					<Button

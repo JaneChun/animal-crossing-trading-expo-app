@@ -1,11 +1,6 @@
-import BottomSheet, {
-	BottomSheetBackdrop,
-	BottomSheetBackdropProps,
-	BottomSheetView,
-} from '@gorhom/bottom-sheet';
-import { useHeaderHeight } from '@react-navigation/elements';
-import { ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
-import { StyleProp, StyleSheet, Text, useWindowDimensions, View, ViewStyle } from 'react-native';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
+import { ReactNode, useCallback, useEffect, useRef } from 'react';
+import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { Colors } from '@/theme/Color';
@@ -13,7 +8,7 @@ import { Colors } from '@/theme/Color';
 const CustomBottomSheet = ({
 	children,
 	isVisible,
-	heightRatio = 0.5,
+	snapPoints = ['50%'],
 	title,
 	leftButton,
 	rightButton,
@@ -22,7 +17,7 @@ const CustomBottomSheet = ({
 }: {
 	children: ReactNode;
 	isVisible: boolean;
-	heightRatio?: number;
+	snapPoints?: string[];
 	title?: string;
 	leftButton?: ReactNode;
 	rightButton?: ReactNode;
@@ -30,10 +25,6 @@ const CustomBottomSheet = ({
 	onClose: () => void;
 }) => {
 	const bottomSheetRef = useRef<BottomSheet>(null);
-	const { height: screenHeight } = useWindowDimensions();
-	const headerHeight = useHeaderHeight();
-
-	const snapPoints = useMemo(() => [`${heightRatio * 100}`], [heightRatio]);
 
 	useEffect(() => {
 		if (isVisible) {
@@ -69,6 +60,7 @@ const CustomBottomSheet = ({
 			style={styles.screen}
 			ref={bottomSheetRef}
 			index={isVisible ? 0 : -1} // -1 (닫힘)
+			enableDynamicSizing={false}
 			snapPoints={snapPoints}
 			onChange={handleSheetChanges}
 			backdropComponent={renderBackdrop}
@@ -80,7 +72,12 @@ const CustomBottomSheet = ({
 			}}
 			handleIndicatorStyle={{ width: 60, backgroundColor: Colors.icon.default }}
 		>
-			<BottomSheetView style={styles.screen}>
+			{/*
+			 * v5의 BottomSheetView는 dynamic sizing 측정용 절대배치 뷰라 flex 체인이 끊김 → 일반 View 사용.
+			 * 단, View는 콘텐츠 높이를 측정해주지 않으므로 enableDynamicSizing={false}가 전제 조건.
+			 * (dynamic sizing을 다시 켜면 detent 계산이 끝나지 않아 시트가 열리지 않음)
+			 */}
+			<View style={styles.screen}>
 				{title && (
 					<View style={styles.header}>
 						{leftButton && (
@@ -92,18 +89,8 @@ const CustomBottomSheet = ({
 						)}
 					</View>
 				)}
-				<View
-					style={[
-						styles.body,
-						{
-							height: (screenHeight - headerHeight) * heightRatio,
-						},
-						bodyStyle,
-					]}
-				>
-					{children}
-				</View>
-			</BottomSheetView>
+				<View style={[styles.body, bodyStyle]}>{children}</View>
+			</View>
 		</BottomSheet>
 	);
 };
@@ -135,7 +122,7 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 	body: {
-		padding: 30,
 		flex: 1,
+		padding: 30,
 	},
 });

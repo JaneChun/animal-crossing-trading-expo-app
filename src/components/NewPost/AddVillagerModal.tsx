@@ -5,7 +5,7 @@ import VillagerSelect from './VillagerSelect';
 
 const AddVillagerModal = ({ addVillager, isVisible, onClose }: AddVillagerModalProps) => {
 	return (
-		<CustomBottomSheet isVisible={isVisible} onClose={onClose} heightRatio={0.95}>
+		<CustomBottomSheet isVisible={isVisible} onClose={onClose} snapPoints={['95%', '100%']}>
 			<VillagerSelect addVillager={addVillager} />
 		</CustomBottomSheet>
 	);
