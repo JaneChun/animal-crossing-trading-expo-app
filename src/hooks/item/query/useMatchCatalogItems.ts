@@ -26,8 +26,15 @@ export interface BulkMatchOutput {
  * 사용자가 붙여넣은 전체 텍스트를 검색할 줄 목록으로 정리
  * 호출부 검증과 별개로 Algolia 요청 수 상한을 훅 레벨에서도 보장
  */
-const parseSearchLines = (text: string): string[] =>
-	[...new Set(getTrimmedNonEmptyLines(text))].slice(0, MAX_ITEM_TEXT_LINES);
+const parseSearchLines = (text: string): string[] => {
+	const lines = getTrimmedNonEmptyLines(text);
+
+	if (lines.length > MAX_ITEM_TEXT_LINES) {
+		throw new Error(`Bulk item matching supports up to ${MAX_ITEM_TEXT_LINES} lines.`);
+	}
+
+	return lines;
+};
 
 const HITS_PER_LINE = 5;
 
