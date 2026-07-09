@@ -17,7 +17,7 @@ const log = (name: string, params?: AnalyticsParams) => {
 	}
 	analytics()
 		.logEvent(name, params)
-		.catch(() => { });
+		.catch(() => {});
 };
 
 // P0 — 인증
@@ -52,6 +52,28 @@ export const logPostMarkDone = () => log('post_mark_done');
 export const logChatRoomCreate = () => log('chat_room_create');
 
 export const logMessageSend = (type: MessageType) => log('message_send', { type });
+
+// P1 — 아이템 일괄 추가
+export const logBulkAddOpen = () => log('bulk_add_open');
+
+type BulkAddSearchParams = {
+	line_count: number;
+	found: number;
+	needs_review: number;
+	failed: number;
+};
+
+export const logBulkAddSearch = (params: BulkAddSearchParams) => log('bulk_add_search', params);
+
+type BulkAddConfirmParams = {
+	added: number;
+	found: number;
+	selected_review: number;
+	skipped_review: number;
+	failed: number;
+};
+
+export const logBulkAddConfirm = (params: BulkAddConfirmParams) => log('bulk_add_confirm', params);
 
 // P1 — 댓글
 export const logCommentCreate = (type: CommentType) => log('comment_create', { type });
