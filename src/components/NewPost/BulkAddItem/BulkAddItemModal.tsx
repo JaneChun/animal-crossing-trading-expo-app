@@ -25,13 +25,11 @@ const BulkAddItemModal = ({
 		reviewItems,
 		failedResults,
 		selectedReviewItems,
-		selectedReviewItemList,
 		selectedCount,
 		isOverCapacity,
 		addableItems,
-		addableFoundItems,
-		addableSelectedReviewItems,
 		selectReviewCandidate,
+		getConfirmStats,
 		reset,
 	} = useBulkAddSelection({
 		cart,
@@ -50,15 +48,7 @@ const BulkAddItemModal = ({
 
 	const handleConfirm = () => {
 		addItemsToCart(addableItems);
-
-		logBulkAddConfirm({
-			added: addableItems.length,
-			found: addableFoundItems.length,
-			selected_review: addableSelectedReviewItems.length,
-			skipped_review: reviewItems.length - selectedReviewItemList.length,
-			failed: failedResults.length,
-		});
-
+		logBulkAddConfirm(getConfirmStats());
 		handleClose();
 	};
 

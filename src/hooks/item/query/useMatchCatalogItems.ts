@@ -1,16 +1,18 @@
 import { useMutation } from '@tanstack/react-query';
 
 import { searchClient } from '@/config/firebase';
-import { HITS_PER_LINE, MAX_ITEM_TEXT_LINES } from '@/constants/post';
+import { HITS_PER_LINE, MAX_ITEM_TEXT_LINES, MAX_MULTI_QUERY_SIZE } from '@/constants/post';
 import {
 	type BulkLineMatchResult,
 	type BulkMatchOutput,
 	type FailedLineMatchResult,
 	type FoundLineMatchResult,
+	type LineSearchRequest,
 	type NeedsReviewLineMatchResult,
 } from '@/types/bulkItemMatching';
 import { CatalogItem } from '@/types/catalog';
 import { buildCleanedSearchTerms, classifyCatalogHits } from '@/utilities/bulkItemMatching';
+import { chunkArray } from '@/utilities/chunkArray';
 import { getTrimmedNonEmptyLines } from '@/utilities/itemTextLines';
 
 /**
@@ -27,42 +29,49 @@ const parseSearchLines = (text: string): string[] => {
 	return lines;
 };
 
-const searchCatalogLine = async (
-	line: string,
-	searchTerm: string,
-	source: 'original' | 'cleaned',
-): Promise<BulkLineMatchResult> => {
-	const { results } = await searchClient.searchForHits<CatalogItem>({
-		requests: [
-			{
-				indexName: 'CatalogItems',
-				query: searchTerm,
-				hitsPerPage: HITS_PER_LINE,
-				optionalFilters: [`name:${searchTerm}`],
-			},
-		],
-	});
+/**
+ * 여러 줄의 검색 요청을 Algolia 멀티쿼리로 묶어 실행한다.
+ * 요청당 상한(MAX_MULTI_QUERY_SIZE)만큼 청킹해 청크별로 한 번씩 요청하고,
+ * 각 응답을 요청 index와 짝지어 분류 결과로 돌려준다.
+ */
+const runSearchRequests = async (
+	requests: LineSearchRequest[],
+): Promise<{ index: number; result: BulkLineMatchResult }[]> => {
+	if (requests.length === 0) return [];
 
-	const hits = (results[0]?.hits ?? []).map((hit) => ({
-		...hit,
-		id: hit.objectID,
-	}));
+	const chunks = chunkArray(requests, MAX_MULTI_QUERY_SIZE);
 
-	return classifyCatalogHits({ line, searchTerm, source, hits });
-};
+	const chunkResults = await Promise.all(
+		chunks.map(async (chunk) => {
+			const { results } = await searchClient.searchForHits<CatalogItem>({
+				requests: chunk.map((request) => ({
+					indexName: 'CatalogItems',
+					query: request.searchTerm,
+					hitsPerPage: HITS_PER_LINE,
+					optionalFilters: [`name:${request.searchTerm}`],
+				})),
+			});
 
-const matchLine = async (line: string): Promise<BulkLineMatchResult> => {
-	// 원본 텍스트로 검색
-	const originalResult = await searchCatalogLine(line, line, 'original');
-	if (originalResult.status !== 'failed') return originalResult;
+			return chunk.map((request, i) => {
+				const hits = (results[i]?.hits ?? []).map((hit) => ({
+					...hit,
+					id: hit.objectID,
+				}));
 
-	// 정제된 검색어로 재시도
-	for (const cleanedTerm of buildCleanedSearchTerms(line)) {
-		const cleanedResult = await searchCatalogLine(line, cleanedTerm, 'cleaned');
-		if (cleanedResult.status !== 'failed') return cleanedResult;
-	}
+				return {
+					index: request.index,
+					result: classifyCatalogHits({
+						line: request.line,
+						searchTerm: request.searchTerm,
+						source: request.source,
+						hits,
+					}),
+				};
+			});
+		}),
+	);
 
-	return { line, status: 'failed' };
+	return chunkResults.flat();
 };
 
 const matchCatalogItems = async (text: string): Promise<BulkMatchOutput> => {
@@ -72,7 +81,47 @@ const matchCatalogItems = async (text: string): Promise<BulkMatchOutput> => {
 		return { results: [], foundResults: [], needsReviewResults: [], failedResults: [] };
 	}
 
-	const lineResults = await Promise.all(lines.map(matchLine));
+	// 줄 순서를 유지한 결과 배열 (기본값은 실패)
+	const lineResults: BulkLineMatchResult[] = lines.map((line) => ({
+		line,
+		status: 'failed',
+	}));
+
+	// 1) 모든 줄을 원문으로 일괄 검색
+	const originalRequests: LineSearchRequest[] = lines.map((line, index) => ({
+		index,
+		line,
+		searchTerm: line,
+		source: 'original',
+	}));
+	const originalResponses = await runSearchRequests(originalRequests);
+	originalResponses.forEach(({ index, result }) => {
+		lineResults[index] = result;
+	});
+
+	// 2) 실패한 줄만 정제된 검색어로 일괄 재검색
+	//    (buildCleanedSearchTerms는 최대 1개의 검색어만 돌려준다)
+	const cleanedRequests: LineSearchRequest[] = [];
+	lineResults.forEach((result, index) => {
+		if (result.status !== 'failed') return;
+
+		const [cleanedTerm] = buildCleanedSearchTerms(lines[index]);
+		if (cleanedTerm) {
+			cleanedRequests.push({
+				index,
+				line: lines[index],
+				searchTerm: cleanedTerm,
+				source: 'cleaned',
+			});
+		}
+	});
+
+	const cleanedResponses = await runSearchRequests(cleanedRequests);
+	cleanedResponses.forEach(({ index, result }) => {
+		if (result.status !== 'failed') {
+			lineResults[index] = result;
+		}
+	});
 
 	return {
 		results: lineResults,

@@ -139,19 +139,36 @@ export const useBulkAddSelection = ({
 		});
 	}, []);
 
+	// 확정 애널리틱스용 카운트 — 카트 중복 제외 후 실제 처리 결과를 집계
+	const getConfirmStats = useCallback(
+		() => ({
+			added: addableItems.length,
+			found: addableFoundItems.length,
+			selected_review: addableSelectedReviewItems.length,
+			skipped_review: reviewItems.length - selectedReviewItemList.length,
+			failed: failedResults.length,
+		}),
+		[
+			addableItems,
+			addableFoundItems,
+			addableSelectedReviewItems,
+			reviewItems,
+			selectedReviewItemList,
+			failedResults,
+		],
+	);
+
 	return {
 		isPending,
 		foundItems,
 		reviewItems,
 		failedResults,
 		selectedReviewItems,
-		selectedReviewItemList,
 		selectedCount,
 		isOverCapacity,
 		addableItems,
-		addableFoundItems,
-		addableSelectedReviewItems,
 		selectReviewCandidate,
+		getConfirmStats,
 		reset,
 	};
 };

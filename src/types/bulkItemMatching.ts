@@ -37,15 +37,21 @@ export type FailedLineMatchResult = {
 };
 
 export type BulkLineMatchResult =
-	| FoundLineMatchResult
-	| NeedsReviewLineMatchResult
-	| FailedLineMatchResult;
+	FoundLineMatchResult | NeedsReviewLineMatchResult | FailedLineMatchResult;
 
 export type ClassifyCatalogHitsParams = {
 	line: string;
 	searchTerm: string;
 	source: MatchSource;
 	hits: CatalogItem[];
+};
+
+// 한 줄에 대한 검색 요청 (멀티쿼리 응답을 원래 줄 위치로 되돌리기 위해 index 유지)
+export type LineSearchRequest = {
+	index: number;
+	line: string;
+	searchTerm: string;
+	source: MatchSource;
 };
 
 // 전체 텍스트 매칭 결과를 상태별로 나눈 형태
