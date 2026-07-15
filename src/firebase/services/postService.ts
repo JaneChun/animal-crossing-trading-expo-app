@@ -17,11 +17,12 @@ import {
 	updateDocToFirestore,
 } from '@/firebase/core/firestoreService';
 import { Collection, CreatePostRequest, Post, PostDoc, UpdatePostRequest } from '@/types/post';
+import { chunkArray } from '@/utilities/chunkArray';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { sanitize } from '@/utilities/sanitize';
 import { toPost } from '@/utilities/toPost';
 
-import { chunkArray, getPublicUserInfos } from './userService';
+import { getPublicUserInfos } from './userService';
 
 import type { PublicUserInfo } from '@/types/user';
 

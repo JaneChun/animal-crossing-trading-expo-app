@@ -15,6 +15,7 @@ import {
 	updateDocToFirestore,
 } from '@/firebase/core/firestoreService';
 import { PublicUserInfo, UserInfo } from '@/types/user';
+import { chunkArray } from '@/utilities/chunkArray';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 
 export const getUserInfo = async (uid: string): Promise<UserInfo | null> => {
@@ -116,14 +117,6 @@ export const getPublicUserInfos = async (
 	});
 
 	return result ?? {};
-};
-
-export const chunkArray = <T>(array: T[], size: number): T[][] => {
-	const result: T[][] = [];
-	for (let i = 0; i < array.length; i += size) {
-		result.push(array.slice(i, i + size));
-	}
-	return result;
 };
 
 export const savePushTokenToFirestore = async ({
