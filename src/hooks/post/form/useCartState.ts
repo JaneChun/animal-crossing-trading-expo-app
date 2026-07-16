@@ -96,7 +96,14 @@ export const useCartState = (
 		(items: Item[]) => {
 			const cart = getValues('cart') ?? [];
 			const cartIds = new Set(cart.map((cartItem) => cartItem.id));
-			const newItems = items.filter((item) => !cartIds.has(item.id));
+
+			// 카트에 이미 있는 아이템뿐 아니라 items 내부의 중복도 제거
+			// (같은 아이템이 여러 줄로 매칭되면 addableItems에 동일 id가 2개 이상 들어올 수 있음)
+			const newItems = items.filter((item) => {
+				if (cartIds.has(item.id)) return false;
+				cartIds.add(item.id);
+				return true;
+			});
 
 			const capacity = Math.max(MAX_CART_ITEMS - cart.length, 0);
 			const itemsToAdd = newItems.slice(0, capacity);
@@ -119,7 +126,7 @@ export const useCartState = (
 			showToast(
 				'success',
 				skippedCount > 0
-					? `아이템 ${itemsToAdd.length}개가 추가되었어요. (${skippedCount}개 제외)`
+					? `아이템 ${itemsToAdd.length}개가 추가되었어요. (중복 ${skippedCount}개 제외)`
 					: `아이템 ${itemsToAdd.length}개가 추가되었어요.`,
 			);
 		},
