@@ -11,7 +11,7 @@ import {
 	type NeedsReviewLineMatchResult,
 } from '@/types/bulkItemMatching';
 import { CatalogItem } from '@/types/catalog';
-import { buildCleanedSearchTerms, classifyCatalogHits } from '@/utilities/bulkItemMatching';
+import { buildCleanedSearchTerm, classifyCatalogHits } from '@/utilities/bulkItemMatching';
 import { chunkArray } from '@/utilities/chunkArray';
 import { getTrimmedNonEmptyLines } from '@/utilities/itemTextLines';
 
@@ -100,12 +100,11 @@ const matchCatalogItems = async (text: string): Promise<BulkMatchOutput> => {
 	});
 
 	// 2) 실패한 줄만 정제된 검색어로 일괄 재검색
-	//    (buildCleanedSearchTerms는 최대 1개의 검색어만 돌려준다)
 	const cleanedRequests: LineSearchRequest[] = [];
 	lineResults.forEach((result, index) => {
 		if (result.status !== 'failed') return;
 
-		const [cleanedTerm] = buildCleanedSearchTerms(lines[index]);
+		const cleanedTerm = buildCleanedSearchTerm(lines[index]);
 		if (cleanedTerm) {
 			cleanedRequests.push({
 				index,

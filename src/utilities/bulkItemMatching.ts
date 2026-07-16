@@ -26,19 +26,20 @@ const stripTradingSuffixes = (value: string): string =>
 	normalizeItemText(value.replace(REGEX.TRADING_SUFFIX, ' '));
 
 /**
- * 입력된 텍스트 라인에서 거래 단위나 구분자를 제거하여 검색을 위한 정제된 텍스트를 추출합니다.
+ * 입력된 텍스트 라인에서 거래 단위나 구분자를 제거하여 검색을 위한 정제된 검색어를 추출합니다.
+ * 정제 결과가 비었거나 원문과 같으면(재검색이 무의미하면) null을 반환합니다.
  */
-export const buildCleanedSearchTerms = (line: string): string[] => {
+export const buildCleanedSearchTerm = (line: string): string | null => {
 	const normalized = normalizeItemText(line);
 	const withoutSuffixes = stripTradingSuffixes(normalized);
 	const withoutParens = withoutSuffixes.replace(REGEX.PARENTHESES, ' ');
 	const itemName = normalizeItemText(withoutParens.split(REGEX.SEPARATOR)[0] ?? '');
 
 	if (!itemName || itemName === normalized) {
-		return [];
+		return null;
 	}
 
-	return [itemName];
+	return itemName;
 };
 
 /**
