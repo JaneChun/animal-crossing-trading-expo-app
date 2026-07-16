@@ -52,17 +52,12 @@ config.gypi
 functions/coverage/
 functions/lib/
 
-todo.ini
-
-# claude, codex
-.claude/*
-.omc/*
-.agents/*
-docs/*
+# temp
+temp.ini
 
 # firebase export
 scripts/*
 emulator-data/*
 
-# test
-src/__tests__/*
+# docs
+docs/*
