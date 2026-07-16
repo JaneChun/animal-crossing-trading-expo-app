@@ -8,11 +8,12 @@ import { BorderRadius } from '@/theme/BorderRadius';
 import { Colors } from '@/theme/Color';
 import { Spacing } from '@/theme/Spacing';
 import {
-	type BulkReviewFoundItem,
-	type BulkReviewNeedsReviewItem,
 	type FailedLineMatchResult,
+	type FoundLineMatchResult,
+	type NeedsReviewLineMatchResult,
 } from '@/types/bulkItemMatching';
-import { type CartItem, type Item } from '@/types/post';
+import { type CatalogItem } from '@/types/catalog';
+import { type CartItem } from '@/types/post';
 
 import FailedRow from './FailedRow';
 import FoundRow from './FoundRow';
@@ -21,20 +22,20 @@ import SectionBanner from './SectionBanner';
 
 type ReviewProps = {
 	cart: CartItem[];
-	foundItems: BulkReviewFoundItem[];
-	reviewItems: BulkReviewNeedsReviewItem[];
+	foundResults: FoundLineMatchResult[];
+	needsReviewResults: NeedsReviewLineMatchResult[];
 	failedResults: FailedLineMatchResult[];
-	selectedReviewItems: Record<string, Item>;
+	selectedReviewItems: Record<string, CatalogItem>;
 	selectedCount: number;
 	isOverCapacity: boolean;
-	onSelectReviewCandidate: (line: string, item: Item) => void;
+	onSelectReviewCandidate: (line: string, item: CatalogItem) => void;
 	onConfirm: () => void;
 };
 
 const Review = ({
 	cart,
-	foundItems,
-	reviewItems,
+	foundResults,
+	needsReviewResults,
 	failedResults,
 	selectedReviewItems,
 	selectedCount,
@@ -50,14 +51,14 @@ const Review = ({
 				style={styles.scrollArea}
 				contentContainerStyle={styles.scrollContent}
 			>
-				{foundItems.length > 0 && (
+				{foundResults.length > 0 && (
 					<>
 						<SectionBanner
 							variant="found"
-							text={`아이템 ${foundItems.length}개를 찾았어요`}
+							text={`아이템 ${foundResults.length}개를 찾았어요`}
 							spaced={false}
 						/>
-						{foundItems.map(({ line, item }) => (
+						{foundResults.map(({ line, item }) => (
 							<FoundRow
 								key={`${line}-${item.id}`}
 								item={item}
@@ -67,14 +68,14 @@ const Review = ({
 					</>
 				)}
 
-				{reviewItems.length > 0 && (
+				{needsReviewResults.length > 0 && (
 					<>
 						<SectionBanner
 							variant="review"
 							text="맞는 아이템을 골라주세요"
-							spaced={foundItems.length > 0}
+							spaced={foundResults.length > 0}
 						/>
-						{reviewItems.map((reviewItem) => (
+						{needsReviewResults.map((reviewItem) => (
 							<ReviewGroup
 								key={reviewItem.line}
 								reviewItem={reviewItem}
@@ -91,7 +92,7 @@ const Review = ({
 						<SectionBanner
 							variant="failed"
 							text="찾지 못한 텍스트예요"
-							spaced={foundItems.length > 0 || reviewItems.length > 0}
+							spaced={foundResults.length > 0 || needsReviewResults.length > 0}
 						/>
 						{failedResults.map((result, index) => (
 							<FailedRow

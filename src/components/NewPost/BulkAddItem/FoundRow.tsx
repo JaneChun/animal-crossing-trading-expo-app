@@ -5,12 +5,12 @@ import { FontSizes, FontWeights, LineHeights } from '@/constants/Typography';
 import { BorderRadius } from '@/theme/BorderRadius';
 import { Colors } from '@/theme/Color';
 import { Spacing } from '@/theme/Spacing';
-import { type Item } from '@/types/post';
+import { type CatalogItem } from '@/types/catalog';
 
 import ItemName from './ItemName';
 
 type FoundRowProps = {
-	item: Item;
+	item: CatalogItem;
 	isDuplicate: boolean;
 };
 

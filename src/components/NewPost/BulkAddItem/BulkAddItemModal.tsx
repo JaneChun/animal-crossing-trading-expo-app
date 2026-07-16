@@ -21,8 +21,8 @@ const BulkAddItemModal = ({
 }: BulkAddItemModalProps) => {
 	const {
 		isPending,
-		foundItems,
-		reviewItems,
+		foundResults,
+		needsReviewResults,
 		failedResults,
 		selectedReviewItems,
 		selectedCount,
@@ -69,8 +69,8 @@ const BulkAddItemModal = ({
 			) : (
 				<Review
 					cart={cart}
-					foundItems={foundItems}
-					reviewItems={reviewItems}
+					foundResults={foundResults}
+					needsReviewResults={needsReviewResults}
 					failedResults={failedResults}
 					selectedCount={selectedCount}
 					isOverCapacity={isOverCapacity}

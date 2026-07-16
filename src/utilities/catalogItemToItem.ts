@@ -2,7 +2,10 @@ import { isArtworkWithFake } from '@/constants/post';
 import { CatalogItem, CatalogVariant } from '@/types/catalog';
 import { Item } from '@/types/post';
 
-const getItemDescription = (item: CatalogItem): string | undefined => {
+/**
+ * 아이템 목록의 보조 설명 문자열 — 미술품은 진품/가품, 레시피는 '레시피'를 반환한다.
+ */
+export const getItemDescription = (item: CatalogItem): string | undefined => {
 	if (item.category === 'Artwork' && isArtworkWithFake(item)) {
 		const genuine = item.attributes.genuine;
 		if (genuine === 'Yes') return '진품';

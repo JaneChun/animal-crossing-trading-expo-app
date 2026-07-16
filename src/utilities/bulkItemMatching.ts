@@ -1,7 +1,6 @@
 import { MAX_REVIEW_CANDIDATES } from '@/constants/post';
 import {
 	type BulkLineMatchResult,
-	type CatalogItemCandidate,
 	type ClassifyCatalogHitsParams,
 } from '@/types/bulkItemMatching';
 import { CatalogItem } from '@/types/catalog';
@@ -43,17 +42,6 @@ export const buildCleanedSearchTerm = (line: string): string | null => {
 };
 
 /**
- * 카탈로그 아이템 데이터를 UI에서 리뷰를 위해 보여줄 후보 객체(Candidate) 형태로 변환합니다.
- */
-export const toCatalogItemCandidate = (item: CatalogItem): CatalogItemCandidate => ({
-	id: item.id,
-	name: item.name,
-	category: item.category,
-	imageUrl: item.imageUrl,
-	item,
-});
-
-/**
  * 검색 결과 배열 중에서 이름이 검색어와 완전히 똑같은 항목만 찾아서 반환합니다.
  */
 const getExactHits = (searchTerm: string, hits: CatalogItem[]): CatalogItem[] => {
@@ -76,13 +64,11 @@ export const classifyCatalogHits = ({
 
 	const exactHits = getExactHits(searchTerm, hits);
 
-	const candidates = (exactHits.length > 0 ? exactHits : hits)
-		.slice(0, MAX_REVIEW_CANDIDATES)
-		.map(toCatalogItemCandidate);
+	const candidates = (exactHits.length > 0 ? exactHits : hits).slice(0, MAX_REVIEW_CANDIDATES);
 
 	// 고를 후보가 하나뿐이면 재확인 없이 완벽 일치(found)로 처리
 	if (candidates.length === 1) {
-		return { line, status: 'found', item: candidates[0].item };
+		return { line, status: 'found', item: candidates[0] };
 	}
 
 	return {

@@ -6,16 +6,16 @@ import { FontSizes, FontWeights, LineHeights } from '@/constants/Typography';
 import { BorderRadius } from '@/theme/BorderRadius';
 import { Colors } from '@/theme/Color';
 import { Spacing } from '@/theme/Spacing';
-import { type BulkReviewNeedsReviewItem } from '@/types/bulkItemMatching';
-import { type Item } from '@/types/post';
+import { type NeedsReviewLineMatchResult } from '@/types/bulkItemMatching';
+import { type CatalogItem } from '@/types/catalog';
 
 import ItemName from './ItemName';
 
 type ReviewGroupProps = {
-	reviewItem: BulkReviewNeedsReviewItem;
+	reviewItem: NeedsReviewLineMatchResult;
 	selectedItemId?: string;
 	cartIds: Set<string>;
-	onSelectCandidate: (line: string, item: Item) => void;
+	onSelectCandidate: (line: string, item: CatalogItem) => void;
 };
 
 // 후보가 여러 개라 사용자가 골라야 하는 라인 + 후보 목록
@@ -29,7 +29,7 @@ const ReviewGroup = ({
 		<Text style={styles.reviewLine} numberOfLines={2} ellipsizeMode="tail">
 			{reviewItem.line}
 		</Text>
-		{reviewItem.candidates.map(({ item }) => {
+		{reviewItem.candidates.map((item) => {
 			const isSelected = selectedItemId === item.id;
 			const isDuplicate = cartIds.has(item.id);
 

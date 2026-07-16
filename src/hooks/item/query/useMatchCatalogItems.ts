@@ -74,11 +74,26 @@ const runSearchRequests = async (
 	return chunkResults.flat();
 };
 
+/**
+ * 줄 순서로 쌓인 매칭 결과를 상태별 그룹으로 나눈다.
+ */
+const toBulkMatchOutput = (lineResults: BulkLineMatchResult[]): BulkMatchOutput => ({
+	foundResults: lineResults.filter(
+		(result): result is FoundLineMatchResult => result.status === 'found',
+	),
+	needsReviewResults: lineResults.filter(
+		(result): result is NeedsReviewLineMatchResult => result.status === 'needsReview',
+	),
+	failedResults: lineResults.filter(
+		(result): result is FailedLineMatchResult => result.status === 'failed',
+	),
+});
+
 const matchCatalogItems = async (text: string): Promise<BulkMatchOutput> => {
 	const lines = parseSearchLines(text);
 
 	if (lines.length === 0) {
-		return { results: [], foundResults: [], needsReviewResults: [], failedResults: [] };
+		return toBulkMatchOutput([]);
 	}
 
 	// 줄 순서를 유지한 결과 배열 (기본값은 실패)
@@ -122,18 +137,7 @@ const matchCatalogItems = async (text: string): Promise<BulkMatchOutput> => {
 		}
 	});
 
-	return {
-		results: lineResults,
-		foundResults: lineResults.filter(
-			(result): result is FoundLineMatchResult => result.status === 'found',
-		),
-		needsReviewResults: lineResults.filter(
-			(result): result is NeedsReviewLineMatchResult => result.status === 'needsReview',
-		),
-		failedResults: lineResults.filter(
-			(result): result is FailedLineMatchResult => result.status === 'failed',
-		),
-	};
+	return toBulkMatchOutput(lineResults);
 };
 
 /**
