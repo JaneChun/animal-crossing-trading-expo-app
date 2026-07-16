@@ -106,8 +106,16 @@ export const useBulkAddSelection = ({
 	const searchFromText = useCallback(
 		(text: string) => {
 			findMatchItems(text, {
-				onSuccess: applyMatchOutput,
+				// mutate 콜백은 호출별로 각자 응답 도착 시점에 실행되고 취소되지 않으므로,
+				// 이전 검색의 늦은 응답이 최신 검색 결과를 덮어쓰지 않도록
+				// 콜백 실행 시점의 마지막 검색 텍스트와 대조해 stale 응답을 무시한다
+				onSuccess: (matchOutput) => {
+					if (lastSearchTextRef.current !== text) return;
+					applyMatchOutput(matchOutput);
+				},
+				// 이전 검색의 늦은 실패가 진행 중인 새 검색의 모달을 닫지 않도록 동일하게 가드
 				onError: () => {
+					if (lastSearchTextRef.current !== text) return;
 					reset();
 					onSearchErrorRef.current();
 				},
