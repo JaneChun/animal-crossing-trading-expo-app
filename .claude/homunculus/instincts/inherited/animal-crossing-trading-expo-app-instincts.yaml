@@ -1,0 +1,610 @@
+# Instincts generated from https://github.com/JaneChun/animal-crossing-trading-expo-app
+# Generated: 2026-07-17T08:24:25.073Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: animal-crossing-trading-expo-app-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: refactor, chore, fix, feat, perf
+
+## Evidence
+
+- 25 commits analyzed
+- Detected conventional commit pattern
+- Examples: feat: 카트 아이템 개수 제한 추가, refactor: 카탈로그 아이템 변환 유틸 정리
+
+---
+id: animal-crossing-trading-expo-app-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Commit Length
+
+## Action
+
+Keep commit messages concise (~37 characters)
+
+## Evidence
+
+- Average commit message length: 37 chars
+- Based on 25 commits
+
+---
+id: animal-crossing-trading-expo-app-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Naming Files
+
+## Action
+
+Use PascalCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: PascalCase
+
+---
+id: animal-crossing-trading-expo-app-import-alias
+trigger: "when importing modules"
+confidence: 0.85
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Import Alias
+
+## Action
+
+Use path aliases (@/, ~/) instead of relative imports
+
+## Evidence
+
+- Import analysis shows alias pattern
+- Example: import { x } from '@/lib/x'
+
+---
+id: animal-crossing-trading-expo-app-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Export Style
+
+## Action
+
+Prefer default exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: default
+
+---
+id: animal-crossing-trading-expo-app-arch-type-based
+trigger: "when adding new code"
+confidence: 0.8
+domain: architecture
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Arch Type Based
+
+## Action
+
+Place code in the appropriate type folder (components/, services/, utils/, etc.)
+
+## Evidence
+
+- Type-based module organization detected
+- Folders: __tests__, components, constants, firebase, hooks
+
+---
+id: animal-crossing-trading-expo-app-test-framework
+trigger: "when writing tests"
+confidence: 0.9
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Test Framework
+
+## Action
+
+Use jest as the test framework
+
+## Evidence
+
+- Test framework detected: jest
+- File pattern: *.test.ts
+
+---
+id: animal-crossing-trading-expo-app-test-naming
+trigger: "when creating a test file"
+confidence: 0.85
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Test Naming
+
+## Action
+
+Name test files using the pattern: *.test.ts
+
+## Evidence
+
+- File pattern: *.test.ts
+- Consistent across test files
+
+---
+id: animal-crossing-trading-expo-app-workflow-refactoring
+trigger: "when refactoring code"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Workflow Refactoring
+
+## Action
+
+Follow the refactoring workflow:
+1. Ensure tests pass before refactor
+2. Refactor code structure
+3. Verify tests still pass
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~11x per month
+- Files: src/**/*
+
+---
+id: animal-crossing-trading-expo-app-workflow-utility-function-extraction-or-refactor
+trigger: "when doing utility function extraction or refactor"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Workflow Utility Function Extraction Or Refactor
+
+## Action
+
+Follow the utility-function-extraction-or-refactor workflow:
+1. Identify reusable logic in a feature or service file.
+2. Extract the logic into a new or existing utility file in src/utilities/.
+3. Update all references in the original and related files to use the new utility.
+4. Optionally, add or update tests for the utility.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: src/utilities/*.ts, src/components/**/*.tsx, src/firebase/services/*.ts
+
+---
+id: animal-crossing-trading-expo-app-workflow-feature-refactor-with-type-and-constant-updates
+trigger: "when doing feature refactor with type and constant updates"
+confidence: 0.65
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Workflow Feature Refactor With Type And Constant Updates
+
+## Action
+
+Follow the feature-refactor-with-type-and-constant-updates workflow:
+1. Update or add constants in src/constants/.
+2. Update or add type definitions in src/types/.
+3. Modify or add hooks in src/hooks/ to implement new logic.
+4. Update related components in src/components/ to use the new logic.
+5. Optionally, update or add tests.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~3x per month
+- Files: src/constants/*.ts, src/types/*.ts, src/hooks/**/*.ts
+
+---
+id: animal-crossing-trading-expo-app-workflow-bulk-feature-development-with-ui-types-hooks
+trigger: "when doing bulk feature development with ui types hooks"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Workflow Bulk Feature Development With Ui Types Hooks
+
+## Action
+
+Follow the bulk-feature-development-with-ui-types-hooks workflow:
+1. Create or update multiple UI components in a dedicated folder (e.g., src/components/NewPost/BulkAddItem/).
+2. Add or update hooks in src/hooks/ to manage state and logic.
+3. Define or update types in src/types/ to support the new feature.
+4. Implement or update utility functions in src/utilities/.
+5. Update constants as needed.
+6. Update or add tests in src/__tests__/utilities/.
+7. Wire up the feature in screens or parent components.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: src/components/NewPost/BulkAddItem/*.tsx, src/hooks/item/**/*.ts, src/types/bulkItemMatching.ts
+
+---
+id: animal-crossing-trading-expo-app-workflow-test-addition-or-update-for-utilities
+trigger: "when doing test addition or update for utilities"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Workflow Test Addition Or Update For Utilities
+
+## Action
+
+Follow the test-addition-or-update-for-utilities workflow:
+1. Create or update test files in src/__tests__/utilities/.
+2. Write or update test cases to cover new or changed utility functions.
+3. Run tests to verify correctness.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: src/__tests__/utilities/*.test.ts, src/utilities/*.ts
+
+---
+id: animal-crossing-trading-expo-app-instinct-file-naming
+trigger: "When creating a new file"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct File Naming
+
+## Action
+
+Name the file using PascalCase
+
+## Evidence
+
+- Pattern in namingConventions.files
+- Examples in src/components/NewPost/AddItemModal.tsx
+
+---
+id: animal-crossing-trading-expo-app-instinct-function-naming
+trigger: "When defining a new function"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Function Naming
+
+## Action
+
+Name the function using camelCase
+
+## Evidence
+
+- Pattern in namingConventions.functions
+
+---
+id: animal-crossing-trading-expo-app-instinct-class-naming
+trigger: "When defining a new class"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Class Naming
+
+## Action
+
+Name the class using PascalCase
+
+## Evidence
+
+- Pattern in namingConventions.classes
+
+---
+id: animal-crossing-trading-expo-app-instinct-constant-naming
+trigger: "When declaring a constant"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Constant Naming
+
+## Action
+
+Name the constant using SCREAMING_SNAKE_CASE
+
+## Evidence
+
+- Pattern in namingConventions.constants
+- Updates in src/constants/*.ts
+
+---
+id: animal-crossing-trading-expo-app-instinct-import-style
+trigger: "When importing modules"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Import Style
+
+## Action
+
+Use alias import style
+
+## Evidence
+
+- Pattern in importStyle
+
+---
+id: animal-crossing-trading-expo-app-instinct-export-style
+trigger: "When exporting modules"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Export Style
+
+## Action
+
+Use default export style
+
+## Evidence
+
+- Pattern in exportStyle
+
+---
+id: animal-crossing-trading-expo-app-instinct-test-file-location
+trigger: "When adding or updating tests"
+confidence: 0.7
+domain: testing
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Test File Location
+
+## Action
+
+Place test files in src/__tests__ or alongside the code (mixed location)
+
+## Evidence
+
+- Pattern in architecture.folderStructure.testLocation
+- Files in src/__tests__/utilities/*.test.ts
+
+---
+id: animal-crossing-trading-expo-app-instinct-test-file-naming
+trigger: "When creating a test file"
+confidence: 0.9
+domain: testing
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Test File Naming
+
+## Action
+
+Name the test file with a .test.ts suffix
+
+## Evidence
+
+- Pattern in testing.filePattern
+- Files in src/__tests__/utilities/*.test.ts
+
+---
+id: animal-crossing-trading-expo-app-instinct-test-framework
+trigger: "When writing tests"
+confidence: 0.9
+domain: testing
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Test Framework
+
+## Action
+
+Use Jest as the testing framework
+
+## Evidence
+
+- Pattern in testing.framework
+- Presence of jest.config.js
+
+---
+id: animal-crossing-trading-expo-app-instinct-unit-test-type
+trigger: "When writing tests for utilities"
+confidence: 0.85
+domain: testing
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Unit Test Type
+
+## Action
+
+Write unit tests
+
+## Evidence
+
+- Pattern in testing.testTypes
+- Files in src/__tests__/utilities/*.test.ts
+
+---
+id: animal-crossing-trading-expo-app-instinct-commit-format
+trigger: "When making a git commit"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Commit Format
+
+## Action
+
+Use conventional commit format with a prefix (e.g., feat, fix, refactor, chore, perf, test, docs)
+
+## Evidence
+
+- Pattern in commits.prefixes
+- Examples: 'feat: 카트 아이템 개수 제한 추가'
+
+---
+id: animal-crossing-trading-expo-app-instinct-commit-length
+trigger: "When writing a commit message"
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Commit Length
+
+## Action
+
+Keep the commit message concise (average ~37 characters)
+
+## Evidence
+
+- Pattern in commits.averageLength
+- Examples in commit messages
+
+---
+id: animal-crossing-trading-expo-app-instinct-utility-extraction
+trigger: "When reusable logic is identified in feature or service files"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Utility Extraction
+
+## Action
+
+Extract the logic into src/utilities/ and update all references
+
+## Evidence
+
+- Workflow: utility-function-extraction-or-refactor
+- Files: src/utilities/*.ts, src/components/**/*.tsx
+
+---
+id: animal-crossing-trading-expo-app-instinct-feature-refactor
+trigger: "When changing or extending feature behavior"
+confidence: 0.85
+domain: workflow
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Feature Refactor
+
+## Action
+
+Update constants, types, hooks, and components related to the feature
+
+## Evidence
+
+- Workflow: feature-refactor-with-type-and-constant-updates
+- Files: src/constants/*.ts, src/types/*.ts, src/hooks/**/*.ts, src/components/**/*.tsx
+
+---
+id: animal-crossing-trading-expo-app-instinct-bulk-feature-development
+trigger: "When adding a complex feature spanning UI, logic, and data"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Bulk Feature Development
+
+## Action
+
+Coordinate changes across dedicated UI folders, hooks, types, utilities, constants, and tests
+
+## Evidence
+
+- Workflow: bulk-feature-development-with-ui-types-hooks
+- Files: src/components/NewPost/BulkAddItem/*.tsx, src/hooks/item/**/*.ts, src/types/bulkItemMatching.ts, src/utilities/bulkItemMatching.ts, src/constants/post.ts, src/__tests__/utilities/*.test.ts, src/screens/NewPost.tsx
+
+---
+id: animal-crossing-trading-expo-app-instinct-utility-test-update
+trigger: "When utility logic is added or changed"
+confidence: 0.85
+domain: workflow
+source: repo-analysis
+source_repo: JaneChun/animal-crossing-trading-expo-app
+---
+
+# Animal Crossing Trading Expo App Instinct Utility Test Update
+
+## Action
+
+Add or update unit tests in src/__tests__/utilities/ for the affected utilities
+
+## Evidence
+
+- Workflow: test-addition-or-update-for-utilities
+- Files: src/__tests__/utilities/*.test.ts, src/utilities/*.ts
+
