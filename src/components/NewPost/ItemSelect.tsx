@@ -13,7 +13,11 @@ import { Colors } from '@/theme/Color';
 import { CatalogItem, CatalogVariant } from '@/types/catalog';
 import { ItemSelectProps } from '@/types/components';
 import { ItemCategory, ItemCategoryItem } from '@/types/post';
-import { catalogItemToItem, catalogVariantToItem } from '@/utilities/catalogItemToItem';
+import {
+	catalogItemToItem,
+	catalogVariantToItem,
+	hasCatalogItemVariants,
+} from '@/utilities/catalogItemToItem';
 
 import ItemSelectItem, { ITEM_HEIGHT } from './ItemSelectItem';
 import ItemSelectSkeleton from './ItemSelectSkeleton';
@@ -35,7 +39,7 @@ const ItemSelect = ({ addItemToCart, containerStyle }: ItemSelectProps) => {
 
 	const handleSelect = useCallback(
 		(item: CatalogItem) => {
-			if (item.bodyTitle || item.patternTitle) {
+			if (hasCatalogItemVariants(item)) {
 				// 변형이 있으면 variant 선택 화면으로 전환
 				setSelectedCatalogItem(item);
 			} else {

@@ -8,6 +8,7 @@ import { Colors } from '@/theme/Color';
 import { Spacing } from '@/theme/Spacing';
 import { type NeedsReviewLineMatchResult } from '@/types/bulkItemMatching';
 import { type CatalogItem } from '@/types/catalog';
+import { getBulkAddCartId } from '@/utilities/catalogItemToItem';
 
 import ItemName from './ItemName';
 
@@ -31,7 +32,7 @@ const ReviewGroup = ({
 		</Text>
 		{reviewItem.candidates.map((item) => {
 			const isSelected = selectedItemId === item.id;
-			const isDuplicate = cartIds.has(item.id);
+			const isDuplicate = cartIds.has(getBulkAddCartId(item));
 
 			return (
 				<TouchableOpacity

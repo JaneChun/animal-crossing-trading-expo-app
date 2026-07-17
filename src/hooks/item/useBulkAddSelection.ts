@@ -6,7 +6,7 @@ import { type BulkMatchOutput } from '@/types/bulkItemMatching';
 import { type CatalogItem } from '@/types/catalog';
 import { type CartItem } from '@/types/post';
 import { logBulkAddSearch } from '@/utilities/analytics';
-import { catalogItemToItem } from '@/utilities/catalogItemToItem';
+import { catalogItemToBulkAddItem, getBulkAddCartId } from '@/utilities/catalogItemToItem';
 
 type UseBulkAddSelectionParams = {
 	cart: CartItem[];
@@ -32,9 +32,7 @@ export const useBulkAddSelection = ({
 	initialText,
 	onSearchError,
 }: UseBulkAddSelectionParams) => {
-	const [selectedReviewItems, setSelectedReviewItems] = useState<Record<string, CatalogItem>>(
-		{},
-	);
+	const [selectedReviewItems, setSelectedReviewItems] = useState<Record<string, CatalogItem>>({});
 	const lastSearchTextRef = useRef('');
 
 	// 검색 실패 콜백은 매 렌더 최신값을 참조하되 검색 트리거 의존성에서는 제외
@@ -57,19 +55,24 @@ export const useBulkAddSelection = ({
 		() => Object.values(selectedReviewItems),
 		[selectedReviewItems],
 	);
+	// 카트 중복 판정은 변환 후 카트 id(변형 보유 아이템은 `_any`) 기준 — AddItemModal의 "색상 무관" 항목과 매칭
+	const isNotInCart = useCallback(
+		(item: CatalogItem) => !cartIds.has(getBulkAddCartId(item)),
+		[cartIds],
+	);
 	const addableFoundItems = useMemo(
-		() => foundResults.filter(({ item }) => !cartIds.has(item.id)),
-		[cartIds, foundResults],
+		() => foundResults.filter(({ item }) => isNotInCart(item)),
+		[isNotInCart, foundResults],
 	);
 	const addableSelectedReviewItems = useMemo(
-		() => selectedReviewItemList.filter((item) => !cartIds.has(item.id)),
-		[cartIds, selectedReviewItemList],
+		() => selectedReviewItemList.filter(isNotInCart),
+		[isNotInCart, selectedReviewItemList],
 	);
 	// 확정 직전 단 한 곳에서만 CatalogItem → 카트용 Item으로 변환
 	const addableItems = useMemo(
 		() =>
 			[...addableFoundItems.map(({ item }) => item), ...addableSelectedReviewItems].map(
-				catalogItemToItem,
+				catalogItemToBulkAddItem,
 			),
 		[addableFoundItems, addableSelectedReviewItems],
 	);

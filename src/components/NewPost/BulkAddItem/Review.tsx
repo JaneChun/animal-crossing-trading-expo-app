@@ -14,6 +14,7 @@ import {
 } from '@/types/bulkItemMatching';
 import { type CatalogItem } from '@/types/catalog';
 import { type CartItem } from '@/types/post';
+import { getBulkAddCartId } from '@/utilities/catalogItemToItem';
 
 import FailedRow from './FailedRow';
 import FoundRow from './FoundRow';
@@ -62,7 +63,7 @@ const Review = ({
 							<FoundRow
 								key={`${line}-${item.id}`}
 								item={item}
-								isDuplicate={cartIds.has(item.id)}
+								isDuplicate={cartIds.has(getBulkAddCartId(item))}
 							/>
 						))}
 					</>

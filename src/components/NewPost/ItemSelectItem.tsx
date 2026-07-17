@@ -6,12 +6,12 @@ import HighlightMatchText from '@/components/ui/HighlightMatchText';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { Colors } from '@/theme/Color';
 import { ItemSelectItemProps } from '@/types/components';
-import { getCatalogItemDisplayName } from '@/utilities/catalogItemToItem';
+import { getCatalogItemDisplayName, hasCatalogItemVariants } from '@/utilities/catalogItemToItem';
 
 export const ITEM_HEIGHT = 53;
 
 const ItemSelectItem = ({ item, searchInput, onSelect, index }: ItemSelectItemProps) => {
-	const hasVariants = !!(item.bodyTitle || item.patternTitle);
+	const hasVariants = hasCatalogItemVariants(item);
 	const displayName = getCatalogItemDisplayName(item);
 
 	return (
