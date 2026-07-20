@@ -1,0 +1,28 @@
+{
+	"permissions": {
+		"allow": [
+			"Bash(npm run lint)",
+			"Bash(npm run lint:fix)",
+			"Bash(npm run typecheck)",
+			"Bash(npm run typecheck:functions)",
+			"Bash(npm test)",
+			"Bash(npm run test)",
+			"Bash(npm run test:*)",
+			"Bash(npx jest:*)",
+			"Bash(npx tsc --noEmit)",
+			"Bash(git status)",
+			"Bash(git diff:*)",
+			"Bash(git log:*)",
+			"Bash(git show:*)",
+			"Bash(git branch)",
+			"Bash(ls:*)"
+		],
+		"deny": [
+			"Bash(npm run deploy:*)",
+			"Bash(firebase deploy:*)",
+			"Bash(eas submit:*)",
+			"Read(.env)",
+			"Read(.env.*)"
+		]
+	}
+}

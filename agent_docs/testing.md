@@ -6,6 +6,11 @@
 - 앱 단위 테스트: `src/__tests__/utilities/` — 유틸리티 대상. 단위 테스트만 실행: `npx jest --selectProjects unit`
 - `src/__tests__/firebase-utils/`는 테스트가 아니라 Firebase 시드/정리 유틸.
 
+## 단위 테스트 작성 규칙
+
+- 테스트 하나는 실패 원인이 하나가 되도록 동작 하나만 검증한다. 기존 상태와의 중복, 입력 내부 중복처럼 조건이 다르면 테스트를 분리한다.
+- 정제 → 중복 제거처럼 변환 단계가 둘 이상이면 의미 있는 중간 변수로 나눠 Arrange/Act/Assert의 데이터 흐름을 드러낸다.
+
 ## E2E: Maestro
 
 - flow 정의: `.maestro/*.yaml` (auth/, posts/, trade/, profile/)
