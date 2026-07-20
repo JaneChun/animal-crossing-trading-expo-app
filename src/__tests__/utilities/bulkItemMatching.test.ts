@@ -1,8 +1,10 @@
+import { BulkLineMatchResult } from '@/types/bulkItemMatching';
 import { CatalogItem } from '@/types/catalog';
 import {
 	buildCleanedSearchTerm,
 	classifyCatalogHits,
 	normalizeItemText,
+	toBulkMatchOutput,
 } from '@/utilities/bulkItemMatching';
 
 const catalogItem = (overrides: Partial<CatalogItem> & { id: string; name: string }) =>
@@ -109,5 +111,52 @@ describe('bulkItemMatching', () => {
 		});
 
 		expect(result).toEqual({ line: '없는 아이템', status: 'failed' });
+	});
+
+	it('서로 다른 입력 줄이 동일한 아이템으로 검색되면 첫 결과만 유지한다', () => {
+		const yacht = catalogItem({ id: 'yacht', name: '요트' });
+		const lineResults: BulkLineMatchResult[] = [
+			{ line: '요트', status: 'found', item: yacht },
+			{ line: '요트 1개', status: 'found', item: yacht },
+			{ line: '요트 3마일', status: 'found', item: yacht },
+		];
+
+		const result = toBulkMatchOutput(lineResults);
+
+		expect(result.foundResults).toEqual([lineResults[0]]);
+	});
+
+	it('이름이 같아도 카탈로그 ID가 다른 아이템은 모두 유지한다', () => {
+		const item = catalogItem({ id: 'bamboo-box', name: '대나무 깜짝 상자' });
+		const recipe = catalogItem({
+			id: 'bamboo-box-recipe',
+			name: '대나무 깜짝 상자',
+			category: 'Recipes',
+		});
+		const lineResults: BulkLineMatchResult[] = [
+			{ line: '대나무 깜짝 상자', status: 'found', item },
+			{ line: '대나무 깜짝 상자 레시피', status: 'found', item: recipe },
+		];
+
+		const result = toBulkMatchOutput(lineResults);
+
+		expect(result.foundResults).toEqual(lineResults);
+	});
+
+	it('검토 필요와 실패 결과는 입력 라인별로 유지한다', () => {
+		const candidate = catalogItem({ id: 'apple-chair', name: '사과 의자' });
+		const needsReviewResult: BulkLineMatchResult = {
+			line: '사과의자',
+			status: 'needsReview',
+			searchTerm: '사과의자',
+			source: 'original',
+			candidates: [candidate],
+		};
+		const failedResult: BulkLineMatchResult = { line: '없는 아이템', status: 'failed' };
+
+		const result = toBulkMatchOutput([needsReviewResult, failedResult]);
+
+		expect(result.needsReviewResults).toEqual([needsReviewResult]);
+		expect(result.failedResults).toEqual([failedResult]);
 	});
 });

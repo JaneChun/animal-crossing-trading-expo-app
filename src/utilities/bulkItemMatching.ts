@@ -1,7 +1,11 @@
 import { MAX_REVIEW_CANDIDATES } from '@/constants/post';
 import {
 	type BulkLineMatchResult,
+	type BulkMatchOutput,
 	type ClassifyCatalogHitsParams,
+	type FailedLineMatchResult,
+	type FoundLineMatchResult,
+	type NeedsReviewLineMatchResult,
 } from '@/types/bulkItemMatching';
 import { CatalogItem } from '@/types/catalog';
 
@@ -77,5 +81,36 @@ export const classifyCatalogHits = ({
 		searchTerm,
 		source,
 		candidates,
+	};
+};
+
+/**
+ * 줄 순서로 쌓인 매칭 결과를 상태별 그룹으로 나누고,
+ * 동일한 카탈로그 아이템은 첫 번째 찾음 결과만 유지한다.
+ */
+export const toBulkMatchOutput = (lineResults: BulkLineMatchResult[]): BulkMatchOutput => {
+	const foundResults = lineResults.filter(
+		(result): result is FoundLineMatchResult => result.status === 'found',
+	);
+	const needsReviewResults = lineResults.filter(
+		(result): result is NeedsReviewLineMatchResult => result.status === 'needsReview',
+	);
+	const failedResults = lineResults.filter(
+		(result): result is FailedLineMatchResult => result.status === 'failed',
+	);
+
+	// 찾음 결과에서 중복된 아이템 제거
+	const uniqueItemIds = new Set<string>();
+	const uniqueFoundResults = foundResults.filter((result) => {
+		if (uniqueItemIds.has(result.item.id)) return false;
+
+		uniqueItemIds.add(result.item.id);
+		return true;
+	});
+
+	return {
+		foundResults: uniqueFoundResults,
+		needsReviewResults,
+		failedResults
 	};
 };

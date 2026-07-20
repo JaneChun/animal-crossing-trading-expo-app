@@ -29,7 +29,8 @@ export type FailedLineMatchResult = {
 export type BulkLineMatchResult =
 	FoundLineMatchResult | NeedsReviewLineMatchResult | FailedLineMatchResult;
 
-// 전체 텍스트 매칭 결과를 상태별로 나눈 형태 — 각 라인은 정확히 한 그룹에만 속한다
+// 전체 텍스트 매칭 결과를 상태별로 나눈 형태
+// 찾은 결과는 카탈로그 ID 기준 첫 항목만, 나머지 결과는 라인별로 유지한다
 export type BulkMatchOutput = {
 	foundResults: FoundLineMatchResult[];
 	needsReviewResults: NeedsReviewLineMatchResult[];

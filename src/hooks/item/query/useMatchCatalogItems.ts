@@ -5,13 +5,14 @@ import { HITS_PER_LINE, MAX_ITEM_TEXT_LINES, MAX_MULTI_QUERY_SIZE } from '@/cons
 import {
 	type BulkLineMatchResult,
 	type BulkMatchOutput,
-	type FailedLineMatchResult,
-	type FoundLineMatchResult,
 	type LineSearchRequest,
-	type NeedsReviewLineMatchResult,
 } from '@/types/bulkItemMatching';
 import { CatalogItem } from '@/types/catalog';
-import { buildCleanedSearchTerm, classifyCatalogHits } from '@/utilities/bulkItemMatching';
+import {
+	buildCleanedSearchTerm,
+	classifyCatalogHits,
+	toBulkMatchOutput,
+} from '@/utilities/bulkItemMatching';
 import { chunkArray } from '@/utilities/chunkArray';
 import { getTrimmedNonEmptyLines, getUniqueLines } from '@/utilities/itemTextLines';
 
@@ -73,21 +74,6 @@ const runSearchRequests = async (
 
 	return chunkResults.flat();
 };
-
-/**
- * 줄 순서로 쌓인 매칭 결과를 상태별 그룹으로 나눈다.
- */
-const toBulkMatchOutput = (lineResults: BulkLineMatchResult[]): BulkMatchOutput => ({
-	foundResults: lineResults.filter(
-		(result): result is FoundLineMatchResult => result.status === 'found',
-	),
-	needsReviewResults: lineResults.filter(
-		(result): result is NeedsReviewLineMatchResult => result.status === 'needsReview',
-	),
-	failedResults: lineResults.filter(
-		(result): result is FailedLineMatchResult => result.status === 'failed',
-	),
-});
 
 const matchCatalogItems = async (text: string): Promise<BulkMatchOutput> => {
 	const lines = parseSearchLines(text);
