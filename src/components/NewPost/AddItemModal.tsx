@@ -11,7 +11,7 @@ const AddItemModal = ({ cart, addItemToCart, isVisible, onClose }: AddItemModalP
 			bodyStyle={styles.container}
 			isVisible={isVisible}
 			onClose={onClose}
-			heightRatio={0.95}
+			snapPoints={['95%', '100%']}
 		>
 			<ItemSelect cart={cart} addItemToCart={addItemToCart} />
 		</CustomBottomSheet>
@@ -23,5 +23,6 @@ export default AddItemModal;
 const styles = StyleSheet.create({
 	container: {
 		padding: 0,
+		paddingBottom: 30,
 	},
 });

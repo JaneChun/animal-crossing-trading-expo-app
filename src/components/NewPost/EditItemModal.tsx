@@ -45,7 +45,7 @@ const EditItemModal = ({ item, isVisible, updateItemFromCart, onClose }: EditIte
 	}, [quantityInput, milesTicketInput, selectedUnit]);
 
 	return (
-		<CustomBottomSheet isVisible={isVisible} onClose={onClose} heightRatio={0.45}>
+		<CustomBottomSheet isVisible={isVisible} onClose={onClose} snapPoints={['40%']}>
 			<View style={styles.content}>
 				{/* 타이틀 */}
 				<Text style={styles.title}>{item?.name}</Text>

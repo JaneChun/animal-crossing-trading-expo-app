@@ -28,6 +28,8 @@ const searchItemsByCursor = async ({
 				page: pageParam, // 시작 페이지 번호
 				hitsPerPage: PAGE_SIZE,
 				...(category === 'All' ? {} : { filters: `category:${category}` }),
+				// 이름 완전 일치 아이템을 최상단으로 부스트 (name이 searchable facet으로 등록되어 있어야 함)
+				...(keyword ? { optionalFilters: [`name:${keyword}`] } : {}),
 			},
 		],
 	});

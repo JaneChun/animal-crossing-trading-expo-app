@@ -10,7 +10,7 @@ module.exports = {
 	testMatch: ['**/*.test.ts'],
 	setupFilesAfterEnv: ['<rootDir>/__tests__/helpers/setup.ts'],
 	moduleFileExtensions: ['ts', 'js'],
-	collectCoverageFrom: ['src/**/*.ts', '!src/migration/**'],
+	collectCoverageFrom: ['src/**/*.ts'],
 	coverageDirectory: 'coverage',
 	clearMocks: true,
 	testTimeout: 10000,

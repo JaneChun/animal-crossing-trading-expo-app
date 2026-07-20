@@ -3,17 +3,20 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldErrors, FormProvider } from 'react-hook-form';
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import AddItemModal from '@/components/NewPost/AddItemModal';
 import AddVillagerModal from '@/components/NewPost/AddVillagerModal';
+import BulkAddItemModal from '@/components/NewPost/BulkAddItem/BulkAddItemModal';
 import EditItemModal from '@/components/NewPost/EditItemModal';
 import PostForm from '@/components/NewPost/PostForm';
 import Button from '@/components/ui/Button';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
+import { showToast } from '@/components/ui/Toast';
+import { MAX_CART_ITEMS, MAX_ITEM_TEXT_LINES } from '@/constants/post';
 import { NewPostFormValues } from '@/hooks/post/form/newPostFormSchema';
 import { useCartState } from '@/hooks/post/form/useCartState';
 import { useNewPostForm } from '@/hooks/post/form/useNewPostForm';
@@ -28,6 +31,7 @@ import { ImageType } from '@/types/image';
 import { RootStackNavigation, type NewPostRouteProp } from '@/types/navigation';
 import { CommunityType, MarketType } from '@/types/post';
 import { handleImageUpload } from '@/utilities/handleImageUpload';
+import { isOverItemTextLineLimit } from '@/utilities/itemTextLines';
 import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
 
 const NewPost = () => {
@@ -198,6 +202,30 @@ const NewPost = () => {
 		scrollViewRef.current?.scrollTo(0);
 	};
 
+	// 본문에 멀티라인 텍스트 붙여넣기 감지 -> 아이템 자동 추가 팝업
+	const handlePasteItemText = (pastedText: string) => {
+		const cart = getValues('cart') ?? [];
+		if (cart.length >= MAX_CART_ITEMS) return;
+
+		Alert.alert('아이템 한 번에 추가', '붙여넣은 텍스트에서 아이템을 찾아 추가할까요?', [
+			{ text: '취소', style: 'cancel' },
+			{
+				text: '아이템 찾기',
+				onPress: () => {
+					if (isOverItemTextLineLimit(pastedText)) {
+						showToast(
+							'warn',
+							`아이템 찾기는 최대 ${MAX_ITEM_TEXT_LINES}줄까지 가능해요.`,
+						);
+						return;
+					}
+
+					cartState.openBulkAddModal(pastedText);
+				},
+			},
+		]);
+	};
+
 	// ─────────────────────────────────────────────────────────────
 	// Render
 	// ─────────────────────────────────────────────────────────────
@@ -221,6 +249,7 @@ const NewPost = () => {
 						deleteVillager={villagerState.deleteVillager}
 						openAddVillagerModal={villagerState.openModal}
 						selectedVillagers={villagerState.selectedVillagers}
+						onPasteItemText={handlePasteItemText}
 					/>
 				</KeyboardAvoidingView>
 
@@ -254,6 +283,14 @@ const NewPost = () => {
 				addItemToCart={cartState.addItem}
 				isVisible={cartState.isAddModalVisible}
 				onClose={cartState.closeAddModal}
+			/>
+
+			<BulkAddItemModal
+				cart={getValues('cart') ?? []}
+				addItemsToCart={cartState.addItems}
+				isVisible={cartState.isBulkAddModalVisible}
+				initialText={cartState.bulkAddInitialText}
+				onClose={cartState.closeBulkAddModal}
 			/>
 
 			<EditItemModal

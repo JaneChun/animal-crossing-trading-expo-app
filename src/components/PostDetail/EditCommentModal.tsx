@@ -1,7 +1,6 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import Button from '@/components/ui/Button';
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
@@ -70,22 +69,20 @@ const EditCommentModal = ({
 		<CustomBottomSheet
 			isVisible={isVisible}
 			onClose={onClose}
-			heightRatio={0.95}
+			snapPoints={['95%', '100%']}
 			title={title}
 			rightButton={submitButton}
 			leftButton={cancelButton}
 			bodyStyle={styles.bottomSheetBodyStyle}
 		>
-			<KeyboardAwareScrollView style={styles.screen}>
-				<BottomSheetTextInput
-					style={styles.textInput}
-					value={newCommentInput}
-					onChangeText={handleChangeText}
-					multiline
-					scrollEnabled={false}
-					maxLength={MAX_COMMENT_LENGTH}
-				/>
-			</KeyboardAwareScrollView>
+			{/* 키보드 회피는 gorhom이 콘텐츠 paddingBottom으로 처리 — 인풋이 남은 영역을 채우고 내부 스크롤로 커서 유지 */}
+			<BottomSheetTextInput
+				style={styles.textInput}
+				value={newCommentInput}
+				onChangeText={handleChangeText}
+				multiline
+				maxLength={MAX_COMMENT_LENGTH}
+			/>
 		</CustomBottomSheet>
 	);
 };
@@ -93,19 +90,16 @@ const EditCommentModal = ({
 export default EditCommentModal;
 
 const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: Colors.bg.primary,
-	},
 	bottomSheetBodyStyle: {
 		padding: PADDING,
 		paddingRight: 0,
-		paddingBottom: 150,
 	},
 	textInput: {
+		flex: 1,
 		fontSize: FontSizes.md,
 		lineHeight: 26,
 		color: Colors.text.secondary,
 		paddingRight: PADDING,
+		textAlignVertical: 'top',
 	},
 });

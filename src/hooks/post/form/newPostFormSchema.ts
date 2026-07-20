@@ -1,6 +1,12 @@
 import * as z from 'zod';
 
-import { COMMUNITY_TYPES, CURRENCY_OPTIONS, MAX_VILLAGERS, MARKET_TYPES } from '@/constants/post';
+import {
+	COMMUNITY_TYPES,
+	CURRENCY_OPTIONS,
+	MAX_CART_ITEMS,
+	MAX_VILLAGERS,
+	MARKET_TYPES,
+} from '@/constants/post';
 import { CommunityType, CurrencyOption, MarketType } from '@/types/post';
 
 const CommonFields = {
@@ -33,7 +39,9 @@ const ImageTypeSchema = z.object({
 const MarketFormSchema = z.object({
 	collectionName: z.literal('Boards'),
 	type: z.enum(MARKET_TYPES.map((item) => item.EN) as [MarketType, ...MarketType[]]),
-	cart: z.array(CartItemSchema),
+	cart: z
+		.array(CartItemSchema)
+		.max(MAX_CART_ITEMS, `아이템은 최대 ${MAX_CART_ITEMS}개까지 추가할 수 있습니다.`),
 	images: z.optional(z.never()), // 금지
 	originalImageUrls: z.optional(z.never()), // 금지
 	villagers: z.optional(z.never()), // 금지

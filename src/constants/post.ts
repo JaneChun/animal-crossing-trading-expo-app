@@ -129,6 +129,14 @@ export const VILLAGER_PERSONALITIES = [
 export const MAX_COMMENT_LENGTH = 1000;
 export const MAX_IMAGES = 10;
 export const MAX_VILLAGERS = 10;
+export const MAX_CART_ITEMS = 100;
+export const MAX_ITEM_TEXT_LINES = MAX_CART_ITEMS;
+export const MIN_ITEM_TEXT_LINES = 2;
+// 붙여넣기 일괄 추가 — 라인별 검색 결과 수와 재확인 후보 상한
+export const HITS_PER_LINE = 5;
+export const MAX_REVIEW_CANDIDATES = 2;
+// Algolia 멀티쿼리 1회 요청당 쿼리 상한 (초과 시 too many queries 에러)
+export const MAX_MULTI_QUERY_SIZE = 50;
 
 export const ARTWORKS_WITH_FAKES = [
 	'아카데믹한 명화',

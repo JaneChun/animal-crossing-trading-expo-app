@@ -26,6 +26,7 @@ const PostForm = ({
 	deleteVillager,
 	openAddVillagerModal,
 	selectedVillagers,
+	onPasteItemText,
 }: PostFormProps) => {
 	const { control, watch, setValue } = useFormContext();
 	const currentType = watch('type');
@@ -108,6 +109,7 @@ const PostForm = ({
 						onBlur={onBlur}
 						containerStyle={styles.inputContainer}
 						inputStyle={styles.input}
+						onPasteItemText={isMarket ? onPasteItemText : undefined}
 					/>
 				)}
 			/>
@@ -147,7 +149,7 @@ const PostForm = ({
 				<Controller
 					control={control}
 					name="cart"
-					render={({ field: { value, onChange } }) => (
+					render={({ field: { value } }) => (
 						<ItemList
 							cart={value}
 							handleEditItemPress={(item) => handleEditItemPress(item)}

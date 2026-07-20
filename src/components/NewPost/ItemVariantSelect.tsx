@@ -6,6 +6,7 @@ import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useItemVariants } from '@/hooks/item/query/useItemVariants';
 import { Colors } from '@/theme/Color';
 import { CatalogItem, CatalogVariant } from '@/types/catalog';
+import { ANY_VARIANT_LABEL, createAnyVariant } from '@/utilities/catalogItemToItem';
 
 import VariantOptionList from './VariantOptionList';
 import VariantOptionListSkeleton from './VariantOptionListSkeleton';
@@ -25,17 +26,9 @@ const ItemVariantSelect = ({ item, onBack, onSelect }: ItemVariantSelectProps) =
 		const firstVariant = variants.find((v) => v.variantId === '0_0');
 		if (!firstVariant) return variants;
 
-		return [
-			{
-				id: `${item.id}_any`,
-				variantId: '0_0',
-				body: '색상 무관',
-				pattern: null,
-				imageUrl: firstVariant.imageUrl,
-			},
-			...variants,
-		];
-	}, [variants, item.id, item.bodyTitle]);
+		// 색상 무관 옵션 추가
+		return [createAnyVariant(item, firstVariant.imageUrl), ...variants];
+	}, [variants, item]);
 
 	const [selectedBody, setSelectedBody] = useState<string | null>(null);
 	const [activeTab, setActiveTab] = useState<'body' | 'pattern'>(
@@ -69,7 +62,7 @@ const ItemVariantSelect = ({ item, onBack, onSelect }: ItemVariantSelectProps) =
 
 	const handleSelectBody = (option: string) => {
 		setSelectedBody(option);
-		if (item.patternTitle && option !== '색상 무관') {
+		if (item.patternTitle && option !== ANY_VARIANT_LABEL) {
 			setActiveTab('pattern');
 		} else {
 			handleFinalSelect(option, null);

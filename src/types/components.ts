@@ -88,6 +88,7 @@ export interface PostFormProps {
 	deleteVillager: (villagerId: string) => void;
 	openAddVillagerModal: () => void;
 	selectedVillagers: Villager[]; // UI 표시용 주민 데이터
+	onPasteItemText?: (text: string) => void;
 }
 export type TypeSelectProps = {
 	type: MarketType;
@@ -110,6 +111,7 @@ export type BodyInputProps = ValidationInputProp & {
 	containerStyle?: StyleProp<ViewStyle>;
 	labelStyle?: StyleProp<TextStyle>;
 	inputStyle?: StyleProp<TextStyle>;
+	onPasteItemText?: (text: string) => void;
 };
 
 export type ImageInputProps = {
@@ -164,6 +166,14 @@ export type AddItemModalProps = {
 	cart: CartItem[];
 	addItemToCart: (item: Item) => void;
 	isVisible: boolean;
+	onClose: () => void;
+};
+
+export type BulkAddItemModalProps = {
+	cart: CartItem[];
+	addItemsToCart: (items: Item[]) => void;
+	isVisible: boolean;
+	initialText?: string;
 	onClose: () => void;
 };
 
