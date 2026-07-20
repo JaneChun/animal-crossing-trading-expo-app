@@ -23,6 +23,7 @@ import VillagerSummaryList from '@/components/PostDetail/VillagerSummaryList';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
+import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { usePost } from '@/hooks/post/usePost';
 import { usePostComment } from '@/hooks/post/usePostComment';
 import { usePostReply } from '@/hooks/reply/usePostReply';
@@ -40,7 +41,8 @@ import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGua
 const PostDetail = () => {
 	const headerHeight = useHeaderHeight();
 	const insets = useSafeAreaInsets();
-	const keyboardVerticalOffset = headerHeight + insets.top + insets.bottom + 10;
+	const screenKeyboardOffset = headerHeight + insets.top + insets.bottom + 10;
+	const keyboardVerticalOffset = screenKeyboardOffset + KEYBOARD_TOOLBAR_HEIGHT;
 
 	const userInfo = useUserInfo();
 	const route = useRoute<PostDetailRouteProp>();

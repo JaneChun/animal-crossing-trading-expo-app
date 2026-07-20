@@ -16,6 +16,7 @@ import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
+import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { useCreateChatRoom } from '@/hooks/chat/mutation/useCreateChatRoom';
 import { useSendImageMessage } from '@/hooks/chat/mutation/useSendImageMessage';
 import { useChatRoom } from '@/hooks/chat/useChatRoom';
@@ -212,7 +213,7 @@ const ChatRoom = () => {
 				}),
 		},
 		{ label: '나가기', onPress: handleLeave },
-		{ label: '취소', onPress: () => {} },
+		{ label: '취소', onPress: () => { } },
 	];
 
 	return (
@@ -252,7 +253,7 @@ const ChatRoom = () => {
 									backgroundColor: Colors.bg.secondary,
 									paddingTop: keyboardHeight, // 키보드 올라왔을 때 키보드 높이만큼 잘리는 컨텐츠 방지
 								}}
-								bottomOffset={-insets.bottom} // 키보드 올라왔을 때 아래로 insets.bottom만큼 이동
+								bottomOffset={KEYBOARD_TOOLBAR_HEIGHT - insets.bottom}
 								infiniteScroll
 								loadEarlier={canLoadMore}
 								onLoadEarlier={onLoadMore}
@@ -264,7 +265,7 @@ const ChatRoom = () => {
 									renderComposer({
 										disabled:
 											receiverInfo?.displayName ===
-												DEFAULT_USER_DISPLAY_NAME ||
+											DEFAULT_USER_DISPLAY_NAME ||
 											isBlockedByMe ||
 											amIBlockedBy,
 										onSend: handleSend,

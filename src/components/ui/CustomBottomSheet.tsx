@@ -1,7 +1,10 @@
 import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import { ReactNode, useCallback, useEffect, useRef } from 'react';
 import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { useGenericKeyboardHandler } from 'react-native-keyboard-controller';
+import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
+import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { Colors } from '@/theme/Color';
 
@@ -25,6 +28,25 @@ const CustomBottomSheet = ({
 	onClose: () => void;
 }) => {
 	const bottomSheetRef = useRef<BottomSheet>(null);
+	const keyboardProgress = useSharedValue(0);
+
+	useGenericKeyboardHandler(
+		{
+			onMove: (event) => {
+				'worklet'; // UI 스레드에서 실행
+				keyboardProgress.value = event.progress; // event.progress: 0~1
+			},
+			onEnd: (event) => {
+				'worklet';
+				keyboardProgress.value = event.progress;
+			},
+		},
+		[],
+	);
+
+	const keyboardToolbarSpacerStyle = useAnimatedStyle(() => ({
+		height: keyboardProgress.value * KEYBOARD_TOOLBAR_HEIGHT,
+	}));
 
 	useEffect(() => {
 		if (isVisible) {
@@ -90,6 +112,7 @@ const CustomBottomSheet = ({
 					</View>
 				)}
 				<View style={[styles.body, bodyStyle]}>{children}</View>
+				<Animated.View pointerEvents="none" style={keyboardToolbarSpacerStyle} />
 			</View>
 		</BottomSheet>
 	);

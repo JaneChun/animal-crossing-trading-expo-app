@@ -15,6 +15,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import NameInput from '@/components/Profile/NameInput';
 import Button from '@/components/ui/Button';
 import CloseButton from '@/components/ui/CloseButton';
+import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
 import { pop } from '@/navigation/RootNavigation';
@@ -53,7 +54,7 @@ const SignUpDisplayName = () => {
 			<KeyboardAvoidingView
 				style={styles.screen}
 				behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-				keyboardVerticalOffset={insets.bottom}
+				keyboardVerticalOffset={insets.bottom + KEYBOARD_TOOLBAR_HEIGHT}
 			>
 				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 					<FormProvider {...methods}>

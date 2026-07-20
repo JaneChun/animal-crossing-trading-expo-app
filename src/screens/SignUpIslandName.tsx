@@ -18,6 +18,7 @@ import NameInput from '@/components/Profile/NameInput';
 import Button from '@/components/ui/Button';
 import CloseButton from '@/components/ui/CloseButton';
 import { showToast } from '@/components/ui/Toast';
+import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { saveUserInfo } from '@/firebase/services/userService';
 import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
@@ -83,7 +84,7 @@ const SignUpIslandName = () => {
 			<KeyboardAvoidingView
 				style={styles.screen}
 				behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-				keyboardVerticalOffset={insets.bottom}
+				keyboardVerticalOffset={insets.bottom + KEYBOARD_TOOLBAR_HEIGHT}
 			>
 				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 					<FormProvider {...methods}>
