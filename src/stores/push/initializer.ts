@@ -15,6 +15,8 @@ export const usePushNotificationInitializer = () => {
 		ExpoNotifications.setNotificationHandler({
 			handleNotification: async () => ({
 				shouldShowAlert: true, // 알림 표시
+				shouldShowBanner: true, // 배너 표시 (iOS)
+				shouldShowList: true, // 알림 센터 목록 표시 (iOS)
 				shouldPlaySound: true, // 사운드 재생
 				shouldSetBadge: true, // 앱 아이콘 배지 설정
 			}),
@@ -59,8 +61,8 @@ export const usePushNotificationInitializer = () => {
 		);
 
 		return () => {
-			ExpoNotifications.removeNotificationSubscription(notificationListener);
-			ExpoNotifications.removeNotificationSubscription(responseListener);
+			notificationListener.remove();
+			responseListener.remove();
 		};
 	}, [setExpoPushToken, setNotification, setError]);
 };

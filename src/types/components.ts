@@ -82,7 +82,7 @@ export type ListItem = PostItem | AdItem;
 // NewPost/
 export interface PostFormProps {
 	collectionName: Collection;
-	scrollViewRef: RefObject<ScrollView>;
+	scrollViewRef: RefObject<ScrollView | null>;
 	handleEditItemPress: (item: CartItem) => void;
 	deleteItemFromCart: (deleteCartItemId: string) => void;
 	deleteVillager: (villagerId: string) => void;
