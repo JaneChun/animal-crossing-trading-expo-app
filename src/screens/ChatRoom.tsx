@@ -1,7 +1,7 @@
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
-import { useEffect, useRef, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import { AnimatedList } from 'react-native-gifted-chat/lib/MessageContainer';
@@ -243,7 +243,9 @@ const ChatRoom = () => {
 								</View>
 							)}
 							<GiftedChat
-								messageContainerRef={giftedChatRef}
+								messageContainerRef={
+									giftedChatRef as RefObject<AnimatedList<ExtendedIMessage>>
+								}
 								messages={messages}
 								user={{ _id: userInfo!.uid }}
 								messagesContainerStyle={{

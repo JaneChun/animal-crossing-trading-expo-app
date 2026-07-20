@@ -81,7 +81,7 @@ function AppContent() {
 	useChatSubscriptionInitializer();
 
 	// 이전 화면 이름을 저장하는 ref (for Analytics)
-	const prevRouteNameRef = useRef<string | undefined>();
+	const prevRouteNameRef = useRef<string | undefined>(undefined);
 
 	return (
 		<ErrorBoundary>

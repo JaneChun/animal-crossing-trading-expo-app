@@ -243,7 +243,7 @@ const CommentUnit = ({
 							>
 								<Text style={styles.chatText}>채팅하기</Text>
 								<AntDesign
-									name="arrowright"
+									name="arrow-right"
 									color={Colors.brand.primary}
 									size={14}
 								/>
