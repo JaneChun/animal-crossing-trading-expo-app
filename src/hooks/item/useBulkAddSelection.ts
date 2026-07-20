@@ -6,7 +6,10 @@ import { type BulkMatchOutput } from '@/types/bulkItemMatching';
 import { type CatalogItem } from '@/types/catalog';
 import { type CartItem } from '@/types/post';
 import { logBulkAddSearch } from '@/utilities/analytics';
-import { catalogItemToBulkAddItem, getBulkAddCartId } from '@/utilities/catalogItemToItem';
+import {
+	catalogItemToBulkAddItem,
+	getUniqueBulkAddCatalogItems,
+} from '@/utilities/catalogItemToItem';
 
 type UseBulkAddSelectionParams = {
 	cart: CartItem[];
@@ -32,7 +35,9 @@ export const useBulkAddSelection = ({
 	initialText,
 	onSearchError,
 }: UseBulkAddSelectionParams) => {
-	const [selectedReviewItems, setSelectedReviewItems] = useState<Record<string, CatalogItem>>({});
+	const [selectedReviewItems, setSelectedReviewItems] = useState<
+		Record<string, CatalogItem>
+	>({});
 	const lastSearchTextRef = useRef('');
 
 	// 검색 실패 콜백은 매 렌더 최신값을 참조하되 검색 트리거 의존성에서는 제외
@@ -48,34 +53,24 @@ export const useBulkAddSelection = ({
 
 	const cartIds = useMemo(() => new Set(cart.map((cartItem) => cartItem.id)), [cart]);
 
-	// 매칭 결과는 mutation data가 단일 원천
 	const { foundResults, needsReviewResults, failedResults } = data ?? EMPTY_MATCH_OUTPUT;
 
-	const selectedReviewItemList = useMemo(
+	const selectedReviewCatalogItems = useMemo(
 		() => Object.values(selectedReviewItems),
 		[selectedReviewItems],
 	);
-	// 카트 중복 판정은 변환 후 카트 id(변형 보유 아이템은 `_any`) 기준 — AddItemModal의 "색상 무관" 항목과 매칭
-	const isNotInCart = useCallback(
-		(item: CatalogItem) => !cartIds.has(getBulkAddCartId(item)),
-		[cartIds],
-	);
-	const addableFoundItems = useMemo(
-		() => foundResults.filter(({ item }) => isNotInCart(item)),
-		[isNotInCart, foundResults],
-	);
-	const addableSelectedReviewItems = useMemo(
-		() => selectedReviewItemList.filter(isNotInCart),
-		[isNotInCart, selectedReviewItemList],
-	);
-	// 확정 직전 단 한 곳에서만 CatalogItem → 카트용 Item으로 변환
-	const addableItems = useMemo(
-		() =>
-			[...addableFoundItems.map(({ item }) => item), ...addableSelectedReviewItems].map(
-				catalogItemToBulkAddItem,
-			),
-		[addableFoundItems, addableSelectedReviewItems],
-	);
+	const addableItems = useMemo(() => {
+		const foundCatalogItems = foundResults.map(({ item }) => item);
+		const candidates = [
+			...foundCatalogItems,
+			...selectedReviewCatalogItems,
+		];
+
+		// 카트에 이미 존재하는 아이템은 제외
+		const addableCatalogItems = getUniqueBulkAddCatalogItems(candidates, cartIds);
+
+		return addableCatalogItems.map(catalogItemToBulkAddItem);
+	}, [cartIds, foundResults, selectedReviewCatalogItems]);
 	const selectedCount = addableItems.length;
 	const remainingCapacity = Math.max(MAX_CART_ITEMS - cart.length, 0);
 	const isOverCapacity = selectedCount > remainingCapacity;
@@ -128,7 +123,7 @@ export const useBulkAddSelection = ({
 		searchFromText(text);
 	}, [initialText, isVisible, resetMatchItems, searchFromText]);
 
-	// 후보 선택 토글 — 이미 선택된 후보를 다시 누르면 해당 라인은 선택 해제
+	// 후보 선택 토글
 	const selectReviewCandidate = useCallback((line: string, item: CatalogItem) => {
 		setSelectedReviewItems((prev) => {
 			if (prev[line]?.id === item.id) {
@@ -138,25 +133,6 @@ export const useBulkAddSelection = ({
 			return { ...prev, [line]: item };
 		});
 	}, []);
-
-	// 확정 애널리틱스용 카운트 — 카트 중복 제외 후 실제 처리 결과를 집계
-	const getConfirmStats = useCallback(
-		() => ({
-			added: addableItems.length,
-			found: addableFoundItems.length,
-			selected_review: addableSelectedReviewItems.length,
-			skipped_review: needsReviewResults.length - selectedReviewItemList.length,
-			failed: failedResults.length,
-		}),
-		[
-			addableItems,
-			addableFoundItems,
-			addableSelectedReviewItems,
-			needsReviewResults,
-			selectedReviewItemList,
-			failedResults,
-		],
-	);
 
 	return {
 		isPending,
@@ -168,7 +144,6 @@ export const useBulkAddSelection = ({
 		isOverCapacity,
 		addableItems,
 		selectReviewCandidate,
-		getConfirmStats,
 		reset,
 	};
 };

@@ -89,6 +89,24 @@ export const catalogItemToBulkAddItem = (item: CatalogItem): Item => {
 export const getBulkAddCartId = (item: CatalogItem): string => catalogItemToBulkAddItem(item).id;
 
 /**
+ * 일괄 추가 후보에서 이미 카트에 담긴 아이템 제거
+ */
+export const getUniqueBulkAddCatalogItems = (
+	items: CatalogItem[],
+	existingCartIds: ReadonlySet<string> = new Set(),
+): CatalogItem[] => {
+	const seenCartIds = new Set(existingCartIds);
+
+	return items.filter((item) => {
+		const cartId = getBulkAddCartId(item);
+		if (seenCartIds.has(cartId)) return false;
+
+		seenCartIds.add(cartId);
+		return true;
+	});
+};
+
+/**
  * 아이템 선택 창(ItemSelect 모달)에서만 사용
  * — 미술품과 레시피에 한해서만 아이템 이름을 거룩한 조각 (진품), 거룩한 조각 (가품), 복숭아 벽지 (레시피)로 표시
  */

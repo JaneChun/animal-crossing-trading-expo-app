@@ -6,6 +6,8 @@ export const getTrimmedNonEmptyLines = (text: string): string[] =>
 		.map((line) => line.trim())
 		.filter(Boolean);
 
+export const getUniqueLines = (lines: string[]): string[] => [...new Set(lines)];
+
 // 최대 붙여넣기 텍스트 줄 수 초과
 export const isOverItemTextLineLimit = (text: string): boolean =>
 	getTrimmedNonEmptyLines(text).length > MAX_ITEM_TEXT_LINES;

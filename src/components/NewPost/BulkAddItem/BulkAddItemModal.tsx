@@ -29,7 +29,6 @@ const BulkAddItemModal = ({
 		isOverCapacity,
 		addableItems,
 		selectReviewCandidate,
-		getConfirmStats,
 		reset,
 	} = useBulkAddSelection({
 		cart,
@@ -48,7 +47,10 @@ const BulkAddItemModal = ({
 
 	const handleConfirm = () => {
 		addItemsToCart(addableItems);
-		logBulkAddConfirm(getConfirmStats());
+		logBulkAddConfirm({
+			added: addableItems.length,
+			failed: failedResults.length,
+		});
 		handleClose();
 	};
 

@@ -2,6 +2,7 @@ import { MAX_ITEM_TEXT_LINES } from '@/constants/post';
 import {
 	getInsertedText,
 	getTrimmedNonEmptyLines,
+	getUniqueLines,
 	isBulkItemText,
 	isOverItemTextLineLimit,
 } from '@/utilities/itemTextLines';
@@ -16,6 +17,15 @@ describe('itemTextLines', () => {
 
 	it('중복된 내용도 본문에 있는 줄이면 각각 카운트한다', () => {
 		expect(getTrimmedNonEmptyLines('요트\n요트\n 요트 ')).toEqual(['요트', '요트', '요트']);
+	});
+
+	it('검색할 줄은 앞뒤 공백을 제거하고 최초 등장 순서대로 중복을 제거한다', () => {
+		const trimmedNonEmptyLines = getTrimmedNonEmptyLines(
+			' 요트 \n소형 자동차\n요트\n 소형 자동차 ',
+		);
+		const uniqueSearchLines = getUniqueLines(trimmedNonEmptyLines);
+
+		expect(uniqueSearchLines).toEqual(['요트', '소형 자동차']);
 	});
 
 	it('공백 제거 후 비어 있지 않은 줄이 제한을 초과하면 추출 제한 초과로 본다', () => {

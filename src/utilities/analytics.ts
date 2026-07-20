@@ -67,9 +67,6 @@ export const logBulkAddSearch = (params: BulkAddSearchParams) => log('bulk_add_s
 
 type BulkAddConfirmParams = {
 	added: number;
-	found: number;
-	selected_review: number;
-	skipped_review: number;
 	failed: number;
 };
 

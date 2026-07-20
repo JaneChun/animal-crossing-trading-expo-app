@@ -13,7 +13,7 @@ import {
 import { CatalogItem } from '@/types/catalog';
 import { buildCleanedSearchTerm, classifyCatalogHits } from '@/utilities/bulkItemMatching';
 import { chunkArray } from '@/utilities/chunkArray';
-import { getTrimmedNonEmptyLines } from '@/utilities/itemTextLines';
+import { getTrimmedNonEmptyLines, getUniqueLines } from '@/utilities/itemTextLines';
 
 /**
  * 사용자가 붙여넣은 전체 텍스트를 검색할 줄 목록으로 정리
@@ -26,7 +26,7 @@ const parseSearchLines = (text: string): string[] => {
 		throw new Error(`Bulk item matching supports up to ${MAX_ITEM_TEXT_LINES} lines.`);
 	}
 
-	return lines;
+	return getUniqueLines(lines);
 };
 
 /**
