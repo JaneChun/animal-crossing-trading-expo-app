@@ -1,26 +1,22 @@
 {
-	"extends": "expo/tsconfig.base",
-	"compilerOptions": {
-		"strict": true,
-		"module": "esnext",
-		"paths": {
-			"@/*": [
-				"./src/*"
-			],
-			"@assets/*": [
-				"./assets/*"
-			]
-		},
-		"baseUrl": ".",
-		"moduleResolution": "node"
-	},
-	"include": [
-		"**/*.ts",
-		"**/*.tsx",
-		".expo/types/**/*.ts",
-		"expo-env.d.ts"
-	],
-	"exclude": [
-		"functions"
-	]
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@assets/*": [
+        "./assets/*"
+      ]
+    },
+    "baseUrl": "."
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ],
+  "exclude": [
+    "functions"
+  ]
 }

@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { ReactElement } from 'react';
 import { StyleProp, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
 
 import { Colors } from '@/theme/Color';
@@ -11,7 +12,7 @@ const SettingListItem = ({
 	style = {},
 	testID = '',
 }: {
-	children: JSX.Element;
+	children: ReactElement;
 	borderRound?: 'top' | 'bottom' | 'all';
 	onPress?: () => void;
 	showChevron?: boolean;

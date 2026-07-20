@@ -39,21 +39,28 @@ export default {
 		},
 		web: {
 			bundler: 'metro',
-			output: 'static',
+			output: 'single',
 			favicon: './assets/images/favicon.png',
 		},
 		plugins: [
+			'expo-font',
+			'expo-web-browser',
 			'@react-native-firebase/app',
 			[
 				'expo-build-properties',
 				{
 					android: {
 						extraMavenRepos: ['https://devrepo.kakao.com/nexus/content/groups/public/'],
-						newArchEnabled: true,
 					},
 					ios: {
-						newArchEnabled: true,
 						useFrameworks: 'static',
+						// 프리컴파일 React-Core는 useFrameworks(static)와 비호환 — 런타임에서
+						// 모듈 레지스트리가 깨져 "AccessibilityManager is nil" 크래시. 소스 빌드 강제.
+						buildReactNativeFromSource: true,
+						// SDK 54 + RN 0.81 프리컴파일 React-Core에서 RNFB framework 모듈이
+						// 비모듈러 헤더(RCTConvert.h)를 include하며 빌드 실패 → 정적 링크로 회피
+						// https://github.com/expo/expo/issues/39607
+						forceStaticLinking: ['RNFBApp', 'RNFBAnalytics'],
 					},
 				},
 			],
@@ -96,13 +103,7 @@ export default {
 				},
 			],
 		],
-		experiments: {
-			typedRoutes: true,
-		},
 		extra: {
-			router: {
-				origin: false,
-			},
 			eas: {
 				projectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID,
 			},
