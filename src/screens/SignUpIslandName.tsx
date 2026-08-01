@@ -84,7 +84,7 @@ const SignUpIslandName = () => {
 			<KeyboardAvoidingView
 				style={styles.screen}
 				behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-				keyboardVerticalOffset={insets.bottom + KEYBOARD_TOOLBAR_HEIGHT}
+				keyboardVerticalOffset={insets.bottom + KEYBOARD_TOOLBAR_HEIGHT + 12}
 			>
 				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 					<FormProvider {...methods}>
