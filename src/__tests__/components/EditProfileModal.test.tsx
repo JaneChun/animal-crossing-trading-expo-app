@@ -25,9 +25,13 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 	setItem: jest.fn(),
 }));
 
-jest.mock('@react-navigation/bottom-tabs', () => ({
-	useBottomTabBarHeight: () => 80,
-}));
+jest.mock('@react-navigation/bottom-tabs', () => {
+	const { createContext } = require('react');
+	// 컨텍스트 기본값을 80으로 두면 Provider 없이도 "탭 안(높이 80)" 상황이 재현된다.
+	return {
+		BottomTabBarHeightContext: createContext(80),
+	};
+});
 
 jest.mock('react-native-keyboard-controller', () => {
 	const { createElement } = require('react');
@@ -194,12 +198,12 @@ describe('EditProfileModal', () => {
 		expect(bottomSheet.props.enableContentPanningGesture).toBeUndefined();
 	});
 
-	it('첫 제스처부터 콘텐츠를 스크롤할 수 있도록 단일 스냅 포인트를 사용한다', () => {
+	it('바텀 시트가 95%/100% 스냅 포인트를 사용한다', () => {
 		const renderer = renderModal();
 
 		const bottomSheet = renderer.root.findByProps({ testID: 'customBottomSheet' });
 
-		expect(bottomSheet.props.snapPoints).toEqual(['95%']);
+		expect(bottomSheet.props.snapPoints).toEqual(['95%', '100%']);
 	});
 
 	it('포커스된 입력이 키보드 위로 자동 스크롤되도록 툴바+여백만큼 bottomOffset을 설정한다', () => {
