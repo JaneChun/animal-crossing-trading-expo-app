@@ -1,9 +1,9 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
 import { ImagePickerAsset } from 'expo-image-picker';
-import { ComponentType, useEffect } from 'react';
+import { ComponentType, useContext, useEffect } from 'react';
 import { Controller, FieldErrors, FormProvider } from 'react-hook-form';
 import {
 	StyleSheet,
@@ -48,7 +48,9 @@ const EditProfileModal = ({
 }: EditProfileModalProps) => {
 	const userInfo = useUserInfo();
 	const setUserInfo = useAuthStore((state) => state.setUserInfo);
-	const bottomTabBarHeight = useBottomTabBarHeight();
+	// Profile은 MainTabNavigator(탭 안)와 RootStackNavigator(탭 밖) 두 곳에 등록되어 있다.
+	// useBottomTabBarHeight()는 탭 밖에서 호출되면 throw하므로, 컨텍스트를 직접 읽어 없으면 0으로 폴백한다.
+	const bottomTabBarHeight = useContext(BottomTabBarHeightContext) ?? 0;
 
 	// form hook 가져오기
 	const methods = useProfileForm();
