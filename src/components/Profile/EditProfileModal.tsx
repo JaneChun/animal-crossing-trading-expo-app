@@ -1,10 +1,19 @@
 import { FontAwesome } from '@expo/vector-icons';
+import { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { ImagePickerAsset } from 'expo-image-picker';
-import { useEffect } from 'react';
+import { ComponentType, useEffect } from 'react';
 import { Controller, FieldErrors, FormProvider } from 'react-hook-form';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {
+	StyleSheet,
+	Text,
+	View,
+	TouchableOpacity,
+	Image,
+	ScrollViewProps,
+} from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import ProfileImageInput from '@/components/Profile/ProfileImageInput';
 import Button from '@/components/ui/Button';
@@ -12,6 +21,7 @@ import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
+import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { FRUIT_IMAGES } from '@/constants/profile';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { updateDocToFirestore } from '@/firebase/core/firestoreService';
@@ -38,6 +48,7 @@ const EditProfileModal = ({
 }: EditProfileModalProps) => {
 	const userInfo = useUserInfo();
 	const setUserInfo = useAuthStore((state) => state.setUserInfo);
+	const bottomTabBarHeight = useBottomTabBarHeight();
 
 	// form hook 가져오기
 	const methods = useProfileForm();
@@ -210,10 +221,27 @@ const EditProfileModal = ({
 				snapPoints={['95%', '100%']}
 				title="프로필 수정"
 				rightButton={submitButton}
-				bodyStyle={styles.bottomSheetBodyStyle}
+				bodyStyle={[
+					styles.bottomSheetBodyStyle,
+					{ paddingBottom: bottomTabBarHeight },
+				]}
 			>
-				<KeyboardAwareScrollView style={styles.screen}>
-					<View style={styles.container}>
+				{/* 스크롤 몸통은 Gorhom, 포커스 자동 스크롤은 keyboard-controller가 담당 */}
+				<KeyboardAwareScrollView
+					testID="editProfileScrollView"
+					// 스크롤 구현체로 BottomSheetScrollView 주입(직접 쓰면 자동 스크롤 사라짐).
+					// 캐스트: prop 타입과 Gorhom props 타입 불일치 회피(런타임 동작 동일)
+					ScrollViewComponent={
+						BottomSheetScrollView as unknown as ComponentType<ScrollViewProps>
+					}
+					// 입력을 키보드 툴바 높이 + 여백만큼 띄워 올림(툴바에 가려지는 것 방지)
+					bottomOffset={KEYBOARD_TOOLBAR_HEIGHT + PADDING}
+					style={styles.screen}
+					// 키보드 여백은 이 컴포넌트가 전담 → 정적 PADDING만, 동적 패딩 금지
+					contentContainerStyle={styles.scrollContent}
+					keyboardShouldPersistTaps="handled"
+				>
+					<View testID="editProfileContent" style={styles.container}>
 						{/* 이미지 */}
 						<Controller
 							control={control}
@@ -223,7 +251,7 @@ const EditProfileModal = ({
 							)}
 						/>
 
-						<View style={styles.info}>
+						<View testID="editProfileInfo" style={styles.info}>
 							{/* 닉네임 */}
 							<Controller
 								control={control}
@@ -235,6 +263,7 @@ const EditProfileModal = ({
 										onChangeText={onChange}
 										label="닉네임"
 										placeholder="닉네임을 입력해주세요."
+										InputComponent={BottomSheetTextInput}
 									/>
 								)}
 							/>
@@ -249,6 +278,7 @@ const EditProfileModal = ({
 										onChangeText={onChange}
 										label="섬 이름"
 										placeholder="섬 이름을 입력해주세요."
+										InputComponent={BottomSheetTextInput}
 									/>
 								)}
 							/>
@@ -286,7 +316,7 @@ const EditProfileModal = ({
 										control={control}
 										name="titleFirst"
 										render={({ field: { value, onChange } }) => (
-											<TextInput
+											<BottomSheetTextInput
 												value={value}
 												onChangeText={onChange}
 												placeholder="초면의"
@@ -298,7 +328,7 @@ const EditProfileModal = ({
 										control={control}
 										name="titleLast"
 										render={({ field: { value, onChange } }) => (
-											<TextInput
+											<BottomSheetTextInput
 												value={value}
 												onChangeText={onChange}
 												placeholder="이주민"
@@ -325,7 +355,8 @@ const EditProfileModal = ({
 									name="bio"
 									render={({ field: { value, onChange } }) => (
 										<View style={styles.bioWrapper}>
-											<TextInput
+											<BottomSheetTextInput
+												testID="bioInput"
 												value={value}
 												onChangeText={onChange}
 												placeholder="한마디를 적어주세요!"
@@ -344,7 +375,7 @@ const EditProfileModal = ({
 							</View>
 
 							{/* 안내 문구 */}
-							<View style={styles.messageContainer}>
+							<View testID="profileInputGuidance" style={styles.messageContainer}>
 								<FontAwesome name="leaf" color={Colors.brand.primary} size={14} />
 								<Text style={styles.infoText}>
 									닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
@@ -362,20 +393,25 @@ export default EditProfileModal;
 
 const styles = StyleSheet.create({
 	bottomSheetBodyStyle: {
-		padding: PADDING,
+		paddingTop: PADDING,
+		paddingLeft: PADDING,
 		paddingRight: 0,
 	},
 	screen: {
 		flex: 1,
-		paddingRight: PADDING,
 		backgroundColor: Colors.bg.primary,
 	},
+	scrollContent: {
+		paddingRight: PADDING,
+		paddingBottom: PADDING,
+	},
 	container: {
-		flex: 1,
+		flexShrink: 0,
 		alignItems: 'center',
 		gap: 4,
 	},
 	info: {
+		flexShrink: 0,
 		width: '90%',
 	},
 	messageContainer: {

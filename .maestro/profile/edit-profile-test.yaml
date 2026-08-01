@@ -15,13 +15,29 @@ appId: com.janechun.animalcrossingtradingapp
 # 프로필 수정 버튼 클릭
 - tapOn:
     label: '프로필 수정 버튼 클릭'
-    text: '프로필 수정'
+    point: '87%, 17%'
 
-# 닉네임 입력 필드 클릭 (모달: point로 접근)
+# 키보드가 닫힌 상태에서 하단까지 스크롤 가능한지 확인
+- swipe:
+    label: '프로필 입력 폼 아래로 스크롤'
+    start: '50%, 65%'
+    end: '50%, 20%'
+    duration: 1500
+
+- swipe:
+    label: '프로필 입력 폼 최하단까지 스크롤'
+    start: '50%, 65%'
+    end: '50%, 20%'
+    duration: 1500
+
+- assertVisible:
+    label: '하단 안내 문구 노출 확인'
+    id: 'profileInputGuidance'
+
+# 닉네임 입력 필드 클릭
 - tapOn:
     label: '닉네임 입력 필드 클릭'
-    # id: displayNameInput
-    point: '50%, 50%'
+    id: 'displayNameInput'
 
 - eraseText:
     label: '기존 닉네임 삭제'
@@ -30,11 +46,10 @@ appId: com.janechun.animalcrossingtradingapp
     label: '새로운 닉네임 입력'
     text: '테스트유저'
 
-# 섬 이름 입력 필드 클릭 및 수정 (모달: point로 접근)
+# 섬 이름 입력 필드 클릭 및 수정
 - tapOn:
     label: '섬 이름 입력 필드 클릭'
-    # id: islandNameInput
-    point: '50%, 55%'
+    id: 'islandNameInput'
 
 - eraseText:
     label: '기존 섬 이름 삭제'
@@ -42,6 +57,22 @@ appId: com.janechun.animalcrossingtradingapp
 - inputText:
     label: '새로운 섬 이름 입력'
     text: '테스트섬'
+
+# 키보드가 열린 상태에서 하단 안내 문구까지 스크롤 가능한지 확인
+- waitForAnimationToEnd
+
+- repeat:
+    times: 5
+    commands:
+      - swipe:
+          label: '키보드 위에서 프로필 입력 폼 아래로 스크롤'
+          start: '50%, 48%'
+          end: '50%, 20%'
+          duration: 800
+
+- assertVisible:
+    label: '키보드가 열린 상태에서 하단 안내 문구 노출 확인'
+    id: 'profileInputGuidance'
 
 # 완료 버튼 클릭
 - tapOn:
