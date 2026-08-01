@@ -15,12 +15,14 @@
 - Gorhom v5의 시트 콘텐츠 높이는 애니메이션 스타일로 계산된다.
   그 아래 일반 `flex: 1` 루트는 높이 제약을 받지 못하고 헤더와 본문 높이만큼 시트 밖으로 넘칠 수 있다.
   `CustomBottomSheet`의 내부 루트를 `StyleSheet.absoluteFillObject`로 부모 경계에 고정해 본문과 스크롤 뷰포트가 실제 시트 높이를 따르게 한다.
-- 탭 화면의 긴 폼은 `useBottomTabBarHeight()` 값을 body의 `paddingBottom`에 반영한다.
+- 탭 화면의 긴 폼은 탭바 높이를 body의 `paddingBottom`에 반영한다.
   스크롤 콘텐츠 여백만 늘리면 탭바 뒤까지 포함한 잘못된 뷰포트 높이는 바뀌지 않는다.
+  단, `Profile`은 `MainTabNavigator`(탭 안)와 `RootStackNavigator`(탭 밖) 두 곳에 등록돼 있어
+  `useBottomTabBarHeight()`를 쓰면 탭 밖 진입 시 throw한다. `BottomTabBarHeightContext`를 직접 읽어 없으면 0으로 폴백한다.
 - 키보드 하단 여백은 `KeyboardAwareScrollView`가 전담한다.
   키보드가 열리면 controller가 내부 스페이서로 키보드 프레임 높이만큼 여백을 주입하므로, 스크롤 콘텐츠에는 정적 `PADDING`만 두고 `useKeyboardState()` 기반 동적 패딩을 더하지 않는다(더하면 이중 여백).
   `bottomOffset`에는 키보드 툴바 높이와 여백(`KEYBOARD_TOOLBAR_HEIGHT + PADDING`)을 주어 포커스 입력이 툴바에 가리지 않게 한다.
 - 스크롤 폼의 세로 래퍼는 `flexShrink: 0`으로 둔다.
   래퍼가 뷰포트 높이에 맞춰 줄어들면 자식은 화면 밖에 그려지면서도 스크롤 가능한 콘텐츠 높이에는 포함되지 않을 수 있다.
-- 스크롤 폼은 단일 `snapPoints`를 사용한다.
-  Gorhom은 여러 스냅 포인트 중 최고점에 도달하기 전까지 내부 스크롤을 잠그므로, 낮은 인덱스로 열면 첫 스와이프가 콘텐츠 스크롤 대신 시트 확장에 소비된다.
+- 스크롤 폼은 `['95%', '100%']` 스냅 포인트를 사용한다.
+  95%로 열어 상단에 닫기 여백을 남기고, 위로 끌면 100%까지 확장된다.
