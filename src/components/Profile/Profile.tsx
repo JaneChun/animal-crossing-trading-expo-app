@@ -33,6 +33,7 @@ const Profile = ({
 
 				{isMyProfile && (
 					<TouchableOpacity
+						testID="editProfileButton"
 						onPress={openEditProfileModal}
 						style={styles.editButton}
 						hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}

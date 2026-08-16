@@ -15,7 +15,7 @@ appId: com.janechun.animalcrossingtradingapp
 # 프로필 수정 버튼 클릭
 - tapOn:
     label: '프로필 수정 버튼 클릭'
-    point: '87%, 17%'
+    id: 'editProfileButton'
 
 # 키보드가 닫힌 상태에서 하단까지 스크롤 가능한지 확인
 - swipe:
