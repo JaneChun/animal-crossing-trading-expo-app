@@ -2,9 +2,11 @@ import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { LinkingOptions, NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as Linking from 'expo-linking';
-import { useRef } from 'react';
+import * as ExpoSplashScreen from 'expo-splash-screen';
+import { useEffect, useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { KeyboardProvider, KeyboardToolbar } from 'react-native-keyboard-controller';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 
@@ -56,6 +58,13 @@ const queryClient = new QueryClient({
 });
 
 export default function App() {
+	useEffect(() => {
+		// SDK 54 dev client에서 auto-hide 옵저버가 유실될 수 있어 명시적으로 종료한다.
+		if (__DEV__) {
+			ExpoSplashScreen.hide();
+		}
+	}, []);
+
 	useAuthInitializer();
 	useAdMobInitializer();
 	usePushNotificationInitializer();
@@ -70,7 +79,10 @@ export default function App() {
 	return (
 		// <StrictMode>
 		<QueryClientProvider client={queryClient}>
-			<AppContent />
+			<KeyboardProvider preload={false}>
+				<AppContent />
+				<KeyboardToolbar showArrows={false} doneText="완료" />
+			</KeyboardProvider>
 		</QueryClientProvider>
 		// </StrictMode>
 	);

@@ -16,6 +16,7 @@ import Button from '@/components/ui/Button';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
+import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { MAX_CART_ITEMS, MAX_ITEM_TEXT_LINES } from '@/constants/post';
 import { NewPostFormValues } from '@/hooks/post/form/newPostFormSchema';
 import { useCartState } from '@/hooks/post/form/useCartState';
@@ -239,7 +240,7 @@ const NewPost = () => {
 				<KeyboardAvoidingView
 					behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
 					style={{ flex: 1 }}
-					keyboardVerticalOffset={headerHeight + insets.top}
+					keyboardVerticalOffset={headerHeight + insets.top + KEYBOARD_TOOLBAR_HEIGHT}
 				>
 					<PostForm
 						collectionName={collectionName}

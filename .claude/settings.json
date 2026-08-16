@@ -20,6 +20,9 @@
 		"deny": [
 			"Bash(npm run deploy:*)",
 			"Bash(firebase deploy:*)",
+			"Bash(npm run release:*)",
+			"Bash(npm run build:*)",
+			"Bash(eas build:*)",
 			"Bash(eas submit:*)",
 			"Read(.env)",
 			"Read(.env.*)"
