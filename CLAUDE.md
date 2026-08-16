@@ -5,7 +5,7 @@
 "모동숲 마켓" — 한국 '모여봐요 동물의 숲' 플레이어를 위한 아이템 거래 마켓플레이스 모바일 앱.
 
 - **스택**
-  - React Native 0.76 + Expo SDK 52 (New Architecture)
+  - React Native 0.81 + Expo SDK 54 (New Architecture)
   - Firebase JS SDK — Auth, Firestore, Functions, Storage
   - Zustand 5 (전역 상태), React Query 5 (서버 상태)
   - React Navigation 7, React Hook Form + Zod, Algolia 검색
