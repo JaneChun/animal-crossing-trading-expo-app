@@ -4,9 +4,9 @@ import FastImage from 'react-native-fast-image';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { VillagerSummaryListProps } from '@/types/components';
 import { Villager } from '@/types/villager';
+import movingBoxIcon from '@assets/images/moving_box.png';
 
 import VillagerItem from './VillagerItem';
-import movingBoxIcon from '../../../assets/images/moving_box.png';
 
 const VillagerSummaryList = ({ type, villagers, containerStyle }: VillagerSummaryListProps) => {
 	if (villagers.length === 0) return null;

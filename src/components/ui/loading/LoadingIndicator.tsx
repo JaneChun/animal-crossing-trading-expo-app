@@ -2,7 +2,7 @@ import { StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { Colors } from '@/theme/Color';
-import dotSpinnerImage from 'assets/images/dots-spinner.jpg';
+import dotSpinnerImage from '@assets/images/dots-spinner.jpg';
 
 const LoadingIndicator = () => (
 	<View style={styles.loadingContainer}>
