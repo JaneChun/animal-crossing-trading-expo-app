@@ -4,7 +4,7 @@ export default {
 	expo: {
 		name: '모동숲 마켓',
 		slug: 'animal-crossing-trading-app',
-		version: '1.9.2',
+		version: '1.9.3',
 		orientation: 'portrait',
 		icon: './assets/images/app_icon.jpg',
 		scheme: 'animal-crossing-trading-app',
@@ -36,6 +36,7 @@ export default {
 				backgroundColor: '#ffffff',
 			},
 			package: 'com.janechun.animalcrossingtradingapp',
+			googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
 		},
 		web: {
 			bundler: 'metro',
@@ -83,6 +84,7 @@ export default {
 						'프로필 사진 및 게시글 이미지 첨부 기능을 제공하기 위해 사진 보관함 접근 권한이 필요합니다. 이 권한은 설정에서 언제든 변경할 수 있습니다.',
 					cameraPermission:
 						'채팅에서 사진을 촬영하여 전송하기 위해 카메라 접근 권한이 필요합니다. 이 권한은 설정에서 언제든 변경할 수 있습니다.',
+					microphonePermission: false,
 				},
 			],
 			[
@@ -97,6 +99,7 @@ export default {
 				'react-native-google-mobile-ads',
 				{
 					iosAppId: process.env.EXPO_PUBLIC_ADMOB_IOS_APP_ID,
+					androidAppId: process.env.EXPO_PUBLIC_ADMOB_ANDROID_APP_ID,
 					userTrackingUsageDescription:
 						'맞춤형 광고 제공을 위해 기기 식별자에 접근합니다. 설정에서 언제든 변경할 수 있습니다.',
 					skAdNetworkItems: ['wzmmz9fp6w.skadnetwork', '22mmun2rn5.skadnetwork'],
