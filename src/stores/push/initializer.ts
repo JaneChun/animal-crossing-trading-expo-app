@@ -55,7 +55,7 @@ export const usePushNotificationInitializer = () => {
 					} else {
 						Alert.alert('유효하지 않은 URL', '유효하지 않은 URL입니다.');
 					}
-				} catch (e: unknown) {
+				} catch {
 					Alert.alert('링크 열기 실패', '링크를 여는 도중 문제가 발생했습니다.');
 				}
 			},
