@@ -12,6 +12,24 @@ interface UserReport {
 	needsAdminReview: boolean;
 }
 
+const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
+
+/**
+ * 한국 날짜 기준 days일 뒤의 한국 시간 00:00:00을 반환
+ * 실행 환경의 타임존(Cloud Functions는 UTC)과 무관하게 동작하도록 고정 오프셋으로 계산한다.
+ * @param now - 기준 시각
+ * @param days - 더할 일수
+ */
+function getKstMidnightAfterDays(now: Date, days: number): Date {
+	const kstNow = new Date(now.getTime() + KST_OFFSET_MS);
+	const kstMidnightAsUtcMs = Date.UTC(
+		kstNow.getUTCFullYear(),
+		kstNow.getUTCMonth(),
+		kstNow.getUTCDate() + days,
+	);
+	return new Date(kstMidnightAsUtcMs - KST_OFFSET_MS);
+}
+
 /**
  * 신고 생성 시 사용자 신고 정보 업데이트
  * @param report - 신고 데이터
@@ -55,11 +73,7 @@ export async function handleUserReport(report: ReportData): Promise<void> {
 
 		if (recent30Days >= 7) {
 			// 최근 30일 신고 7회 이상 → 30일 정지 + 관리자 플
-			const thirtyDaysLater = new Date(
-				now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }),
-			);
-			thirtyDaysLater.setDate(thirtyDaysLater.getDate() + 30);
-			thirtyDaysLater.setHours(0, 0, 0, 0); // 한국 시간 00:00:00으로 설정
+			const thirtyDaysLater = getKstMidnightAfterDays(now, 30);
 
 			if (!currentSuspendDate || thirtyDaysLater > currentSuspendDate) {
 				newSuspendDate = thirtyDaysLater;
@@ -67,11 +81,7 @@ export async function handleUserReport(report: ReportData): Promise<void> {
 			needsAdminReview = true;
 		} else if (recent7Days >= 3) {
 			// 최근 7일 신고 3회 이상 → 7일 정지
-			const sevenDaysLater = new Date(
-				now.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }),
-			);
-			sevenDaysLater.setDate(sevenDaysLater.getDate() + 7);
-			sevenDaysLater.setHours(0, 0, 0, 0); // 한국 시간 00:00:00으로 설정
+			const sevenDaysLater = getKstMidnightAfterDays(now, 7);
 
 			if (!currentSuspendDate || sevenDaysLater > currentSuspendDate) {
 				newSuspendDate = sevenDaysLater;
