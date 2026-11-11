@@ -49,3 +49,9 @@ npm --prefix functions run typecheck   # tsc --noEmit
 npm --prefix functions test            # jest (에뮬레이터 필요, agent_docs/testing.md 참조)
 npm --prefix functions run test:coverage
 ```
+
+## GitHub Actions (Claude)
+
+- `claude-code-review.yml`: master 대상 PR에서 공식 `code-review` 플러그인이 한국어로 리뷰한다. 플러그인은 Claude가 이미 코멘트한 PR을 다시 리뷰하지 않으므로, 자동 리뷰는 PR당 사실상 한 번이다.
+- `claude.yml`: PR 댓글·리뷰에 `@claude`를 쓰면 작업 후 PR 브랜치에 푸시한다. 댓글 이벤트 워크플로는 기본 브랜치(master)의 파일로 실행되므로, 워크플로 수정은 머지 후에야 반영된다.
+- 두 워크플로 모두 `CLAUDE_CODE_OAUTH_TOKEN` 시크릿(`claude setup-token`으로 발급)이 필요하다.
