@@ -112,7 +112,7 @@ const AgreeToTermsAndConditions = () => {
 				<Button
 					disabled={!termsAgree || !privacyAgree}
 					onPress={handleNext}
-					color="mint"
+					variant="primary"
 					size="lg"
 					style={styles.button}
 				>

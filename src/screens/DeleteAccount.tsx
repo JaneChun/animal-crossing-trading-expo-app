@@ -96,10 +96,10 @@ const DeleteAccount = () => {
 					))}
 					<View style={styles.bottom}>
 						<View style={styles.buttonsContainer}>
-							<Button onPress={backToAccount} color="gray" size="lg2" flex>
+							<Button onPress={backToAccount} variant="secondary" size="lg" flex>
 								취소
 							</Button>
-							<Button onPress={handleDeleteAccount} color="mint" size="lg2" flex>
+							<Button onPress={handleDeleteAccount} variant="primary" size="lg" flex>
 								탈퇴할래요
 							</Button>
 						</View>

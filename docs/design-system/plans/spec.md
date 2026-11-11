@@ -156,7 +156,7 @@
 
 ## Badge
 
-- `tone` prop(`'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'lavender' | 'purple' | 'brand'`)을 받아 `Colors.text.{tone}` 글자와 `Colors.bg.{tone}` 배경을 쓴다.
+- `tone` prop(`'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'lavender' | 'purple' | 'brand' | 'neutral'`)을 받아 `Colors.text.{tone}` 글자와 `Colors.bg.{tone}` 배경을 쓴다. `brand`는 `primaryBrand` 쌍, `neutral`은 `tertiary` 쌍이다('거래완료', '자유' 배지).
 - 글자는 `caption` semibold, padding은 세로 4 / 가로 6, 모서리는 `BorderRadius.xs`다.
 - 기존 `textColor`·`bgColor` prop은 제거한다. 호출부(`MarketTypeBadge`, `CommunityTypeBadge`)는 타입별 tone 매핑으로 바꾼다.
 - 기존 Badge에 있던 `marginRight: 6`은 컴포넌트에서 빼고, 간격은 호출부의 레이아웃이 정한다.
@@ -180,7 +180,7 @@
 - **Button의 `flex`와 `style.width`를 함께 지정**: `style`이 마지막에 병합되므로 `style`이 이긴다.
 - **disabled이면서 loading**: loading 표시를 우선하되 색은 disabled 색을 쓴다.
 - **Text에 `color`와 `style.color`를 함께 지정**: `style.color`가 이긴다.
-- **Badge에 정의되지 않은 타입**(`MarketTypeBadge`에 새 마켓 타입이 추가된 경우): tone `brand`로 표시한다.
+- **Badge에 정의되지 않은 tone**: tone `brand`로 표시한다. `MarketTypeBadge`·`CommunityTypeBadge`에 매핑에 없는 타입이 들어오면 표시할 라벨이 없으므로 지금처럼 배지를 렌더링하지 않는다.
 - **폐기 예정 색상 키 사용**: 기존 화면은 계속 같은 색으로 렌더링된다. 편집기에서 취소선과 대체 키 안내가 보인다.
 - **다크에서 흰 배경이 들어간 이미지**(아이템·주민 이미지, 업로드 사진): 이미지는 바꾸지 않는다. 썸네일 컨테이너는 `bg.secondary` 배경과 모서리를 유지해서 이미지가 화면에 떠 보이지 않게 한다.
 - **광고(`NativeAdUnit`)**: 광고 소재의 이미지·문구 색은 바꾸지 않는다. 광고를 감싼 카드의 배경·테두리·"광고" 라벨만 테마를 따른다.

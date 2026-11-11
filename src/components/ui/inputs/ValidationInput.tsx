@@ -1,6 +1,7 @@
 import { StyleSheet, TextInput } from 'react-native';
 
 import { FontSizes } from '@/constants/Typography';
+import { useTheme } from '@/theme';
 import { Colors } from '@/theme/Color';
 import { ValidationInputProp } from '@/types/components';
 
@@ -13,12 +14,14 @@ const ValidationInput = ({
 	InputComponent = TextInput,
 	...props
 }: ValidationInputProp) => {
+	const { colors } = useTheme();
+
 	return (
 		<>
 			<InputComponent
 				{...props}
 				placeholderTextColor={Colors.text.tertiary}
-				style={[inputStyle, errorMessage ? { borderColor: 'red' } : null]}
+				style={[inputStyle, errorMessage ? { borderColor: colors.status.error } : null]}
 			/>
 			{errorMessage && (
 				<ErrorMessage message={errorMessage} containerStyle={errorMessageContainerStyle} />

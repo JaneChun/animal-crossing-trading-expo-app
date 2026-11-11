@@ -120,7 +120,7 @@ const SignUpIslandName = () => {
 							<Button
 								disabled={!isIslandNameValid}
 								onPress={onSubmit}
-								color="mint"
+								variant="primary"
 								size="lg"
 								style={styles.button}
 							>

@@ -57,10 +57,20 @@ export type TypeBadgeProps<T extends MarketType | CommunityType> = {
 	containerStyle?: ViewStyle;
 };
 
+export type BadgeTone =
+	| 'red'
+	| 'orange'
+	| 'yellow'
+	| 'green'
+	| 'blue'
+	| 'lavender'
+	| 'purple'
+	| 'brand'
+	| 'neutral';
+
 export type BadgeProps = {
 	text: string;
-	textColor: string;
-	bgColor: string;
+	tone: BadgeTone;
 	containerStyle?: ViewStyle;
 };
 
@@ -418,17 +428,30 @@ export interface RenderDayProps extends DayProps {
 }
 
 // ui/
-export type ButtonColor = 'mint' | 'white' | 'gray' | 'red' | 'redWhite';
-export type ButtonSize = 'sm' | 'md' | 'md2' | 'lg' | 'lg2';
+export type ButtonVariant =
+	| 'primary'
+	| 'outline'
+	| 'secondary'
+	| 'danger'
+	| 'dangerOutline'
+	| 'ghost';
+export type ButtonSize = 'sm' | 'md' | 'lg';
 export type ButtonProps = {
-	children: React.ReactNode;
+	children: string;
 	onPress: (event: GestureResponderEvent) => void;
-	color: ButtonColor;
-	size: ButtonSize;
+	variant?: ButtonVariant;
+	size?: ButtonSize;
+	isLoading?: boolean;
+	leftIcon?: ReactNode;
 	flex?: boolean;
-	style?: object;
+	style?: StyleProp<ViewStyle>;
 	disabled?: boolean;
 	testID?: string;
+};
+
+export type DividerProps = {
+	variant?: 'thin' | 'section';
+	style?: StyleProp<ViewStyle>;
 };
 
 export type TextProps = RNTextProps & {

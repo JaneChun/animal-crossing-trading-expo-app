@@ -57,8 +57,8 @@ const BlockedUserUnit = ({ blockedUserInfo, onToggleBlock }: BlockedUserUnitProp
 			</View>
 			<View style={styles.footer}>
 				<Button
-					size="md2"
-					color={isBlocked ? 'red' : 'redWhite'}
+					size="md"
+					variant={isBlocked ? 'danger' : 'dangerOutline'}
 					style={{ width: 90 }}
 					onPress={handlePress}
 				>

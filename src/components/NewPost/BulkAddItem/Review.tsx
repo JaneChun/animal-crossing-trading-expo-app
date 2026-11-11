@@ -114,14 +114,14 @@ const Review = ({
 					/>
 				)}
 				<Button
-					color="mint"
-					size="lg2"
+					variant="primary"
+					size="lg"
 					onPress={onConfirm}
 					disabled={selectedCount === 0 || isOverCapacity}
 					testID="bulkAddConfirmButton"
 					style={styles.confirmButton}
 				>
-					{selectedCount}개 추가하기
+					{`${selectedCount}개 추가하기`}
 				</Button>
 			</View>
 		</View>

@@ -80,18 +80,20 @@ Phase 1이 끝나도 화면은 바뀌지 않아야 한다(인증 뱃지 아이�
 
 ## Phase 4: 핵심 컴포넌트 API 표준화
 
-- [ ] `Button` 재작성 (`src/components/ui/Button.tsx`, `src/types/components.ts`)
+- [x] `Button` 재작성 (`src/components/ui/Button.tsx`, `src/types/components.ts`)
   - 재사용: 기존 `memo`, `testID`, `flex`, `style` prop 지원
   - 패턴: 참고 프로젝트 `components/ui/button.tsx`의 `variant`·`size`·`isLoading`·disabled 처리 구조. 피드백은 `TouchableOpacity` 대신 `Pressable`의 pressed 상태로 처리. 색은 `useThemedStyles`로 만든다
   - API와 기존 값 매핑은 `spec.md`의 Button 절을 따른다
   - 결정: padding 기반 높이를 고정 높이 sm 32 / md 40 / lg 52로 바꾼다. `lg` 6곳은 약 3px 커지고 `md2`·`lg2`는 약 1px 작아진다(사용자 결정, 시안 비교 후 수락)
-- [ ] Button 호출부 마이그레이션 (`src/screens/AgreeToTermsAndConditions.tsx`, `Onboarding.tsx`, `SignUpDisplayName.tsx`, `DeleteAccount.tsx`, `SignUpIslandName.tsx`, `NewPost.tsx`, `src/components/ui/UpdateModal.tsx`, `src/components/PostDetail/ReportModal.tsx`, `EditCommentModal.tsx`, `src/components/Profile/EditProfileModal.tsx`, `src/components/NewPost/BulkAddItem/Review.tsx`, `src/components/Block/BlockedUserUnit.tsx`)
+- [x] Button 호출부 마이그레이션 (`src/screens/AgreeToTermsAndConditions.tsx`, `Onboarding.tsx`, `SignUpDisplayName.tsx`, `DeleteAccount.tsx`, `SignUpIslandName.tsx`, `NewPost.tsx`, `src/components/ui/UpdateModal.tsx`, `src/components/PostDetail/ReportModal.tsx`, `EditCommentModal.tsx`, `src/components/Profile/EditProfileModal.tsx`, `src/components/NewPost/BulkAddItem/Review.tsx`, `src/components/Block/BlockedUserUnit.tsx`)
   - 패턴: `src/__tests__/components/EditProfileModal.test.tsx`는 `Button`을 문자열로 mock하므로 prop 이름 변경의 영향을 받지 않는다
-- [ ] `Badge`를 tone 기반으로 재작성 (`src/components/ui/Badge.tsx`, `src/components/Home/MarketTypeBadge.tsx`, `src/components/Community/CommunityTypeBadge.tsx`)
+  - 결정: 계획 목록에 없던 `src/components/ui/UpdateModal.tsx`도 상대 경로 import라 함께 바꿨다. children이 `string`이 되면서 `Review.tsx`는 템플릿 문자열로, `UpdateModal.tsx`는 스타일 없는 RN `Text` 래퍼를 제거했다(화면 동일)
+- [x] `Badge`를 tone 기반으로 재작성 (`src/components/ui/Badge.tsx`, `src/components/Home/MarketTypeBadge.tsx`, `src/components/Community/CommunityTypeBadge.tsx`)
   - 재사용: `colors.text.{tone}`·`colors.bg.{tone}` 쌍이 이미 tone별로 짝지어져 있다
-- [ ] `Divider` 컴포넌트 추가 (`src/components/ui/Divider.tsx`)
+  - 결정: spec의 tone 목록에 없던 회색 배지('거래완료', '자유')를 위해 `neutral` tone(`text.tertiary`/`bg.tertiary`)을 추가했다. 타입별 배지는 정의되지 않은 타입이면 지금처럼 렌더링하지 않고, brand 대체는 `Badge`에 잘못된 tone이 들어올 때만 적용한다(표시할 라벨이 없음). 빠진 `marginRight: 6`은 배지 옆에 제목이 붙는 `Chat/PostSummary.tsx`에만 `gap: 6`으로 보존했다
+- [x] `Divider` 컴포넌트 추가 (`src/components/ui/Divider.tsx`)
   - 재사용: `colors.border.default`, `SECTION_DIVIDER_HEIGHT`(현재 사용처 0)
-- [ ] 입력 에러 색상 토큰화 (`src/components/ui/inputs/ValidationInput.tsx`)
+- [x] 입력 에러 색상 토큰화 (`src/components/ui/inputs/ValidationInput.tsx`)
   - 현재 `borderColor: 'red'` 리터럴 → `colors.status.error`
 
 ## Phase 5: 가드레일과 문서
@@ -162,3 +164,5 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 - 결정: RN 0.83의 `useColorScheme()`은 설정 값이 없을 때 `null`이 아니라 `'unspecified'`를 반환하므로 spec 상태 정의를 고쳤다
 - Phase 3 완료
 - 검증: `npx jest --selectProjects unit` 8개 스위트 49개 통과, `npm run typecheck` 통과, 변경 파일 `eslint` 통과
+- Phase 4 완료
+- 검증: `npm run typecheck` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, 변경 파일 `eslint` 경고 8건(모두 변경 전부터 있던 경고, 신규 0건)

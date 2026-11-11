@@ -85,7 +85,7 @@ const Onboarding = () => {
 				<PageIndicator totalPages={ONBOARDING_DATA.length} currentIndex={currentStep} />
 
 				{/* 버튼  */}
-				<Button onPress={handleNext} color="mint" size="lg2" style={styles.button}>
+				<Button onPress={handleNext} variant="primary" size="lg" style={styles.button}>
 					{currentData.buttonText}
 				</Button>
 			</View>

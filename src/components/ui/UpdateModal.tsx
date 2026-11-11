@@ -89,8 +89,8 @@ export const UpdateModal = ({
 
 						{/* 버튼 영역 */}
 						<View style={styles.buttonContainer}>
-							<Button size="lg" color="mint" onPress={handleUpdate}>
-								<Text>업데이트 하러가기</Text>
+							<Button size="lg" variant="primary" onPress={handleUpdate}>
+								업데이트 하러가기
 							</Button>
 
 							{!isForceUpdate && (

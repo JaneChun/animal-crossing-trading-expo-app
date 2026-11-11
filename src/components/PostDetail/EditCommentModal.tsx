@@ -56,13 +56,13 @@ const EditCommentModal = ({
 	};
 
 	const submitButton = (
-		<Button disabled={!isValid} color="white" size="md2" onPress={handleSubmit}>
+		<Button disabled={!isValid} variant="outline" size="md" onPress={handleSubmit}>
 			완료
 		</Button>
 	);
 
 	const cancelButton = (
-		<Button color="gray" size="md2" onPress={goBack}>
+		<Button variant="secondary" size="md" onPress={goBack}>
 			취소
 		</Button>
 	);

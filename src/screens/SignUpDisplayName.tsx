@@ -90,7 +90,7 @@ const SignUpDisplayName = () => {
 							<Button
 								disabled={!isDisplayNameValid}
 								onPress={handleNext}
-								color="mint"
+								variant="primary"
 								size="lg"
 								style={styles.button}
 							>

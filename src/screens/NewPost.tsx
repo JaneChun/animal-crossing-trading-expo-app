@@ -257,7 +257,7 @@ const NewPost = () => {
 				<View style={styles.buttonContainer}>
 					{collectionName === 'Boards' && (
 						<Button
-							color="white"
+							variant="outline"
 							size="lg"
 							flex
 							onPress={cartState.openAddModal}
@@ -267,8 +267,8 @@ const NewPost = () => {
 						</Button>
 					)}
 					<Button
-						color="mint"
-						size="lg2"
+						variant="primary"
+						size="lg"
 						flex
 						disabled={Object.keys(errors).length > 0}
 						onPress={handleSubmit(onSubmit, onError)}

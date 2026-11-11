@@ -202,8 +202,8 @@ const EditProfileModal = ({
 	const submitButton = (
 		<Button
 			disabled={!isValid || isUploading}
-			color="white"
-			size="md2"
+			variant="outline"
+			size="md"
 			onPress={handleSubmit(onSubmit, onError)}
 			testID="submitProfileButton"
 		>

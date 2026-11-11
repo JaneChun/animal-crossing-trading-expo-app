@@ -45,21 +45,21 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 				step === 1 ? (
 					<Button
 						disabled={!selectedCategory}
-						color="white"
-						size="md2"
+						variant="outline"
+						size="md"
 						onPress={handleNext}
 					>
 						다음
 					</Button>
 				) : (
-					<Button color="white" size="md2" onPress={handleSubmit}>
+					<Button variant="outline" size="md" onPress={handleSubmit}>
 						제출
 					</Button>
 				)
 			}
 			leftButton={
 				step === 1 ? null : (
-					<Button color="gray" size="md2" onPress={handleBack}>
+					<Button variant="secondary" size="md" onPress={handleBack}>
 						이전
 					</Button>
 				)

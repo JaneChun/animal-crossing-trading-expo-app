@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
 		height: 30,
 		flexDirection: 'row',
 		alignItems: 'center',
+		gap: 6,
 	},
 	title: {
 		flexShrink: 1,
