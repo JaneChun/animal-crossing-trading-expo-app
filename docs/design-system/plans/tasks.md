@@ -98,13 +98,14 @@ Phase 1이 끝나도 화면은 바뀌지 않아야 한다(인증 뱃지 아이�
 
 ## Phase 5: 가드레일과 문서
 
-- [ ] ESLint 규칙 추가 (`.eslintrc.js`)
+- [x] ESLint 규칙 추가 (`.eslintrc.js`)
   - `no-restricted-imports`: react-native의 `Text` import와 `@/theme`의 정적 `Colors` import를 `warn`으로 표시하고 대체 방법을 안내한다
   - `no-restricted-syntax`: `src/theme/` 밖의 hex 문자열 리터럴과 `'white'`·`'black'`·`'red'` 색 리터럴을 `warn`으로 표시한다
   - 패턴: 참고 프로젝트 AGENTS.md의 "react-native 기본 컴포넌트 직접 import 금지" 규칙. `npm run lint`에 `--max-warnings`가 없으므로 경고는 CI를 막지 않는다
-- [ ] 디자인 시스템 문서 (`agent_docs/design-system.md`)
+  - 결정: `'red'` 등은 tone 키·`Text`의 `color` prop 값과 겹치므로, 색 이름 리터럴은 이름이 `color`/`Color`로 끝나는 스타일 속성과 JSX 속성(`Text` 제외)에서만 잡는다. 규칙 대상은 `src/`·`App.tsx`이고 `src/theme/`, `src/__tests__/theme/`, `ui/Text.tsx`는 제외한다
+- [x] 디자인 시스템 문서 (`agent_docs/design-system.md`)
   - 토큰 표, 컴포넌트 API, 마이그레이션 레시피, 서드파티 style prop 처리법, "새 컴포넌트를 `ui/`로 올리는 기준", 스케일 밖 값 규칙, 도메인별 마이그레이션 현황 표
-- [ ] CLAUDE.md 세부 문서 표에 `design-system.md` 행 추가 (`CLAUDE.md`)
+- [x] CLAUDE.md 세부 문서 표에 `design-system.md` 행 추가 (`CLAUDE.md`)
 
 ## Phase 6: 공통 UI와 내비게이션 마이그레이션
 
@@ -166,3 +167,8 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 - 검증: `npx jest --selectProjects unit` 8개 스위트 49개 통과, `npm run typecheck` 통과, 변경 파일 `eslint` 통과
 - Phase 4 완료
 - 검증: `npm run typecheck` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, 변경 파일 `eslint` 경고 8건(모두 변경 전부터 있던 경고, 신규 0건)
+
+### 2026-11-12
+
+- Phase 5 완료
+- 검증: `npm run lint` 종료 코드 0(오류 0건). 가드레일 경고는 RN `Text` import 76건, 정적 `Colors` import 112건, hex 11건, 색 이름 2건
