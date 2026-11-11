@@ -6,6 +6,7 @@
 - 최초 설정: `npm install`(루트) → `cd functions && npm install`
 - `.npmrc`에 `legacy-peer-deps=true` — peer 충돌을 무시하고 설치 (CI의 `npm ci`에도 동일 적용)
 - 라이브러리 수정은 직접 수정 대신 `patch-package` 사용 (`patches/`, postinstall에서 자동 적용)
+- 에디터가 TypeScript 6 이상을 쓰면 테스트 파일의 `jest.mock` 등에 `Cannot use namespace 'jest' as a value`(TS2708)가 표시된다. TS 6부터 `types` 기본값이 `[]`라 `@types/jest` 전역이 자동으로 로드되지 않기 때문이다. 프로젝트 기준은 `typescript ~5.9`(`npm run typecheck`)이므로 에디터에서 "Use Workspace Version"을 선택한다
 
 ## 환경 변수 (git 미추적)
 
