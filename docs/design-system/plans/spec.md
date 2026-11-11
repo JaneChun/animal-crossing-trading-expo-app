@@ -102,7 +102,7 @@
 - `Text`의 기본 variant는 `body1`, 기본 color는 현재 테마의 `text.primary`다.
 - `color` prop은 `text`의 키(`'primary' | 'secondary' | 'tertiary' | 'inverse' | 'onBrand' | 'red' | …`)만 받고, 현재 테마의 값으로 바뀐다. 임의 색은 `style`로만 넘길 수 있다.
 - `style` prop은 variant 스타일 뒤에 병합되므로 `style`의 값이 이긴다.
-- 중첩된 `Text`(예: `HighlightMatchText`의 강조 구간)는 variant를 지정하지 않으면 부모의 크기·행간을 상속한다. 이를 위해 자식 `Text`는 variant prop이 없을 때 fontSize·lineHeight를 스타일에 넣지 않는다.
+- 중첩된 `Text`(예: `HighlightMatchText`의 강조 구간)는 variant를 지정하지 않으면 부모의 크기·행간·굵기를 상속한다. 이를 위해 자식 `Text`는 variant prop이 없을 때 fontSize·lineHeight를 스타일에 넣지 않고, `weight`·`color` prop이 없으면 굵기·색도 넣지 않는다. 색은 variant 지정 여부와 관계없이 `color` prop이 없으면 부모 색을 상속한다.
 - 접근성 글자 크기 설정(`allowFontScaling`)은 지금 동작(RN 기본값, 확대 허용)을 그대로 둔다.
 
 ## 간격·모서리·그림자

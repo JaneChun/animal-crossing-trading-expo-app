@@ -71,10 +71,11 @@ Phase 1이 끝나도 화면은 바뀌지 않아야 한다(인증 뱃지 아이�
 
 ## Phase 3: 공통 Text 컴포넌트
 
-- [ ] `Text` 컴포넌트 (`src/components/ui/Text.tsx`)
+- [x] `Text` 컴포넌트 (`src/components/ui/Text.tsx`)
   - 패턴: 참고 프로젝트 `components/ui/text.tsx`처럼 RN `Text`를 감싸되, `variant`·`weight`·`color` prop을 받아 `TextVariants`와 `useTheme().colors.text`로 스타일을 만든다. `style` prop은 마지막에 병합한다
   - 재사용: `HighlightMatchText.tsx`가 중첩 `Text`를 쓰므로 중첩 시 부모 스타일 상속이 깨지지 않는지 확인
-- [ ] `Text` 단위 테스트 (`src/__tests__/components/Text.test.tsx`)
+  - 결정: 중첩 여부는 자체 Context로 판단하고, variant 없는 중첩 `Text`는 크기·행간뿐 아니라 굵기·색도 지정한 prop이 없으면 넣지 않는다(기본 색 `text.primary`가 부모 색을 덮어쓰는 문제 방지). props 타입은 기존 관례대로 `src/types/components.ts`의 `TextProps`
+- [x] `Text` 단위 테스트 (`src/__tests__/components/Text.test.tsx`)
   - 검증: variant별 스타일, light/dark 색, 중첩 상속, `style` 우선
 
 ## Phase 4: 핵심 컴포넌트 API 표준화
@@ -159,3 +160,5 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 - Phase 2 완료
 - 검증: `npx jest --selectProjects unit` 7개 스위트 42개 통과, `npm run typecheck` 통과, 변경 파일 `eslint` 통과
 - 결정: RN 0.83의 `useColorScheme()`은 설정 값이 없을 때 `null`이 아니라 `'unspecified'`를 반환하므로 spec 상태 정의를 고쳤다
+- Phase 3 완료
+- 검증: `npx jest --selectProjects unit` 8개 스위트 49개 통과, `npm run typecheck` 통과, 변경 파일 `eslint` 통과

@@ -7,6 +7,7 @@ import {
 	StyleProp,
 	TextInput,
 	TextInputProps,
+	TextProps as RNTextProps,
 	TextStyle,
 	ViewStyle,
 } from 'react-native';
@@ -16,6 +17,7 @@ import { DayProps } from 'react-native-gifted-chat';
 
 import { ICON_MAP } from '@/components/ui/EmptyIndicator';
 import { OnboardingStep } from '@/constants/onboardingData';
+import { ColorScheme, FontWeights, TextVariant } from '@/theme';
 
 import { CatalogItem } from './catalog';
 import { ExtendedIMessage } from './chat';
@@ -427,6 +429,15 @@ export type ButtonProps = {
 	style?: object;
 	disabled?: boolean;
 	testID?: string;
+};
+
+export type TextProps = RNTextProps & {
+	/** 크기·행간 프리셋. 중첩된 Text에서 생략하면 부모의 크기·행간을 상속한다 */
+	variant?: TextVariant;
+	/** 생략하면 variant의 기본 굵기 */
+	weight?: keyof typeof FontWeights;
+	/** 현재 테마의 text 색 키. 임의 색은 style로 넘긴다 */
+	color?: keyof ColorScheme['text'];
 };
 
 export type ValidationInputProp = TextInputProps & {
