@@ -52,18 +52,21 @@ Phase 1이 끝나도 화면은 바뀌지 않아야 한다(인증 뱃지 아이�
 
 ## Phase 2: 테마 인프라
 
-- [ ] `ThemeProvider`와 `useTheme` (`src/theme/ThemeProvider.tsx`)
+- [x] `ThemeProvider`와 `useTheme` (`src/theme/ThemeProvider.tsx`)
   - react-native `useColorScheme()`으로 기기 설정을 읽고 `{ scheme, colors }`를 Context로 내려준다. `DARK_MODE_ENABLED`가 `false`이면 항상 `light`를 내려준다
   - 패턴: 별도 스토어를 만들지 않는다. Zustand는 서버·도메인 상태용이고(`agent_docs/architecture.md`), 테마는 기기 설정에서 파생되는 값이라 Context로 충분하다
-- [ ] `useThemedStyles` 훅 (`src/theme/useThemedStyles.ts`)
+- [x] `useThemedStyles` 훅 (`src/theme/useThemedStyles.ts`)
   - `makeStyles: (theme) => StyleSheet.create(...)`를 받아 `useMemo`로 scheme마다 한 번만 만든다
   - 이 훅의 사용법이 104개 파일 마이그레이션의 레시피가 되므로, 레시피를 `agent_docs/design-system.md` 초안에 바로 적는다(Phase 5에서 문서 완성)
-- [ ] 앱 루트 연결 (`App.tsx`)
+- [x] 앱 루트 연결 (`App.tsx`)
   - `ThemeProvider`를 `ErrorBoundary` 바로 안쪽에 둔다. `NavigationContainer`에 scheme에 맞는 `theme`(React Navigation `DefaultTheme`/`DarkTheme`을 우리 토큰으로 덮어쓴 값)을 넘긴다
   - `expo-status-bar`의 `StatusBar`를 scheme에 맞춰 렌더링한다(현재 사용처 없음)
+  - 결정: 라이트는 React Navigation `DefaultTheme`을 그대로 쓰고 다크만 토큰으로 덮어쓴다(`src/theme/navigationTheme.ts`). 라이트까지 덮어쓰면 화면 배경(`#F2F2F2`→흰색)과 헤더 테두리 색이 바뀌어 "중간 배포 시 화면 동일" 결정과 충돌한다
+  - 결정: `useTheme`을 쓰기 위해 `AppContent`의 `ErrorBoundary` 안쪽을 `ThemedAppContent` 컴포넌트로 분리했다
   - 결정: `ErrorBoundary`는 `ThemeProvider` 바깥이고 클래스 컴포넌트라 훅을 못 쓴다. fallback 화면만 `lightColors`로 고정한다(테마 컨텍스트가 깨졌을 수도 있는 에러 화면이므로 단순하게 유지)
-- [ ] 테마 인프라 테스트 (`src/__tests__/theme/ThemeProvider.test.tsx`)
+- [x] 테마 인프라 테스트 (`src/__tests__/theme/ThemeProvider.test.tsx`)
   - 패턴: `src/__tests__/components/EditProfileModal.test.tsx`의 react-test-renderer 사용 방식
+  - 결정: 플래그는 상수라 테스트에서 바꿀 수 없으므로, "켜져 있으면 기기 설정을 따름"은 순수 함수 `resolveThemeScheme`으로 검증한다
   - 검증: 플래그가 꺼져 있으면 기기가 다크여도 light, 켜져 있으면 기기 설정을 따름, 같은 scheme에서 `useThemedStyles`가 같은 객체를 반환함
 
 ## Phase 3: 공통 Text 컴포넌트
@@ -153,3 +156,6 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 - 결정: 주 버튼(흰 글자 on `#35d8c9`)의 대비가 1.78 : 1로 접근성 기준(3 : 1)에 못 미치지만, 브랜드 색 조정은 이번 범위에서 빼고 별도 작업으로 다룬다
 - Phase 1 완료
 - 검증: `npx jest --selectProjects unit` 6개 스위트 37개 통과, `npm run typecheck` 통과, 변경 파일 `eslint` 통과
+- Phase 2 완료
+- 검증: `npx jest --selectProjects unit` 7개 스위트 42개 통과, `npm run typecheck` 통과, 변경 파일 `eslint` 통과
+- 결정: RN 0.83의 `useColorScheme()`은 설정 값이 없을 때 `null`이 아니라 `'unspecified'`를 반환하므로 spec 상태 정의를 고쳤다

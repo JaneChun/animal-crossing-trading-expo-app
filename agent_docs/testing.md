@@ -10,6 +10,7 @@
 
 - 테스트 하나는 실패 원인이 하나가 되도록 동작 하나만 검증한다. 기존 상태와의 중복, 입력 내부 중복처럼 조건이 다르면 테스트를 분리한다.
 - 정제 → 중복 제거처럼 변환 단계가 둘 이상이면 의미 있는 중간 변수로 나눠 Arrange/Act/Assert의 데이터 흐름을 드러낸다.
+- unit 프로젝트의 변환기(`jest.ts-transformer.js`)는 `jest.mock`을 파일 맨 위로 끌어올리지 않는다. `react-native` 등을 mock하는 테스트는 mock 선언 뒤에 `require`로 대상 모듈을 불러와야 한다. `import`로 불러오면 실제 `react-native`가 로드되어 파싱 에러가 난다.
 
 ## E2E: Maestro
 
