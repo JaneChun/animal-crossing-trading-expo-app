@@ -110,7 +110,7 @@ const Profile = ({
 							{profileInfo?.review?.badgeGranted && (
 								<MaterialIcons
 									name="verified"
-									color={Colors.icon.primary}
+									color={Colors.brand.primary}
 									size={20}
 									style={styles.verifiedIcon}
 								/>

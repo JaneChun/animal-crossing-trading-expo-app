@@ -1,85 +1,178 @@
-export const Colors = {
+import { Palette } from './palette';
+
+export const lightColors = {
 	// Brand colors
 	brand: {
-		primary: '#35d8c9',
-		secondary: '#e6f8f5',
+		primary: Palette.mint[400],
+		secondary: Palette.mint[50],
 	},
 
 	// Text colors
 	text: {
-		primary: '#050512',
-		secondary: '#262634',
-		tertiary: '#9797a0',
-		inverse: '#FFFFFF',
-		red: '#CD5067',
-		orange: '#e47a41',
-		yellow: '#DAA520',
-		green: '#278734',
-		blue: '#4e9eb6',
-		lavender: '#5B5BDA',
-		purple: '#B150CD',
-		primaryBrand: '#06A98A',
+		primary: Palette.gray[900],
+		secondary: Palette.gray[800],
+		tertiary: Palette.gray[500],
+		/** 테마의 반대색. 민트 면 위의 글자에는 `text.onBrand`를 쓴다 */
+		inverse: Palette.gray[0],
+		/** 민트 면(주 버튼, 보낸 말풍선) 위의 글자. 두 테마 모두 흰색 */
+		onBrand: Palette.gray[0],
+		red: Palette.red[800],
+		orange: Palette.orange[500],
+		yellow: Palette.yellow[500],
+		green: Palette.green[700],
+		blue: Palette.blue[500],
+		lavender: Palette.lavender[600],
+		purple: Palette.purple[500],
+		primaryBrand: Palette.mint[600],
 	},
 
 	// Background colors
 	bg: {
-		primary: '#FFFFFF',
-		secondary: '#F5F5F8',
-		tertiary: '#eff0f4',
-		inverse: '#000000',
-		red: '#F6DBE0',
-		orange: '#ffdfc9',
-		yellow: '#FAF3E0',
-		green: '#d6f3db',
-		blue: '#d2f4ff',
-		lavender: '#E6E6FA',
-		purple: '#F0DBF6',
-		primaryBrand: '#DBF6F1',
+		primary: Palette.gray[0],
+		secondary: Palette.gray[100],
+		tertiary: Palette.gray[200],
+		/** 바텀시트·모달·토스트처럼 화면 위에 떠 있는 면 */
+		elevated: Palette.gray[0],
+		inverse: Palette.gray[1000],
+		red: Palette.red[50],
+		orange: Palette.orange[50],
+		yellow: Palette.yellow[50],
+		green: Palette.green[50],
+		blue: Palette.blue[50],
+		lavender: Palette.lavender[50],
+		purple: Palette.purple[50],
+		primaryBrand: Palette.mint[100],
 	},
 
 	// Border colors
 	border: {
-		default: '#eff0f4',
+		default: Palette.gray[200],
 	},
 
 	// Divider colors
 	divider: {
-		default: '#eff0f4',
-		thick: '#e1e1e1',
+		/** @deprecated `border.default`를 사용하세요 */
+		default: Palette.gray[200],
+		thick: Palette.gray[300],
 	},
 
 	// Icon colors
 	icon: {
-		default: '#bebed2',
-		red: '#fb657e',
-		green: '#50d086',
-		primary: '#3AECDB',
+		default: Palette.gray[400],
+		red: Palette.red[300],
+		green: Palette.green[400],
+		/** @deprecated `brand.primary`를 사용하세요 */
+		primary: Palette.mint[400],
 	},
 
 	// Badge colors
 	badge: {
-		red: '#ff3a30',
+		/** @deprecated `status.danger`를 사용하세요 */
+		red: Palette.red[600],
 	},
 
 	// Status colors
 	status: {
-		error: '#E73B2A',
-		success: '#2dcd6f',
-		warning: '#FFA500',
+		error: Palette.red[700],
+		success: Palette.green[500],
+		warning: Palette.orange[400],
+		danger: Palette.red[600],
 	},
 
 	// Overlay colors
 	overlay: {
-		dim: 'rgba(0, 0, 0, 0.5)',
+		dim: Palette.blackAlpha[50],
 	},
 
 	// Social login colors
 	social: {
-		naver: '#03C75A',
-		naverText: '#FFFFFF',
-		kakao: '#FEE500',
-		kakaoText: '#3B1E1E',
-		apple: '#ffffff',
-		appleText: '#000000',
+		naver: Palette.social.naver,
+		naverText: Palette.gray[0],
+		kakao: Palette.social.kakao,
+		kakaoText: Palette.social.kakaoText,
+		apple: Palette.gray[0],
+		appleText: Palette.gray[1000],
 	},
 } as const;
+
+type ColorTokens<T> = {
+	[K in keyof T]: T[K] extends string ? string : ColorTokens<T[K]>;
+};
+
+export type ColorScheme = ColorTokens<typeof lightColors>;
+
+export const darkColors: ColorScheme = {
+	brand: {
+		primary: Palette.mint[400],
+		secondary: Palette.mint[950],
+	},
+	text: {
+		primary: Palette.grayDark[50],
+		secondary: Palette.grayDark[100],
+		tertiary: Palette.grayDark[400],
+		inverse: Palette.gray[900],
+		onBrand: Palette.gray[0],
+		red: Palette.red[200],
+		orange: Palette.orange[300],
+		yellow: Palette.yellow[300],
+		green: Palette.green[200],
+		blue: Palette.blue[300],
+		lavender: Palette.lavender[300],
+		purple: Palette.purple[300],
+		primaryBrand: Palette.mint[400],
+	},
+	bg: {
+		primary: Palette.grayDark[950],
+		secondary: Palette.grayDark[900],
+		tertiary: Palette.grayDark[800],
+		elevated: Palette.grayDark[850],
+		inverse: Palette.gray[0],
+		red: Palette.red[950],
+		orange: Palette.orange[950],
+		yellow: Palette.yellow[950],
+		green: Palette.green[950],
+		blue: Palette.blue[950],
+		lavender: Palette.lavender[950],
+		purple: Palette.purple[950],
+		primaryBrand: Palette.mint[900],
+	},
+	border: {
+		default: Palette.grayDark[750],
+	},
+	divider: {
+		default: Palette.grayDark[750],
+		thick: Palette.grayDark[700],
+	},
+	icon: {
+		default: Palette.grayDark[600],
+		red: Palette.red[300],
+		green: Palette.green[400],
+		primary: Palette.mint[400],
+	},
+	badge: {
+		red: Palette.red[500],
+	},
+	status: {
+		error: Palette.red[400],
+		success: Palette.green[300],
+		warning: Palette.orange[200],
+		danger: Palette.red[500],
+	},
+	overlay: {
+		dim: Palette.blackAlpha[60],
+	},
+	social: {
+		naver: Palette.social.naver,
+		naverText: Palette.gray[0],
+		kakao: Palette.social.kakao,
+		kakaoText: Palette.social.kakaoText,
+		apple: Palette.gray[0],
+		appleText: Palette.gray[1000],
+	},
+};
+
+/**
+ * @deprecated 라이트 테마에 고정된 정적 값이라 다크 모드를 따르지 않습니다.
+ * 컴포넌트 안에서는 `useTheme().colors` 또는 `useThemedStyles()`를 사용하세요.
+ */
+export const Colors = lightColors;

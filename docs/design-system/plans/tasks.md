@@ -2,7 +2,7 @@
 
 > 이슈: 없음
 > 작업 종류: 기능 개발
-> 상태: 대기
+> 상태: 진행중
 > 생성일: 2026-11-11
 
 ## 개요
@@ -26,25 +26,27 @@
 
 Phase 1이 끝나도 화면은 바뀌지 않아야 한다(인증 뱃지 아이콘 1곳 제외). 기존 hex 값을 바꾸지 않고 구조만 정리한다.
 
-- [ ] primitive 팔레트 정의 (`src/theme/palette.ts`)
+- [x] primitive 팔레트 정의 (`src/theme/palette.ts`)
   - 재사용: `src/theme/Color.ts`의 현재 hex 값 전부를 mint/gray/red/orange/yellow/green/blue/lavender/purple 단계로 분류하고, `spec.md`의 다크 값도 같은 파일에 단계로 추가한다
   - 패턴: 참고 프로젝트 `tailwind.colors.js`의 `coye`, `coor` 50~950 단계 구조
   - 결정: 민트는 `mint.400 #35d8c9`(면·활성)과 `mint.600 #06A98A`(연한 민트 배경 위 글자) 2단계만 둔다. `#3AECDB`는 팔레트에 넣지 않는다(사용자 결정, 시안 B안)
-- [ ] semantic 색상 스킴 정의 (`src/theme/Color.ts`)
+- [x] semantic 색상 스킴 정의 (`src/theme/Color.ts`)
   - `ColorScheme` 타입과 `lightColors`, `darkColors` 두 객체를 만든다. 키 구조는 기존 `Colors.text/bg/border/icon/status/overlay/social`을 그대로 쓰고, `bg.elevated`, `text.onBrand`, `status.danger`를 추가한다(값은 `spec.md`)
   - 기존 `export const Colors`는 `lightColors`를 가리키게 남겨서 116개 파일이 그대로 동작하게 한다. `@deprecated`를 달고 `useTheme()`을 안내한다
   - 중복 키(`divider.default`, `badge.red`, `icon.primary`)는 `@deprecated` JSDoc을 달고 대체 키를 명시한다
   - 결정: `icon.primary`의 유일한 사용처인 `src/components/Profile/Profile.tsx` 인증 뱃지는 `brand.primary`로 바꾼다. Phase 1에서 화면이 바뀌는 유일한 예외다(사용자 결정, 시안 B안)
-- [ ] 타이포그래피 토큰을 theme으로 이동하고 텍스트 프리셋 추가 (`src/theme/Typography.ts`, `src/constants/Typography.ts`)
+  - 결정: spec 다크 표에 없는 `icon.red`·`icon.green`은 라이트 값을 그대로 쓴다(다크 배경에서도 대비가 충분한 중간 채도 색이라 별도 값이 불필요). 폐기 예정 키의 다크 값은 대체 키와 같게 둔다
+- [x] 타이포그래피 토큰을 theme으로 이동하고 텍스트 프리셋 추가 (`src/theme/Typography.ts`, `src/constants/Typography.ts`)
   - 재사용: 현재 `FontSizes`, `FontWeights`, `LineHeights`, `LetterSpacing`
+  - 결정: `git mv`로 파일을 옮겨 이력을 유지하고, variant별 기본 굵기는 `TextVariants.{variant}.defaultWeight`에 둔다
   - 패턴: `src/constants/Typography.ts`는 `export * from '@/theme/Typography'`만 남겨서 70개 import를 이번 Phase에서 건드리지 않는다
   - `TextVariants`(display/title/heading/body1/body2/caption/micro)는 `spec.md`의 표를 따른다
-- [ ] Spacing·Radius·Shadow 정리 (`src/theme/Spacing.ts`, `src/theme/BorderRadius.ts`, `src/theme/Shadow.ts`)
+- [x] Spacing·Radius·Shadow 정리 (`src/theme/Spacing.ts`, `src/theme/BorderRadius.ts`, `src/theme/Shadow.ts`)
   - 패턴: 리터럴 분포가 16(89건), 8(65), 12(53), 24(43), 4·6(각 30)으로 기존 스케일(2/4/8/12/16/20/24/32)과 대부분 일치하므로 스케일은 유지한다. 스케일 밖 값은 spec의 "스케일 밖 값" 규칙으로 처리한다
   - `Shadow`에 `lg`(모달·바텀시트용) 추가
-- [ ] theme 진입점 정리 (`src/theme/index.ts`)
+- [x] theme 진입점 정리 (`src/theme/index.ts`)
   - 패턴: 현재는 `Color`만 export한다. Palette·Typography·Spacing·BorderRadius·Shadow를 모두 export한다
-- [ ] 토큰 무결성 테스트 (`src/__tests__/theme/tokens.test.ts`)
+- [x] 토큰 무결성 테스트 (`src/__tests__/theme/tokens.test.ts`)
   - 패턴: 기존 unit 프로젝트(`jest.config.js`의 `src/__tests__/**/*.test.ts`)
   - 검증: `lightColors`와 `darkColors`의 키 구조가 같음, light 값이 재정비 전 hex와 같음(인증 뱃지 제외), 모든 `TextVariants`의 lineHeight ≥ fontSize, semantic 값이 전부 Palette 값 중 하나
 
@@ -149,3 +151,5 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 
 - 시안: https://claude.ai/artifact/RBSR356wP9H6mG5wnwAZRJ (민트 정리안, 버튼 높이 전후 비교, variant·상태, 다크 팔레트)
 - 결정: 주 버튼(흰 글자 on `#35d8c9`)의 대비가 1.78 : 1로 접근성 기준(3 : 1)에 못 미치지만, 브랜드 색 조정은 이번 범위에서 빼고 별도 작업으로 다룬다
+- Phase 1 완료
+- 검증: `npx jest --selectProjects unit` 6개 스위트 37개 통과, `npm run typecheck` 통과, 변경 파일 `eslint` 통과
