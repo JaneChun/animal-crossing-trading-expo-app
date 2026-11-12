@@ -16,7 +16,10 @@ export async function sendPushNotification(
 	payload: PushNotificationPayload,
 ): Promise<void> {
 	try {
-		await axios.post('https://exp.host/--/api/v2/push/send', payload, {
+		// Android: 앱이 만든 'default' 채널(시스템 설정 이름 '알림')로 표시. 지정하지 않으면 Expo 기본 채널(Miscellaneous)로 들어간다. iOS는 무시
+		const message = { ...payload, channelId: 'default' };
+
+		await axios.post('https://exp.host/--/api/v2/push/send', message, {
 			headers: {
 				'Content-Type': 'application/json',
 			},
