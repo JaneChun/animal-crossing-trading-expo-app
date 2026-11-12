@@ -19,6 +19,7 @@
 - 순서 제어: Jest 러너 `__tests__/maestro/*.test.js`
   - `maestro-sequencer.js`: auth-flow → post-flow → trade-flow
 - 새 기능 추가 시 컴포넌트에 `testID` prop 부여.
+- 앱이 Firebase 에뮬레이터에 붙었는지는 번들을 curl로 받아 `EXPO_PUBLIC_USE_FIREBASE_EMULATOR` 값을 보는 것만으로 판단하지 않는다. Metro는 실행 중에 `.env`가 바뀌면 값을 다시 읽고, 앱이 요청하는 번들은 curl 요청과 변환 옵션이 달라 따로 변환되므로, curl 번들은 `true`인데 앱은 운영에 붙어 있을 수 있다. 쓰기·읽음 처리가 일어나는 화면에 들어가기 전에 앱 화면에 에뮬레이터 데이터가 보이는지 확인한다.
 - iOS 시뮬레이터와 Android 에뮬레이터가 함께 켜져 있으면 Maestro는 기기를 지정하지 않을 때 Android를 고른다. 의도한 기기에서만 실행되도록 `maestro --device <UDID> test ...`로 명시한다(iOS UDID: `xcrun simctl list devices booted`, Android: `adb devices`).
 
 ## Functions 테스트

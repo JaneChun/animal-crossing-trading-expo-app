@@ -1,15 +1,17 @@
 import { FontAwesome6 } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
+import Text from '@/components/ui/Text';
 import { createReview, getReviewBySenderId } from '@/firebase/services/reviewService';
 import { useReceiverInfo } from '@/hooks/chat/query/useReceiverInfo';
 import { useUserInfo } from '@/stores/auth';
-import { Colors } from '@/theme/Color';
+import { useTheme } from '@/theme';
 import { ReviewIMessage } from '@/types/chat';
 import { CreateReviewParams, ReviewValue } from '@/types/review';
 
 const ReviewMessageUnit = ({ message }: { message: ReviewIMessage }) => {
+	const { colors } = useTheme();
 	const [localReview, setLocalReview] = useState<ReviewValue>(0);
 	const [isReviewed, setIsReviewed] = useState<boolean>(false);
 
@@ -63,7 +65,9 @@ const ReviewMessageUnit = ({ message }: { message: ReviewIMessage }) => {
 		<View style={styles.container}>
 			<View style={styles.messageContainer}>
 				<View style={styles.textContainer}>
-					<Text style={styles.text}>상대방과의 거래는 어땠나요?</Text>
+					<Text variant="body2" color="tertiary">
+						상대방과의 거래는 어땠나요?
+					</Text>
 				</View>
 
 				<View style={styles.buttonsContainer}>
@@ -75,7 +79,7 @@ const ReviewMessageUnit = ({ message }: { message: ReviewIMessage }) => {
 					>
 						<FontAwesome6
 							name="smile-beam"
-							color={localReview === 1 ? Colors.icon.green : Colors.icon.default}
+							color={localReview === 1 ? colors.icon.green : colors.icon.default}
 							size={24}
 						/>
 					</Pressable>
@@ -87,7 +91,7 @@ const ReviewMessageUnit = ({ message }: { message: ReviewIMessage }) => {
 					>
 						<FontAwesome6
 							name="frown-open"
-							color={localReview === -1 ? Colors.icon.red : Colors.icon.default}
+							color={localReview === -1 ? colors.icon.red : colors.icon.default}
 							size={24}
 						/>
 					</Pressable>
@@ -111,10 +115,6 @@ const styles = StyleSheet.create({
 	},
 	textContainer: {
 		marginBottom: 8,
-	},
-	text: {
-		fontSize: 14,
-		color: Colors.text.tertiary,
 	},
 	buttonsContainer: {
 		flexDirection: 'row',

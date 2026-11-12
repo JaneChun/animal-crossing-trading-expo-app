@@ -1,9 +1,11 @@
 import { StyleSheet, View } from 'react-native';
 
 import ThreeDotsLoadingIndicator from '@/components/ui/loading/ThreeDotsLoadingIndicator';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 
 const PostSummaryLoading = () => {
+	const styles = useThemedStyles(makeStyles);
+
 	return (
 		<View style={styles.container}>
 			<ThreeDotsLoadingIndicator />
@@ -13,16 +15,17 @@ const PostSummaryLoading = () => {
 
 export default PostSummaryLoading;
 
-const styles = StyleSheet.create({
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
 	container: {
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
 		paddingHorizontal: 16,
 		height: 70,
-		borderColor: Colors.border.default,
+		borderColor: colors.border.default,
 		borderWidth: 1,
-		backgroundColor: Colors.bg.primary,
+		backgroundColor: colors.bg.primary,
 		borderRadius: 8,
 	},
 });

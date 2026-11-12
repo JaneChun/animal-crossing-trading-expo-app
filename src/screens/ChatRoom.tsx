@@ -2,7 +2,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { RefObject, useEffect, useRef, useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import { AnimatedList } from 'react-native-gifted-chat/lib/MessageContainer';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,6 +15,7 @@ import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
+import Text from '@/components/ui/Text';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
 import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { useCreateChatRoom } from '@/hooks/chat/mutation/useCreateChatRoom';
@@ -27,7 +28,7 @@ import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
 import { useReportUser } from '@/hooks/shared/useReportUser';
 import { goBack } from '@/navigation/RootNavigation';
 import { useBlockStore } from '@/stores/block';
-import { Colors } from '@/theme/Color';
+import { Theme, useTheme, useThemedStyles } from '@/theme';
 import { ExtendedIMessage, Message } from '@/types/chat';
 import { ChatRoomRouteProp } from '@/types/navigation';
 import { compressImage } from '@/utilities/compressImage';
@@ -38,6 +39,8 @@ const ChatRoom = () => {
 	const hasChatRoomCreated = useRef<boolean>(false);
 	const hasSystemMessageSent = useRef<boolean>(false);
 
+	const { colors } = useTheme();
+	const styles = useThemedStyles(makeStyles);
 	const route = useRoute<ChatRoomRouteProp>();
 	const { chatId, chatStartInfo, receiverInfo: passedReceiverInfo, systemMessage } = route.params;
 
@@ -225,7 +228,7 @@ const ChatRoom = () => {
 					}
 					headerRightComponent={
 						<ActionSheetButton
-							color={Colors.text.primary}
+							color={colors.text.primary}
 							size={18}
 							destructiveButtonIndex={2}
 							options={headerOptions}
@@ -240,7 +243,9 @@ const ChatRoom = () => {
 						<KeyboardAvoidingView style={{ flex: 1 }}>
 							{blockMessage && (
 								<View style={styles.blockMessageContainer}>
-									<Text style={styles.blockMessageText}>{blockMessage}</Text>
+									<Text variant="body2" color="onBrand" style={styles.blockMessageText}>
+										{blockMessage}
+									</Text>
 								</View>
 							)}
 							<GiftedChat
@@ -250,7 +255,7 @@ const ChatRoom = () => {
 								messages={messages}
 								user={{ _id: userInfo!.uid }}
 								messagesContainerStyle={{
-									backgroundColor: Colors.bg.secondary,
+									backgroundColor: colors.bg.secondary,
 									paddingTop: keyboardHeight, // 키보드 올라왔을 때 키보드 높이만큼 잘리는 컨텐츠 방지
 								}}
 								bottomOffset={KEYBOARD_TOOLBAR_HEIGHT - insets.bottom}
@@ -296,18 +301,18 @@ const ChatRoom = () => {
 	);
 };
 
-const styles = StyleSheet.create({
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
 	screen: {
 		flex: 1,
-		backgroundColor: Colors.bg.primary,
+		backgroundColor: colors.bg.primary,
 	},
 	blockMessageContainer: {
 		paddingVertical: 16,
-		backgroundColor: Colors.badge.red,
+		backgroundColor: colors.status.danger,
 	},
 	blockMessageText: {
 		textAlign: 'center',
-		color: Colors.text.inverse,
 	},
 });
 export default ChatRoom;

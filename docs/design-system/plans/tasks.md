@@ -145,9 +145,13 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 
 ## Phase 9: 도메인 마이그레이션 3 (Chat)
 
-- [ ] Chat 12개 파일 (`src/components/Chat/**`)
+- [x] Chat 12개 파일 (`src/components/Chat/**`)
   - 주의: `react-native-gifted-chat`의 `containerStyle`, `wrapperStyle`, renderer 함수 안의 색은 모두 `useTheme()`에서 읽는다. renderer가 컴포넌트 밖 함수라면 컴포넌트 안으로 옮기거나 colors를 인자로 넘긴다
   - 보낸 말풍선(`brand.primary` 배경 + 흰 글자)은 다크에서도 같은 색을 쓴다
+  - 결정: `screens/ChatRoom.tsx`도 여기서 바꿨다. gifted-chat의 `messagesContainerStyle`과 차단 안내 배너가 이 파일에 있다
+  - 결정: 보낸 말풍선 글자는 `text.inverse` 대신 `text.onBrand`를 쓴다. 빨간 면(안 읽은 수 배지, 나가기 스와이프, 차단 안내) 위의 흰 글자·아이콘도 Button `danger`와 같이 `status.danger` + `text.onBrand`를 쓴다
+  - 결정: 사진 전송 확인 모달의 검정 바탕과 닫기 아이콘은 `media.background`·`media.foreground`를 쓴다. 테마와 관계없이 검정 바탕을 쓰는 화면이기 때문이다
+  - 결정: 모듈 함수였던 `renderScrollToBottomComponent`는 `useTheme()`을 쓰는 `ScrollToBottomButton` 컴포넌트를 렌더링하도록 바꿨다
 
 ## Phase 10: 도메인 마이그레이션 4 (PostDetail, Profile, Notice, screens)
 
@@ -198,3 +202,5 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 
 - Phase 8 완료
 - 검증: `npm run typecheck` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, Phase 8 범위 `eslint` 가드레일 경고 0건. 운영 앱에서 새 글 작성·아이템 선택·변형 선택·아이템 편집 시트를 띄워 잘림이 없는 것을 확인했다(등록하지 않음). 검색어 강조와 일괄 추가 화면은 Maestro 텍스트 입력이 동작하지 않아 화면으로는 확인하지 못했다
+- Phase 9 완료
+- 검증: `npm run typecheck` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, Phase 9 범위 `eslint` 가드레일 경고 0건. 운영 테스트 계정의 채팅방(사용자 허락)에서 채팅 목록, 말풍선, 날짜 구분선, 사진 메시지, 게시글 없음 안내, 입력창을 확인했다(메시지 전송 없음)

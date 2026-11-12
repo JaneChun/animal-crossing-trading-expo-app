@@ -1,18 +1,20 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import CommunityTypeBadge from '@/components/Community/CommunityTypeBadge';
 import MarketTypeBadge from '@/components/Home/MarketTypeBadge';
 import ItemThumbnail from '@/components/ui/ItemThumbnail';
+import Text from '@/components/ui/Text';
 import Thumbnail from '@/components/ui/Thumbnail';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 import { PostSummaryProps } from '@/types/components';
 import { Collection } from '@/types/post';
 import { navigateToPost } from '@/utilities/navigationHelpers';
 import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
 
 const PostSummary = <C extends Collection>({ post, collectionName }: PostSummaryProps<C>) => {
+	const styles = useThemedStyles(makeStyles);
+
 	return (
 		<Pressable
 			style={styles.container}
@@ -39,7 +41,13 @@ const PostSummary = <C extends Collection>({ post, collectionName }: PostSummary
 					{isCommunityPost(post, collectionName) && (
 						<CommunityTypeBadge type={post.type} />
 					)}
-					<Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+					<Text
+						variant="body1"
+						weight="semibold"
+						style={styles.title}
+						numberOfLines={1}
+						ellipsizeMode="tail"
+					>
 						{post.title}
 					</Text>
 				</View>
@@ -50,21 +58,22 @@ const PostSummary = <C extends Collection>({ post, collectionName }: PostSummary
 				<Ionicons
 					name="arrow-forward-circle-outline"
 					size={24}
-					color={Colors.brand.primary}
+					color={styles.arrowIcon.color}
 				/>
 			</View>
 		</Pressable>
 	);
 };
 
-const styles = StyleSheet.create({
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
 	container: {
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
 		paddingHorizontal: 16,
 		height: 70,
-		backgroundColor: Colors.bg.primary,
+		backgroundColor: colors.bg.primary,
 		borderRadius: 8,
 	},
 	thumbnailContainer: {
@@ -83,9 +92,9 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		flexShrink: 1,
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-		color: Colors.text.primary,
+	},
+	arrowIcon: {
+		color: colors.brand.primary,
 	},
 });
 
