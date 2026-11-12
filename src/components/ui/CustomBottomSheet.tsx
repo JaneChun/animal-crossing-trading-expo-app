@@ -1,6 +1,6 @@
 import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import { ReactNode, useCallback, useEffect, useRef } from 'react';
-import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { BackHandler, StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import { useGenericKeyboardHandler } from 'react-native-keyboard-controller';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
@@ -55,6 +55,17 @@ const CustomBottomSheet = ({
 			bottomSheetRef.current?.close();
 		}
 	}, [isVisible]);
+
+	// Android 뒤로가기: 시트가 열려 있는 동안에는 화면 이동 대신 시트만 닫는다
+	useEffect(() => {
+		if (!isVisible) return;
+
+		const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+			onClose();
+			return true;
+		});
+		return () => subscription.remove();
+	}, [isVisible, onClose]);
 
 	const handleSheetChanges = useCallback(
 		(index: number) => {
