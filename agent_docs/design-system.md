@@ -118,17 +118,4 @@ const makeStyles = ({ colors }: Theme) =>
 
 ## 도메인별 마이그레이션 현황
 
-가드레일 경고가 남은 파일 수(2026-11-12 기준). 0이 되면 해당 도메인 마이그레이션이 끝난 것이다.
-
-| 도메인 | 남은 파일 | 계획 Phase |
-| --- | --- | --- |
-| `components/ui` | 25 | 6 |
-| `navigation` + `PageIndicator.tsx` | 4 | 6 |
-| `components/Home` | 4 | 7 |
-| `components/Search`, `Block`, `Onboarding` | 5 | 7 |
-| `components/NewPost` | 21 | 8 |
-| `components/Chat` | 13 | 9 |
-| `components/PostDetail` | 15 | 10 |
-| `components/Profile` | 8 | 10 |
-| `components/Notice` | 7 | 10 |
-| `screens` | 18 | 10 |
+2026-11-13 기준 `src/`와 `App.tsx`의 가드레일 경고(RN `Text` import, 정적 `Colors` import, hex·색 이름 리터럴)는 0건이다. 새 경고가 생기면 위 레시피로 옮긴다. 예외는 `screens/ErrorBoundary.tsx` 하나로, `ThemeProvider` 바깥에서 렌더링되므로 `lightColors`를 직접 읽는다.

@@ -1,15 +1,15 @@
 import { useRoute } from '@react-navigation/native';
 import Checkbox from 'expo-checkbox';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Button from '@/components/ui/Button';
 import CloseButton from '@/components/ui/CloseButton';
 import { PADDING } from '@/components/ui/layout/Layout';
-import { FontSizes, FontWeights } from '@/constants/Typography';
+import Text from '@/components/ui/Text';
 import { goBack } from '@/navigation/RootNavigation';
-import { Colors } from '@/theme/Color';
+import { Theme, useTheme, useThemedStyles } from '@/theme';
 import { SignUpDisplayNameRouteProp } from '@/types/navigation';
 import {
 	navigateToPrivacyPolicy,
@@ -18,6 +18,8 @@ import {
 } from '@/utilities/navigationHelpers';
 
 const AgreeToTermsAndConditions = () => {
+	const { colors } = useTheme();
+	const styles = useThemedStyles(makeStyles);
 	const [allAgree, setAllAgree] = useState(false);
 	const [termsAgree, setTermsAgree] = useState(false);
 	const [privacyAgree, setPrivacyAgree] = useState(false);
@@ -59,8 +61,10 @@ const AgreeToTermsAndConditions = () => {
 				<CloseButton style={styles.closeButton} onPress={backToProfile} />
 
 				{/* 타이틀 */}
-				<Text style={styles.title}>{'모동숲 마켓\n이용약관 동의'}</Text>
-				<Text style={styles.subtitle}>
+				<Text variant="display" weight="bold" style={styles.title}>
+					{'모동숲 마켓\n이용약관 동의'}
+				</Text>
+				<Text variant="body2" color="tertiary" style={styles.subtitle}>
 					원활한 서비스 이용을 위해 아래 약관에 동의해주세요.
 				</Text>
 
@@ -70,11 +74,13 @@ const AgreeToTermsAndConditions = () => {
 						<Checkbox
 							value={allAgree}
 							onValueChange={setAllAgree}
-							color={allAgree ? Colors.brand.primary : undefined}
+							color={allAgree ? colors.brand.primary : undefined}
 							style={styles.checkbox}
 							testID="allAgreeCheckbox"
 						/>
-						<Text style={styles.largeLabel}>전체 약관 동의</Text>
+						<Text variant="heading" weight="bold" style={styles.largeLabel}>
+							전체 약관 동의
+						</Text>
 					</View>
 
 					<View style={styles.divider} />
@@ -84,12 +90,16 @@ const AgreeToTermsAndConditions = () => {
 						<Checkbox
 							value={termsAgree}
 							onValueChange={setTermsAgree}
-							color={termsAgree ? Colors.brand.primary : undefined}
+							color={termsAgree ? colors.brand.primary : undefined}
 							style={styles.checkbox}
 						/>
-						<Text style={styles.label}>서비스 이용약관 (필수)</Text>
+						<Text variant="body1" style={styles.label}>
+							서비스 이용약관 (필수)
+						</Text>
 						<TouchableOpacity onPress={navigateToTermsOfService}>
-							<Text style={styles.link}>자세히 보기</Text>
+							<Text variant="body2" color="tertiary" style={styles.link}>
+								자세히 보기
+							</Text>
 						</TouchableOpacity>
 					</View>
 
@@ -98,12 +108,16 @@ const AgreeToTermsAndConditions = () => {
 						<Checkbox
 							value={privacyAgree}
 							onValueChange={setPrivacyAgree}
-							color={privacyAgree ? Colors.brand.primary : undefined}
+							color={privacyAgree ? colors.brand.primary : undefined}
 							style={styles.checkbox}
 						/>
-						<Text style={styles.label}>개인정보 수집 및 이용 동의 (필수)</Text>
+						<Text variant="body1" style={styles.label}>
+							개인정보 수집 및 이용 동의 (필수)
+						</Text>
 						<TouchableOpacity onPress={navigateToPrivacyPolicy}>
-							<Text style={styles.link}>자세히 보기</Text>
+							<Text variant="body2" color="tertiary" style={styles.link}>
+								자세히 보기
+							</Text>
 						</TouchableOpacity>
 					</View>
 				</View>
@@ -125,71 +139,60 @@ const AgreeToTermsAndConditions = () => {
 
 export default AgreeToTermsAndConditions;
 
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: Colors.bg.primary,
-	},
-	container: {
-		flex: 1,
-		padding: PADDING,
-	},
-	closeButton: {
-		alignSelf: 'flex-end',
-		padding: 0,
-	},
-	title: {
-		fontSize: 24,
-		fontWeight: 'bold',
-		marginTop: 24,
-		marginBottom: 8,
-		lineHeight: 32,
-	},
-	subtitle: {
-		fontSize: 14,
-		color: Colors.text.tertiary,
-		marginBottom: 24,
-	},
-	infoBox: {
-		backgroundColor: Colors.bg.secondary,
-		borderRadius: 10,
-		paddingHorizontal: 24,
-		paddingVertical: 32,
-		marginBottom: 24,
-	},
-	row: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginBottom: 16,
-	},
-	largeLabel: {
-		fontSize: FontSizes.lg,
-		fontWeight: FontWeights.bold,
-		color: Colors.text.primary,
-		marginLeft: 8,
-	},
-	label: {
-		flex: 1,
-		fontSize: FontSizes.md,
-		color: Colors.text.primary,
-		marginLeft: 8,
-	},
-	divider: {
-		height: 1,
-		backgroundColor: Colors.divider.thick,
-		marginBottom: 16,
-	},
-	link: {
-		fontSize: 14,
-		color: Colors.text.tertiary,
-		marginLeft: 8,
-		borderBottomWidth: 1,
-		borderColor: Colors.text.tertiary,
-	},
-	checkbox: {
-		borderRadius: '50%',
-	},
-	button: {
-		marginTop: 'auto',
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		screen: {
+			flex: 1,
+			backgroundColor: colors.bg.primary,
+		},
+		container: {
+			flex: 1,
+			padding: PADDING,
+		},
+		closeButton: {
+			alignSelf: 'flex-end',
+			padding: 0,
+		},
+		title: {
+			marginTop: 24,
+			marginBottom: 8,
+		},
+		subtitle: {
+			marginBottom: 24,
+		},
+		infoBox: {
+			backgroundColor: colors.bg.secondary,
+			borderRadius: 10,
+			paddingHorizontal: 24,
+			paddingVertical: 32,
+			marginBottom: 24,
+		},
+		row: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			marginBottom: 16,
+		},
+		largeLabel: {
+			marginLeft: 8,
+		},
+		label: {
+			flex: 1,
+			marginLeft: 8,
+		},
+		divider: {
+			height: 1,
+			backgroundColor: colors.divider.thick,
+			marginBottom: 16,
+		},
+		link: {
+			marginLeft: 8,
+			borderBottomWidth: 1,
+			borderColor: colors.text.tertiary,
+		},
+		checkbox: {
+			borderRadius: '50%',
+		},
+		button: {
+			marginTop: 'auto',
+		},
+	});

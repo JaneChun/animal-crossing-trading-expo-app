@@ -6,7 +6,6 @@ import {
 	KeyboardAvoidingView,
 	Platform,
 	StyleSheet,
-	Text,
 	TouchableWithoutFeedback,
 	View,
 } from 'react-native';
@@ -15,15 +14,18 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import NameInput from '@/components/Profile/NameInput';
 import Button from '@/components/ui/Button';
 import CloseButton from '@/components/ui/CloseButton';
+import Text from '@/components/ui/Text';
 import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
 import { pop } from '@/navigation/RootNavigation';
-import { Colors } from '@/theme/Color';
+import { Theme, useTheme, useThemedStyles } from '@/theme';
 import { SignUpDisplayNameRouteProp } from '@/types/navigation';
 import { navigateToSignUpEnd } from '@/utilities/navigationHelpers';
 
 const SignUpDisplayName = () => {
+	const { colors } = useTheme();
+	const styles = useThemedStyles(makeStyles);
 	const insets = useSafeAreaInsets();
 	const route = useRoute<SignUpDisplayNameRouteProp>();
 	const { uid, oauthType, email } = route.params;
@@ -63,7 +65,9 @@ const SignUpDisplayName = () => {
 							<CloseButton style={styles.closeButton} onPress={backToProfile} />
 
 							{/* 타이틀 */}
-							<Text style={styles.title}>{'닉네임을\n입력해주세요'}</Text>
+							<Text variant="display" weight="bold" style={styles.title}>
+								{'닉네임을\n입력해주세요'}
+							</Text>
 
 							<Controller
 								control={control}
@@ -80,8 +84,8 @@ const SignUpDisplayName = () => {
 							/>
 
 							<View style={styles.messageContainer}>
-								<FontAwesome name="leaf" color={Colors.brand.primary} size={14} />
-								<Text style={styles.infoText}>
+								<FontAwesome name="leaf" color={colors.brand.primary} size={14} />
+								<Text variant="body2" style={styles.infoText}>
 									닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
 								</Text>
 							</View>
@@ -106,59 +110,56 @@ const SignUpDisplayName = () => {
 
 export default SignUpDisplayName;
 
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: Colors.bg.primary,
-	},
-	container: {
-		flex: 1,
-		backgroundColor: Colors.bg.primary,
-		padding: 24,
-	},
-	closeButton: {
-		alignSelf: 'flex-end',
-		padding: 0,
-	},
-	title: {
-		fontSize: 24,
-		fontWeight: 'bold',
-		marginTop: 24,
-		marginBottom: 32,
-		lineHeight: 32,
-	},
-	inputContainer: {
-		width: '100%',
-		marginBottom: 24,
-	},
-	label: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-		color: Colors.text.primary,
-		marginBottom: 16,
-	},
-	input: {
-		fontSize: FontSizes.md,
-		padding: 12,
-		borderWidth: 1,
-		borderColor: Colors.bg.secondary,
-		borderRadius: 8,
-		backgroundColor: Colors.bg.secondary,
-		marginBottom: 8,
-		textAlignVertical: 'center',
-	},
-	messageContainer: {
-		paddingHorizontal: 12,
-		flexDirection: 'row',
-		gap: 8,
-		marginBottom: 8,
-	},
-	infoText: {
-		color: Colors.brand.primary,
-		fontSize: FontSizes.sm,
-		marginBottom: 16,
-	},
-	button: {
-		marginTop: 'auto',
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		screen: {
+			flex: 1,
+			backgroundColor: colors.bg.primary,
+		},
+		container: {
+			flex: 1,
+			backgroundColor: colors.bg.primary,
+			padding: 24,
+		},
+		closeButton: {
+			alignSelf: 'flex-end',
+			padding: 0,
+		},
+		title: {
+			marginTop: 24,
+			marginBottom: 32,
+		},
+		inputContainer: {
+			width: '100%',
+			marginBottom: 24,
+		},
+		label: {
+			fontSize: FontSizes.md,
+			fontWeight: FontWeights.semibold,
+			color: colors.text.primary,
+			marginBottom: 16,
+		},
+		input: {
+			fontSize: FontSizes.md,
+			padding: 12,
+			borderWidth: 1,
+			borderColor: colors.bg.secondary,
+			borderRadius: 8,
+			backgroundColor: colors.bg.secondary,
+			marginBottom: 8,
+			textAlignVertical: 'center',
+		},
+		messageContainer: {
+			paddingHorizontal: 12,
+			flexDirection: 'row',
+			gap: 8,
+			marginBottom: 8,
+		},
+		infoText: {
+			color: colors.brand.primary,
+			marginBottom: 16,
+		},
+		button: {
+			marginTop: 'auto',
+		},
+	});

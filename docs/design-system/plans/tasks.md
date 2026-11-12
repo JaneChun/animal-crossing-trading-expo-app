@@ -161,9 +161,10 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
   - 결정: JSX 값 상수였던 `SettingIcon`은 훅을 쓰기 위해 컴포넌트로 바꾸고, 쓰는 곳(`screens/Profile.tsx`)을 `<SettingIcon />`으로 고쳤다
 - [x] Notice 7개 파일 (`src/components/Notice/**`, `src/screens/Notice.tsx`의 탭바 스타일 포함)
   - 결정: 빨간 면(안 읽음 점, 삭제 스와이프)은 Phase 9와 같이 `status.danger` + `text.onBrand`를 쓴다
-- [ ] screens 18개 파일 (`src/screens/*`)
+- [x] screens 18개 파일 (`src/screens/*`)
   - `PrivacyPolicy.tsx`, `TermsOfService.tsx`의 `'#333'` 6건을 `colors.text.secondary`로 바꾼다
   - `ErrorBoundary.tsx`는 Phase 2 결정대로 `lightColors`로 고정한다
+  - 결정: 크기가 variant와 맞지 않는 제목(22)은 spec대로 가장 가까운 `title` variant를 쓰고 style에 `fontSize`를 남겼다. 원래 행간이 있던 약관 본문(20·22)도 style의 `lineHeight`를 유지했다
 
 ## Phase 11: 다크 모드 활성화
 
@@ -210,3 +211,5 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 - Phase 10 PostDetail·Profile·Notice 완료
 - 검증: `npm run typecheck` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, 범위 `eslint` 가드레일 경고 0건. 운영 앱에서 게시글 상세, 프로필, 알림 탭을 읽기만 해서 확인했다
 - 결정: Phase 6~9에서 `makeStyles`로 감싼 스타일 블록의 들여쓰기가 Prettier 형식과 달라, 원본이 Prettier 형식이던 파일은 `prettier --write`로, 아니던 파일은 바꾼 블록만 범위 지정으로 정리했다(별도 커밋)
+- Phase 10 완료
+- 검증: `npm run typecheck` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, `src/`·`App.tsx` 가드레일 경고 0건. 운영 앱에서 설정, 이용약관 화면을 읽기만 해서 확인했다. 로그인·회원가입·온보딩·에러 화면은 로그인 상태라 화면으로 확인하지 못했다
