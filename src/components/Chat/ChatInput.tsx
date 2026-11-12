@@ -68,35 +68,35 @@ export default ChatInput;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	inputContainer: {
-		flexDirection: 'row',
-		backgroundColor: colors.bg.primary,
-		alignItems: 'center',
-		borderColor: colors.border.default,
-	},
-	inputText: {
-		flex: 1,
-		borderWidth: 1,
-		borderColor: colors.border.default,
-		backgroundColor: colors.bg.secondary,
-		borderRadius: 20,
-		paddingVertical: 10,
-		paddingHorizontal: 16,
-		margin: 8,
-		fontSize: FontSizes.md,
-		color: colors.text.tertiary,
-		minHeight: 42,
-		maxHeight: 90,
-	},
-	imageButtonContainer: {
-		marginLeft: 16,
-		width: 32,
-		height: 32,
-		borderRadius: 16,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	iconContainer: {
-		marginRight: 16,
-	},
-});
+		inputContainer: {
+			flexDirection: 'row',
+			backgroundColor: colors.bg.primary,
+			alignItems: 'center',
+			borderColor: colors.border.default,
+		},
+		inputText: {
+			flex: 1,
+			borderWidth: 1,
+			borderColor: colors.border.default,
+			backgroundColor: colors.bg.secondary,
+			borderRadius: 20,
+			paddingVertical: 10,
+			paddingHorizontal: 16,
+			margin: 8,
+			fontSize: FontSizes.md,
+			color: colors.text.tertiary,
+			minHeight: 42,
+			maxHeight: 90,
+		},
+		imageButtonContainer: {
+			marginLeft: 16,
+			width: 32,
+			height: 32,
+			borderRadius: 16,
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+		iconContainer: {
+			marginRight: 16,
+		},
+	});

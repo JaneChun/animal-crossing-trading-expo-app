@@ -18,7 +18,9 @@ const ErrorMessage = ({ message, containerStyle }: ErrorMessageProps) => {
 	return (
 		<View style={[styles.container, containerStyle]}>
 			<FontAwesome6 name="circle-exclamation" color={styles.text.color} size={12} />
-			<Text variant="caption" style={styles.text}>{message}</Text>
+			<Text variant="caption" style={styles.text}>
+				{message}
+			</Text>
 		</View>
 	);
 };

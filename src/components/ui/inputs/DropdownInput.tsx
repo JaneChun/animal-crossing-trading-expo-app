@@ -87,7 +87,9 @@ const DropdownInput = ({
 								]}
 								onPress={() => handleSelect(item)}
 							>
-								<Text variant="body1" style={styles.optionText}>{item.text}</Text>
+								<Text variant="body1" style={styles.optionText}>
+									{item.text}
+								</Text>
 							</TouchableOpacity>
 						))}
 					</View>

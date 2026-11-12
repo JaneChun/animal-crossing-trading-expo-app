@@ -51,27 +51,27 @@ export default MessageUnit;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	messageContainer: {
-		flexDirection: 'row',
-		alignItems: 'flex-end',
-		gap: 6,
-		marginBottom: 8,
-	},
-	messageBubble: {
-		maxWidth: '75%',
-		paddingVertical: 12,
-		paddingHorizontal: 16,
-		borderRadius: 16,
-	},
-	sentBubble: {
-		backgroundColor: colors.brand.primary,
-		marginRight: 24,
-	},
-	receivedBubble: {
-		backgroundColor: colors.bg.primary,
-		marginLeft: 24,
-	},
-	infoContainer: {
-		alignItems: 'flex-end',
-	},
-});
+		messageContainer: {
+			flexDirection: 'row',
+			alignItems: 'flex-end',
+			gap: 6,
+			marginBottom: 8,
+		},
+		messageBubble: {
+			maxWidth: '75%',
+			paddingVertical: 12,
+			paddingHorizontal: 16,
+			borderRadius: 16,
+		},
+		sentBubble: {
+			backgroundColor: colors.brand.primary,
+			marginRight: 24,
+		},
+		receivedBubble: {
+			backgroundColor: colors.bg.primary,
+			marginLeft: 24,
+		},
+		infoContainer: {
+			alignItems: 'flex-end',
+		},
+	});

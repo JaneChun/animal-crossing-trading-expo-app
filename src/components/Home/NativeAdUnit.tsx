@@ -83,56 +83,56 @@ const NativeAdUnit = () => {
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: 'center',
-		minHeight: POST_UNIT_MIN_HEIGHT,
-		paddingVertical: 10,
-		borderBottomWidth: 1,
-		borderBottomColor: colors.border.default,
-		backgroundColor: colors.bg.primary,
-	},
-	row: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 10,
-	},
-	thumbnail: {
-		width: 50,
-		height: 50,
-		borderRadius: 6,
-		resizeMode: 'cover',
-		borderWidth: 1,
-		borderColor: colors.border.default,
-	},
-	textArea: {
-		flex: 1,
-		gap: 6,
-	},
-	headlineRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 8,
-	},
-	adBadge: {
-		backgroundColor: colors.bg.primary,
-		borderWidth: 1,
-		borderColor: colors.border.default,
-		paddingVertical: 4,
-		paddingHorizontal: 5,
-		borderRadius: 4,
-	},
-	headline: {
-		flex: 1,
-	},
-	meta: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 4,
-	},
-	advertiser: {
-		flexShrink: 1,
-	},
-});
+		container: {
+			flex: 1,
+			justifyContent: 'center',
+			minHeight: POST_UNIT_MIN_HEIGHT,
+			paddingVertical: 10,
+			borderBottomWidth: 1,
+			borderBottomColor: colors.border.default,
+			backgroundColor: colors.bg.primary,
+		},
+		row: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			gap: 10,
+		},
+		thumbnail: {
+			width: 50,
+			height: 50,
+			borderRadius: 6,
+			resizeMode: 'cover',
+			borderWidth: 1,
+			borderColor: colors.border.default,
+		},
+		textArea: {
+			flex: 1,
+			gap: 6,
+		},
+		headlineRow: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			gap: 8,
+		},
+		adBadge: {
+			backgroundColor: colors.bg.primary,
+			borderWidth: 1,
+			borderColor: colors.border.default,
+			paddingVertical: 4,
+			paddingHorizontal: 5,
+			borderRadius: 4,
+		},
+		headline: {
+			flex: 1,
+		},
+		meta: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			gap: 4,
+		},
+		advertiser: {
+			flexShrink: 1,
+		},
+	});
 
 export default NativeAdUnit;

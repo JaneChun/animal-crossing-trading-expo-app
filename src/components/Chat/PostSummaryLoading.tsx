@@ -17,15 +17,15 @@ export default PostSummaryLoading;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
-		paddingHorizontal: 16,
-		height: 70,
-		borderColor: colors.border.default,
-		borderWidth: 1,
-		backgroundColor: colors.bg.primary,
-		borderRadius: 8,
-	},
-});
+		container: {
+			flexDirection: 'row',
+			justifyContent: 'center',
+			alignItems: 'center',
+			paddingHorizontal: 16,
+			height: 70,
+			borderColor: colors.border.default,
+			borderWidth: 1,
+			backgroundColor: colors.bg.primary,
+			borderRadius: 8,
+		},
+	});

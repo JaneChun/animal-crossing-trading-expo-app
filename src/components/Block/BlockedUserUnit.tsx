@@ -78,28 +78,28 @@ export default BlockedUserUnit;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingHorizontal: 24,
-		paddingVertical: 12,
-		borderBottomWidth: 1,
-		borderBottomColor: colors.border.default,
-	},
-	header: {},
-	body: {
-		flexGrow: 1,
-		marginLeft: 12,
-		justifyContent: 'center',
-	},
-	footer: {},
-	profileImage: {
-		width: 50,
-		height: 50,
-		borderRadius: 25,
-	},
-	islandName: {
-		flex: 1,
-		marginTop: 4,
-	},
-});
+		container: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			paddingHorizontal: 24,
+			paddingVertical: 12,
+			borderBottomWidth: 1,
+			borderBottomColor: colors.border.default,
+		},
+		header: {},
+		body: {
+			flexGrow: 1,
+			marginLeft: 12,
+			justifyContent: 'center',
+		},
+		footer: {},
+		profileImage: {
+			width: 50,
+			height: 50,
+			borderRadius: 25,
+		},
+		islandName: {
+			flex: 1,
+			marginTop: 4,
+		},
+	});

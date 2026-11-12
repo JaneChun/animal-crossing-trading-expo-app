@@ -29,7 +29,11 @@ const ImageConfirmModal = ({ visible, image, onSend, onClose }: ImageConfirmModa
 				{/* 하단 버튼 영역 */}
 				<View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
 					<Pressable onPress={onClose} hitSlop={12} testID="closeImageConfirm">
-						<FontAwesome6 name="chevron-left" size={24} color={styles.closeIcon.color} />
+						<FontAwesome6
+							name="chevron-left"
+							size={24}
+							color={styles.closeIcon.color}
+						/>
 					</Pressable>
 					<Pressable style={styles.sendButton} onPress={onSend} testID="sendImageButton">
 						<FontAwesome6
@@ -49,41 +53,41 @@ export default ImageConfirmModal;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: colors.media.background,
-	},
-	imageContainer: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	image: {
-		width: '100%',
-		height: '100%',
-	},
-	footer: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingHorizontal: 20,
-		paddingTop: 16,
-	},
-	sendButton: {
-		backgroundColor: colors.text.onBrand,
-		width: 36,
-		height: 36,
-		borderRadius: 18,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	arrowIcon: {
-		position: 'absolute',
-	},
-	closeIcon: {
-		color: colors.media.foreground,
-	},
-	sendIcon: {
-		color: colors.brand.primary,
-	},
-});
+		container: {
+			flex: 1,
+			backgroundColor: colors.media.background,
+		},
+		imageContainer: {
+			flex: 1,
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+		image: {
+			width: '100%',
+			height: '100%',
+		},
+		footer: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+			paddingHorizontal: 20,
+			paddingTop: 16,
+		},
+		sendButton: {
+			backgroundColor: colors.text.onBrand,
+			width: 36,
+			height: 36,
+			borderRadius: 18,
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+		arrowIcon: {
+			position: 'absolute',
+		},
+		closeIcon: {
+			color: colors.media.foreground,
+		},
+		sendIcon: {
+			color: colors.brand.primary,
+		},
+	});

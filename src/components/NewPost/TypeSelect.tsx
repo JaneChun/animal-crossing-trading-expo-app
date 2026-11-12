@@ -58,25 +58,25 @@ export default TypeSelect;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		flexDirection: 'row',
-		justifyContent: 'flex-start',
-		marginBottom: 16,
-		gap: 6,
-	},
-	button: {
-		paddingVertical: 10,
-		paddingHorizontal: 16,
-		alignItems: 'center',
-		borderRadius: 10,
-		borderWidth: 1,
-		borderColor: colors.border.default,
-	},
-	buttonActive: {
-		backgroundColor: colors.bg.primary,
-		borderColor: colors.brand.primary,
-	},
-	textActive: {
-		color: colors.brand.primary,
-	},
-});
+		container: {
+			flexDirection: 'row',
+			justifyContent: 'flex-start',
+			marginBottom: 16,
+			gap: 6,
+		},
+		button: {
+			paddingVertical: 10,
+			paddingHorizontal: 16,
+			alignItems: 'center',
+			borderRadius: 10,
+			borderWidth: 1,
+			borderColor: colors.border.default,
+		},
+		buttonActive: {
+			backgroundColor: colors.bg.primary,
+			borderColor: colors.brand.primary,
+		},
+		textActive: {
+			color: colors.brand.primary,
+		},
+	});

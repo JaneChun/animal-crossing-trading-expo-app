@@ -22,19 +22,19 @@ export default PostNotExist;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
-		paddingHorizontal: 16,
-		height: 70,
-		borderColor: colors.border.default,
-		borderWidth: 1,
-		backgroundColor: colors.bg.primary,
-		borderRadius: 8,
-		gap: 6,
-	},
-	invalidPostText: {
-		alignSelf: 'center',
-	},
-});
+		container: {
+			flexDirection: 'row',
+			justifyContent: 'center',
+			alignItems: 'center',
+			paddingHorizontal: 16,
+			height: 70,
+			borderColor: colors.border.default,
+			borderWidth: 1,
+			backgroundColor: colors.bg.primary,
+			borderRadius: 8,
+			gap: 6,
+		},
+		invalidPostText: {
+			alignSelf: 'center',
+		},
+	});

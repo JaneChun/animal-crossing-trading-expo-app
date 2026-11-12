@@ -97,6 +97,7 @@ const makeStyles = ({ colors }: Theme) =>
 
 - `makeStyles`는 반드시 컴포넌트 밖에 둔다. 컴포넌트 안에서 만들면 렌더마다 함수가 새로 생겨 스타일도 매번 다시 만들어진다.
 - JSX prop에 색을 직접 넘기는 곳(`color={Colors.icon.default}`, `placeholderTextColor` 등)은 `const { colors } = useTheme()`으로 읽는다.
+- `StyleSheet.create`를 `makeStyles`로 감싸면 안쪽 들여쓰기가 한 단계 깊어진다. ESLint는 Prettier 형식을 검사하지 않으므로(`eslint-config-prettier`만 사용) 바꾼 파일은 `npx prettier --write`로 정리한다. 원본부터 Prettier 형식이 아닌 파일은 `--range-start`/`--range-end`로 바꾼 블록만 정리해 관계없는 줄이 바뀌지 않게 한다.
 - 마이그레이션 중 라이트 화면이 이전과 같은지 확인하고, `DARK_MODE_ENABLED`를 임시로 켜서 다크 화면이 깨지지 않는지 본다(커밋 전 다시 끈다).
 
 ### 서드파티 style prop

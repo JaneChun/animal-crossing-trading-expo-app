@@ -31,19 +31,19 @@ export default SearchResultItem;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		paddingHorizontal: 12,
-		paddingVertical: 6,
-		borderBottomWidth: 1,
-		borderBottomColor: colors.border.default,
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	row: {
-		flex: 1,
-	},
-	highlight: {
-		fontWeight: FontWeights.semibold,
-		color: colors.brand.primary,
-	},
-});
+		container: {
+			paddingHorizontal: 12,
+			paddingVertical: 6,
+			borderBottomWidth: 1,
+			borderBottomColor: colors.border.default,
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		row: {
+			flex: 1,
+		},
+		highlight: {
+			fontWeight: FontWeights.semibold,
+			color: colors.brand.primary,
+		},
+	});

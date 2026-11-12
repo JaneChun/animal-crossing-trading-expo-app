@@ -14,16 +14,16 @@ const FailedRow = ({ line, index }: FailedRowProps) => {
 	const styles = useThemedStyles(makeStyles);
 
 	return (
-	<Text
-		variant="body2"
-		color="tertiary"
-		style={styles.failedLine}
-		numberOfLines={2}
-		ellipsizeMode="tail"
-		testID={`bulkAddFailedRow-${index}`}
-	>
-		{line}
-	</Text>
+		<Text
+			variant="body2"
+			color="tertiary"
+			style={styles.failedLine}
+			numberOfLines={2}
+			ellipsizeMode="tail"
+			testID={`bulkAddFailedRow-${index}`}
+		>
+			{line}
+		</Text>
 	);
 };
 
@@ -31,9 +31,9 @@ export default FailedRow;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	failedLine: {
-		paddingVertical: Spacing.s,
-		borderBottomWidth: 1,
-		borderBottomColor: colors.border.default,
-	},
-});
+		failedLine: {
+			paddingVertical: Spacing.s,
+			borderBottomWidth: 1,
+			borderBottomColor: colors.border.default,
+		},
+	});

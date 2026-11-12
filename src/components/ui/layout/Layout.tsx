@@ -24,7 +24,9 @@ const Layout = ({
 			{/* 헤더나 제목 등 패딩이 필요한 부분 */}
 			{title && (
 				<View style={[styles.header, headerStyle]}>
-					<Text variant="title" style={styles.title}>{title}</Text>
+					<Text variant="title" style={styles.title}>
+						{title}
+					</Text>
 					{headerRightComponent}
 				</View>
 			)}

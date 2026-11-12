@@ -57,29 +57,29 @@ export default memo<VillagerSelectItemProps>(VillagerSelectItem, (prevProps, nex
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		width: '31%',
-		aspectRatio: '1/1',
-		alignItems: 'center',
-		padding: 8,
-		backgroundColor: colors.bg.secondary,
-		borderRadius: 12,
-	},
-	imageContainer: {
-		position: 'relative',
-	},
-	image: {
-		width: 60,
-		height: 60,
-		borderRadius: 8,
-	},
-	nameContainer: {
-		flex: 1,
-		marginTop: 4,
-		textAlign: 'center',
-	},
-	highlight: {
-		fontWeight: FontWeights.bold,
-		color: colors.brand.primary,
-	},
-});
+		container: {
+			width: '31%',
+			aspectRatio: '1/1',
+			alignItems: 'center',
+			padding: 8,
+			backgroundColor: colors.bg.secondary,
+			borderRadius: 12,
+		},
+		imageContainer: {
+			position: 'relative',
+		},
+		image: {
+			width: 60,
+			height: 60,
+			borderRadius: 8,
+		},
+		nameContainer: {
+			flex: 1,
+			marginTop: 4,
+			textAlign: 'center',
+		},
+		highlight: {
+			fontWeight: FontWeights.bold,
+			color: colors.brand.primary,
+		},
+	});

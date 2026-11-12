@@ -129,30 +129,30 @@ const PostList = ({
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	endText: {
-		textAlign: 'center',
-		marginVertical: 16,
-	},
-	addPostIcon: {
-		color: colors.brand.primary,
-	},
-	addPostButton: {
-		position: 'absolute',
-		bottom: 20,
-		right: 20,
-		width: 50,
-		height: 50,
-	},
-	whiteBackground: {
-		position: 'absolute',
-		top: 10,
-		left: 10,
-		width: 30,
-		height: 30,
-		zIndex: -1,
-		backgroundColor: colors.text.onBrand,
-		borderRadius: '50%',
-	},
-});
+		endText: {
+			textAlign: 'center',
+			marginVertical: 16,
+		},
+		addPostIcon: {
+			color: colors.brand.primary,
+		},
+		addPostButton: {
+			position: 'absolute',
+			bottom: 20,
+			right: 20,
+			width: 50,
+			height: 50,
+		},
+		whiteBackground: {
+			position: 'absolute',
+			top: 10,
+			left: 10,
+			width: 30,
+			height: 30,
+			zIndex: -1,
+			backgroundColor: colors.text.onBrand,
+			borderRadius: '50%',
+		},
+	});
 
 export default PostList;

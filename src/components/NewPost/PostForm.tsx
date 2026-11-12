@@ -172,21 +172,21 @@ export default PostForm;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	inputContainer: {
-		borderColor: colors.border.default,
-		borderBottomWidth: 1,
-		marginBottom: 16,
-	},
-	label: {
-		marginBottom: 12,
-	},
-	input: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.regular,
-	},
-	titleInput: {
-		fontSize: FontSizes.lg,
-		fontWeight: FontWeights.semibold,
-		paddingVertical: 12,
-	},
-});
+		inputContainer: {
+			borderColor: colors.border.default,
+			borderBottomWidth: 1,
+			marginBottom: 16,
+		},
+		label: {
+			marginBottom: 12,
+		},
+		input: {
+			fontSize: FontSizes.md,
+			fontWeight: FontWeights.regular,
+		},
+		titleInput: {
+			fontSize: FontSizes.lg,
+			fontWeight: FontWeights.semibold,
+			paddingVertical: 12,
+		},
+	});

@@ -133,30 +133,30 @@ export default Review;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: colors.bg.elevated,
-	},
-	scrollArea: {
-		flex: 1,
-	},
-	scrollContent: {
-		paddingTop: Spacing.xl,
-		paddingHorizontal: Spacing.xl,
-		paddingBottom: Spacing.xl,
-	},
-	footer: {
-		gap: Spacing.m,
-		paddingTop: Spacing.m,
-		paddingHorizontal: Spacing.xl,
-		borderTopWidth: 1,
-		borderTopColor: colors.border.default,
-		backgroundColor: colors.bg.elevated,
-	},
-	warning: {
-		marginTop: 0,
-	},
-	confirmButton: {
-		borderRadius: BorderRadius.m,
-	},
-});
+		container: {
+			flex: 1,
+			backgroundColor: colors.bg.elevated,
+		},
+		scrollArea: {
+			flex: 1,
+		},
+		scrollContent: {
+			paddingTop: Spacing.xl,
+			paddingHorizontal: Spacing.xl,
+			paddingBottom: Spacing.xl,
+		},
+		footer: {
+			gap: Spacing.m,
+			paddingTop: Spacing.m,
+			paddingHorizontal: Spacing.xl,
+			borderTopWidth: 1,
+			borderTopColor: colors.border.default,
+			backgroundColor: colors.bg.elevated,
+		},
+		warning: {
+			marginTop: 0,
+		},
+		confirmButton: {
+			borderRadius: BorderRadius.m,
+		},
+	});

@@ -58,15 +58,7 @@ export type TypeBadgeProps<T extends MarketType | CommunityType> = {
 };
 
 export type BadgeTone =
-	| 'red'
-	| 'orange'
-	| 'yellow'
-	| 'green'
-	| 'blue'
-	| 'lavender'
-	| 'purple'
-	| 'brand'
-	| 'neutral';
+	'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'lavender' | 'purple' | 'brand' | 'neutral';
 
 export type BadgeProps = {
 	text: string;
@@ -429,12 +421,7 @@ export interface RenderDayProps extends DayProps {
 
 // ui/
 export type ButtonVariant =
-	| 'primary'
-	| 'outline'
-	| 'secondary'
-	| 'danger'
-	| 'dangerOutline'
-	| 'ghost';
+	'primary' | 'outline' | 'secondary' | 'danger' | 'dangerOutline' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 export type ButtonProps = {
 	children: string;

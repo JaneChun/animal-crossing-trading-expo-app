@@ -101,51 +101,51 @@ export default ChatUnit;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingHorizontal: 24,
-		paddingVertical: 12,
-		borderBottomWidth: 1,
-		borderBottomColor: colors.border.default,
-	},
-	header: {},
-	profileImage: {
-		width: 50,
-		height: 50,
-		borderRadius: 25,
-	},
-	body: {
-		flex: 1,
-		marginLeft: 12,
-	},
-	title: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-	},
-	content: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginTop: 4,
-	},
-	count: {
-		borderRadius: 25,
-		backgroundColor: colors.status.danger,
-		paddingVertical: 2,
-		paddingHorizontal: 7,
-	},
-	lastMessage: {
-		flex: 1,
-	},
-	rightActionContainer: {
-		backgroundColor: colors.status.danger,
-		width: 80,
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	trashIcon: {
-		color: colors.text.onBrand,
-	},
-});
+		container: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			paddingHorizontal: 24,
+			paddingVertical: 12,
+			borderBottomWidth: 1,
+			borderBottomColor: colors.border.default,
+		},
+		header: {},
+		profileImage: {
+			width: 50,
+			height: 50,
+			borderRadius: 25,
+		},
+		body: {
+			flex: 1,
+			marginLeft: 12,
+		},
+		title: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+		},
+		content: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			marginTop: 4,
+		},
+		count: {
+			borderRadius: 25,
+			backgroundColor: colors.status.danger,
+			paddingVertical: 2,
+			paddingHorizontal: 7,
+		},
+		lastMessage: {
+			flex: 1,
+		},
+		rightActionContainer: {
+			backgroundColor: colors.status.danger,
+			width: 80,
+			flex: 1,
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+		trashIcon: {
+			color: colors.text.onBrand,
+		},
+	});

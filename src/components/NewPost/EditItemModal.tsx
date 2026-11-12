@@ -109,34 +109,34 @@ export default EditItemModal;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	content: {
-		flex: 1,
-		gap: 8,
-	},
-	subTitle: {
-		marginBottom: 16,
-	},
-	row: {
-		flexDirection: 'row',
-		gap: 8,
-	},
-	inputContainer: {
-		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		borderWidth: 1,
-		borderColor: colors.border.default,
-		borderRadius: 8,
-		backgroundColor: 'transparent',
-		height: 48,
-		paddingHorizontal: 16,
-	},
-	unitContainer: {
-		backgroundColor: colors.bg.secondary,
-	},
-	totalContainer: {
-		justifyContent: 'flex-end',
-		marginTop: 24,
-	},
-});
+		content: {
+			flex: 1,
+			gap: 8,
+		},
+		subTitle: {
+			marginBottom: 16,
+		},
+		row: {
+			flexDirection: 'row',
+			gap: 8,
+		},
+		inputContainer: {
+			flex: 1,
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+			borderWidth: 1,
+			borderColor: colors.border.default,
+			borderRadius: 8,
+			backgroundColor: 'transparent',
+			height: 48,
+			paddingHorizontal: 16,
+		},
+		unitContainer: {
+			backgroundColor: colors.bg.secondary,
+		},
+		totalContainer: {
+			justifyContent: 'flex-end',
+			marginTop: 24,
+		},
+	});

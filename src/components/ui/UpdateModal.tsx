@@ -78,7 +78,9 @@ export const UpdateModal = ({
 						/>
 
 						{/* 제목 */}
-						<Text variant="heading" weight="bold" style={styles.title}>새로운 버전이 업데이트되었어요!</Text>
+						<Text variant="heading" weight="bold" style={styles.title}>
+							새로운 버전이 업데이트되었어요!
+						</Text>
 
 						{/* 메시지 */}
 						<View style={styles.description}>
@@ -100,7 +102,9 @@ export const UpdateModal = ({
 									style={styles.laterButton}
 									onPress={onClose}
 								>
-									<Text variant="body2" style={styles.laterButtonText}>다음에 할게요</Text>
+									<Text variant="body2" style={styles.laterButtonText}>
+										다음에 할게요
+									</Text>
 								</TouchableWithoutFeedback>
 							)}
 						</View>

@@ -55,35 +55,35 @@ export default memo(ItemSelectItem, (prevProps, nextProps) => {
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		paddingHorizontal: 24,
-	},
-	item: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		height: ITEM_HEIGHT,
-		borderBottomWidth: 1,
-		borderBottomColor: colors.border.default,
-	},
-	itemImage: {
-		width: 40,
-		height: 40,
-		borderRadius: 12,
-		marginRight: 12,
-	},
-	itemTextContainer: {
-		flexDirection: 'row',
-		flex: 1,
-		alignItems: 'center',
-	},
-	itemNameText: {
-		flex: 1,
-	},
-	chevron: {
-		color: colors.text.tertiary,
-	},
-	highlight: {
-		fontWeight: 800,
-		color: colors.brand.primary,
-	},
-});
+		container: {
+			paddingHorizontal: 24,
+		},
+		item: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			height: ITEM_HEIGHT,
+			borderBottomWidth: 1,
+			borderBottomColor: colors.border.default,
+		},
+		itemImage: {
+			width: 40,
+			height: 40,
+			borderRadius: 12,
+			marginRight: 12,
+		},
+		itemTextContainer: {
+			flexDirection: 'row',
+			flex: 1,
+			alignItems: 'center',
+		},
+		itemNameText: {
+			flex: 1,
+		},
+		chevron: {
+			color: colors.text.tertiary,
+		},
+		highlight: {
+			fontWeight: 800,
+			color: colors.brand.primary,
+		},
+	});

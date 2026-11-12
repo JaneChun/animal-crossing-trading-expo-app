@@ -134,36 +134,36 @@ export default ItemVariantSelect;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: colors.bg.elevated,
-	},
-	header: {
-		paddingVertical: 24,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	backButtonContainer: {
-		padding: 4,
-		position: 'absolute',
-		left: 8,
-		flexDirection: 'row',
-		alignItems: 'center',
-		zIndex: 1,
-		maxWidth: 120, // 방어 코드: 너무 길어지면 ... 처리
-	},
-	backIcon: {
-		color: colors.text.tertiary,
-	},
-	headerTitle: {
-		textAlign: 'center',
-		paddingHorizontal: 120, // 좌우 텍스트 겹침 방지
-	},
-	content: {
-		flex: 1,
-	},
-	contentContainer: {
-		paddingHorizontal: 24,
-	},
-});
+		container: {
+			flex: 1,
+			backgroundColor: colors.bg.elevated,
+		},
+		header: {
+			paddingVertical: 24,
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'center',
+		},
+		backButtonContainer: {
+			padding: 4,
+			position: 'absolute',
+			left: 8,
+			flexDirection: 'row',
+			alignItems: 'center',
+			zIndex: 1,
+			maxWidth: 120, // 방어 코드: 너무 길어지면 ... 처리
+		},
+		backIcon: {
+			color: colors.text.tertiary,
+		},
+		headerTitle: {
+			textAlign: 'center',
+			paddingHorizontal: 120, // 좌우 텍스트 겹침 방지
+		},
+		content: {
+			flex: 1,
+		},
+		contentContainer: {
+			paddingHorizontal: 24,
+		},
+	});

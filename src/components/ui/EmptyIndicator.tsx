@@ -36,7 +36,9 @@ const EmptyIndicator = ({
 			<View style={styles.emptyIcon}>
 				<IconComponent name={iconName} size={72} color={styles.emptyText.color} />
 			</View>
-			<Text variant="body1" weight="light" style={styles.emptyText}>{message}</Text>
+			<Text variant="body1" weight="light" style={styles.emptyText}>
+				{message}
+			</Text>
 		</View>
 	);
 };

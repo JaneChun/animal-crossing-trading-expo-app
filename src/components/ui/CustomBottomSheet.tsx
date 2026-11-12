@@ -113,7 +113,9 @@ const CustomBottomSheet = ({
 						{leftButton && (
 							<View style={[styles.headerButton, { left: 0 }]}>{leftButton}</View>
 						)}
-						<Text variant="heading" weight="bold" style={styles.title}>{title}</Text>
+						<Text variant="heading" weight="bold" style={styles.title}>
+							{title}
+						</Text>
 						{rightButton && (
 							<View style={[styles.headerButton, { right: 0 }]}>{rightButton}</View>
 						)}

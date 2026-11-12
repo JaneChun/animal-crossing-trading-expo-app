@@ -65,58 +65,58 @@ export default EditableItem;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingVertical: 12,
-		paddingHorizontal: 16,
-		backgroundColor: colors.bg.primary,
-		borderWidth: 1,
-		borderColor: colors.border.default,
-		borderRadius: 16,
-		marginBottom: 12,
-	},
-	readOnlyContainer: {
-		backgroundColor: colors.bg.secondary,
-		borderWidth: 0,
-	},
-	body: {
-		flex: 1,
-		flexDirection: 'column',
-		justifyContent: 'center',
-		alignItems: 'flex-start',
-		gap: 5,
-	},
-	image: {
-		width: 30,
-		height: 30,
-		borderRadius: 8,
-		marginRight: 12,
-	},
-	closeIcon: {
-		color: colors.text.tertiary,
-	},
-	quantityContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 1,
-	},
-	priceContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingHorizontal: 4,
-		gap: 1,
-	},
-	ticketIcon: {
-		width: 20,
-		height: 20,
-	},
-	deleteIcon: {
-		color: colors.brand.primary,
-	},
-	deleteButton: {
-		padding: 6,
-		paddingRight: 0,
-	},
-});
+		container: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+			paddingVertical: 12,
+			paddingHorizontal: 16,
+			backgroundColor: colors.bg.primary,
+			borderWidth: 1,
+			borderColor: colors.border.default,
+			borderRadius: 16,
+			marginBottom: 12,
+		},
+		readOnlyContainer: {
+			backgroundColor: colors.bg.secondary,
+			borderWidth: 0,
+		},
+		body: {
+			flex: 1,
+			flexDirection: 'column',
+			justifyContent: 'center',
+			alignItems: 'flex-start',
+			gap: 5,
+		},
+		image: {
+			width: 30,
+			height: 30,
+			borderRadius: 8,
+			marginRight: 12,
+		},
+		closeIcon: {
+			color: colors.text.tertiary,
+		},
+		quantityContainer: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			gap: 1,
+		},
+		priceContainer: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			paddingHorizontal: 4,
+			gap: 1,
+		},
+		ticketIcon: {
+			width: 20,
+			height: 20,
+		},
+		deleteIcon: {
+			color: colors.brand.primary,
+		},
+		deleteButton: {
+			padding: 6,
+			paddingRight: 0,
+		},
+	});

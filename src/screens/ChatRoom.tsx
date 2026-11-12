@@ -303,16 +303,16 @@ const ChatRoom = () => {
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: colors.bg.primary,
-	},
-	blockMessageContainer: {
-		paddingVertical: 16,
-		backgroundColor: colors.status.danger,
-	},
-	blockMessageText: {
-		textAlign: 'center',
-	},
-});
+		screen: {
+			flex: 1,
+			backgroundColor: colors.bg.primary,
+		},
+		blockMessageContainer: {
+			paddingVertical: 16,
+			backgroundColor: colors.status.danger,
+		},
+		blockMessageText: {
+			textAlign: 'center',
+		},
+	});
 export default ChatRoom;

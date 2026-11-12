@@ -45,30 +45,30 @@ export default Slide;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		flex: 1,
-		padding: 24,
-	},
-	imageContainer: {
-		flex: 1,
-	},
-	image: {
-		width: '100%',
-		height: '100%',
-	},
-	content: {
-		paddingHorizontal: 18,
-		paddingVertical: 18,
-	},
-	badgeContainer: {
-		backgroundColor: colors.bg.primaryBrand,
-		paddingVertical: 6,
-		paddingHorizontal: 12,
-		borderRadius: 50,
-		alignSelf: 'flex-start',
-		marginBottom: 12,
-	},
-	title: {
-		marginBottom: 16,
-	},
-});
+		container: {
+			flex: 1,
+			padding: 24,
+		},
+		imageContainer: {
+			flex: 1,
+		},
+		image: {
+			width: '100%',
+			height: '100%',
+		},
+		content: {
+			paddingHorizontal: 18,
+			paddingVertical: 18,
+		},
+		badgeContainer: {
+			backgroundColor: colors.bg.primaryBrand,
+			paddingVertical: 6,
+			paddingHorizontal: 12,
+			borderRadius: 50,
+			alignSelf: 'flex-start',
+			marginBottom: 12,
+		},
+		title: {
+			marginBottom: 16,
+		},
+	});

@@ -21,15 +21,22 @@ const AddImageButton = ({ count, totalCount, onPress, isLoading }: AddImageButto
 				<>
 					<ActivityIndicator color={colors.text.tertiary} size="large" />
 					<View style={styles.textContainer}>
-						<Text variant="body2" style={styles.totalCountText}>업로드중...</Text>
+						<Text variant="body2" style={styles.totalCountText}>
+							업로드중...
+						</Text>
 					</View>
 				</>
 			) : (
 				<>
 					<MaterialIcons name="photo-library" color={colors.text.tertiary} size={48} />
 					<View style={styles.textContainer}>
-						<Text variant="body2" style={styles.currentCountText}>{count}</Text>
-						<Text variant="body2" style={styles.totalCountText}> / {totalCount}</Text>
+						<Text variant="body2" style={styles.currentCountText}>
+							{count}
+						</Text>
+						<Text variant="body2" style={styles.totalCountText}>
+							{' '}
+							/ {totalCount}
+						</Text>
 					</View>
 				</>
 			)}

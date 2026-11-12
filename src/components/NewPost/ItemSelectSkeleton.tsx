@@ -32,20 +32,20 @@ const ItemSelectSkeleton = () => {
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	listContainer: {
-		marginTop: 16,
-	},
-	item: {
-		paddingHorizontal: 24,
-		height: ITEM_HEIGHT,
-		flexDirection: 'row',
-		alignItems: 'center',
-		borderBottomWidth: 1,
-		borderBottomColor: colors.border.default,
-	},
-	image: {
-		marginRight: 12,
-	},
-});
+		listContainer: {
+			marginTop: 16,
+		},
+		item: {
+			paddingHorizontal: 24,
+			height: ITEM_HEIGHT,
+			flexDirection: 'row',
+			alignItems: 'center',
+			borderBottomWidth: 1,
+			borderBottomColor: colors.border.default,
+		},
+		image: {
+			marginRight: 12,
+		},
+	});
 
 export default ItemSelectSkeleton;

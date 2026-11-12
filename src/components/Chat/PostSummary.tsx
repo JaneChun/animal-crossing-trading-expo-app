@@ -67,35 +67,35 @@ const PostSummary = <C extends Collection>({ post, collectionName }: PostSummary
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		flexDirection: 'row',
-		justifyContent: 'center',
-		alignItems: 'center',
-		paddingHorizontal: 16,
-		height: 70,
-		backgroundColor: colors.bg.primary,
-		borderRadius: 8,
-	},
-	thumbnailContainer: {
-		flexShrink: 0,
-	},
-	infoContainer: {
-		flex: 1,
-		marginLeft: 12,
-	},
-	titleContainer: {
-		flex: 1,
-		height: 30,
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 6,
-	},
-	title: {
-		flexShrink: 1,
-	},
-	arrowIcon: {
-		color: colors.brand.primary,
-	},
-});
+		container: {
+			flexDirection: 'row',
+			justifyContent: 'center',
+			alignItems: 'center',
+			paddingHorizontal: 16,
+			height: 70,
+			backgroundColor: colors.bg.primary,
+			borderRadius: 8,
+		},
+		thumbnailContainer: {
+			flexShrink: 0,
+		},
+		infoContainer: {
+			flex: 1,
+			marginLeft: 12,
+		},
+		titleContainer: {
+			flex: 1,
+			height: 30,
+			flexDirection: 'row',
+			alignItems: 'center',
+			gap: 6,
+		},
+		title: {
+			flexShrink: 1,
+		},
+		arrowIcon: {
+			color: colors.brand.primary,
+		},
+	});
 
 export default PostSummary;

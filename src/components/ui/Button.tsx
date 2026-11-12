@@ -55,10 +55,7 @@ const Button = ({
 				</Text>
 			</View>
 			{isLoading && (
-				<ActivityIndicator
-					style={StyleSheet.absoluteFill}
-					color={textColorStyle.color}
-				/>
+				<ActivityIndicator style={StyleSheet.absoluteFill} color={textColorStyle.color} />
 			)}
 		</Pressable>
 	);

@@ -21,18 +21,18 @@ export default DateSeparator;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		marginVertical: 8,
-		marginHorizontal: 24,
-	},
-	line: {
-		flex: 1,
-		height: 0.5,
-		backgroundColor: colors.text.tertiary,
-	},
-	text: {
-		marginHorizontal: 6,
-	},
-});
+		container: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			marginVertical: 8,
+			marginHorizontal: 24,
+		},
+		line: {
+			flex: 1,
+			height: 0.5,
+			backgroundColor: colors.text.tertiary,
+		},
+		text: {
+			marginHorizontal: 6,
+		},
+	});

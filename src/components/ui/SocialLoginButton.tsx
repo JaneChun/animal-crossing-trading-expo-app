@@ -67,7 +67,9 @@ const SocialLoginButton = ({
 			{disabled && (
 				<View style={styles.bubbleWrapper}>
 					<View style={styles.bubble}>
-						<Text variant="caption" style={styles.bubbleText}>🚀 준비중이에요!</Text>
+						<Text variant="caption" style={styles.bubbleText}>
+							🚀 준비중이에요!
+						</Text>
 					</View>
 					<View style={styles.bubbleTriangle} />
 				</View>

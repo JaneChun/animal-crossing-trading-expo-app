@@ -5,8 +5,9 @@ import { darkColors, lightColors } from '@/theme/Color';
 
 import type { Theme } from '@/theme/ThemeProvider';
 
-(globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean; React: typeof React }).React =
-	React;
+(
+	globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean; React: typeof React }
+).React = React;
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT =
 	true;
 

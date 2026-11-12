@@ -88,7 +88,7 @@ describe('theme tokens', () => {
 		const paletteValues = new Set(Object.values(flatten(Palette as unknown as Tokens)));
 		const semanticValues = [...Object.values(lightTokens), ...Object.values(darkTokens)];
 
-		semanticValues.forEach(value => {
+		semanticValues.forEach((value) => {
 			expect(paletteValues).toContain(value);
 		});
 	});

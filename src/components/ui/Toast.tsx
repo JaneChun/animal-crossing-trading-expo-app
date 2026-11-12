@@ -34,7 +34,9 @@ const ToastView = ({ type, text }: { type: ToastType; text?: string }) => {
 		<View style={[styles.container, { backgroundColor: backgroundColors[type] }]}>
 			<View style={styles.icon}>{icons[type]}</View>
 			<View style={styles.textContainer}>
-				<Text variant="body2" style={styles.text}>{text}</Text>
+				<Text variant="body2" style={styles.text}>
+					{text}
+				</Text>
 			</View>
 		</View>
 	);

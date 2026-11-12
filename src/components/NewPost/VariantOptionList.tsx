@@ -41,36 +41,36 @@ const VariantOptionList = ({ options, onSelect }: VariantOptionListProps) => {
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	listContainer: {
-		flexDirection: 'row',
-		flexWrap: 'wrap',
-		justifyContent: 'space-between',
-		gap: 16,
-		paddingHorizontal: 12,
-	},
-	wrapper: {
-		width: '47%',
-		aspectRatio: 1,
-	},
-	container: {
-		flex: 1,
-		backgroundColor: colors.bg.secondary,
-		borderRadius: 20,
-		alignItems: 'center',
-		justifyContent: 'center',
-		paddingVertical: 16,
-		overflow: 'hidden',
-	},
-	image: {
-		width: 90,
-		height: 90,
-		borderRadius: 16,
-		marginBottom: 10,
-	},
-	name: {
-		textAlign: 'center',
-		paddingHorizontal: 8,
-	},
-});
+		listContainer: {
+			flexDirection: 'row',
+			flexWrap: 'wrap',
+			justifyContent: 'space-between',
+			gap: 16,
+			paddingHorizontal: 12,
+		},
+		wrapper: {
+			width: '47%',
+			aspectRatio: 1,
+		},
+		container: {
+			flex: 1,
+			backgroundColor: colors.bg.secondary,
+			borderRadius: 20,
+			alignItems: 'center',
+			justifyContent: 'center',
+			paddingVertical: 16,
+			overflow: 'hidden',
+		},
+		image: {
+			width: 90,
+			height: 90,
+			borderRadius: 16,
+			marginBottom: 10,
+		},
+		name: {
+			textAlign: 'center',
+			paddingHorizontal: 8,
+		},
+	});
 
 export default VariantOptionList;

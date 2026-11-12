@@ -107,53 +107,53 @@ const PostUnit = <C extends Collection>({
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: 'center',
-		minHeight: POST_UNIT_MIN_HEIGHT,
-		paddingVertical: 10,
-		borderBottomWidth: 1,
-		borderBottomColor: colors.border.default,
-	},
-	topRow: {
-		flexDirection: 'row',
-		width: '100%',
-		gap: 8,
-	},
-	typeAndTitle: {
-		gap: 6,
-		flex: 1,
-	},
-	thumbnail: {
-		flexShrink: 0,
-		alignSelf: 'flex-end',
-	},
-	title: {
-		flexShrink: 1,
-	},
-	bottomRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		marginTop: 8,
-	},
-	infoContainer: {
-		flexDirection: 'row',
-		gap: 2,
-		marginTop: 2,
-	},
-	commentIcon: {
-		color: colors.icon.default,
-	},
-	commentContainer: {
-		width: 30,
-	},
-	commentBox: {
-		flexDirection: 'row',
-		gap: 2,
-	},
-	badgeContainer: {
-		flexDirection: 'row',
-	},
-});
+		container: {
+			flex: 1,
+			justifyContent: 'center',
+			minHeight: POST_UNIT_MIN_HEIGHT,
+			paddingVertical: 10,
+			borderBottomWidth: 1,
+			borderBottomColor: colors.border.default,
+		},
+		topRow: {
+			flexDirection: 'row',
+			width: '100%',
+			gap: 8,
+		},
+		typeAndTitle: {
+			gap: 6,
+			flex: 1,
+		},
+		thumbnail: {
+			flexShrink: 0,
+			alignSelf: 'flex-end',
+		},
+		title: {
+			flexShrink: 1,
+		},
+		bottomRow: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			marginTop: 8,
+		},
+		infoContainer: {
+			flexDirection: 'row',
+			gap: 2,
+			marginTop: 2,
+		},
+		commentIcon: {
+			color: colors.icon.default,
+		},
+		commentContainer: {
+			width: 30,
+		},
+		commentBox: {
+			flexDirection: 'row',
+			gap: 2,
+		},
+		badgeContainer: {
+			flexDirection: 'row',
+		},
+	});
 
 export default memo(PostUnit);

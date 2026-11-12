@@ -77,55 +77,55 @@ const VillagerList = ({
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
-	scrollContent: {
-		flexDirection: 'row',
-		alignItems: 'flex-start',
-		paddingTop: 8,
-		paddingBottom: 16,
-		gap: 12,
-	},
-	villagerItem: {
-		width: 100,
-		height: 100,
-		alignItems: 'center',
-		paddingVertical: 12,
-		paddingHorizontal: 16,
-		backgroundColor: colors.bg.secondary,
-		borderRadius: 12,
-		borderWidth: 1,
-		borderColor: colors.border.default,
-	},
-	imageContainer: {
-		position: 'relative',
-	},
-	villagerImage: {
-		width: 60,
-		height: 60,
-	},
-	removeButton: {
-		position: 'absolute',
-		top: 4,
-		right: 4,
-		borderRadius: 10,
-	},
-	villagerName: {
-		marginTop: 4,
-		textAlign: 'center',
-	},
-	icon: {
-		color: colors.text.tertiary,
-	},
-	addButton: {
-		width: 60,
-		height: 60,
-		borderRadius: 30,
-		borderWidth: 1,
-		backgroundColor: colors.bg.secondary,
-		borderColor: colors.bg.secondary,
-		justifyContent: 'center',
-		alignItems: 'center',
-		marginVertical: 'auto',
-	},
-});
+		scrollContent: {
+			flexDirection: 'row',
+			alignItems: 'flex-start',
+			paddingTop: 8,
+			paddingBottom: 16,
+			gap: 12,
+		},
+		villagerItem: {
+			width: 100,
+			height: 100,
+			alignItems: 'center',
+			paddingVertical: 12,
+			paddingHorizontal: 16,
+			backgroundColor: colors.bg.secondary,
+			borderRadius: 12,
+			borderWidth: 1,
+			borderColor: colors.border.default,
+		},
+		imageContainer: {
+			position: 'relative',
+		},
+		villagerImage: {
+			width: 60,
+			height: 60,
+		},
+		removeButton: {
+			position: 'absolute',
+			top: 4,
+			right: 4,
+			borderRadius: 10,
+		},
+		villagerName: {
+			marginTop: 4,
+			textAlign: 'center',
+		},
+		icon: {
+			color: colors.text.tertiary,
+		},
+		addButton: {
+			width: 60,
+			height: 60,
+			borderRadius: 30,
+			borderWidth: 1,
+			backgroundColor: colors.bg.secondary,
+			borderColor: colors.bg.secondary,
+			justifyContent: 'center',
+			alignItems: 'center',
+			marginVertical: 'auto',
+		},
+	});
 
 export default VillagerList;
