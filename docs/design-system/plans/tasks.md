@@ -109,14 +109,18 @@ Phase 1이 끝나도 화면은 바뀌지 않아야 한다(인증 뱃지 아이�
 
 ## Phase 6: 공통 UI와 내비게이션 마이그레이션
 
-Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` → `useThemedStyles`/`useTheme`, (2) RN `Text` → 공통 `Text`, (3) 간격·모서리 리터럴 → 토큰, (4) hex·색 이름 리터럴 → semantic 토큰으로 바꾼다. Phase마다 라이트 화면이 이전과 같은지, 플래그를 임시로 켰을 때 다크 화면이 깨지지 않는지 확인한다.
+Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` → `useThemedStyles`/`useTheme`, (2) RN `Text` → 공통 `Text`, (3) 간격·모서리 리터럴 → 토큰, (4) hex·색 이름 리터럴 → semantic 토큰으로 바꾼다. Phase마다 라이트 화면이 행간 변화 외에는 이전과 같은지, 행간 때문에 잘리거나 겹치는 곳이 없는지, 플래그를 임시로 켰을 때 다크 화면이 깨지지 않는지 확인한다. 행간으로 생긴 UI 오류는 그 Phase에서 고친다.
 
-- [ ] `src/components/ui/` 25개 파일 (`layout/`, `inputs/`, `loading/`, `skeleton/`, `CustomBottomSheet.tsx`, `Toast.tsx`, `SocialLoginButton.tsx`, `ImageViewerModal.tsx` 등)
+- 결정: RN `Text` 교체 시 행간이 없던 곳에도 variant 행간을 적용한다(사용자 결정, 에뮬레이터 캡처 비교 https://claude.ai/artifact/NAGiBeCXtxJxBqg6CWydMN). variant 선택 규칙은 spec 타이포그래피 절
+
+- [x] `src/components/ui/` 25개 파일 (`layout/`, `inputs/`, `loading/`, `skeleton/`, `CustomBottomSheet.tsx`, `Toast.tsx`, `SocialLoginButton.tsx`, `ImageViewerModal.tsx` 등)
+  - 결정: `HighlightMatchText.tsx`는 Phase 8로 옮긴다. 호출부 3곳(Search 1, NewPost 2)이 부모 RN `Text` 안에서 쓰므로, 부모가 공통 `Text`가 되기 전에 바꾸면 중첩으로 인식되지 않아 기본 크기 16이 강제된다
+  - 결정: 바텀시트·업데이트 모달 배경은 spec대로 `bg.elevated`(라이트 값 동일). 토큰이 없던 색은 `skeleton.highlight`·`status.info`·`media.*`를 새로 만들고, 말풍선 글자 `#363636`은 `text.secondary`로 바꿨다. `Toast`는 훅을 쓰기 위해 `ToastView` 컴포넌트로 분리했다
   - 주의: `CustomBottomSheet.tsx`의 `backgroundStyle`·`handleIndicatorStyle`처럼 `style`이 아닌 prop도 훅에서 만든 스타일을 넘긴다
   - hex 4건(`SkeletonBox`, `Toast`, `SocialLoginButton`)을 여기서 제거한다
-- [ ] 내비게이션 3개 파일 (`src/navigation/RootStackNavigator.tsx`, `ProfileStackNavigator.tsx`, `MainTabNavigator.tsx`)
+- [x] 내비게이션 3개 파일 (`src/navigation/RootStackNavigator.tsx`, `ProfileStackNavigator.tsx`, `MainTabNavigator.tsx`)
   - `headerTintColor`, `tabBarStyle`, `tabBarActiveTintColor`를 `useTheme()`에서 읽는다
-- [ ] `src/components/PageIndicator.tsx`
+- [x] `src/components/PageIndicator.tsx`
 
 ## Phase 7: 도메인 마이그레이션 1 (소규모 도메인)
 
@@ -127,6 +131,7 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 ## Phase 8: 도메인 마이그레이션 2 (NewPost)
 
 - [ ] NewPost 19개 파일 (`src/components/NewPost/**`)
+  - `src/components/ui/HighlightMatchText.tsx`도 여기서 함께 바꾼다(Phase 6 결정)
   - `BulkAddItem/` 하위의 배너·리뷰 그룹은 tone 색을 쓰므로 Badge와 같은 tone 쌍 규칙을 따른다
 
 ## Phase 9: 도메인 마이그레이션 3 (Chat)
@@ -172,3 +177,8 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 
 - Phase 5 완료
 - 검증: `npm run lint` 종료 코드 0(오류 0건). 가드레일 경고는 RN `Text` import 76건, 정적 `Colors` import 112건, hex 11건, 색 이름 2건
+- Phase 6 색상·간격 마이그레이션 완료(RN `Text` 교체는 blocker)
+- 검증: `npx tsc --noEmit` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과(`CustomBottomSheet.test.tsx`의 `Color` mock을 `useTheme` mock으로 교체), Phase 6 범위 `eslint`의 정적 `Colors`·hex·색 이름 경고 0건
+- Phase 6 완료
+- 검증: `npx tsc --noEmit` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, Phase 6 범위 `eslint` 가드레일 경고는 Phase 8로 미룬 `HighlightMatchText` 1건만 남음. 고정 높이 컴포넌트(Button 32/40/52, DropdownInput 48, SocialLoginButton 50)는 새 행간(20~24)보다 높아 잘림 없음을 코드로 확인
+- 결정: Maestro는 기기를 지정하지 않으면 함께 실행 중인 Android 에뮬레이터를 고른다. 시뮬레이터 확인 시 `--device <iOS UDID>`를 명시한다

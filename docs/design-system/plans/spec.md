@@ -70,6 +70,10 @@
 | `status.success` | `#2dcd6f` | `#3DDC84` | — |
 | `status.warning` | `#FFA500` | `#FFB340` | — |
 | `status.danger` (신규) | `#ff3a30` | `#FF5A50` | — |
+| `status.info` (신규) | `#1E90FF` | `#1E90FF` | Toast의 info 배경 |
+| `media.background` (신규) | `#000000` | `#000000` | 사진 뷰어처럼 테마와 관계없이 검정 바탕인 화면 |
+| `media.foreground` (신규) | `#FFFFFF` | `#FFFFFF` | `media.background` 위의 아이콘·글자 |
+| `skeleton.highlight` (신규) | `#fafafa` | `#2C2C37` | 로딩 shimmer의 밝은 부분(바탕은 `bg.tertiary`) |
 | `overlay.dim` | `rgba(0,0,0,0.5)` | `rgba(0,0,0,0.6)` | — |
 | `social.*` | 현재 값 | 라이트와 같음 | 각 사 브랜드 가이드 |
 
@@ -104,11 +108,14 @@
 - `style` prop은 variant 스타일 뒤에 병합되므로 `style`의 값이 이긴다.
 - 중첩된 `Text`(예: `HighlightMatchText`의 강조 구간)는 variant를 지정하지 않으면 부모의 크기·행간·굵기를 상속한다. 이를 위해 자식 `Text`는 variant prop이 없을 때 fontSize·lineHeight를 스타일에 넣지 않고, `weight`·`color` prop이 없으면 굵기·색도 넣지 않는다. 색은 variant 지정 여부와 관계없이 `color` prop이 없으면 부모 색을 상속한다.
 - 접근성 글자 크기 설정(`allowFontScaling`)은 지금 동작(RN 기본값, 확대 허용)을 그대로 둔다.
+- RN `Text`를 공통 `Text`로 바꿀 때 행간이 없던 곳에도 variant의 행간을 적용한다. 기존 텍스트 161곳 중 132곳은 행간 없이 RN 기본 줄 높이(16px 글자 기준 약 19px)로 그려졌으므로, 교체하면 줄 높이가 커진다(캡처 비교 후 사용자 결정).
+- 행간이 커져서 생기는 잘림·겹침(고정 높이 목록 항목 등)은 그 화면을 마이그레이션하는 Phase에서 함께 고친다. 예: 마켓 목록 `POST_UNIT_HEIGHT`(95pt)는 두 줄 제목 항목에서 작성자·날짜 줄이 구분선과 겹친다.
+- variant 고르는 규칙: `fontSize`가 variant 크기와 같으면 그 variant를 쓰고 `fontSize`는 스타일에서 뺀다. variant에 없는 크기(13·15·22·30 등)는 가장 가까운 variant를 쓰고 `fontSize`는 `style`로 남긴다. `fontSize`가 없던 RN `Text`는 RN 기본 크기 14에 맞춰 `body2`를 쓴다. 이미 지정된 `lineHeight`는 `style`로 남겨 그대로 둔다.
 
 ## 간격·모서리·그림자
 
 - 간격은 `Spacing` 스케일(2/4/8/12/16/20/24/32)을 쓴다. 화면 좌우 여백은 `SCREEN_PADDING`(16)이다.
-- **스케일 밖 값**: 6·10·14·18처럼 스케일에 없는 값을 만나면, 인접한 토큰으로 바꿔서 화면 차이가 2px 이하일 때는 토큰으로 바꾼다. 차이가 그보다 크거나 정렬이 깨지면 리터럴로 남긴다. 스케일에 값을 새로 추가하지 않는다.
+- **스케일 밖 값**: 6·10·14·18처럼 스케일에 없는 값을 만나면, 인접한 토큰으로 바꿔서 화면 차이가 2px 이하일 때는 토큰으로 바꾼다. 차이가 그보다 크거나 정렬이 깨지면 리터럴로 남긴다. 6·10·14·18처럼 양쪽 토큰과의 거리가 같은 값은 어느 쪽인지 정할 수 없으므로 리터럴로 남긴다(예: 5 → 4, 30 → 32는 토큰, 6은 리터럴). 스케일에 값을 새로 추가하지 않는다.
 - 모서리는 `BorderRadius`(4/8/12/16/20/full)를 쓴다. 원형은 `full`을 쓰고, `borderRadius: 50`, `25` 같은 "반지름 = 크기의 절반" 리터럴은 `full`로 바꾼다.
 - 그림자는 `Shadow.sm`(카드), `Shadow.md`(플로팅 버튼·드롭다운), `Shadow.lg`(모달·바텀시트) 세 단계다.
 

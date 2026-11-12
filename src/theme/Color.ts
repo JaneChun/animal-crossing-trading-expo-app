@@ -77,11 +77,24 @@ export const lightColors = {
 		success: Palette.green[500],
 		warning: Palette.orange[400],
 		danger: Palette.red[600],
+		info: Palette.blue[400],
 	},
 
 	// Overlay colors
 	overlay: {
 		dim: Palette.blackAlpha[50],
+	},
+
+	// Media viewer colors — 사진 뷰어처럼 테마와 관계없이 검정 바탕을 쓰는 화면
+	media: {
+		background: Palette.gray[1000],
+		foreground: Palette.gray[0],
+	},
+
+	// Skeleton colors
+	skeleton: {
+		/** 로딩 shimmer가 지나가는 밝은 부분. 바탕은 `bg.tertiary` */
+		highlight: Palette.gray[50],
 	},
 
 	// Social login colors
@@ -157,9 +170,17 @@ export const darkColors: ColorScheme = {
 		success: Palette.green[300],
 		warning: Palette.orange[200],
 		danger: Palette.red[500],
+		info: Palette.blue[400],
 	},
 	overlay: {
 		dim: Palette.blackAlpha[60],
+	},
+	media: {
+		background: Palette.gray[1000],
+		foreground: Palette.gray[0],
+	},
+	skeleton: {
+		highlight: Palette.grayDark[750],
 	},
 	social: {
 		naver: Palette.social.naver,

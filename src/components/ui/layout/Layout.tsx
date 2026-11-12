@@ -1,8 +1,9 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { Spacing, Theme, useThemedStyles } from '@/theme';
 import { LayoutProps } from '@/types/components';
+
+import Text from '../Text';
 
 // const { width } = Dimensions.get('window');
 // const isIphoneMini = width <= 375;
@@ -16,12 +17,14 @@ const Layout = ({
 	headerStyle,
 	children,
 }: LayoutProps) => {
+	const styles = useThemedStyles(makeStyles);
+
 	return (
 		<View style={[styles.screen, containerStyle]}>
 			{/* 헤더나 제목 등 패딩이 필요한 부분 */}
 			{title && (
 				<View style={[styles.header, headerStyle]}>
-					<Text style={styles.title}>{title}</Text>
+					<Text variant="title" style={styles.title}>{title}</Text>
 					{headerRightComponent}
 				</View>
 			)}
@@ -34,23 +37,22 @@ const Layout = ({
 
 export default Layout;
 
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: Colors.bg.primary,
-	},
-	header: {
-		paddingHorizontal: PADDING,
-		paddingTop: PADDING,
-		paddingBottom: PADDING / 2,
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-	},
-	title: {
-		fontSize: FontSizes.xl,
-		fontWeight: FontWeights.bold,
-		marginBottom: 8,
-		color: Colors.text.primary,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		screen: {
+			flex: 1,
+			backgroundColor: colors.bg.primary,
+		},
+		header: {
+			paddingHorizontal: PADDING,
+			paddingTop: PADDING,
+			paddingBottom: PADDING / 2,
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+		},
+		title: {
+			marginBottom: Spacing.s,
+			color: colors.text.primary,
+		},
+	});

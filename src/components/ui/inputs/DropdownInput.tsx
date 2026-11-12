@@ -5,14 +5,14 @@ import {
 	Pressable,
 	Modal as RNmodal,
 	StyleSheet,
-	Text,
 	TouchableOpacity,
 	View,
 } from 'react-native';
 
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { BorderRadius, Spacing, Theme, useTheme, useThemedStyles } from '@/theme';
 import { DropdownInputProps, DropdownOption } from '@/types/components';
+
+import Text from '../Text';
 
 const DropdownInput = ({
 	options,
@@ -22,6 +22,8 @@ const DropdownInput = ({
 	topOffset = 0,
 	style,
 }: DropdownInputProps) => {
+	const styles = useThemedStyles(makeStyles);
+	const { colors } = useTheme();
 	const [isDropdownVisible, setDropdownVisible] = useState<boolean>(false);
 	const [dropdownPosition, setDropdownPosition] = useState<LayoutRectangle | null>(null);
 
@@ -45,20 +47,20 @@ const DropdownInput = ({
 				ref={comboBoxRef}
 				style={[
 					styles.inputContainer,
-					disabled && { backgroundColor: Colors.bg.secondary },
+					disabled && { backgroundColor: colors.bg.secondary },
 					style,
 				]}
 				onPress={openModal}
 				disabled={disabled}
 			>
-				<Text style={styles.text}>
+				<Text variant="body1" weight="semibold" style={styles.text}>
 					{options.find((opt) => opt.value === value)?.text || '선택'}
 				</Text>
 
 				<Feather
 					name={`chevron-${isDropdownVisible ? 'up' : 'down'}`}
 					size={24}
-					color={Colors.brand.primary}
+					color={colors.brand.primary}
 				/>
 			</Pressable>
 
@@ -85,7 +87,7 @@ const DropdownInput = ({
 								]}
 								onPress={() => handleSelect(item)}
 							>
-								<Text style={styles.optionText}>{item.text}</Text>
+								<Text variant="body1" style={styles.optionText}>{item.text}</Text>
 							</TouchableOpacity>
 						))}
 					</View>
@@ -97,55 +99,53 @@ const DropdownInput = ({
 
 export default DropdownInput;
 
-const styles = StyleSheet.create({
-	inputContainer: {
-		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		borderWidth: 1,
-		// borderColor: Colors.border.default,
-		borderColor: Colors.brand.primary,
-		borderRadius: 8,
-		backgroundColor: 'transparent',
-		height: 48,
-		paddingHorizontal: 16,
-	},
-	text: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-		// color: Colors.text.primary,
-		color: Colors.brand.primary,
-	},
-	modalOverlay: {
-		flex: 1,
-	},
-	modalContent: {
-		position: 'absolute',
-		backgroundColor: Colors.bg.primary,
-		borderRadius: 8,
-		borderWidth: 1,
-		borderColor: Colors.border.default,
-		marginTop: 8,
-		elevation: 5,
-		shadowColor: Colors.border.default,
-		shadowOffset: {
-			width: 0,
-			height: 0,
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		inputContainer: {
+			flex: 1,
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+			borderWidth: 1,
+			// borderColor: colors.border.default,
+			borderColor: colors.brand.primary,
+			borderRadius: BorderRadius.s,
+			backgroundColor: 'transparent',
+			height: 48,
+			paddingHorizontal: Spacing.l,
 		},
-		shadowOpacity: 1,
-		shadowRadius: 2,
-	},
-	option: {
-		paddingVertical: 14,
-		paddingHorizontal: 16,
-	},
-	optionText: {
-		fontSize: FontSizes.md,
-		color: Colors.text.secondary,
-	},
-	optionBorderBottom: {
-		// borderBottomWidth: 1,
-		// borderBottomColor: Colors.border.default,
-	},
-});
+		text: {
+			// color: colors.text.primary,
+			color: colors.brand.primary,
+		},
+		modalOverlay: {
+			flex: 1,
+		},
+		modalContent: {
+			position: 'absolute',
+			backgroundColor: colors.bg.primary,
+			borderRadius: BorderRadius.s,
+			borderWidth: 1,
+			borderColor: colors.border.default,
+			marginTop: Spacing.s,
+			elevation: 5,
+			shadowColor: colors.border.default,
+			shadowOffset: {
+				width: 0,
+				height: 0,
+			},
+			shadowOpacity: 1,
+			shadowRadius: 2,
+		},
+		option: {
+			paddingVertical: 14,
+			paddingHorizontal: Spacing.l,
+		},
+		optionText: {
+			color: colors.text.secondary,
+		},
+		optionBorderBottom: {
+			// borderBottomWidth: 1,
+			// borderBottomColor: colors.border.default,
+		},
+	});

@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
 import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { BorderRadius, Spacing, Theme, useTheme, useThemedStyles } from '@/theme';
 import { NumberInputProps } from '@/types/components';
 
 const NumberInput = ({ value, setValue, InputComponent = TextInput, style }: NumberInputProps) => {
+	const styles = useThemedStyles(makeStyles);
+	const { colors } = useTheme();
 	const [tempValue, setTempValue] = useState<string>(String(value));
 
 	// 외부 value가 바뀌었을 때도 tempValue를 반영
@@ -50,7 +52,7 @@ const NumberInput = ({ value, setValue, InputComponent = TextInput, style }: Num
 	return (
 		<View style={[styles.inputContainer, style]}>
 			<Pressable onPress={onDecrement}>
-				<Feather name="minus" size={24} color={Colors.text.tertiary} />
+				<Feather name="minus" size={24} color={colors.text.tertiary} />
 			</Pressable>
 
 			{/* 숫자 입력 필드 */}
@@ -65,7 +67,7 @@ const NumberInput = ({ value, setValue, InputComponent = TextInput, style }: Num
 			/>
 
 			<Pressable onPress={onIncrement}>
-				<Feather name="plus" size={24} color={Colors.text.tertiary} />
+				<Feather name="plus" size={24} color={colors.text.tertiary} />
 			</Pressable>
 		</View>
 	);
@@ -73,22 +75,23 @@ const NumberInput = ({ value, setValue, InputComponent = TextInput, style }: Num
 
 export default NumberInput;
 
-const styles = StyleSheet.create({
-	inputContainer: {
-		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		borderWidth: 1,
-		borderColor: Colors.border.default,
-		borderRadius: 8,
-		backgroundColor: 'transparent',
-		height: 48,
-		paddingHorizontal: 16,
-	},
-	text: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-		color: Colors.text.primary,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		inputContainer: {
+			flex: 1,
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+			borderWidth: 1,
+			borderColor: colors.border.default,
+			borderRadius: BorderRadius.s,
+			backgroundColor: 'transparent',
+			height: 48,
+			paddingHorizontal: Spacing.l,
+		},
+		text: {
+			fontSize: FontSizes.md,
+			fontWeight: FontWeights.semibold,
+			color: colors.text.primary,
+		},
+	});

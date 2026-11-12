@@ -1,67 +1,50 @@
 import { FontAwesome, FontAwesome6 } from '@expo/vector-icons';
-import { StyleSheet, Text, View } from 'react-native';
+import { ReactNode } from 'react';
+import { StyleSheet, View } from 'react-native';
 import Toast, { BaseToastProps } from 'react-native-toast-message';
 
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { BorderRadius, Spacing, Theme, useTheme, useThemedStyles } from '@/theme';
+
+import Text from './Text';
 
 interface CustomToastProps extends BaseToastProps {
 	text1?: string;
 }
 
+type ToastType = 'success' | 'error' | 'warn' | 'info';
+
+const ToastView = ({ type, text }: { type: ToastType; text?: string }) => {
+	const styles = useThemedStyles(makeStyles);
+	const { colors } = useTheme();
+
+	const backgroundColors: Record<ToastType, string> = {
+		success: colors.status.success,
+		error: colors.status.error,
+		warn: colors.status.warning,
+		info: colors.status.info,
+	};
+	const icons: Record<ToastType, ReactNode> = {
+		success: <FontAwesome6 name="check-circle" size={20} color={colors.text.inverse} />,
+		error: <FontAwesome6 name="xmark-circle" size={20} color={colors.text.inverse} />,
+		warn: <FontAwesome name="warning" size={20} color={colors.text.inverse} />,
+		info: <FontAwesome6 name="circle-info" size={20} color={colors.text.inverse} />,
+	};
+
+	return (
+		<View style={[styles.container, { backgroundColor: backgroundColors[type] }]}>
+			<View style={styles.icon}>{icons[type]}</View>
+			<View style={styles.textContainer}>
+				<Text variant="body2" style={styles.text}>{text}</Text>
+			</View>
+		</View>
+	);
+};
+
 export const toastConfig = {
-	success: ({ text1 }: CustomToastProps) => (
-		<View style={[styles.container, { backgroundColor: Colors.status.success }]}>
-			<FontAwesome6
-				name="check-circle"
-				size={20}
-				color={Colors.text.inverse}
-				style={{ marginRight: 8 }}
-			/>
-			<View style={styles.textContainer}>
-				<Text style={styles.text}>{text1}</Text>
-			</View>
-		</View>
-	),
-	error: ({ text1 }: CustomToastProps) => (
-		<View style={[styles.container, { backgroundColor: Colors.status.error }]}>
-			<FontAwesome6
-				name="xmark-circle"
-				size={20}
-				color={Colors.text.inverse}
-				style={{ marginRight: 8 }}
-			/>
-			<View style={styles.textContainer}>
-				<Text style={styles.text}>{text1}</Text>
-			</View>
-		</View>
-	),
-	warn: ({ text1 }: CustomToastProps) => (
-		<View style={[styles.container, { backgroundColor: Colors.status.warning }]}>
-			<FontAwesome
-				name="warning"
-				size={20}
-				color={Colors.text.inverse}
-				style={{ marginRight: 8 }}
-			/>
-			<View style={styles.textContainer}>
-				<Text style={styles.text}>{text1}</Text>
-			</View>
-		</View>
-	),
-	info: ({ text1 }: CustomToastProps) => (
-		<View style={[styles.container, { backgroundColor: '#1E90FF' }]}>
-			<FontAwesome6
-				name="circle-info"
-				size={20}
-				color={Colors.text.inverse}
-				style={{ marginRight: 8 }}
-			/>
-			<View style={styles.textContainer}>
-				<Text style={styles.text}>{text1}</Text>
-			</View>
-		</View>
-	),
+	success: ({ text1 }: CustomToastProps) => <ToastView type="success" text={text1} />,
+	error: ({ text1 }: CustomToastProps) => <ToastView type="error" text={text1} />,
+	warn: ({ text1 }: CustomToastProps) => <ToastView type="warn" text={text1} />,
+	info: ({ text1 }: CustomToastProps) => <ToastView type="info" text={text1} />,
 };
 
 export const showToast = (
@@ -92,24 +75,26 @@ export const showLongToast = (
 	});
 };
 
-const styles = StyleSheet.create({
-	container: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		width: '85%',
-		padding: 14,
-		borderRadius: 16,
-	},
-	textContainer: {
-		flex: 1,
-		marginLeft: 8,
-	},
-	text: {
-		color: Colors.text.inverse,
-		fontSize: FontSizes.sm,
-		fontWeight: FontWeights.regular,
-		flexWrap: 'wrap',
-		textAlign: 'center',
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		container: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+			width: '85%',
+			padding: 14,
+			borderRadius: BorderRadius.l,
+		},
+		icon: {
+			marginRight: Spacing.s,
+		},
+		textContainer: {
+			flex: 1,
+			marginLeft: Spacing.s,
+		},
+		text: {
+			color: colors.text.inverse,
+			flexWrap: 'wrap',
+			textAlign: 'center',
+		},
+	});

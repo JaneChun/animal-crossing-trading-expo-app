@@ -11,6 +11,7 @@
 - 테스트 하나는 실패 원인이 하나가 되도록 동작 하나만 검증한다. 기존 상태와의 중복, 입력 내부 중복처럼 조건이 다르면 테스트를 분리한다.
 - 정제 → 중복 제거처럼 변환 단계가 둘 이상이면 의미 있는 중간 변수로 나눠 Arrange/Act/Assert의 데이터 흐름을 드러낸다.
 - unit 프로젝트의 변환기(`jest.ts-transformer.js`)는 `jest.mock`을 파일 맨 위로 끌어올리지 않는다. `react-native` 등을 mock하는 테스트는 mock 선언 뒤에 `require`로 대상 모듈을 불러와야 한다. `import`로 불러오면 실제 `react-native`가 로드되어 파싱 에러가 난다.
+- 테마를 쓰는 컴포넌트(`useTheme`·`useThemedStyles`)를 테스트할 때는 `@/theme/Color`를 mock하지 말고 `@/theme/ThemeProvider`의 `useTheme`을 mock한다. `Color`를 일부 키만 가진 객체로 mock하면 `lightColors`가 `undefined`가 되어 렌더링이 실패한다. 예: `useTheme: () => ({ scheme: 'light', colors: jest.requireActual('@/theme/Color').lightColors })`
 
 ## E2E: Maestro
 
@@ -18,6 +19,7 @@
 - 순서 제어: Jest 러너 `__tests__/maestro/*.test.js`
   - `maestro-sequencer.js`: auth-flow → post-flow → trade-flow
 - 새 기능 추가 시 컴포넌트에 `testID` prop 부여.
+- iOS 시뮬레이터와 Android 에뮬레이터가 함께 켜져 있으면 Maestro는 기기를 지정하지 않을 때 Android를 고른다. 의도한 기기에서만 실행되도록 `maestro --device <UDID> test ...`로 명시한다(iOS UDID: `xcrun simctl list devices booted`, Android: `adb devices`).
 
 ## Functions 테스트
 

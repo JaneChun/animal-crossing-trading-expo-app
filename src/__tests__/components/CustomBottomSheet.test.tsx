@@ -52,12 +52,8 @@ jest.mock('@/constants/Typography', () => ({
 	FontSizes: { lg: 18 },
 	FontWeights: { bold: '700' },
 }));
-jest.mock('@/theme/Color', () => ({
-	Colors: {
-		bg: { primary: 'white' },
-		border: { default: 'gray' },
-		icon: { default: 'gray' },
-	},
+jest.mock('@/theme/ThemeProvider', () => ({
+	useTheme: () => ({ scheme: 'light', colors: jest.requireActual('@/theme/Color').lightColors }),
 }));
 
 const CustomBottomSheet = require('@/components/ui/CustomBottomSheet').default;

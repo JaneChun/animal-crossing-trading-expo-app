@@ -8,6 +8,7 @@ export const Palette = {
 	/** 라이트 테마 무채색 */
 	gray: {
 		0: '#FFFFFF',
+		50: '#fafafa',
 		100: '#F5F5F8',
 		200: '#eff0f4',
 		300: '#e1e1e1',
@@ -76,6 +77,7 @@ export const Palette = {
 	blue: {
 		50: '#d2f4ff',
 		300: '#7CC4DA',
+		400: '#1E90FF',
 		500: '#4e9eb6',
 		950: '#14303A',
 	},
