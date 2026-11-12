@@ -37,6 +37,14 @@ export default {
 			},
 			package: 'com.janechun.animalcrossingtradingapp',
 			googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
+			blockedPermissions: [
+				'android.permission.READ_MEDIA_IMAGES',
+				'android.permission.READ_MEDIA_VIDEO',
+				'android.permission.READ_EXTERNAL_STORAGE',
+				'android.permission.WRITE_EXTERNAL_STORAGE',
+				'android.permission.SYSTEM_ALERT_WINDOW',
+				'android.permission.RECORD_AUDIO',
+			],
 		},
 		web: {
 			bundler: 'metro',
