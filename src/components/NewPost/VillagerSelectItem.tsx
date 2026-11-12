@@ -1,10 +1,11 @@
 import { memo } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import HighlightMatchText from '@/components/ui/HighlightMatchText';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import Text from '@/components/ui/Text';
+import { FontWeights } from '@/constants/Typography';
+import { Theme, useThemedStyles } from '@/theme';
 import { VillagerSelectItemProps } from '@/types/components';
 
 export const VILLAGER_ITEM_HEIGHT = 53;
@@ -15,6 +16,8 @@ const VillagerSelectItem = ({
 	addVillager,
 	index,
 }: VillagerSelectItemProps) => {
+	const styles = useThemedStyles(makeStyles);
+
 	return (
 		<TouchableOpacity
 			style={styles.container}
@@ -26,11 +29,18 @@ const VillagerSelectItem = ({
 				<ImageWithFallback uri={villager.imageUrl} style={styles.image} priority="normal" />
 			</View>
 			{/* 이름 */}
-			<Text numberOfLines={1} ellipsizeMode="tail" style={styles.nameContainer}>
+			<Text
+				variant="body2"
+				weight="semibold"
+				color="secondary"
+				numberOfLines={1}
+				ellipsizeMode="tail"
+				style={styles.nameContainer}
+			>
 				<HighlightMatchText
 					text={villager.name}
 					keyword={searchInput}
-					textStyle={styles.name}
+					textStyle={{}}
 					highlightTextStyle={styles.highlight}
 				/>
 			</Text>
@@ -45,13 +55,14 @@ export default memo<VillagerSelectItemProps>(VillagerSelectItem, (prevProps, nex
 	);
 });
 
-const styles = StyleSheet.create({
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
 	container: {
 		width: '31%',
 		aspectRatio: '1/1',
 		alignItems: 'center',
 		padding: 8,
-		backgroundColor: Colors.bg.secondary,
+		backgroundColor: colors.bg.secondary,
 		borderRadius: 12,
 	},
 	imageContainer: {
@@ -63,19 +74,12 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 	},
 	nameContainer: {
-		fontSize: 16,
 		flex: 1,
 		marginTop: 4,
-	},
-	name: {
-		fontWeight: FontWeights.semibold,
-		fontSize: FontSizes.sm,
-		color: Colors.text.secondary,
 		textAlign: 'center',
 	},
 	highlight: {
 		fontWeight: FontWeights.bold,
-		color: Colors.brand.primary,
-		fontSize: FontSizes.sm,
+		color: colors.brand.primary,
 	},
 });

@@ -1,15 +1,14 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import Categories from '@/components/ui/Categories';
 import SearchInput from '@/components/ui/inputs/SearchInput';
+import Text from '@/components/ui/Text';
 import { ITEM_CATEGORIES } from '@/constants/post';
-import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useSearchItems } from '@/hooks/item/query/useSearchItems';
 import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
-import { Colors } from '@/theme/Color';
 import { CatalogItem, CatalogVariant } from '@/types/catalog';
 import { ItemSelectProps } from '@/types/components';
 import { ItemCategory, ItemCategoryItem } from '@/types/post';
@@ -94,7 +93,9 @@ const ItemSelect = ({ addItemToCart, containerStyle }: ItemSelectProps) => {
 	const getListEmptyComponent = useMemo(
 		() => (
 			<View style={styles.spinnerContainer}>
-				<Text style={styles.emptyText}>검색 결과가 없습니다.</Text>
+				<Text variant="body2" color="tertiary">
+					검색 결과가 없습니다.
+				</Text>
 			</View>
 		),
 		[],
@@ -179,11 +180,6 @@ const styles = StyleSheet.create({
 	},
 	hidden: {
 		display: 'none',
-	},
-	emptyText: {
-		fontSize: FontSizes.sm,
-		fontWeight: FontWeights.regular,
-		color: Colors.text.tertiary,
 	},
 	listContainer: {
 		flex: 1,

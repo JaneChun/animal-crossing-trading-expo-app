@@ -1,10 +1,10 @@
 import { Feather } from '@expo/vector-icons';
 import { useCallback, useMemo, useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, ScrollView, Text } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ScrollView } from 'react-native';
 
-import { FontSizes, FontWeights } from '@/constants/Typography';
+import Text from '@/components/ui/Text';
 import { useItemVariants } from '@/hooks/item/query/useItemVariants';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 import { CatalogItem, CatalogVariant } from '@/types/catalog';
 import { ANY_VARIANT_LABEL, createAnyVariant } from '@/utilities/catalogItemToItem';
 
@@ -18,6 +18,7 @@ interface ItemVariantSelectProps {
 }
 
 const ItemVariantSelect = ({ item, onBack, onSelect }: ItemVariantSelectProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const { data: variants, isLoading } = useItemVariants(item.id);
 
 	const localVariants = useMemo(() => {
@@ -98,12 +99,12 @@ const ItemVariantSelect = ({ item, onBack, onSelect }: ItemVariantSelectProps) =
 			{/* Header */}
 			<View style={styles.header}>
 				<TouchableOpacity onPress={handleBack} style={styles.backButtonContainer}>
-					<Feather name="chevron-left" size={24} color={Colors.text.tertiary} />
-					<Text style={styles.backButtonText} numberOfLines={1}>
+					<Feather name="chevron-left" size={24} color={styles.backIcon.color} />
+					<Text variant="body1" color="tertiary" numberOfLines={1}>
 						{backLabel}
 					</Text>
 				</TouchableOpacity>
-				<Text style={styles.headerTitle} numberOfLines={1}>
+				<Text variant="heading" weight="bold" style={styles.headerTitle} numberOfLines={1}>
 					{activeTab === 'body' ? item.bodyTitle : item.patternTitle}
 				</Text>
 			</View>
@@ -131,10 +132,11 @@ const ItemVariantSelect = ({ item, onBack, onSelect }: ItemVariantSelectProps) =
 
 export default ItemVariantSelect;
 
-const styles = StyleSheet.create({
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: Colors.bg.primary,
+		backgroundColor: colors.bg.elevated,
 	},
 	header: {
 		paddingVertical: 24,
@@ -151,14 +153,10 @@ const styles = StyleSheet.create({
 		zIndex: 1,
 		maxWidth: 120, // 방어 코드: 너무 길어지면 ... 처리
 	},
-	backButtonText: {
-		fontSize: FontSizes.md,
-		color: Colors.text.tertiary,
+	backIcon: {
+		color: colors.text.tertiary,
 	},
 	headerTitle: {
-		fontSize: FontSizes.lg,
-		fontWeight: FontWeights.bold,
-		color: Colors.text.primary,
 		textAlign: 'center',
 		paddingHorizontal: 120, // 좌우 텍스트 겹침 방지
 	},

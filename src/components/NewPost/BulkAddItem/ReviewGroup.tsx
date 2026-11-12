@@ -1,10 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
-import { FontSizes, FontWeights, LineHeights } from '@/constants/Typography';
+import Text from '@/components/ui/Text';
+import { Theme, useThemedStyles } from '@/theme';
 import { BorderRadius } from '@/theme/BorderRadius';
-import { Colors } from '@/theme/Color';
 import { Spacing } from '@/theme/Spacing';
 import { type NeedsReviewLineMatchResult } from '@/types/bulkItemMatching';
 import { type CatalogItem } from '@/types/catalog';
@@ -25,9 +25,18 @@ const ReviewGroup = ({
 	selectedItemId,
 	cartIds,
 	onSelectCandidate,
-}: ReviewGroupProps) => (
+}: ReviewGroupProps) => {
+	const styles = useThemedStyles(makeStyles);
+
+	return (
 	<View style={styles.reviewGroup}>
-		<Text style={styles.reviewLine} numberOfLines={2} ellipsizeMode="tail">
+		<Text
+			variant="body2"
+			weight="medium"
+			color="secondary"
+			numberOfLines={2}
+			ellipsizeMode="tail"
+		>
 			{reviewItem.line}
 		</Text>
 		{reviewItem.candidates.map((item) => {
@@ -49,36 +58,40 @@ const ReviewGroup = ({
 					/>
 					<ItemName
 						item={item}
+						weight="semibold"
 						nameStyle={styles.candidateName}
 						isDuplicate={isDuplicate}
 					/>
 					{isDuplicate ? (
-						<Text style={[styles.chip, styles.duplicateChip]}>이미 담김</Text>
+						<Text
+							variant="micro"
+							weight="semibold"
+							color="tertiary"
+							style={[styles.chip, styles.duplicateChip]}
+						>
+							이미 담김
+						</Text>
 					) : (
 						<Ionicons
 							name={isSelected ? 'checkbox' : 'square-outline'}
 							size={24}
-							color={isSelected ? Colors.brand.primary : Colors.border.default}
+							color={isSelected ? styles.checkboxSelected.color : styles.checkbox.color}
 						/>
 					)}
 				</TouchableOpacity>
 			);
 		})}
 	</View>
-);
+	);
+};
 
 export default ReviewGroup;
 
-const styles = StyleSheet.create({
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
 	reviewGroup: {
 		marginBottom: Spacing.l,
 		gap: Spacing.s,
-	},
-	reviewLine: {
-		fontSize: FontSizes.sm,
-		fontWeight: FontWeights.medium,
-		lineHeight: LineHeights.sm,
-		color: Colors.text.secondary,
 	},
 	candidateRow: {
 		flexDirection: 'row',
@@ -87,8 +100,8 @@ const styles = StyleSheet.create({
 		paddingHorizontal: Spacing.l,
 		borderRadius: BorderRadius.l,
 		borderWidth: 1,
-		borderColor: Colors.border.default,
-		backgroundColor: Colors.bg.primary,
+		borderColor: colors.border.default,
+		backgroundColor: colors.bg.primary,
 	},
 	candidateImage: {
 		width: 30,
@@ -98,26 +111,23 @@ const styles = StyleSheet.create({
 	},
 	candidateName: {
 		flex: 1,
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-		lineHeight: LineHeights.md,
-		color: Colors.text.primary,
 		marginRight: Spacing.s,
 	},
+	checkbox: {
+		color: colors.border.default,
+	},
+	checkboxSelected: {
+		color: colors.brand.primary,
+	},
 	chip: {
-		fontSize: FontSizes.xxs,
-		fontWeight: FontWeights.semibold,
-		lineHeight: LineHeights.xxs,
-		color: Colors.text.tertiary,
-		backgroundColor: Colors.bg.tertiary,
+		backgroundColor: colors.bg.tertiary,
 		borderRadius: BorderRadius.full,
 		paddingVertical: 3,
 		paddingHorizontal: Spacing.s,
 		overflow: 'hidden',
 	},
 	duplicateChip: {
-		color: Colors.text.tertiary,
-		backgroundColor: Colors.bg.secondary,
+		backgroundColor: colors.bg.secondary,
 	},
 	dimmed: {
 		opacity: 0.45,

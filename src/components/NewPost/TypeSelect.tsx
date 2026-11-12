@@ -1,11 +1,12 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import Text from '@/components/ui/Text';
+import { Theme, useThemedStyles } from '@/theme';
 import { TypeSelectProps } from '@/types/components';
 import { MarketType } from '@/types/post';
 
 const TypeSelect = ({ type, setType, containerStyle, labelStyle }: TypeSelectProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const typeOptions: MarketType[] = ['buy', 'sell'];
 
 	const typeButtonMap: Record<MarketType, { label: string; sideStyle: object }> = {
@@ -39,7 +40,11 @@ const TypeSelect = ({ type, setType, containerStyle, labelStyle }: TypeSelectPro
 						style={[styles.button, type === option && styles.buttonActive]}
 						onPress={() => setType(option)}
 					>
-						<Text style={[styles.text, type === option && styles.textActive]}>
+						<Text
+							weight={type === option ? 'semibold' : 'regular'}
+							color="tertiary"
+							style={type === option && styles.textActive}
+						>
 							{typeButtonMap[option].label}
 						</Text>
 					</Pressable>
@@ -51,7 +56,8 @@ const TypeSelect = ({ type, setType, containerStyle, labelStyle }: TypeSelectPro
 
 export default TypeSelect;
 
-const styles = StyleSheet.create({
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
 	container: {
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
@@ -64,19 +70,13 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		borderRadius: 10,
 		borderWidth: 1,
-		borderColor: Colors.border.default,
+		borderColor: colors.border.default,
 	},
 	buttonActive: {
-		backgroundColor: Colors.bg.primary,
-		borderColor: Colors.brand.primary,
-	},
-	text: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.regular,
-		color: Colors.text.tertiary,
+		backgroundColor: colors.bg.primary,
+		borderColor: colors.brand.primary,
 	},
 	textActive: {
-		color: Colors.brand.primary,
-		fontWeight: FontWeights.semibold,
+		color: colors.brand.primary,
 	},
 });

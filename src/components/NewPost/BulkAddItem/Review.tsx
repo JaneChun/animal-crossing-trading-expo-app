@@ -4,8 +4,8 @@ import { StyleSheet, View } from 'react-native';
 import Button from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import { MAX_CART_ITEMS } from '@/constants/post';
+import { Theme, useThemedStyles } from '@/theme';
 import { BorderRadius } from '@/theme/BorderRadius';
-import { Colors } from '@/theme/Color';
 import { Spacing } from '@/theme/Spacing';
 import {
 	type FailedLineMatchResult,
@@ -44,6 +44,7 @@ const Review = ({
 	onSelectReviewCandidate,
 	onConfirm,
 }: ReviewProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const cartIds = new Set(cart.map((cartItem) => cartItem.id));
 
 	return (
@@ -130,10 +131,11 @@ const Review = ({
 
 export default Review;
 
-const styles = StyleSheet.create({
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: Colors.bg.primary,
+		backgroundColor: colors.bg.elevated,
 	},
 	scrollArea: {
 		flex: 1,
@@ -148,8 +150,8 @@ const styles = StyleSheet.create({
 		paddingTop: Spacing.m,
 		paddingHorizontal: Spacing.xl,
 		borderTopWidth: 1,
-		borderTopColor: Colors.border.default,
-		backgroundColor: Colors.bg.primary,
+		borderTopColor: colors.border.default,
+		backgroundColor: colors.bg.elevated,
 	},
 	warning: {
 		marginTop: 0,

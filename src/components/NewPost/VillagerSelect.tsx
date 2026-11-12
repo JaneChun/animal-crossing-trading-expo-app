@@ -1,16 +1,15 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useCallback, useMemo, useState } from 'react';
-import { Keyboard, StyleSheet, Text, View } from 'react-native';
+import { Keyboard, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import Categories from '@/components/ui/Categories';
 import SearchInput from '@/components/ui/inputs/SearchInput';
 import InlineLoadingIndicator from '@/components/ui/loading/InlineLoadingIndicator';
+import Text from '@/components/ui/Text';
 import { VILLAGER_SPECIES } from '@/constants/post';
-import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useDebouncedValue } from '@/hooks/shared/useDebouncedValue';
 import { useSearchVillagers } from '@/hooks/villager/query/useSearchVillagers';
-import { Colors } from '@/theme/Color';
 import { VillagerSelectProps } from '@/types/components';
 import { Villager, VillagerSpecies, VillagerSpeciesItem } from '@/types/villager';
 
@@ -52,7 +51,9 @@ const VillagerSelect = ({ addVillager, containerStyle }: VillagerSelectProps) =>
 	const getListEmptyComponent = useMemo(
 		() => (
 			<View style={styles.spinnerContainer}>
-				<Text style={styles.emptyText}>검색 결과가 없습니다.</Text>
+				<Text variant="body2" color="tertiary">
+					검색 결과가 없습니다.
+				</Text>
 			</View>
 		),
 		[],
@@ -108,11 +109,6 @@ const VillagerSelect = ({ addVillager, containerStyle }: VillagerSelectProps) =>
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-	},
-	emptyText: {
-		fontSize: FontSizes.sm,
-		fontWeight: FontWeights.regular,
-		color: Colors.text.tertiary,
 	},
 	listContainer: {
 		flex: 1,

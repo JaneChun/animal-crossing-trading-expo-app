@@ -1,37 +1,40 @@
 import { FontAwesome6, Ionicons } from '@expo/vector-icons';
-import { StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import Bell from '@/components/ui/Icons/Bell';
 import MileTicket from '@/components/ui/Icons/MileTicket';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import Text from '@/components/ui/Text';
+import { Theme, useThemedStyles } from '@/theme';
 import { EditableItemProps } from '@/types/components';
 
 const EditableItem = ({ item, readonly = false, onDeleteItem }: EditableItemProps) => {
-	const readOnlyContainer: ViewStyle = {
-		backgroundColor: Colors.bg.secondary,
-		borderWidth: 0,
-	};
+	const styles = useThemedStyles(makeStyles);
 
 	return (
-		<View style={[styles.container, readonly && readOnlyContainer]}>
+		<View style={[styles.container, readonly && styles.readOnlyContainer]}>
 			{/* 이미지 */}
 			<ImageWithFallback uri={item.imageUrl} style={styles.image} />
 
 			<View style={styles.body}>
-				<Text style={styles.name} numberOfLines={1} ellipsizeMode="tail">
+				<Text variant="body1" weight="semibold" numberOfLines={1} ellipsizeMode="tail">
 					{item.name}
 				</Text>
-				{item.color && <Text style={styles.color}>{item.color}</Text>}
+				{item.color && (
+					<Text variant="body2" color="tertiary">
+						{item.color}
+					</Text>
+				)}
 
 				<View style={styles.quantityContainer}>
-					<Text style={styles.quantity}>
+					<Text variant="body2" color="tertiary">
 						{item.price}
 						{item.unit === 'bell' ? '덩' : '마일'}
 					</Text>
-					<Ionicons name="close" size={14} color={Colors.text.tertiary} />
-					<Text style={styles.quantity}>{item.quantity}</Text>
+					<Ionicons name="close" size={14} color={styles.closeIcon.color} />
+					<Text variant="body2" color="tertiary">
+						{item.quantity}
+					</Text>
 				</View>
 			</View>
 
@@ -42,7 +45,7 @@ const EditableItem = ({ item, readonly = false, onDeleteItem }: EditableItemProp
 				) : (
 					<MileTicket style={[styles.ticketIcon, { marginRight: 1 }]} />
 				)}
-				<Text style={styles.price}>{item.quantity * item.price}</Text>
+				<Text variant="body2">{item.quantity * item.price}</Text>
 			</View>
 
 			{!readonly && onDeleteItem && (
@@ -51,7 +54,7 @@ const EditableItem = ({ item, readonly = false, onDeleteItem }: EditableItemProp
 					hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
 					onPress={() => onDeleteItem(item.id)}
 				>
-					<FontAwesome6 name="circle-minus" size={22} color={Colors.brand.primary} />
+					<FontAwesome6 name="circle-minus" size={22} color={styles.deleteIcon.color} />
 				</TouchableOpacity>
 			)}
 		</View>
@@ -60,18 +63,23 @@ const EditableItem = ({ item, readonly = false, onDeleteItem }: EditableItemProp
 
 export default EditableItem;
 
-const styles = StyleSheet.create({
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
 	container: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		paddingVertical: 12,
 		paddingHorizontal: 16,
-		backgroundColor: Colors.bg.primary,
+		backgroundColor: colors.bg.primary,
 		borderWidth: 1,
-		borderColor: Colors.border.default,
+		borderColor: colors.border.default,
 		borderRadius: 16,
 		marginBottom: 12,
+	},
+	readOnlyContainer: {
+		backgroundColor: colors.bg.secondary,
+		borderWidth: 0,
 	},
 	body: {
 		flex: 1,
@@ -86,17 +94,8 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 		marginRight: 12,
 	},
-	name: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-	},
-	color: {
-		fontSize: FontSizes.sm,
-		color: Colors.text.tertiary,
-	},
-	quantity: {
-		fontSize: FontSizes.sm,
-		color: Colors.text.tertiary,
+	closeIcon: {
+		color: colors.text.tertiary,
 	},
 	quantityContainer: {
 		flexDirection: 'row',
@@ -113,8 +112,8 @@ const styles = StyleSheet.create({
 		width: 20,
 		height: 20,
 	},
-	price: {
-		color: Colors.text.primary,
+	deleteIcon: {
+		color: colors.brand.primary,
 	},
 	deleteButton: {
 		padding: 6,

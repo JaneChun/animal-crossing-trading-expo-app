@@ -135,9 +135,13 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 
 ## Phase 8: 도메인 마이그레이션 2 (NewPost)
 
-- [ ] NewPost 19개 파일 (`src/components/NewPost/**`)
+- [x] NewPost 19개 파일 (`src/components/NewPost/**`)
   - `src/components/ui/HighlightMatchText.tsx`도 여기서 함께 바꾼다(Phase 6 결정)
   - `BulkAddItem/` 하위의 배너·리뷰 그룹은 tone 색을 쓰므로 Badge와 같은 tone 쌍 규칙을 따른다
+  - 결정: `SectionBanner`는 variant마다 tone 키 하나(`primaryBrand`·`yellow`·`red`)로 `text.{key}` 글자·아이콘 색과 `bg.{key}` 배경색을 함께 고른다
+  - 결정: `ItemName`은 이름 굵기를 `nameStyle`의 `fontWeight` 대신 `weight` prop으로 받는다
+  - 결정: 바텀시트 안에 놓인 `Review`·`ItemVariantSelect`의 배경은 시트와 같은 `bg.elevated`로 바꿨다(라이트 값 동일)
+  - 남은 경고 `labelStyle` 미사용 2건, `EditItemModal`·`screens/NewPost.tsx`의 `exhaustive-deps` 2건은 디자인 시스템과 무관해 범위 밖
 
 ## Phase 9: 도메인 마이그레이션 3 (Chat)
 
@@ -189,3 +193,8 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 - 결정: Maestro는 기기를 지정하지 않으면 함께 실행 중인 Android 에뮬레이터를 고른다. 시뮬레이터 확인 시 `--device <iOS UDID>`를 명시한다
 - Phase 7 완료
 - 검증: `npm run typecheck` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, Phase 7 범위 `eslint` 가드레일 경고 0건. 운영 데이터로 마켓 목록을 띄워 두 줄 제목 항목의 작성자·날짜 줄이 구분선과 떨어진 것을 확인했다
+
+### 2026-11-13
+
+- Phase 8 완료
+- 검증: `npm run typecheck` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, Phase 8 범위 `eslint` 가드레일 경고 0건. 운영 앱에서 새 글 작성·아이템 선택·변형 선택·아이템 편집 시트를 띄워 잘림이 없는 것을 확인했다(등록하지 않음). 검색어 강조와 일괄 추가 화면은 Maestro 텍스트 입력이 동작하지 않아 화면으로는 확인하지 못했다

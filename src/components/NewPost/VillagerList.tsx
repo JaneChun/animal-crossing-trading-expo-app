@@ -1,10 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import Text from '@/components/ui/Text';
 import { MAX_VILLAGERS } from '@/constants/post';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 import { VillagerListProps } from '@/types/components';
 
 const VillagerList = ({
@@ -14,11 +14,14 @@ const VillagerList = ({
 	containerStyle,
 	labelStyle,
 }: VillagerListProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const canAddMore = villagers.length < MAX_VILLAGERS;
 
 	return (
 		<View style={containerStyle}>
-			<Text style={labelStyle}>주민</Text>
+			<Text variant="body1" weight="semibold" style={labelStyle}>
+				주민
+			</Text>
 
 			<ScrollView
 				horizontal
@@ -34,7 +37,7 @@ const VillagerList = ({
 							onPress={() => deleteVillager(villager.id)}
 							hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
 						>
-							<Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
+							<Ionicons name="close-circle" size={20} color={styles.icon.color} />
 						</TouchableOpacity>
 						{/* 이미지 */}
 						<View style={styles.imageContainer}>
@@ -45,7 +48,13 @@ const VillagerList = ({
 							/>
 						</View>
 						{/* 이름 */}
-						<Text style={styles.villagerName} numberOfLines={1}>
+						<Text
+							variant="body2"
+							weight="semibold"
+							color="secondary"
+							style={styles.villagerName}
+							numberOfLines={1}
+						>
 							{villager.name}
 						</Text>
 					</View>
@@ -58,7 +67,7 @@ const VillagerList = ({
 						onPress={openAddVillagerModal}
 						testID="addVillagerButton"
 					>
-						<Ionicons name="add" size={32} color={Colors.text.tertiary} />
+						<Ionicons name="add" size={32} color={styles.icon.color} />
 					</TouchableOpacity>
 				)}
 			</ScrollView>
@@ -66,7 +75,8 @@ const VillagerList = ({
 	);
 };
 
-const styles = StyleSheet.create({
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
 	scrollContent: {
 		flexDirection: 'row',
 		alignItems: 'flex-start',
@@ -80,10 +90,10 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		paddingVertical: 12,
 		paddingHorizontal: 16,
-		backgroundColor: Colors.bg.secondary,
+		backgroundColor: colors.bg.secondary,
 		borderRadius: 12,
 		borderWidth: 1,
-		borderColor: Colors.border.default,
+		borderColor: colors.border.default,
 	},
 	imageContainer: {
 		position: 'relative',
@@ -100,18 +110,18 @@ const styles = StyleSheet.create({
 	},
 	villagerName: {
 		marginTop: 4,
-		fontSize: FontSizes.sm,
-		fontWeight: FontWeights.semibold,
-		color: Colors.text.secondary,
 		textAlign: 'center',
+	},
+	icon: {
+		color: colors.text.tertiary,
 	},
 	addButton: {
 		width: 60,
 		height: 60,
 		borderRadius: 30,
 		borderWidth: 1,
-		backgroundColor: Colors.bg.secondary,
-		borderColor: Colors.bg.secondary,
+		backgroundColor: colors.bg.secondary,
+		borderColor: colors.bg.secondary,
 		justifyContent: 'center',
 		alignItems: 'center',
 		marginVertical: 'auto',

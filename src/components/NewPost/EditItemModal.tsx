@@ -1,18 +1,19 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import Total from '@/components/PostDetail/Total';
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 import DropdownInput from '@/components/ui/inputs/DropdownInput';
 import NumberInput from '@/components/ui/inputs/NumberInput';
+import Text from '@/components/ui/Text';
 import { CURRENCY_OPTIONS } from '@/constants/post';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 import { EditItemModalProps } from '@/types/components';
 import { CartItem } from '@/types/post';
 
 const EditItemModal = ({ item, isVisible, updateItemFromCart, onClose }: EditItemModalProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const [quantityInput, setQuantityInput] = useState<number>(1);
 	const [milesTicketInput, setMilesTicketInput] = useState<number>(1);
 	const [selectedUnit, setSelectedUnit] = useState<string>('mileticket');
@@ -48,8 +49,14 @@ const EditItemModal = ({ item, isVisible, updateItemFromCart, onClose }: EditIte
 		<CustomBottomSheet isVisible={isVisible} onClose={onClose} snapPoints={['40%']}>
 			<View style={styles.content}>
 				{/* 타이틀 */}
-				<Text style={styles.title}>{item?.name}</Text>
-				{item?.color && <Text style={styles.subTitle}>{item?.color}</Text>}
+				<Text variant="heading" weight="bold">
+					{item?.name}
+				</Text>
+				{item?.color && (
+					<Text variant="body1" color="tertiary" style={styles.subTitle}>
+						{item?.color}
+					</Text>
+				)}
 
 				{/* 가격 */}
 				<View style={styles.row}>
@@ -74,8 +81,10 @@ const EditItemModal = ({ item, isVisible, updateItemFromCart, onClose }: EditIte
 						setValue={setQuantityInput}
 						InputComponent={BottomSheetTextInput}
 					/>
-					<View style={[styles.inputContainer, { backgroundColor: Colors.bg.secondary }]}>
-						<Text style={styles.text}>개</Text>
+					<View style={[styles.inputContainer, styles.unitContainer]}>
+						<Text variant="body1" weight="semibold">
+							개
+						</Text>
 					</View>
 				</View>
 
@@ -98,18 +107,13 @@ const EditItemModal = ({ item, isVisible, updateItemFromCart, onClose }: EditIte
 
 export default EditItemModal;
 
-const styles = StyleSheet.create({
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
 	content: {
 		flex: 1,
 		gap: 8,
 	},
-	title: {
-		fontSize: FontSizes.lg,
-		fontWeight: FontWeights.bold,
-	},
 	subTitle: {
-		fontSize: FontSizes.md,
-		color: Colors.text.tertiary,
 		marginBottom: 16,
 	},
 	row: {
@@ -122,16 +126,14 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 		borderWidth: 1,
-		borderColor: Colors.border.default,
+		borderColor: colors.border.default,
 		borderRadius: 8,
 		backgroundColor: 'transparent',
 		height: 48,
 		paddingHorizontal: 16,
 	},
-	text: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-		color: Colors.text.primary,
+	unitContainer: {
+		backgroundColor: colors.bg.secondary,
 	},
 	totalContainer: {
 		justifyContent: 'flex-end',

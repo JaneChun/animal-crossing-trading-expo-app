@@ -1,9 +1,9 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
-import { FontSizes, FontWeights, LineHeights } from '@/constants/Typography';
+import Text from '@/components/ui/Text';
+import { Theme, useThemedStyles } from '@/theme';
 import { BorderRadius } from '@/theme/BorderRadius';
-import { Colors } from '@/theme/Color';
 import { Spacing } from '@/theme/Spacing';
 import { type CatalogItem } from '@/types/catalog';
 
@@ -15,20 +15,39 @@ type FoundRowProps = {
 };
 
 // 정확히 하나로 확정된 아이템 행
-const FoundRow = ({ item, isDuplicate }: FoundRowProps) => (
+const FoundRow = ({ item, isDuplicate }: FoundRowProps) => {
+	const styles = useThemedStyles(makeStyles);
+
+	return (
 	<View style={styles.row} testID={`bulkAddFoundRow-${item.id}`}>
 		<ImageWithFallback
 			uri={item.imageUrl}
 			style={[styles.itemImage, isDuplicate && styles.dimmed]}
 		/>
-		<ItemName item={item} nameStyle={styles.itemName} isDuplicate={isDuplicate} />
-		{isDuplicate && <Text style={[styles.chip, styles.duplicateChip]}>이미 담김</Text>}
+		<ItemName
+			item={item}
+			weight="medium"
+			nameStyle={styles.itemName}
+			isDuplicate={isDuplicate}
+		/>
+		{isDuplicate && (
+			<Text
+				variant="micro"
+				weight="semibold"
+				color="tertiary"
+				style={[styles.chip, styles.duplicateChip]}
+			>
+				이미 담김
+			</Text>
+		)}
 	</View>
-);
+	);
+};
 
 export default FoundRow;
 
-const styles = StyleSheet.create({
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
 	row: {
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -37,7 +56,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: Spacing.s,
 		borderRadius: BorderRadius.m,
 		borderBottomWidth: 1,
-		borderBottomColor: Colors.border.default,
+		borderBottomColor: colors.border.default,
 	},
 	itemImage: {
 		width: 40,
@@ -47,26 +66,17 @@ const styles = StyleSheet.create({
 	},
 	itemName: {
 		flex: 1,
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.medium,
-		lineHeight: LineHeights.md,
-		color: Colors.text.primary,
 		marginRight: Spacing.s,
 	},
 	chip: {
-		fontSize: FontSizes.xxs,
-		fontWeight: FontWeights.semibold,
-		lineHeight: LineHeights.xxs,
-		color: Colors.text.tertiary,
-		backgroundColor: Colors.bg.tertiary,
+		backgroundColor: colors.bg.tertiary,
 		borderRadius: BorderRadius.full,
 		paddingVertical: 3,
 		paddingHorizontal: Spacing.s,
 		overflow: 'hidden',
 	},
 	duplicateChip: {
-		color: Colors.text.tertiary,
-		backgroundColor: Colors.bg.secondary,
+		backgroundColor: colors.bg.secondary,
 	},
 	dimmed: {
 		opacity: 0.45,
