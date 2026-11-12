@@ -1,10 +1,11 @@
 import { useFormContext } from 'react-hook-form';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 
 import ValidationInput from '@/components/ui/inputs/ValidationInput';
-import { FontSizes, FontWeights } from '@/constants/Typography';
+import Text from '@/components/ui/Text';
+import { FontSizes } from '@/constants/Typography';
 import { ProfileFormValues } from '@/hooks/profile/form/profileFormSchema';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 import { NameInputProp } from '@/types/components';
 
 const NameInput = ({
@@ -15,6 +16,7 @@ const NameInput = ({
 	placeholder,
 	InputComponent = TextInput,
 }: NameInputProp) => {
+	const styles = useThemedStyles(makeStyles);
 	const {
 		formState: { errors },
 	} = useFormContext<ProfileFormValues>();
@@ -23,7 +25,9 @@ const NameInput = ({
 
 	return (
 		<View style={styles.inputContainer}>
-			<Text style={styles.label}>{label}</Text>
+			<Text variant="body1" weight="semibold" style={styles.label}>
+				{label}
+			</Text>
 			<ValidationInput
 				value={value}
 				onChangeText={onChangeText}
@@ -37,28 +41,26 @@ const NameInput = ({
 	);
 };
 
-const styles = StyleSheet.create({
-	inputContainer: {
-		width: '100%',
-		marginBottom: 18,
-	},
-	label: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-		color: Colors.text.primary,
-		marginBottom: 16,
-	},
-	input: {
-		fontSize: FontSizes.md,
-		padding: 12,
-		borderWidth: 1,
-		borderColor: Colors.bg.secondary,
-		borderRadius: 8,
-		backgroundColor: Colors.bg.secondary,
-		marginBottom: 8,
-		textAlignVertical: 'center',
-		height: 45,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		inputContainer: {
+			width: '100%',
+			marginBottom: 18,
+		},
+		label: {
+			marginBottom: 16,
+		},
+		input: {
+			fontSize: FontSizes.md,
+			padding: 12,
+			borderWidth: 1,
+			borderColor: colors.bg.secondary,
+			borderRadius: 8,
+			backgroundColor: colors.bg.secondary,
+			marginBottom: 8,
+			textAlignVertical: 'center',
+			height: 45,
+		},
+	});
 
 export default NameInput;

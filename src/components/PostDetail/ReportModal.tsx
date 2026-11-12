@@ -1,12 +1,13 @@
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import Button from '@/components/ui/Button';
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
+import Text from '@/components/ui/Text';
 import { REPORT_CATEGORIES } from '@/constants/post';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { FontSizes } from '@/constants/Typography';
+import { Theme, useThemedStyles } from '@/theme';
 import { ReportUserParams } from '@/types/components';
 
 type ReportModalProps = {
@@ -16,6 +17,7 @@ type ReportModalProps = {
 };
 
 const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const [step, setStep] = useState<1 | 2>(1);
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 	const [detail, setDetail] = useState<string>('');
@@ -68,7 +70,9 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 			<View style={styles.screen}>
 				{step === 1 && (
 					<>
-						<Text style={styles.label}>신고 사유</Text>
+						<Text variant="body1" weight="semibold" style={styles.label}>
+							신고 사유
+						</Text>
 						{REPORT_CATEGORIES?.map((category) => (
 							<Pressable
 								key={category.EN}
@@ -79,11 +83,12 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 								onPress={() => setSelectedCategory(category.EN)}
 							>
 								<Text
-									style={[
-										styles.categoryText,
+									variant="body1"
+									weight={selectedCategory === category.EN ? 'bold' : 'regular'}
+									style={
 										selectedCategory === category.EN &&
-											styles.selectedCategoryText,
-									]}
+										styles.selectedCategoryText
+									}
 								>
 									{category.KR}
 								</Text>
@@ -94,7 +99,9 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 
 				{step === 2 && (
 					<>
-						<Text style={styles.label}>상세 내용 (선택)</Text>
+						<Text variant="body1" weight="semibold" style={styles.label}>
+							상세 내용 (선택)
+						</Text>
 						<BottomSheetTextInput
 							style={styles.textInput}
 							placeholder="자세한 내용을 입력해주세요"
@@ -111,43 +118,36 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 
 export default ReportModal;
 
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-	},
-	label: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-		color: Colors.text.primary,
-		marginBottom: 16,
-	},
-	categoryButton: {
-		padding: 12,
-		borderRadius: 8,
-		borderWidth: 1,
-		borderColor: Colors.border.default,
-		marginBottom: 10,
-	},
-	selectedCategory: {
-		borderColor: Colors.brand.primary,
-		backgroundColor: Colors.brand.secondary,
-	},
-	categoryText: {
-		color: Colors.text.primary,
-		fontSize: FontSizes.md,
-	},
-	selectedCategoryText: {
-		color: Colors.brand.primary,
-		fontWeight: 'bold',
-	},
-	textInput: {
-		borderWidth: 1,
-		borderColor: Colors.border.default,
-		borderRadius: 8,
-		padding: 12,
-		height: 100,
-		textAlignVertical: 'top',
-		lineHeight: 26,
-		fontSize: FontSizes.md,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		screen: {
+			flex: 1,
+		},
+		label: {
+			marginBottom: 16,
+		},
+		categoryButton: {
+			padding: 12,
+			borderRadius: 8,
+			borderWidth: 1,
+			borderColor: colors.border.default,
+			marginBottom: 10,
+		},
+		selectedCategory: {
+			borderColor: colors.brand.primary,
+			backgroundColor: colors.brand.secondary,
+		},
+		selectedCategoryText: {
+			color: colors.brand.primary,
+		},
+		textInput: {
+			borderWidth: 1,
+			borderColor: colors.border.default,
+			borderRadius: 8,
+			padding: 12,
+			height: 100,
+			textAlignVertical: 'top',
+			lineHeight: 26,
+			fontSize: FontSizes.md,
+		},
+	});

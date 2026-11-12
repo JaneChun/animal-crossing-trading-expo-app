@@ -11,7 +11,7 @@ import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { MAX_COMMENT_LENGTH } from '@/constants/post';
 import { FontSizes } from '@/constants/Typography';
 import { goBack } from '@/navigation/RootNavigation';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 
 type EditCommentModalProps = {
 	comment: string;
@@ -28,6 +28,7 @@ const EditCommentModal = ({
 	onSubmit,
 	title = '댓글 수정',
 }: EditCommentModalProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const [newCommentInput, setNewCommentInput] = useState(comment);
 
 	useEffect(() => {
@@ -105,24 +106,25 @@ const EditCommentModal = ({
 
 export default EditCommentModal;
 
-const styles = StyleSheet.create({
-	bottomSheetBodyStyle: {
-		padding: PADDING,
-		paddingRight: 0,
-	},
-	screen: {
-		flex: 1,
-	},
-	scrollContent: {
-		flexGrow: 1,
-		paddingBottom: PADDING,
-	},
-	textInput: {
-		flex: 1,
-		fontSize: FontSizes.md,
-		lineHeight: 26,
-		color: Colors.text.secondary,
-		paddingRight: PADDING,
-		textAlignVertical: 'top',
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		bottomSheetBodyStyle: {
+			padding: PADDING,
+			paddingRight: 0,
+		},
+		screen: {
+			flex: 1,
+		},
+		scrollContent: {
+			flexGrow: 1,
+			paddingBottom: PADDING,
+		},
+		textInput: {
+			flex: 1,
+			fontSize: FontSizes.md,
+			lineHeight: 26,
+			color: colors.text.secondary,
+			paddingRight: PADDING,
+			textAlignVertical: 'top',
+		},
+	});

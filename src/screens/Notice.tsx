@@ -5,7 +5,7 @@ import TabBarLabel from '@/components/Notice/TabBarLabel';
 import Layout from '@/components/ui/layout/Layout';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useNotificationStore } from '@/stores/notification';
-import { Colors } from '@/theme/Color';
+import { useTheme } from '@/theme';
 import { Collection } from '@/types/post';
 
 const Tab = createMaterialTopTabNavigator();
@@ -27,6 +27,7 @@ const CommunityTab = () => {
 };
 
 const Notice = () => {
+	const { colors } = useTheme();
 	const notifications = useNotificationStore((state) => state.notifications);
 
 	const hasUnreadMarket = notifications.some(
@@ -46,11 +47,11 @@ const Notice = () => {
 						fontWeight: FontWeights.semibold,
 					},
 					tabBarStyle: {
-						backgroundColor: Colors.bg.primary,
+						backgroundColor: colors.bg.primary,
 					},
-					tabBarIndicatorStyle: { backgroundColor: Colors.brand.primary }, // 선택된 탭 밑줄 색상
-					tabBarActiveTintColor: Colors.brand.primary, // 활성 탭 색상
-					tabBarInactiveTintColor: Colors.text.tertiary, // 비활성 탭 색상
+					tabBarIndicatorStyle: { backgroundColor: colors.brand.primary }, // 선택된 탭 밑줄 색상
+					tabBarActiveTintColor: colors.brand.primary, // 활성 탭 색상
+					tabBarInactiveTintColor: colors.text.tertiary, // 비활성 탭 색상
 				}}
 			>
 				<Tab.Screen

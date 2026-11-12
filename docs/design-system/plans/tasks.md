@@ -155,9 +155,12 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 
 ## Phase 10: 도메인 마이그레이션 4 (PostDetail, Profile, Notice, screens)
 
-- [ ] PostDetail 11개 파일 (`src/components/PostDetail/**`)
-- [ ] Profile 8개 파일 (`src/components/Profile/**`)
-- [ ] Notice 7개 파일 (`src/components/Notice/**`, `src/screens/Notice.tsx`의 탭바 스타일 포함)
+- [x] PostDetail 11개 파일 (`src/components/PostDetail/**`)
+  - 결정: 댓글·답글 본문처럼 행간이 이미 있던 곳(22·24·26)은 spec대로 style의 `lineHeight`를 유지했다
+- [x] Profile 8개 파일 (`src/components/Profile/**`)
+  - 결정: JSX 값 상수였던 `SettingIcon`은 훅을 쓰기 위해 컴포넌트로 바꾸고, 쓰는 곳(`screens/Profile.tsx`)을 `<SettingIcon />`으로 고쳤다
+- [x] Notice 7개 파일 (`src/components/Notice/**`, `src/screens/Notice.tsx`의 탭바 스타일 포함)
+  - 결정: 빨간 면(안 읽음 점, 삭제 스와이프)은 Phase 9와 같이 `status.danger` + `text.onBrand`를 쓴다
 - [ ] screens 18개 파일 (`src/screens/*`)
   - `PrivacyPolicy.tsx`, `TermsOfService.tsx`의 `'#333'` 6건을 `colors.text.secondary`로 바꾼다
   - `ErrorBoundary.tsx`는 Phase 2 결정대로 `lightColors`로 고정한다
@@ -204,3 +207,6 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 - 검증: `npm run typecheck` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, Phase 8 범위 `eslint` 가드레일 경고 0건. 운영 앱에서 새 글 작성·아이템 선택·변형 선택·아이템 편집 시트를 띄워 잘림이 없는 것을 확인했다(등록하지 않음). 검색어 강조와 일괄 추가 화면은 Maestro 텍스트 입력이 동작하지 않아 화면으로는 확인하지 못했다
 - Phase 9 완료
 - 검증: `npm run typecheck` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, Phase 9 범위 `eslint` 가드레일 경고 0건. 운영 테스트 계정의 채팅방(사용자 허락)에서 채팅 목록, 말풍선, 날짜 구분선, 사진 메시지, 게시글 없음 안내, 입력창을 확인했다(메시지 전송 없음)
+- Phase 10 PostDetail·Profile·Notice 완료
+- 검증: `npm run typecheck` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, 범위 `eslint` 가드레일 경고 0건. 운영 앱에서 게시글 상세, 프로필, 알림 탭을 읽기만 해서 확인했다
+- 결정: Phase 6~9에서 `makeStyles`로 감싼 스타일 블록의 들여쓰기가 Prettier 형식과 달라, 원본이 Prettier 형식이던 파일은 `prettier --write`로, 아니던 파일은 바꾼 블록만 범위 지정으로 정리했다(별도 커밋)

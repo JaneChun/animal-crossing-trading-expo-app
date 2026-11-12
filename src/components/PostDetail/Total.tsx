@@ -1,9 +1,9 @@
 import { Entypo } from '@expo/vector-icons';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import Bell from '@/components/ui/Icons/Bell';
 import MileTicket from '@/components/ui/Icons/MileTicket';
-import { FontSizes, FontWeights } from '@/constants/Typography';
+import Text from '@/components/ui/Text';
 import { TotalProps } from '@/types/components';
 import { CurrencyOption } from '@/types/post';
 
@@ -28,11 +28,15 @@ const Total = ({ cart = [], containerStyle }: TotalProps) => {
 
 	return (
 		<View style={[styles.container, containerStyle]}>
-			<Text style={styles.totalLabel}>총계</Text>
+			<Text variant="body1" weight="semibold">
+				총계
+			</Text>
 			{totalBell > 0 && (
 				<View style={styles.totalPriceContainer}>
 					<Bell style={styles.ticketIcon} />
-					<Text style={styles.totalPrice}>{totalBell}</Text>
+					<Text variant="body1" weight="semibold">
+						{totalBell}
+					</Text>
 				</View>
 			)}
 
@@ -41,7 +45,9 @@ const Total = ({ cart = [], containerStyle }: TotalProps) => {
 			{totalMileTicket > 0 && (
 				<View style={styles.totalPriceContainer}>
 					<MileTicket style={styles.ticketIcon} />
-					<Text style={styles.totalPrice}>{totalMileTicket}</Text>
+					<Text variant="body1" weight="semibold">
+						{totalMileTicket}
+					</Text>
 				</View>
 			)}
 		</View>
@@ -58,17 +64,9 @@ const styles = StyleSheet.create({
 		paddingRight: 16,
 		gap: 3,
 	},
-	totalLabel: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-	},
 	totalPriceContainer: {
 		flexDirection: 'row',
 		alignItems: 'center',
-	},
-	totalPrice: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
 	},
 	ticketIcon: {
 		width: 20,

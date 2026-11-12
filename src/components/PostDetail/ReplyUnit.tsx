@@ -1,16 +1,17 @@
 import { FontAwesome } from '@expo/vector-icons';
-import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import Text from '@/components/ui/Text';
 import { showToast } from '@/components/ui/Toast';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
-import { FontSizes, FontWeights } from '@/constants/Typography';
+import { FontSizes } from '@/constants/Typography';
 import { usePostContext } from '@/hooks/post/usePostContext';
 import { useDeleteReply } from '@/hooks/reply/mutation/useDeleteReply';
 import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useUserInfo } from '@/stores/auth';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 import { ReplyUnitProps } from '@/types/components';
 import { Collection } from '@/types/post';
 import { elapsedTime } from '@/utilities/elapsedTime';
@@ -34,6 +35,7 @@ const ReplyUnit = ({
 	creatorIslandName,
 	creatorPhotoURL,
 }: ReplyUnitProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const { collectionName } = usePostContext();
 	const userInfo = useUserInfo();
 
@@ -121,17 +123,21 @@ const ReplyUnit = ({
 					{/* 작성자 */}
 					<View style={styles.creatorInfo}>
 						<Pressable onPress={onPressUserProfile}>
-							<Text style={styles.creatorDisplayNameText}>{creatorDisplayName}</Text>
+							<Text variant="body2" weight="semibold">
+								{creatorDisplayName}
+							</Text>
 						</Pressable>
 						{postCreatorId === creatorId && (
-							<Text style={styles.authorTag}>작성자</Text>
+							<Text variant="caption" color="primaryBrand" style={styles.authorTag}>
+								작성자
+							</Text>
 						)}
 					</View>
 					{/* 액션 시트 버튼 */}
 					<View style={styles.actionContainer}>
 						{userInfo && (
 							<ActionSheetButton
-								color={Colors.text.tertiary}
+								color={styles.actionIcon.color}
 								size={14}
 								options={options}
 							/>
@@ -140,13 +146,17 @@ const ReplyUnit = ({
 				</View>
 
 				{/* 섬 이름, 작성 시간 */}
-				<Text
-					style={styles.infoText}
-				>{`${creatorIslandName} · ${elapsedTime(createdAt)}`}</Text>
+				<Text variant="caption" color="tertiary" style={styles.infoText}>
+					{`${creatorIslandName} · ${elapsedTime(createdAt)}`}
+				</Text>
 
 				{/* 바디 */}
-				<Text style={styles.replyBody}>
-					{mentionTag && <Text style={styles.mentionTag}>@{mentionTag} </Text>}
+				<Text variant="body1" color="secondary" style={styles.replyBody}>
+					{mentionTag && (
+						<Text weight="semibold" color="tertiary">
+							@{mentionTag}{' '}
+						</Text>
+					)}
 					{body}
 				</Text>
 
@@ -165,12 +175,11 @@ const ReplyUnit = ({
 							}
 						>
 							<View style={styles.replyIconContainer}>
-								<FontAwesome
-									name="reply"
-									style={[styles.replyText, styles.replyIcon]}
-								/>
+								<FontAwesome name="reply" style={styles.replyIcon} />
 							</View>
-							<Text style={styles.replyText}>답글 달기</Text>
+							<Text variant="caption" color="tertiary">
+								답글 달기
+							</Text>
 						</TouchableOpacity>
 					)}
 				</View>
@@ -179,85 +188,68 @@ const ReplyUnit = ({
 	);
 };
 
-const styles = StyleSheet.create({
-	container: {
-		flexDirection: 'row',
-		paddingVertical: 8,
-	},
-	profileImage: {
-		width: 25,
-		height: 25,
-		borderRadius: 20,
-		marginRight: 8,
-	},
-	content: {
-		flex: 1,
-	},
-	replyHeader: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-	},
-	creatorInfo: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	creatorDisplayNameText: {
-		fontSize: FontSizes.sm,
-		fontWeight: FontWeights.semibold,
-		color: Colors.text.primary,
-	},
-	authorTag: {
-		backgroundColor: Colors.bg.primaryBrand,
-		color: Colors.text.primaryBrand,
-		fontSize: FontSizes.xs,
-		padding: 4,
-		borderRadius: 4,
-		marginHorizontal: 6,
-	},
-	actionContainer: {
-		height: 28,
-		alignItems: 'flex-end',
-	},
-	infoText: {
-		fontSize: FontSizes.xs,
-		color: Colors.text.tertiary,
-		marginBottom: 6,
-	},
-	replyBody: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.regular,
-		color: Colors.text.secondary,
-		lineHeight: 22,
-	},
-	mentionTag: {
-		fontSize: FontSizes.md,
-		color: Colors.text.tertiary,
-		fontWeight: FontWeights.semibold,
-	},
-	replyFooter: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		// alignItems: 'center',
-		gap: 12,
-		marginTop: 8,
-	},
-	replyButton: {
-		flexDirection: 'row',
-		alignItems: 'flex-start',
-		gap: 4,
-	},
-	replyIconContainer: {
-		transform: [{ rotateX: '180deg' }, { rotateY: '180deg' }],
-	},
-	replyIcon: {
-		color: Colors.icon.default,
-	},
-	replyText: {
-		fontSize: FontSizes.xs,
-		color: Colors.text.tertiary,
-		fontWeight: FontWeights.regular,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		container: {
+			flexDirection: 'row',
+			paddingVertical: 8,
+		},
+		profileImage: {
+			width: 25,
+			height: 25,
+			borderRadius: 20,
+			marginRight: 8,
+		},
+		content: {
+			flex: 1,
+		},
+		replyHeader: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+		},
+		creatorInfo: {
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		authorTag: {
+			backgroundColor: colors.bg.primaryBrand,
+			padding: 4,
+			borderRadius: 4,
+			marginHorizontal: 6,
+		},
+		actionContainer: {
+			height: 28,
+			alignItems: 'flex-end',
+		},
+		actionIcon: {
+			color: colors.text.tertiary,
+		},
+		infoText: {
+			marginBottom: 6,
+		},
+		replyBody: {
+			lineHeight: 22,
+		},
+		replyFooter: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			// alignItems: 'center',
+			gap: 12,
+			marginTop: 8,
+		},
+		replyButton: {
+			flexDirection: 'row',
+			alignItems: 'flex-start',
+			gap: 4,
+		},
+		replyIconContainer: {
+			transform: [{ rotateX: '180deg' }, { rotateY: '180deg' }],
+		},
+		replyIcon: {
+			fontSize: FontSizes.xs,
+			color: colors.icon.default,
+		},
+	});
 
 export default ReplyUnit;

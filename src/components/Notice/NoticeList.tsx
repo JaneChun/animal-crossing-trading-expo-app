@@ -5,7 +5,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import { useMarkAllAsRead } from '@/hooks/notification/query/mutation/useMarkAllAsRead';
 import { useNotificationStore } from '@/stores/notification';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 import { NoticeTabProps } from '@/types/components';
 import { PopulatedNotification } from '@/types/notification';
 
@@ -14,6 +14,7 @@ import NotificationUnit from './NotificationUnit';
 import ReadAllButton from './ReadAllButton';
 
 const NoticeList = ({ notifications, collectionName }: NoticeTabProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const { mutate: markAllAsRead } = useMarkAllAsRead();
 	const isLoading = useNotificationStore((state) => state.isLoading);
 
@@ -60,9 +61,10 @@ const NoticeList = ({ notifications, collectionName }: NoticeTabProps) => {
 
 export default NoticeList;
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: Colors.bg.primary,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		container: {
+			flex: 1,
+			backgroundColor: colors.bg.primary,
+		},
+	});

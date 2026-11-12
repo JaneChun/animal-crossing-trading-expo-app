@@ -1,5 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
+import Text from '@/components/ui/Text';
 import { CommentsListProps } from '@/types/components';
 
 import CommentListSkeleton from './CommentListSkeleton';
@@ -21,7 +22,9 @@ const CommentsList = ({
 }: CommentsListProps) => {
 	return (
 		<View style={[styles.container, containerStyle]}>
-			<Text style={styles.commentHeader}>댓글 ({postCommentCount})</Text>
+			<Text variant="body1" weight="bold" style={styles.commentHeader}>
+				댓글 ({postCommentCount})
+			</Text>
 
 			{isCommentsLoading ? (
 				<CommentListSkeleton />
@@ -52,8 +55,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 	commentHeader: {
-		fontSize: 16,
-		fontWeight: 'bold',
 		marginBottom: 8,
 	},
 });

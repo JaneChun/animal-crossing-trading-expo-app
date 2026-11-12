@@ -7,7 +7,6 @@ import { ComponentType, useContext, useEffect } from 'react';
 import { Controller, FieldErrors, FormProvider } from 'react-hook-form';
 import {
 	StyleSheet,
-	Text,
 	View,
 	TouchableOpacity,
 	Image,
@@ -20,10 +19,11 @@ import Button from '@/components/ui/Button';
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
+import Text from '@/components/ui/Text';
 import { showToast } from '@/components/ui/Toast';
 import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { FRUIT_IMAGES } from '@/constants/profile';
-import { FontSizes, FontWeights } from '@/constants/Typography';
+import { FontSizes } from '@/constants/Typography';
 import { updateDocToFirestore } from '@/firebase/core/firestoreService';
 import {
 	checkIfObjectExistsInStorage,
@@ -32,7 +32,7 @@ import {
 } from '@/firebase/services/imageService';
 import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
 import { useAuthStore, useUserInfo } from '@/stores/auth';
-import { Colors } from '@/theme/Color';
+import { Theme, useTheme, useThemedStyles } from '@/theme';
 import { EditProfileModalProps } from '@/types/components';
 import { Fruit, UserInfo } from '@/types/user';
 import { logProfileUpdate } from '@/utilities/analytics';
@@ -46,6 +46,8 @@ const EditProfileModal = ({
 	isUploading,
 	setIsUploading,
 }: EditProfileModalProps) => {
+	const { colors } = useTheme();
+	const styles = useThemedStyles(makeStyles);
 	const userInfo = useUserInfo();
 	const setUserInfo = useAuthStore((state) => state.setUserInfo);
 	// Profile은 MainTabNavigator(탭 안)와 RootStackNavigator(탭 밖) 두 곳에 등록되어 있다.
@@ -286,7 +288,7 @@ const EditProfileModal = ({
 							/>
 							{/* 과일 */}
 							<View style={styles.inputContainer}>
-								<Text style={styles.label}>과일</Text>
+								<Text variant="body1" weight="semibold" style={styles.label}>과일</Text>
 								<View style={styles.fruitContainer}>
 									{(Object.entries(FRUIT_IMAGES) as [Fruit, number][]).map(
 										([name, imageUrl]) => (
@@ -312,7 +314,7 @@ const EditProfileModal = ({
 
 							{/* 칭호 */}
 							<View style={styles.inputContainer}>
-								<Text style={styles.label}>칭호</Text>
+								<Text variant="body1" weight="semibold" style={styles.label}>칭호</Text>
 								<View style={styles.titleContainer}>
 									<Controller
 										control={control}
@@ -351,7 +353,7 @@ const EditProfileModal = ({
 
 							{/* 한마디 */}
 							<View style={styles.inputContainer}>
-								<Text style={styles.label}>한마디</Text>
+								<Text variant="body1" weight="semibold" style={styles.label}>한마디</Text>
 								<Controller
 									control={control}
 									name="bio"
@@ -365,7 +367,7 @@ const EditProfileModal = ({
 												style={styles.bioInput}
 												maxLength={20}
 											/>
-											<Text style={styles.bioCounter}>
+											<Text variant="caption" color="tertiary" style={styles.bioCounter}>
 												{(value ?? '').length}/20
 											</Text>
 										</View>
@@ -378,8 +380,8 @@ const EditProfileModal = ({
 
 							{/* 안내 문구 */}
 							<View testID="profileInputGuidance" style={styles.messageContainer}>
-								<FontAwesome name="leaf" color={Colors.brand.primary} size={14} />
-								<Text style={styles.infoText}>
+								<FontAwesome name="leaf" color={colors.brand.primary} size={14} />
+								<Text variant="body2" style={styles.infoText}>
 									닉네임과 섬 이름은 동물의 숲 여권과 동일하게 입력해주세요.
 								</Text>
 							</View>
@@ -393,102 +395,97 @@ const EditProfileModal = ({
 
 export default EditProfileModal;
 
-const styles = StyleSheet.create({
-	bottomSheetBodyStyle: {
-		paddingTop: PADDING,
-		paddingLeft: PADDING,
-		paddingRight: 0,
-	},
-	screen: {
-		flex: 1,
-		backgroundColor: Colors.bg.primary,
-	},
-	scrollContent: {
-		paddingRight: PADDING,
-		paddingBottom: PADDING,
-	},
-	container: {
-		flexShrink: 0,
-		alignItems: 'center',
-		gap: 4,
-	},
-	info: {
-		flexShrink: 0,
-		width: '90%',
-	},
-	messageContainer: {
-		paddingHorizontal: 12,
-		flexDirection: 'row',
-		gap: 8,
-	},
-	infoText: {
-		color: Colors.brand.primary,
-		fontSize: FontSizes.sm,
-		marginBottom: 16,
-	},
-	inputContainer: {
-		marginBottom: 18,
-	},
-	label: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-		color: Colors.text.primary,
-		marginBottom: 16,
-	},
-	fruitContainer: {
-		flexDirection: 'row',
-		justifyContent: 'space-around',
-		marginBottom: 8,
-	},
-	titleContainer: {
-		flexDirection: 'row',
-		gap: 12,
-	},
-	titleInput: {
-		flex: 1,
-		fontSize: FontSizes.md,
-		padding: 12,
-		borderWidth: 1,
-		borderColor: Colors.bg.secondary,
-		borderRadius: 8,
-		backgroundColor: Colors.bg.secondary,
-		textAlignVertical: 'center',
-		height: 45,
-	},
-	fruitItem: {
-		width: 52,
-		height: 52,
-		justifyContent: 'center',
-		alignItems: 'center',
-		backgroundColor: Colors.bg.secondary,
-		borderRadius: 18,
-	},
-	selectedFruitItem: {
-		backgroundColor: Colors.brand.primary,
-	},
-	fruitImage: {
-		width: 36,
-		height: 36,
-		resizeMode: 'contain',
-	},
-	bioWrapper: {
-		position: 'relative',
-	},
-	bioInput: {
-		fontSize: FontSizes.md,
-		paddingHorizontal: 12,
-		paddingVertical: 18,
-		paddingBottom: 32,
-		borderWidth: 1,
-		borderColor: Colors.bg.secondary,
-		borderRadius: 8,
-		backgroundColor: Colors.bg.secondary,
-	},
-	bioCounter: {
-		position: 'absolute',
-		bottom: 8,
-		right: 12,
-		fontSize: FontSizes.xs,
-		color: Colors.text.tertiary,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		bottomSheetBodyStyle: {
+			paddingTop: PADDING,
+			paddingLeft: PADDING,
+			paddingRight: 0,
+		},
+		screen: {
+			flex: 1,
+			backgroundColor: colors.bg.primary,
+		},
+		scrollContent: {
+			paddingRight: PADDING,
+			paddingBottom: PADDING,
+		},
+		container: {
+			flexShrink: 0,
+			alignItems: 'center',
+			gap: 4,
+		},
+		info: {
+			flexShrink: 0,
+			width: '90%',
+		},
+		messageContainer: {
+			paddingHorizontal: 12,
+			flexDirection: 'row',
+			gap: 8,
+		},
+		infoText: {
+			color: colors.brand.primary,
+			marginBottom: 16,
+		},
+		inputContainer: {
+			marginBottom: 18,
+		},
+		label: {
+			marginBottom: 16,
+		},
+		fruitContainer: {
+			flexDirection: 'row',
+			justifyContent: 'space-around',
+			marginBottom: 8,
+		},
+		titleContainer: {
+			flexDirection: 'row',
+			gap: 12,
+		},
+		titleInput: {
+			flex: 1,
+			fontSize: FontSizes.md,
+			padding: 12,
+			borderWidth: 1,
+			borderColor: colors.bg.secondary,
+			borderRadius: 8,
+			backgroundColor: colors.bg.secondary,
+			textAlignVertical: 'center',
+			height: 45,
+		},
+		fruitItem: {
+			width: 52,
+			height: 52,
+			justifyContent: 'center',
+			alignItems: 'center',
+			backgroundColor: colors.bg.secondary,
+			borderRadius: 18,
+		},
+		selectedFruitItem: {
+			backgroundColor: colors.brand.primary,
+		},
+		fruitImage: {
+			width: 36,
+			height: 36,
+			resizeMode: 'contain',
+		},
+		bioWrapper: {
+			position: 'relative',
+		},
+		bioInput: {
+			fontSize: FontSizes.md,
+			paddingHorizontal: 12,
+			paddingVertical: 18,
+			paddingBottom: 32,
+			borderWidth: 1,
+			borderColor: colors.bg.secondary,
+			borderRadius: 8,
+			backgroundColor: colors.bg.secondary,
+		},
+		bioCounter: {
+			position: 'absolute',
+			bottom: 8,
+			right: 12,
+		},
+	});

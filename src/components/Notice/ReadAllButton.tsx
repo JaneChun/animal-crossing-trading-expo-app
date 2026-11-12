@@ -1,13 +1,14 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { FontSizes } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import Text from '@/components/ui/Text';
 
 const ReadAllButton = ({ onPress }: { onPress: () => void }) => {
 	return (
 		<View style={styles.container}>
 			<TouchableOpacity onPress={onPress}>
-				<Text style={styles.text}>모두 읽음</Text>
+				<Text variant="caption" color="tertiary">
+					모두 읽음
+				</Text>
 			</TouchableOpacity>
 		</View>
 	);
@@ -20,9 +21,5 @@ const styles = StyleSheet.create({
 		padding: 16,
 		flexDirection: 'row',
 		justifyContent: 'flex-end',
-	},
-	text: {
-		color: Colors.text.tertiary,
-		fontSize: FontSizes.xs,
 	},
 });
