@@ -15,6 +15,7 @@
   - 소셜 로그인: `EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY`, `EXPO_PUBLIC_NAVER_CLIENT_ID`, `EXPO_PUBLIC_NAVER_SECRET` 등
   - AdMob/EAS: `EXPO_PUBLIC_ADMOB_IOS_APP_ID`, `EXPO_PUBLIC_ADMOB_ANDROID_APP_ID`, `EXPO_PUBLIC_EAS_PROJECT_ID`, `GOOGLE_SERVICE_INFO_PLIST`, `GOOGLE_SERVICES_JSON`(상대 경로 `./google-services.json`)
 - `.env.local` (에뮬레이터용): `EXPO_PUBLIC_USE_FIREBASE_EMULATOR`, `EXPO_PUBLIC_FIREBASE_*_EMULATOR_HOST`
+- `functions/.env` (Functions 배포용): `GOOGLE_WEB_CLIENT_ID`(Google 로그인 토큰 검증 audience, 앱의 `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`와 같은 값). Functions는 루트 `.env`를 읽지 않는다. git 미추적이라 워크트리·새 클론마다 직접 복사해야 하며, 없으면 `firebase deploy`가 값을 대화형으로 묻는다(`--non-interactive`에서는 실패)
 - `GoogleService-Info.plist`, `google-services.json`도 git 미추적
 
 ## Expo SDK 54 빌드 제약 (2026-07, 52→54 업그레이드에서 확인)
@@ -29,6 +30,7 @@
 ## 시뮬레이터/dev 서버 함정
 
 - **dev client가 리로드/재접속 후 스플래시에서 멈추면 네이티브 문제부터 의심** (2026-07, RN 0.81 New Architecture) — JS 로그가 정상이면 `isAppInitializing` 등 JS 초기화 버그로 오진하지 말 것. 확인된 원인 3가지: ① TurboModule 초기화 데드락(이 앱에 대한 `simctl launch/terminate`까지 무한 대기), ② Fabric 서페이스 마운트 실패(`xcrun simctl io booted screenshot`으로 화면 확인), ③ expo-splash-screen auto-hide 옵저버 소실(CDP에서 `globalThis.expo.modules.ExpoSplashScreen.hide()` 호출 시 화면이 나오면 확정). 복구는 공통 — 호스트에서 앱 프로세스 `kill -9` 후 재실행(`simctl terminate`는 같이 멈출 수 있어 소용없음).
+- **dev client는 마지막으로 연결한 Metro에 다시 붙는다**: 워크트리마다 Metro를 다른 포트로 띄우면, 알림 탭이나 아이콘으로 앱을 새로 켤 때 다른 워크트리(예: 메인 저장소 8081)의 번들을 받아 수정 전 코드로 테스트하게 될 수 있다. 실기기는 `adb reverse tcp:<포트> tcp:<포트>` 후 `adb shell am start -a android.intent.action.VIEW -d "exp+animal-crossing-trading-app://expo-development-client/?url=http%3A%2F%2Flocalhost%3A<포트>"`로 한 번 열어 연결 대상을 바꾸고, Metro 로그에 `Bundled`나 앱 로그가 찍히는지로 확인한다. 이렇게 연 실행에서는 `Linking.getInitialURL()`이 이 dev client 주소를 반환한다.
 - **포트 8081을 이전 세션의 `expo start`가 점유하면** 새 dev 서버가 8082로 밀리거나 앱이 엉뚱한 서버에 붙음. `lsof -iTCP:8081 -sTCP:LISTEN`으로 확인 후 정리.
 - **SDK 54: 셸에서 준 `EXPO_PUBLIC_*` 변수를 env 파일 값이 덮어씀** — `.env.local`에 같은 키가 있으면 셸 주입 값이 무시됨(`--clear`로도 해결 안 됨). `npm run dev:emulator`가 조용히 **프로덕션 Firebase에 붙을 수 있으므로**, 셸로 주입하는 키는 `.env.local`에서 제거. 검증: 번들에서 `grep -o 'EXPO_PUBLIC_USE_FIREBASE_EMULATOR": "[a-z]*"'`.
 
