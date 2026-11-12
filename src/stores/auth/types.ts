@@ -20,6 +20,9 @@ export interface AuthState {
 	appleLogin: () => Promise<LoginResult>;
 	appleLogout: () => Promise<boolean>;
 	appleDeleteAccount: (uid: string) => Promise<boolean>;
+	googleLogin: () => Promise<LoginResult>;
+	googleLogout: () => Promise<boolean>;
+	googleDeleteAccount: (uid: string) => Promise<boolean>;
 }
 
 export interface AuthProvider {
@@ -41,7 +44,7 @@ export interface ProviderSDKConfig {
 	};
 }
 
-export type AuthProviderType = 'kakao' | 'naver' | 'apple';
+export type AuthProviderType = 'kakao' | 'naver' | 'apple' | 'google';
 
 export interface AuthStateManager {
 	getUserInfo: () => UserInfo | null;

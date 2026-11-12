@@ -3,7 +3,7 @@ import analytics from '@react-native-firebase/analytics';
 import { Collection, CommunityType, MarketType } from '@/types/post';
 import { ReportCategory } from '@/types/report';
 
-type LoginMethod = 'naver' | 'apple';
+type LoginMethod = 'naver' | 'apple' | 'google';
 type MessageType = 'text' | 'image';
 type CommentType = 'comment' | 'reply';
 export type InteractionSource = 'post' | 'comment' | 'chat_room' | 'profile';

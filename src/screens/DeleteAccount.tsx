@@ -33,6 +33,7 @@ const DeleteAccount = () => {
 	const kakaoDeleteAccount = useAuthStore((state) => state.kakaoDeleteAccount);
 	const naverDeleteAccount = useAuthStore((state) => state.naverDeleteAccount);
 	const appleDeleteAccount = useAuthStore((state) => state.appleDeleteAccount);
+	const googleDeleteAccount = useAuthStore((state) => state.googleDeleteAccount);
 
 	const handleDeleteAccount = async () => {
 		Alert.alert(
@@ -56,6 +57,7 @@ const DeleteAccount = () => {
 		if (userInfo.oauthType === 'kakao') isSuccess = await kakaoDeleteAccount(userInfo.uid);
 		else if (userInfo.oauthType === 'naver') isSuccess = await naverDeleteAccount(userInfo.uid);
 		else if (userInfo.oauthType === 'apple') isSuccess = await appleDeleteAccount(userInfo.uid);
+		else if (userInfo.oauthType === 'google') isSuccess = await googleDeleteAccount(userInfo.uid);
 
 		if (isSuccess) {
 			Alert.alert('탈퇴 완료', '회원 탈퇴가 완료되었습니다.');

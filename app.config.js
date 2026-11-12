@@ -101,6 +101,7 @@ export default {
 					urlScheme: 'com.janechun.animalcrossingtradingapp',
 				},
 			],
+			'@react-native-google-signin/google-signin',
 			['expo-apple-authentication'],
 			['expo-tracking-transparency'],
 			[

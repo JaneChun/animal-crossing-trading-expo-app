@@ -5,6 +5,7 @@ import { FontSizes, FontWeights } from '@/constants/Typography';
 import { Colors } from '@/theme/Color';
 import { SocialLoginButtonProps } from '@/types/components';
 import appleImage from '@assets/images/apple.webp';
+import googleImage from '@assets/images/google.png';
 import kakaoImage from '@assets/images/kakao.png';
 import kakaoRoundImage from '@assets/images/kakao_round.png';
 import naverImage from '@assets/images/naver.png';
@@ -16,6 +17,7 @@ const socialImages: Record<string, number> = {
 	naver: naverImage,
 	naver_round: naverRoundImage,
 	apple: appleImage,
+	google: googleImage,
 };
 
 const SocialLoginButton = ({
@@ -32,12 +34,21 @@ const SocialLoginButton = ({
 		<TouchableOpacity
 			activeOpacity={0.7}
 			onPress={onPress}
-			style={[styles.buttonContainer, { backgroundColor: Colors.social[oauthType] }, style]}
+			style={[
+				styles.buttonContainer,
+				{ backgroundColor: Colors.social[oauthType] },
+				oauthType === 'google' && styles.googleButton,
+				style,
+			]}
 			disabled={disabled}
 		>
 			<FastImage
 				source={imageSource}
-				style={[styles.icon, oauthType === 'apple' && styles.appleIcon]}
+				style={[
+					styles.icon,
+					oauthType === 'apple' && styles.appleIcon,
+					oauthType === 'google' && styles.googleIcon,
+				]}
 				resizeMode={FastImage.resizeMode.contain}
 			/>
 			<Text
@@ -49,7 +60,9 @@ const SocialLoginButton = ({
 								? Colors.social.naverText
 								: oauthType === 'kakao'
 									? Colors.social.kakaoText
-									: Colors.social.appleText,
+									: oauthType === 'google'
+										? Colors.social.googleText
+										: Colors.social.appleText,
 					},
 				]}
 			>
@@ -57,7 +70,9 @@ const SocialLoginButton = ({
 					? '네이버로 로그인'
 					: oauthType === 'kakao'
 						? '카카오로 로그인'
-						: 'Apple로 로그인'}
+						: oauthType === 'google'
+							? 'Google로 로그인'
+							: 'Apple로 로그인'}
 			</Text>
 			{disabled && (
 				<View style={styles.bubbleWrapper}>
@@ -92,6 +107,15 @@ const styles = StyleSheet.create({
 		width: 22,
 		height: 22,
 		marginLeft: 14,
+	},
+	googleButton: {
+		borderWidth: 1,
+		borderColor: Colors.social.googleBorder,
+	},
+	googleIcon: {
+		width: 24,
+		height: 24,
+		marginLeft: 13,
 	},
 	text: {
 		flex: 1,

@@ -46,6 +46,7 @@
     "@react-native-community/netinfo": "11.5.2",
     "@react-native-firebase/analytics": "^23.8.4",
     "@react-native-firebase/app": "^23.8.4",
+    "@react-native-google-signin/google-signin": "^17.0.0",
     "@react-native-kakao/core": "^2.2.6",
     "@react-native-kakao/user": "^2.2.6",
     "@react-native-seoul/naver-login": "^4.2.4",

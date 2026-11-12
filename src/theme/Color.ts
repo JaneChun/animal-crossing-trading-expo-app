@@ -81,5 +81,8 @@ export const Colors = {
 		kakaoText: '#3B1E1E',
 		apple: '#ffffff',
 		appleText: '#000000',
+		google: '#FFFFFF',
+		googleText: '#1F1F1F',
+		googleBorder: '#747775',
 	},
 } as const;

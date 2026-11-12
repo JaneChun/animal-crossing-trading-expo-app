@@ -16,6 +16,7 @@ const SocialAccountCheck = () => {
 	const userInfo = useUserInfo();
 	const kakaoLogin = useAuthStore((state) => state.kakaoLogin);
 	const naverLogin = useAuthStore((state) => state.naverLogin);
+	const googleLogin = useAuthStore((state) => state.googleLogin);
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 
 	const handleLogin = async (oauthType: OauthType) => {
@@ -27,6 +28,7 @@ const SocialAccountCheck = () => {
 
 		if (oauthType === 'kakao') loginResult = await kakaoLogin();
 		else if (oauthType === 'naver') loginResult = await naverLogin();
+		else if (oauthType === 'google') loginResult = await googleLogin();
 
 		if (loginResult.isSuccess) {
 			navigateToDeleteAccount();
@@ -54,6 +56,12 @@ const SocialAccountCheck = () => {
 							<SocialLoginButton
 								oauthType="naver"
 								onPress={() => handleLogin('naver')}
+								style={{ height: 50 }}
+							/>
+						) : userInfo?.oauthType === 'google' ? (
+							<SocialLoginButton
+								oauthType="google"
+								onPress={() => handleLogin('google')}
 								style={{ height: 50 }}
 							/>
 						) : (

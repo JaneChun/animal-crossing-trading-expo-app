@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import { AppleAuthProvider } from './providers/apple';
+import { GoogleAuthProvider } from './providers/google';
 import { KakaoAuthProvider } from './providers/kakao';
 import { NaverAuthProvider } from './providers/naver';
 import { AuthState, AuthStateManager } from './types';
@@ -18,6 +19,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
 	const kakaoProvider = new KakaoAuthProvider(stateManager);
 	const naverProvider = new NaverAuthProvider(stateManager);
 	const appleProvider = new AppleAuthProvider(stateManager);
+	const googleProvider = new GoogleAuthProvider(stateManager);
 
 	return {
 		userInfo: null,
@@ -37,5 +39,9 @@ export const useAuthStore = create<AuthState>((set, get) => {
 		appleLogin: () => appleProvider.login(),
 		appleLogout: () => appleProvider.logout(),
 		appleDeleteAccount: () => appleProvider.deleteAccount(),
+
+		googleLogin: () => googleProvider.login(),
+		googleLogout: () => googleProvider.logout(),
+		googleDeleteAccount: () => googleProvider.deleteAccount(),
 	};
 });
