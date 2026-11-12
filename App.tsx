@@ -2,6 +2,7 @@ import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { LinkingOptions, NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as Linking from 'expo-linking';
+import * as ExpoNotifications from 'expo-notifications';
 import * as ExpoSplashScreen from 'expo-splash-screen';
 import { useEffect, useRef } from 'react';
 import { StyleSheet } from 'react-native';
@@ -36,6 +37,16 @@ if (__DEV__) {
 const prefix = Linking.createURL('/');
 const linking: LinkingOptions<RootStackParamList> = {
 	prefixes: [prefix, 'animal-crossing-trading-app://'],
+	// 앱이 꺼진 상태에서 푸시 알림을 탭해 열리면 알림의 url을 첫 화면 주소로 쓴다.
+	// 이 경우 응답 리스너(usePushNotificationInitializer)가 호출되지 않는다. 실행 중 탭은 리스너가 처리한다
+	async getInitialURL() {
+		const initialUrl = await Linking.getInitialURL();
+		if (initialUrl) return initialUrl;
+
+		const lastResponse = ExpoNotifications.getLastNotificationResponse();
+		const notificationUrl = lastResponse?.notification.request.content.data?.url;
+		return typeof notificationUrl === 'string' ? notificationUrl : null;
+	},
 	config: {
 		screens: {
 			PostDetail: {

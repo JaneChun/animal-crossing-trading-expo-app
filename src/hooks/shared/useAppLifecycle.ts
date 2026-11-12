@@ -10,12 +10,11 @@ export const useAppLifecycle = () => {
 
 	// cold start 로깅 — 푸시 알림 탭으로 열린 경우 중복 로깅 방지
 	useEffect(() => {
-		ExpoNotifications.getLastNotificationResponseAsync().then((response) => {
-			if (!response) {
-				logAppOpen('cold_start');
-			}
-			// push_notification은 addNotificationResponseReceivedListener에서 처리
-		});
+		const response = ExpoNotifications.getLastNotificationResponse();
+		if (!response) {
+			logAppOpen('cold_start');
+		}
+		// push_notification은 addNotificationResponseReceivedListener에서 처리
 	}, []);
 
 	useEffect(() => {
