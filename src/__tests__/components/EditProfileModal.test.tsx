@@ -1,5 +1,5 @@
-import React from 'react';
-import { act, create, ReactTestRenderer } from 'react-test-renderer';
+import React, { act } from 'react';
+import { create, ReactTestRenderer } from 'react-test-renderer';
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean; React: typeof React }).React =
 	React;
