@@ -124,9 +124,14 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 
 ## Phase 7: 도메인 마이그레이션 1 (소규모 도메인)
 
-- [ ] Home 5개 파일 (`src/components/Home/*`, `src/screens/Home.tsx`)
+- [x] Home 5개 파일 (`src/components/Home/*`, `src/screens/Home.tsx`)
   - `NativeAdUnit.tsx`의 hex 1건 제거. 광고 소재 자체의 색은 바꾸지 않는다
-- [ ] Search 3개, Community 1개, Block 1개, Onboarding 1개 파일 (`src/components/Search/*`, `src/components/Community/*`, `src/components/Block/*`, `src/components/Onboarding/*`)
+  - 결정: 게시글 목록 항목의 고정 높이 `POST_UNIT_HEIGHT`(95)를 최소 높이 `POST_UNIT_MIN_HEIGHT`(103, 한 줄 제목 기준)와 위아래 여백 10으로 바꿨다. 행간이 들어간 두 줄 제목(약 127)이 고정 높이에 들어가지 않기 때문이다. 높이가 항목마다 달라져서 검색 결과 목록의 `getItemLayout`은 제거했다. 광고·스켈레톤 항목도 같은 최소 높이를 쓴다
+  - 결정: 광고 별점 색 `#ffcc26`은 `text.yellow`로 바꿨다. 별점은 광고 소재가 아니라 앱이 그리는 표시다
+  - 결정: 글쓰기 버튼 `+` 모양 뒤의 흰 원은 `text.onBrand`를 쓴다. 다크 모드에서도 민트 원 위의 `+`가 흰색으로 보여야 하기 때문이다
+  - `src/screens/Home.tsx`는 가드레일 경고가 없어 바꾸지 않았다(남은 `exhaustive-deps` 경고는 이번 범위 밖)
+- [x] Search 3개, Community 1개, Block 1개, Onboarding 1개 파일 (`src/components/Search/*`, `src/components/Community/*`, `src/components/Block/*`, `src/components/Onboarding/*`)
+  - `CommunityTypeBadge.tsx`는 Phase 4에서 이미 공통 `Badge`를 써서 바꿀 곳이 없었다
 
 ## Phase 8: 도메인 마이그레이션 2 (NewPost)
 
@@ -182,3 +187,5 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 - Phase 6 완료
 - 검증: `npx tsc --noEmit` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, Phase 6 범위 `eslint` 가드레일 경고는 Phase 8로 미룬 `HighlightMatchText` 1건만 남음. 고정 높이 컴포넌트(Button 32/40/52, DropdownInput 48, SocialLoginButton 50)는 새 행간(20~24)보다 높아 잘림 없음을 코드로 확인
 - 결정: Maestro는 기기를 지정하지 않으면 함께 실행 중인 Android 에뮬레이터를 고른다. 시뮬레이터 확인 시 `--device <iOS UDID>`를 명시한다
+- Phase 7 완료
+- 검증: `npm run typecheck` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, Phase 7 범위 `eslint` 가드레일 경고 0건. 운영 데이터로 마켓 목록을 띄워 두 줄 제목 항목의 작성자·날짜 줄이 구분선과 떨어진 것을 확인했다

@@ -1,11 +1,14 @@
 import { StyleSheet, View } from 'react-native';
 
 import { SkeletonBox, SkeletonText } from '@/components/ui/skeleton';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 
-import { POST_UNIT_HEIGHT } from './PostUnit';
+import { POST_UNIT_MIN_HEIGHT } from './PostUnit';
 
-const PostUnitSkeleton = () => (
+const PostUnitSkeleton = () => {
+	const styles = useThemedStyles(makeStyles);
+
+	return (
 	<View style={styles.container}>
 		<View style={styles.topRow}>
 			<View style={styles.typeAndTitle}>
@@ -22,16 +25,18 @@ const PostUnitSkeleton = () => (
 			<SkeletonBox width={40} height={14} />
 		</View>
 	</View>
-);
+	);
+};
 
-const styles = StyleSheet.create({
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
 	container: {
-		height: POST_UNIT_HEIGHT,
+		height: POST_UNIT_MIN_HEIGHT,
 		justifyContent: 'center',
 		borderBottomWidth: 1,
-		borderBottomColor: Colors.border.default,
+		borderBottomColor: colors.border.default,
 		borderTopWidth: 1,
-		borderTopColor: Colors.border.default,
+		borderTopColor: colors.border.default,
 	},
 	topRow: {
 		flexDirection: 'row',

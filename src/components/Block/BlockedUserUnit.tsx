@@ -1,12 +1,12 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import Button from '@/components/ui/Button';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import Text from '@/components/ui/Text';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
-import { FontSizes, FontWeights } from '@/constants/Typography';
 import { blockUser, unblockUser } from '@/firebase/services/blockService';
 import { useUserInfo } from '@/stores/auth';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 import { BlockedUser } from '@/types/user';
 import { navigateToUserProfile } from '@/utilities/navigationHelpers';
 import emptyProfileImage from '@assets/images/empty_profile_image.png';
@@ -17,6 +17,7 @@ type BlockedUserUnitProps = {
 };
 
 const BlockedUserUnit = ({ blockedUserInfo, onToggleBlock }: BlockedUserUnitProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const userInfo = useUserInfo();
 	const { uid, displayName, islandName, isBlocked } = blockedUserInfo;
 
@@ -51,8 +52,12 @@ const BlockedUserUnit = ({ blockedUserInfo, onToggleBlock }: BlockedUserUnitProp
 			</View>
 			<View style={styles.body}>
 				<View>
-					<Text style={styles.displayName}>{displayName}</Text>
-					<Text style={styles.islandName}>{islandName}</Text>
+					<Text variant="body1" weight="semibold">
+						{displayName}
+					</Text>
+					<Text variant="body2" weight="light" color="tertiary" style={styles.islandName}>
+						{islandName}
+					</Text>
 				</View>
 			</View>
 			<View style={styles.footer}>
@@ -71,14 +76,15 @@ const BlockedUserUnit = ({ blockedUserInfo, onToggleBlock }: BlockedUserUnitProp
 
 export default BlockedUserUnit;
 
-const styles = StyleSheet.create({
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
 	container: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		paddingHorizontal: 24,
 		paddingVertical: 12,
 		borderBottomWidth: 1,
-		borderBottomColor: Colors.border.default,
+		borderBottomColor: colors.border.default,
 	},
 	header: {},
 	body: {
@@ -92,16 +98,8 @@ const styles = StyleSheet.create({
 		height: 50,
 		borderRadius: 25,
 	},
-	displayName: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-		color: Colors.text.primary,
-	},
 	islandName: {
 		flex: 1,
 		marginTop: 4,
-		fontSize: FontSizes.sm,
-		color: Colors.text.tertiary,
-		fontWeight: FontWeights.light,
 	},
 });
