@@ -26,6 +26,7 @@
 - **RNFB(@react-native-firebase)는 프리컴파일 React-Core와 non-modular header 충돌** — expo-build-properties ios의 `forceStaticLinking: ['RNFBApp', 'RNFBAnalytics']`로 해결 (expo/expo#39607).
 - **프리컴파일 React-Core + `useFrameworks: static`은 런타임 크래시** — 빌드는 성공하나 앱 시작 시 "AccessibilityManager is nil" 네이티브 예외로 "App entry not found" 표시. `buildReactNativeFromSource: true`로 코어를 소스 빌드해 해결. 단 이 옵션은 fmt/folly 프리빌드까지 꺼서 fmt 11 컴파일이 실패하므로 pod install 시점에 `RCT_USE_RN_DEP=1` 필요 — 로컬은 `RCT_USE_RN_DEP=1 npx expo prebuild --clean -p ios`, EAS는 eas.json 각 프로필 `env`에 설정돼 있음.
 - **`expo run:ios`는 시뮬레이터 검증에 부적합** — 실기기 연결 시 실기기를 기본 타깃으로 잡고, Xcode 26.6에서는 devicectl 출력 파싱 실패로 시뮬레이터까지 실기기로 오인해 서명 오류로 실패. 시뮬레이터 빌드는 xcodebuild 직접 사용(`-destination "platform=iOS Simulator,name=..."`).
+- **`app.config.js`의 네이티브 설정(스플래시·아이콘 등)은 Xcode 빌드에 자동 반영되지 않음** — Xcode는 기존 `ios/`를 그대로 빌드하므로 변경 후 `RCT_USE_RN_DEP=1 npx expo prebuild --clean -p ios`로 다시 생성해야 한다. 워크트리마다 `ios/`가 따로라서, 빌드하는 워크트리에서 prebuild해야 하고 git에 없는 `GoogleService-Info.plist`·`.env.local`도 그 워크트리에 복사해야 한다. iOS는 실행 화면(스플래시)을 캐시하므로 새 빌드는 기존 앱을 삭제한 뒤 설치하고, 그래도 예전 화면이면 기기를 재시동한다.
 
 ## 시뮬레이터/dev 서버 함정
 

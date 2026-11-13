@@ -10,11 +10,6 @@ export default {
 		scheme: 'animal-crossing-trading-app',
 		userInterfaceStyle: 'automatic',
 		newArchEnabled: true,
-		splash: {
-			image: './assets/images/splash_image.jpg',
-			resizeMode: 'contain',
-			backgroundColor: '#ffffff',
-		},
 		ios: {
 			supportsTablet: true,
 			bundleIdentifier: 'com.janechun.animalcrossingtradingapp',
@@ -22,11 +17,6 @@ export default {
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
 				FirebaseAutomaticScreenReportingEnabled: false,
-			},
-			splash: {
-				image: './assets/images/splash_image.jpg',
-				resizeMode: 'contain',
-				backgroundColor: '#ffffff',
 			},
 			googleServicesFile: process.env.GOOGLE_SERVICE_INFO_PLIST,
 		},
@@ -45,6 +35,21 @@ export default {
 		},
 		plugins: [
 			'expo-font',
+			[
+				'expo-splash-screen',
+				{
+					image: './assets/images/splash_icon.png',
+					// SplashScreen.tsx의 SPLASH_ICON_WIDTH와 같아야 전환할 때 로고가 움직이지 않는다.
+					// Android 12+는 288dp 캔버스 중앙 지름 192dp 원 밖을 자르므로 잎 대각선이 그 안에 들어가는 150으로 둔다.
+					imageWidth: 150,
+					resizeMode: 'contain',
+					backgroundColor: '#ffffff',
+					dark: {
+						image: './assets/images/splash_icon.png',
+						backgroundColor: '#111118',
+					},
+				},
+			],
 			'expo-web-browser',
 			'@react-native-firebase/app',
 			[
