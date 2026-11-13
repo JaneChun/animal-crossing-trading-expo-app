@@ -18,6 +18,7 @@ export default {
 		ios: {
 			supportsTablet: true,
 			bundleIdentifier: 'com.janechun.animalcrossingtradingapp',
+			appleTeamId: '2BVVK923CQ',
 			usesAppleSignIn: true,
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
