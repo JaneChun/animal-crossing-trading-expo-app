@@ -33,6 +33,12 @@ export const lightColors = {
 		tertiary: Palette.gray[200],
 		/** 바텀시트·모달·토스트처럼 화면 위에 떠 있는 면 */
 		elevated: Palette.gray[0],
+		/** 바탕 위에 놓인 입력칸·칩·카드 면. 시트 안에서는 `SheetThemeProvider`가 `fillOnElevated` 값으로 바꿔 준다 */
+		fill: Palette.gray[100],
+		/** 시트(`bg.elevated`) 위의 `bg.fill` 값. 화면 코드에서 직접 쓰지 않는다 */
+		fillOnElevated: Palette.gray[100],
+		/** `bg.secondary` 바탕 위에 올라온 면(받은 말풍선, 채팅 거래글 요약 카드) */
+		raised: Palette.gray[0],
 		inverse: Palette.gray[1000],
 		red: Palette.red[50],
 		orange: Palette.orange[50],
@@ -47,12 +53,12 @@ export const lightColors = {
 	// Border colors
 	border: {
 		default: Palette.gray[200],
+		/** `bg.fill` 면 안의 행 구분선. 다크에서는 화면 바탕색으로 그려 행 사이를 띄운다 */
+		onFill: Palette.gray[200],
 	},
 
 	// Divider colors
 	divider: {
-		/** @deprecated `border.default`를 사용하세요 */
-		default: Palette.gray[200],
 		thick: Palette.gray[300],
 	},
 
@@ -61,14 +67,6 @@ export const lightColors = {
 		default: Palette.gray[400],
 		red: Palette.red[300],
 		green: Palette.green[400],
-		/** @deprecated `brand.primary`를 사용하세요 */
-		primary: Palette.mint[400],
-	},
-
-	// Badge colors
-	badge: {
-		/** @deprecated `status.danger`를 사용하세요 */
-		red: Palette.red[600],
 	},
 
 	// Status colors
@@ -139,6 +137,9 @@ export const darkColors: ColorScheme = {
 		secondary: Palette.grayDark[900],
 		tertiary: Palette.grayDark[800],
 		elevated: Palette.grayDark[850],
+		fill: Palette.grayDark[800],
+		fillOnElevated: Palette.grayDark[725],
+		raised: Palette.grayDark[725],
 		inverse: Palette.gray[0],
 		red: Palette.red[950],
 		orange: Palette.orange[950],
@@ -151,19 +152,15 @@ export const darkColors: ColorScheme = {
 	},
 	border: {
 		default: Palette.grayDark[750],
+		onFill: Palette.grayDark[950],
 	},
 	divider: {
-		default: Palette.grayDark[750],
 		thick: Palette.grayDark[700],
 	},
 	icon: {
 		default: Palette.grayDark[600],
 		red: Palette.red[300],
 		green: Palette.green[400],
-		primary: Palette.mint[400],
-	},
-	badge: {
-		red: Palette.red[500],
 	},
 	status: {
 		error: Palette.red[400],
@@ -191,9 +188,3 @@ export const darkColors: ColorScheme = {
 		appleText: Palette.gray[1000],
 	},
 };
-
-/**
- * @deprecated 라이트 테마에 고정된 정적 값이라 다크 모드를 따르지 않습니다.
- * 컴포넌트 안에서는 `useTheme().colors` 또는 `useThemedStyles()`를 사용하세요.
- */
-export const Colors = lightColors;

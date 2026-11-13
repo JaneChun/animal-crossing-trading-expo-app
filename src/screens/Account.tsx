@@ -8,10 +8,9 @@ import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import Text from '@/components/ui/Text';
 import { showToast } from '@/components/ui/Toast';
-import { FontSizes, FontWeights } from '@/constants/Typography';
 import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore, useUserInfo } from '@/stores/auth';
-import { Theme, useThemedStyles } from '@/theme';
+import { FontSizes, FontWeights , Theme, useThemedStyles } from '@/theme';
 import { logLogout } from '@/utilities/analytics';
 import {
 	navigateToDeleteAccount,

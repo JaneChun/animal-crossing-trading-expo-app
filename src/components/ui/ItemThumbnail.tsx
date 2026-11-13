@@ -1,7 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { BorderRadius, Theme, useThemedStyles } from '@/theme';
+import { FontSizes, FontWeights , BorderRadius, Theme, useThemedStyles } from '@/theme';
 import { ItemThumabnailProps } from '@/types/components';
 
 import ImageWithFallback from './ImageWithFallback';

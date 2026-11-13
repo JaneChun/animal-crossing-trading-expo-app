@@ -3,8 +3,8 @@ import { Button, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-na
 
 import Text from '@/components/ui/Text';
 import { showToast } from '@/components/ui/Toast';
-import { FontSizes } from '@/constants/Typography';
 import { reportError } from '@/firebase/services/errorService';
+import { FontSizes } from '@/theme';
 // ThemeProvider 바깥에서 렌더링되므로 테마와 관계없이 라이트 색으로 고정한다
 import { lightColors } from '@/theme/Color';
 

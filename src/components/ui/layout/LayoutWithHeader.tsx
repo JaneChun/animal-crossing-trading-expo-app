@@ -1,9 +1,8 @@
 import { Feather } from '@expo/vector-icons';
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { FontWeights } from '@/constants/Typography';
 import { goBack } from '@/navigation/RootNavigation';
-import { Spacing, Theme, useThemedStyles } from '@/theme';
+import { FontWeights , Spacing, Theme, useThemedStyles } from '@/theme';
 import { LayoutWithHeaderProps } from '@/types/components';
 
 const { width } = Dimensions.get('window');

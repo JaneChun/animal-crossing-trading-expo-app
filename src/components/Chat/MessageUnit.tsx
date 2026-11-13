@@ -68,7 +68,7 @@ const makeStyles = ({ colors }: Theme) =>
 			marginRight: 24,
 		},
 		receivedBubble: {
-			backgroundColor: colors.bg.primary,
+			backgroundColor: colors.bg.raised,
 			marginLeft: 24,
 		},
 		infoContainer: {

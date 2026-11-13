@@ -96,9 +96,9 @@ const makeStyles = ({ colors }: Theme) =>
 			paddingVertical: Spacing.s,
 			paddingHorizontal: 14,
 			borderRadius: BorderRadius.full,
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fill,
 			borderWidth: 1,
-			borderColor: colors.bg.secondary,
+			borderColor: colors.bg.fill,
 		},
 		categorySelected: {
 			backgroundColor: colors.bg.primary,

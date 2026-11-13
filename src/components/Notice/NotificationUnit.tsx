@@ -126,7 +126,7 @@ const makeStyles = ({ colors }: Theme) =>
 			gap: 16,
 		},
 		unreadBackground: {
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fill,
 		},
 		readBackground: {
 			backgroundColor: colors.bg.primary,

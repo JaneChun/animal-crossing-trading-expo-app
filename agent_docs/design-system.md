@@ -4,8 +4,8 @@
 
 ## 테마 구조
 
-- 앱 코드는 모든 토큰을 `@/theme`에서 import한다. `@/constants/Typography`는 하위 호환용 re-export다.
-- `src/theme/ThemeProvider.tsx` — 기기 설정(`useColorScheme`)을 읽어 `{ scheme, colors }`를 Context로 내려준다. `DARK_MODE_ENABLED`가 `false`이면 항상 `light`다.
+- 앱 코드는 모든 토큰을 `@/theme`에서 import한다.
+- `src/theme/ThemeProvider.tsx` — 기기 설정(`useColorScheme`)을 읽어 `{ scheme, colors }`를 Context로 내려준다. `DARK_MODE_ENABLED`(현재 `true`)를 `false`로 바꾸면 항상 `light`다.
 - `ThemeProvider`는 `App.tsx`의 `ErrorBoundary` 바로 안쪽에 있다. 그래서 `ErrorBoundary` fallback 화면은 테마를 쓰지 못하고 `lightColors`로 고정된다.
 - React Navigation 테마는 `src/theme/navigationTheme.ts`가 정한다. 라이트는 기본 테마(`DefaultTheme`)를 그대로 쓰고 다크만 토큰으로 덮어쓴다. 라이트까지 덮어쓰면 화면 배경과 헤더 테두리 색이 바뀐다.
 
@@ -25,7 +25,8 @@
 - tone 색(red/orange/yellow/green/blue/lavender/purple)은 `text.{tone}`과 `bg.{tone}`을 반드시 쌍으로 쓴다.
 - 민트 면(주 버튼, 보낸 말풍선) 위의 글자는 `text.onBrand`(두 테마 모두 흰색)다. `text.inverse`는 테마의 반대색이라 다크에서 어두워진다.
 - 화면 위에 떠 있는 면(바텀시트·모달·토스트)의 배경은 `bg.elevated`다. 다크에서는 그림자가 보이지 않아서 이 색으로 층을 구분한다.
-- 폐기 예정 키: `divider.default` → `border.default`, `badge.red` → `status.danger`, `icon.primary` → `brand.primary`.
+- 바탕 위에 놓인 입력칸·칩·카드·강조 행의 면은 `bg.fill`이다. 바텀시트 안에서는 `CustomBottomSheet`의 `SheetThemeProvider`가 `bg.fill`을 한 단계 밝은 값(`bg.fillOnElevated`)으로 바꿔 주므로, 컴포넌트는 위치와 관계없이 `bg.fill`만 쓴다. `bg.fillOnElevated`는 `CustomBottomSheet`를 직접 렌더링하는 컴포넌트(`EditProfileModal`, `EditItemModal` 등)의 스타일에서만 쓴다. 이 컴포넌트의 `useThemedStyles`는 Provider 바깥에서 실행되어, 시트 안에 그려지는 요소라도 `bg.fill`이 화면 바탕용 값으로 나온다. `bg.secondary`를 면으로 쓰면 다크에서 바탕(`bg.primary`)과 거의 같고 시트(`bg.elevated`) 위에서는 오히려 어두워진다. 테두리를 면과 같은 색으로 숨길 때도 `bg.fill`을 쓰고, 면 안의 행 구분선은 `border.onFill`을 쓴다.
+- `bg.secondary` 바탕(채팅 메시지 영역) 위에 올라온 면은 `bg.raised`다. 라이트에서는 흰색, 다크에서는 `bg.fillOnElevated`와 같은 색이다.
 
 **스케일 밖 값**: 6·10·14·18처럼 `Spacing`에 없는 값은 인접 토큰으로 바꿨을 때 화면 차이가 2px 이하이면 토큰으로 바꾸고, 그보다 크거나 정렬이 깨지면 리터럴로 남긴다. 스케일에 값을 새로 추가하지 않는다. `borderRadius: 50`처럼 "반지름 = 크기의 절반" 리터럴은 `full`로 바꾼다.
 
@@ -98,7 +99,9 @@ const makeStyles = ({ colors }: Theme) =>
 - `makeStyles`는 반드시 컴포넌트 밖에 둔다. 컴포넌트 안에서 만들면 렌더마다 함수가 새로 생겨 스타일도 매번 다시 만들어진다.
 - JSX prop에 색을 직접 넘기는 곳(`color={Colors.icon.default}`, `placeholderTextColor` 등)은 `const { colors } = useTheme()`으로 읽는다.
 - `StyleSheet.create`를 `makeStyles`로 감싸면 안쪽 들여쓰기가 한 단계 깊어진다. ESLint는 Prettier 형식을 검사하지 않으므로(`eslint-config-prettier`만 사용) 바꾼 파일은 `npx prettier --write`로 정리한다. 원본부터 Prettier 형식이 아닌 파일은 `--range-start`/`--range-end`로 바꾼 블록만 정리해 관계없는 줄이 바뀌지 않게 한다.
-- 마이그레이션 중 라이트 화면이 이전과 같은지 확인하고, `DARK_MODE_ENABLED`를 임시로 켜서 다크 화면이 깨지지 않는지 본다(커밋 전 다시 끈다).
+- 바꾼 화면은 시뮬레이터의 라이트·다크 모드에서 모두 확인한다(`xcrun simctl ui <UDID> appearance dark`).
+
+- 흰 실루엣 같은 장식 이미지를 테마 색으로 칠할 때 `react-native-fast-image`의 `tintColor`를 쓰지 않는다. iOS에서 `FFFastImageView makeImage:withTint:`가 `UIGraphicsBeginImageContextWithOptions` assertion으로 앱을 종료시킨다. 로컬 에셋은 RN `Image`의 `style.tintColor`를 쓴다(예: `components/Profile/Profile.tsx`의 섬 배경).
 
 ### 서드파티 style prop
 
@@ -110,10 +113,9 @@ const makeStyles = ({ colors }: Theme) =>
 
 ## 가드레일 (`.eslintrc.js`)
 
-`src/`와 `App.tsx`에서 아래를 `warn`으로 표시한다. `src/theme/`과 공통 `Text` 자체는 제외한다. `npm run lint`에 `--max-warnings`가 없으므로 경고는 CI를 막지 않는다. 다크 모드를 활성화할 때 `error`로 올린다.
+`src/`와 `App.tsx`에서 아래를 `error`로 막는다. `src/theme/`과 공통 `Text` 자체는 제외한다. 정적 `Colors` export는 삭제되어 import하면 타입 에러가 난다.
 
 - react-native의 `Text` import → 공통 `Text` 안내
-- `@/theme/Color`·`@/theme`의 정적 `Colors` import → `useTheme()`·`useThemedStyles()` 안내
 - hex 문자열 리터럴, 색 관련 prop(`color`·`backgroundColor` 등)의 `'white'`·`'black'`·`'red'` 리터럴. `'transparent'`는 허용
 
 ## 도메인별 마이그레이션 현황

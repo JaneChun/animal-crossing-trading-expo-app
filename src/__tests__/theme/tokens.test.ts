@@ -36,10 +36,8 @@ const LEGACY_COLORS = {
 		primaryBrand: '#DBF6F1',
 	},
 	border: { default: '#eff0f4' },
-	divider: { default: '#eff0f4', thick: '#e1e1e1' },
-	// 인증 뱃지 아이콘만 의도적으로 #3AECDB → #35d8c9로 바뀌었다
-	icon: { default: '#bebed2', red: '#fb657e', green: '#50d086', primary: '#35d8c9' },
-	badge: { red: '#ff3a30' },
+	divider: { thick: '#e1e1e1' },
+	icon: { default: '#bebed2', red: '#fb657e', green: '#50d086' },
 	status: { error: '#E73B2A', success: '#2dcd6f', warning: '#FFA500' },
 	overlay: { dim: 'rgba(0, 0, 0, 0.5)' },
 	social: {

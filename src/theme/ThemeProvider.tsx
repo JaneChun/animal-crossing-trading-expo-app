@@ -5,9 +5,9 @@ import { ColorScheme, darkColors, lightColors } from './Color';
 
 /**
  * 다크 모드 활성화 플래그
- * 도메인 마이그레이션이 끝날 때까지 false로 두어 앱 화면을 라이트로 고정한다.
+ * false로 바꾸면 기기 설정과 관계없이 앱 화면을 라이트로 고정한다.
  */
-export const DARK_MODE_ENABLED = false;
+export const DARK_MODE_ENABLED = true;
 
 export type ThemeScheme = 'light' | 'dark';
 
@@ -39,4 +39,27 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
 export function useTheme(): Theme {
 	return useContext(ThemeContext);
+}
+
+/** 시트 면이 화면 바탕보다 밝아서, 시트 안에서는 `bg.fill`을 한 단계 밝은 `bg.fillOnElevated` 값으로 쓴다 */
+function withSheetFill(theme: Theme): Theme {
+	return {
+		...theme,
+		colors: {
+			...theme.colors,
+			bg: { ...theme.colors.bg, fill: theme.colors.bg.fillOnElevated },
+		},
+	};
+}
+
+const sheetThemes: Record<ThemeScheme, Theme> = {
+	light: withSheetFill(lightTheme),
+	dark: withSheetFill(darkTheme),
+};
+
+/** 바텀시트 안의 화면에 시트용 테마를 내려준다. `CustomBottomSheet`가 내용물을 감싼다 */
+export function SheetThemeProvider({ children }: { children: ReactNode }) {
+	const { scheme } = useTheme();
+
+	return <ThemeContext.Provider value={sheetThemes[scheme]}>{children}</ThemeContext.Provider>;
 }

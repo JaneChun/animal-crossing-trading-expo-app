@@ -54,7 +54,7 @@ const makeStyles = ({ colors }: Theme) =>
 		},
 		container: {
 			flex: 1,
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fill,
 			borderRadius: 20,
 			alignItems: 'center',
 			justifyContent: 'center',

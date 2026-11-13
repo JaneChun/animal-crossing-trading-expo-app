@@ -5,8 +5,7 @@ import { Pressable, StyleSheet, TextInput, TouchableOpacity, View } from 'react-
 import Text from '@/components/ui/Text';
 import { showToast } from '@/components/ui/Toast';
 import { MAX_COMMENT_LENGTH } from '@/constants/post';
-import { FontSizes } from '@/constants/Typography';
-import { Theme, useTheme, useThemedStyles } from '@/theme';
+import { FontSizes , Theme, useTheme, useThemedStyles } from '@/theme';
 import { CommentInputProps } from '@/types/components';
 
 export interface CommentInputRef {
@@ -118,7 +117,7 @@ const makeStyles = ({ colors }: Theme) =>
 			alignItems: 'center',
 			paddingHorizontal: 16,
 			paddingVertical: 8,
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fill,
 			borderBottomWidth: 1,
 			borderBottomColor: colors.border.default,
 		},

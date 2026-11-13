@@ -78,7 +78,7 @@ const makeStyles = ({ colors }: Theme) =>
 			marginBottom: 12,
 		},
 		readOnlyContainer: {
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fill,
 			borderWidth: 0,
 		},
 		body: {

@@ -48,12 +48,9 @@ jest.mock('react-native-reanimated', () => ({
 }));
 
 jest.mock('@/constants/keyboard', () => ({ KEYBOARD_TOOLBAR_HEIGHT: 50 }));
-jest.mock('@/constants/Typography', () => ({
-	FontSizes: { lg: 18 },
-	FontWeights: { bold: '700' },
-}));
 jest.mock('@/theme/ThemeProvider', () => ({
 	useTheme: () => ({ scheme: 'light', colors: jest.requireActual('@/theme/Color').lightColors }),
+	SheetThemeProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 const CustomBottomSheet = require('@/components/ui/CustomBottomSheet').default;

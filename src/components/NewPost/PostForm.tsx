@@ -6,8 +6,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import DropdownInput from '@/components/ui/inputs/DropdownInput';
 import { PADDING } from '@/components/ui/layout/Layout';
 import { COMMUNITY_TYPES } from '@/constants/post';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Theme, useThemedStyles } from '@/theme';
+import { FontSizes, FontWeights , Theme, useThemedStyles } from '@/theme';
 import { PostFormProps } from '@/types/components';
 import { MarketType } from '@/types/post';
 

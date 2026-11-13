@@ -4,8 +4,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import HighlightMatchText from '@/components/ui/HighlightMatchText';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import Text from '@/components/ui/Text';
-import { FontWeights } from '@/constants/Typography';
-import { Theme, useThemedStyles } from '@/theme';
+import { FontWeights , Theme, useThemedStyles } from '@/theme';
 import { VillagerSelectItemProps } from '@/types/components';
 
 export const VILLAGER_ITEM_HEIGHT = 53;
@@ -62,7 +61,7 @@ const makeStyles = ({ colors }: Theme) =>
 			aspectRatio: '1/1',
 			alignItems: 'center',
 			padding: 8,
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fill,
 			borderRadius: 12,
 		},
 		imageContainer: {

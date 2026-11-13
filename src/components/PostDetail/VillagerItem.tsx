@@ -38,7 +38,7 @@ const makeStyles = ({ colors }: Theme) =>
 			alignItems: 'center',
 			paddingVertical: 12,
 			paddingHorizontal: 16,
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fill,
 			borderRadius: 16,
 		},
 		body: {

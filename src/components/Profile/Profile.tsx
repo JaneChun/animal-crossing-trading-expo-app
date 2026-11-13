@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
@@ -127,7 +127,12 @@ const Profile = ({
 					</View>
 				</View>
 
-				<FastImage style={styles.islandBackground} source={islandBackgroundImage} />
+				{/* 흰 실루엣 이미지라서 카드 면 색으로 칠해 다크에서도 은은하게 보이게 한다.
+				    FastImage의 tintColor는 iOS에서 크래시가 나므로 RN Image를 쓴다 */}
+				<Image
+					source={islandBackgroundImage}
+					style={[styles.islandBackground, { tintColor: colors.bg.primary }]}
+				/>
 			</View>
 
 			{/* Footer */}

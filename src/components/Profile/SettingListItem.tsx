@@ -49,11 +49,11 @@ const makeStyles = ({ colors }: Theme) =>
 		row: {
 			padding: 16,
 			borderTopWidth: 1,
-			borderColor: colors.border.default,
+			borderColor: colors.border.onFill,
 			flexDirection: 'row',
 			justifyContent: 'space-between',
 			alignItems: 'center',
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fill,
 		},
 		topRow: {
 			borderTopWidth: 0,

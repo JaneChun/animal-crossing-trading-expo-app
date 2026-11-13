@@ -161,7 +161,7 @@ const makeStyles = ({ colors }: Theme) =>
 			marginBottom: 24,
 		},
 		infoBox: {
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fill,
 			borderRadius: 10,
 			paddingHorizontal: 24,
 			paddingVertical: 32,

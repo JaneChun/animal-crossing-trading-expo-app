@@ -24,6 +24,9 @@
 - tone 색상(red/orange/yellow/green/blue/lavender/purple)은 `Colors.text.{tone}`과 `Colors.bg.{tone}`을 반드시 쌍으로 쓴다. 글자색만 tone으로 바꾸고 배경을 다른 tone으로 쓰지 않는다.
 - `text.onBrand`는 민트 면(주 버튼, 보낸 말풍선) 위의 글자색이고 두 테마 모두 흰색이다. `text.inverse`는 테마의 반대색이라 다크에서는 어두운 색이 된다. 기존 `text.inverse` 17곳 중 민트 면 위에 있는 것은 마이그레이션 때 `text.onBrand`로 바꾼다.
 - `bg.elevated`는 바텀시트·모달·토스트처럼 화면 위에 떠 있는 면의 배경이다. 다크에서는 그림자가 보이지 않으므로 이 면을 `bg.primary`보다 밝게 해서 층을 구분한다.
+- `bg.fill`은 바탕 위에 놓인 입력칸·칩·카드 면이고, `bg.raised`는 `bg.secondary` 바탕 위에 올라온 면(받은 말풍선, 채팅 거래글 요약 카드)이다. 다크에서 `bg.secondary`·`bg.primary`를 그대로 쓰면 면이 바탕과 거의 같거나 더 어두웠다. 다른 채팅 앱의 받은 말풍선 대비(1.32)를 기준으로 시트 위와 말풍선은 `#30303B`로 정했고, 화면 바탕 위는 같은 색이 튀어 보여 `#24242E`로 낮췄다.
+- 시트 면(`bg.elevated`)은 화면 바탕보다 밝아서 같은 `bg.fill`이 시트 안에서는 묻힌다. `CustomBottomSheet`가 내용물을 `SheetThemeProvider`로 감싸, 시트 안에서는 `bg.fill`이 `bg.fillOnElevated` 값이 된다. 검색창·칩처럼 화면과 시트 양쪽에서 쓰는 컴포넌트가 자기 위치를 몰라도 된다.
+- `bg.fill` 면 안의 행 구분선은 `border.onFill`이다. 다크에서는 화면 바탕색으로 그려 행 사이를 띄운다. `border.default`는 이 면 위에서 대비가 1.06이라 보이지 않는다.
 
 ## 테마와 다크 모드
 
@@ -53,8 +56,12 @@
 | `bg.secondary` | `#F5F5F8` | `#1A1A23` | — |
 | `bg.tertiary` | `#eff0f4` | `#24242E` | — |
 | `bg.elevated` (신규) | `#FFFFFF` | `#1E1E27` | — |
+| `bg.fill` (신규) | `#F5F5F8` | `#24242E` | 화면 바탕 대비 1.22 |
+| `bg.fillOnElevated` (신규) | `#F5F5F8` | `#30303B` | 시트 대비 1.27 |
+| `bg.raised` (신규) | `#FFFFFF` | `#30303B` | 채팅 영역 대비 1.33 |
 | `bg.inverse` | `#000000` | `#FFFFFF` | — |
 | `border.default` | `#eff0f4` | `#2C2C37` | — |
+| `border.onFill` (신규) | `#eff0f4` | `#111118` | — |
 | `divider.thick` | `#e1e1e1` | `#3A3A46` | — |
 | `text.primary` | `#050512` | `#F2F2F7` | 16.9 : 1 |
 | `text.secondary` | `#262634` | `#C9C9D3` | 11.4 : 1 |
@@ -188,7 +195,6 @@
 - **disabled이면서 loading**: loading 표시를 우선하되 색은 disabled 색을 쓴다.
 - **Text에 `color`와 `style.color`를 함께 지정**: `style.color`가 이긴다.
 - **Badge에 정의되지 않은 tone**: tone `brand`로 표시한다. `MarketTypeBadge`·`CommunityTypeBadge`에 매핑에 없는 타입이 들어오면 표시할 라벨이 없으므로 지금처럼 배지를 렌더링하지 않는다.
-- **폐기 예정 색상 키 사용**: 기존 화면은 계속 같은 색으로 렌더링된다. 편집기에서 취소선과 대체 키 안내가 보인다.
 - **다크에서 흰 배경이 들어간 이미지**(아이템·주민 이미지, 업로드 사진): 이미지는 바꾸지 않는다. 썸네일 컨테이너는 `bg.secondary` 배경과 모서리를 유지해서 이미지가 화면에 떠 보이지 않게 한다.
 - **광고(`NativeAdUnit`)**: 광고 소재의 이미지·문구 색은 바꾸지 않는다. 광고를 감싼 카드의 배경·테두리·"광고" 라벨만 테마를 따른다.
 - **스플래시 화면**: `splash_image.jpg`는 흰 배경 이미지라서 다크 기기에서도 흰 스플래시가 잠깐 보인 뒤 다크 첫 화면으로 넘어간다. 이번 범위에서는 이 동작을 허용한다.

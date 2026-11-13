@@ -19,12 +19,11 @@ import CloseButton from '@/components/ui/CloseButton';
 import Text from '@/components/ui/Text';
 import { showToast } from '@/components/ui/Toast';
 import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
-import { FontSizes, FontWeights } from '@/constants/Typography';
 import { saveUserInfo } from '@/firebase/services/userService';
 import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
 import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore } from '@/stores/auth';
-import { Theme, useTheme, useThemedStyles } from '@/theme';
+import { FontSizes, FontWeights , Theme, useTheme, useThemedStyles } from '@/theme';
 import { SignUpIslandNameRouteProp } from '@/types/navigation';
 import { UserInfo } from '@/types/user';
 
@@ -173,9 +172,9 @@ const makeStyles = ({ colors }: Theme) =>
 			fontSize: FontSizes.md,
 			padding: 12,
 			borderWidth: 1,
-			borderColor: colors.bg.secondary,
+			borderColor: colors.bg.fill,
 			borderRadius: 8,
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fill,
 			marginBottom: 8,
 			textAlignVertical: 'center',
 		},

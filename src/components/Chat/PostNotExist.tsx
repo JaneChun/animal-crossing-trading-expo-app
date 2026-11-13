@@ -30,7 +30,7 @@ const makeStyles = ({ colors }: Theme) =>
 			height: 70,
 			borderColor: colors.border.default,
 			borderWidth: 1,
-			backgroundColor: colors.bg.primary,
+			backgroundColor: colors.bg.raised,
 			borderRadius: 8,
 			gap: 6,
 		},

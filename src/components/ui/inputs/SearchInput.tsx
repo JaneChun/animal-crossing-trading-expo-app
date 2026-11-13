@@ -3,8 +3,7 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import { Pressable } from 'react-native-gesture-handler';
 
 import SearchIcon from '@/components/Search/SearchIcon';
-import { FontSizes } from '@/constants/Typography';
-import { BorderRadius, Spacing, Theme, useTheme, useThemedStyles } from '@/theme';
+import { FontSizes, BorderRadius, Spacing, Theme, useTheme, useThemedStyles } from '@/theme';
 import { SearchInputProps } from '@/types/components';
 
 const SearchInput = ({
@@ -54,7 +53,7 @@ const makeStyles = ({ colors }: Theme) =>
 			alignItems: 'center',
 			padding: Spacing.m,
 			borderRadius: BorderRadius.s,
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fill,
 		},
 		searchIcon: {
 			marginRight: Spacing.s,
@@ -62,5 +61,6 @@ const makeStyles = ({ colors }: Theme) =>
 		searchInput: {
 			flex: 1,
 			fontSize: FontSizes.md,
+			color: colors.text.primary,
 		},
 	});

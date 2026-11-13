@@ -2,8 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { BorderRadius, Spacing, Theme, useTheme, useThemedStyles } from '@/theme';
+import { FontSizes, FontWeights , BorderRadius, Spacing, Theme, useTheme, useThemedStyles } from '@/theme';
 import { NumberInputProps } from '@/types/components';
 
 const NumberInput = ({ value, setValue, InputComponent = TextInput, style }: NumberInputProps) => {

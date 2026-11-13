@@ -2,7 +2,7 @@
 
 > 이슈: 없음
 > 작업 종류: 기능 개발
-> 상태: 진행중
+> 상태: 완료
 > 생성일: 2026-11-11
 
 ## 개요
@@ -168,11 +168,13 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 
 ## Phase 11: 다크 모드 활성화
 
-- [ ] 남은 위반 확인 — `npm run lint` 경고 중 정적 `Colors` import, RN `Text` import, 색 리터럴이 0건인지 확인하고, 남은 것을 처리한다
-- [ ] 플래그 켜기 (`src/theme/ThemeProvider.tsx`) — `DARK_MODE_ENABLED = true`
-- [ ] 정적 `Colors` export와 폐기 예정 키 삭제 (`src/theme/Color.ts`), `src/constants/Typography.ts` re-export 삭제 후 import 경로 일괄 변경
-- [ ] ESLint 규칙을 `warn`에서 `error`로 올림 (`.eslintrc.js`)
-- [ ] 실기기 QA 체크리스트 작성과 수행 (`docs/design-system/plans/dark-mode-qa.md`) — `spec.md`의 화면 흐름과 엣지 케이스를 화면별로 확인
+- [x] 남은 위반 확인 — `npm run lint` 경고 중 정적 `Colors` import, RN `Text` import, 색 리터럴이 0건인지 확인하고, 남은 것을 처리한다
+- [x] 플래그 켜기 (`src/theme/ThemeProvider.tsx`) — `DARK_MODE_ENABLED = true`
+- [x] 정적 `Colors` export와 폐기 예정 키 삭제 (`src/theme/Color.ts`), `src/constants/Typography.ts` re-export 삭제 후 import 경로 일괄 변경
+- [x] ESLint 규칙을 `warn`에서 `error`로 올림 (`.eslintrc.js`)
+  - 결정: 정적 `Colors` import 금지 항목은 export가 삭제되어 타입 에러로 막히므로 규칙에서 뺐다
+- [x] 실기기 QA 체크리스트 작성과 수행 (`docs/design-system/plans/dark-mode-qa.md`)
+  - 결정: 시뮬레이터로 확인한 결과를 체크리스트에 적었다. 실기기 열은 `## 기기 확인`에서 사람이 확인한다 — `spec.md`의 화면 흐름과 엣지 케이스를 화면별로 확인
 
 ## 진행 기록
 
@@ -213,3 +215,17 @@ Phase 6~10은 같은 레시피를 반복한다. 각 파일에서 (1) `Colors` �
 - 결정: Phase 6~9에서 `makeStyles`로 감싼 스타일 블록의 들여쓰기가 Prettier 형식과 달라, 원본이 Prettier 형식이던 파일은 `prettier --write`로, 아니던 파일은 바꾼 블록만 범위 지정으로 정리했다(별도 커밋)
 - Phase 10 완료
 - 검증: `npm run typecheck` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과, `src/`·`App.tsx` 가드레일 경고 0건. 운영 앱에서 설정, 이용약관 화면을 읽기만 해서 확인했다. 로그인·회원가입·온보딩·에러 화면은 로그인 상태라 화면으로 확인하지 못했다
+- Phase 11 완료
+- 검증: `npm run lint` 오류 0건(경고 54건은 디자인 시스템과 무관한 기존 경고), `npm run typecheck` 통과, `npx jest --selectProjects unit` 8개 스위트 49개 통과. 시뮬레이터 다크 모드에서 11개 화면 확인
+- 결정: QA 중 발견한 입력칸 글자색 누락, 섬 그림 대비, 프로필 수정 시트 안쪽 면 색을 고쳤다(`dark-mode-qa.md`의 "QA 중 고친 것")
+- 결정: 다크에서 바탕과 구분되지 않던 면에 `bg.fill`·`bg.raised`와 `border.onFill`을 추가했다. 사용자가 시안에서 E안(#30303B)과 구분선 9-3안(바탕색 선)을 고른 뒤, 화면 바탕 위는 튀어 보인다며 `#24242E`를 골랐다. 그래서 시트 안은 `SheetThemeProvider`로 `#30303B`를 유지한다
+- 전체 구현 완료
+
+## 기기 확인
+
+- [ ] 기기를 다크 모드로 두고 앱을 새로 실행한다 → 첫 화면부터 다크이고 라이트로 깜빡이지 않는다
+- [ ] 앱 사용 중 제어 센터에서 라이트·다크를 바꾼다 → 현재 화면과 열린 시트가 그대로 새 테마로 바뀐다
+- [ ] 검색창, 댓글 입력창, 프로필 수정 입력칸에 글자를 입력한다 → 다크에서 입력한 글자가 잘 보인다
+- [ ] 일괄 추가에 아이템 목록을 붙여넣는다 → 찾음·확인 필요·실패 배너가 색으로 구분된다
+- [ ] 로그아웃 후 로그인·회원가입 화면을 연다 → 소셜 로그인 버튼과 약관 체크박스가 다크에서 읽힌다
+- [ ] 그 밖의 화면은 `docs/design-system/plans/dark-mode-qa.md`의 실기기 열을 따라 확인한다

@@ -3,9 +3,8 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import NoticeList from '@/components/Notice/NoticeList';
 import TabBarLabel from '@/components/Notice/TabBarLabel';
 import Layout from '@/components/ui/layout/Layout';
-import { FontSizes, FontWeights } from '@/constants/Typography';
 import { useNotificationStore } from '@/stores/notification';
-import { useTheme } from '@/theme';
+import { FontSizes, FontWeights , useTheme } from '@/theme';
 import { Collection } from '@/types/post';
 
 const Tab = createMaterialTopTabNavigator();

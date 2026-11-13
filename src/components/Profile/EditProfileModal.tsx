@@ -23,7 +23,6 @@ import Text from '@/components/ui/Text';
 import { showToast } from '@/components/ui/Toast';
 import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { FRUIT_IMAGES } from '@/constants/profile';
-import { FontSizes } from '@/constants/Typography';
 import { updateDocToFirestore } from '@/firebase/core/firestoreService';
 import {
 	checkIfObjectExistsInStorage,
@@ -32,7 +31,7 @@ import {
 } from '@/firebase/services/imageService';
 import { useProfileForm } from '@/hooks/profile/form/useProfileForm';
 import { useAuthStore, useUserInfo } from '@/stores/auth';
-import { Theme, useTheme, useThemedStyles } from '@/theme';
+import { FontSizes , Theme, useTheme, useThemedStyles } from '@/theme';
 import { EditProfileModalProps } from '@/types/components';
 import { Fruit, UserInfo } from '@/types/user';
 import { logProfileUpdate } from '@/utilities/analytics';
@@ -404,7 +403,7 @@ const makeStyles = ({ colors }: Theme) =>
 		},
 		screen: {
 			flex: 1,
-			backgroundColor: colors.bg.primary,
+			backgroundColor: colors.bg.elevated,
 		},
 		scrollContent: {
 			paddingRight: PADDING,
@@ -446,11 +445,12 @@ const makeStyles = ({ colors }: Theme) =>
 		titleInput: {
 			flex: 1,
 			fontSize: FontSizes.md,
+			color: colors.text.primary,
 			padding: 12,
 			borderWidth: 1,
-			borderColor: colors.bg.secondary,
+			borderColor: colors.bg.fillOnElevated,
 			borderRadius: 8,
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fillOnElevated,
 			textAlignVertical: 'center',
 			height: 45,
 		},
@@ -459,7 +459,7 @@ const makeStyles = ({ colors }: Theme) =>
 			height: 52,
 			justifyContent: 'center',
 			alignItems: 'center',
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fillOnElevated,
 			borderRadius: 18,
 		},
 		selectedFruitItem: {
@@ -475,13 +475,14 @@ const makeStyles = ({ colors }: Theme) =>
 		},
 		bioInput: {
 			fontSize: FontSizes.md,
+			color: colors.text.primary,
 			paddingHorizontal: 12,
 			paddingVertical: 18,
 			paddingBottom: 32,
 			borderWidth: 1,
-			borderColor: colors.bg.secondary,
+			borderColor: colors.bg.fillOnElevated,
 			borderRadius: 8,
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fillOnElevated,
 		},
 		bioCounter: {
 			position: 'absolute',

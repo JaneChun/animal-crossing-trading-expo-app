@@ -1,7 +1,6 @@
 import { StyleSheet, TextInput } from 'react-native';
 
-import { FontSizes } from '@/constants/Typography';
-import { Spacing, Theme, useTheme } from '@/theme';
+import { FontSizes , Spacing, Theme, useTheme } from '@/theme';
 import { ValidationInputProp } from '@/types/components';
 
 import ErrorMessage from '../ErrorMessage';

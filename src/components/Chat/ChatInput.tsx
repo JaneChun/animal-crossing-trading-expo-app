@@ -2,8 +2,7 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
-import { FontSizes } from '@/constants/Typography';
-import { Theme, useTheme, useThemedStyles } from '@/theme';
+import { FontSizes , Theme, useTheme, useThemedStyles } from '@/theme';
 import { ChatInputProps } from '@/types/components';
 
 const ChatInput = ({ disabled, onSubmit, onImagePress }: ChatInputProps) => {

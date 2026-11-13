@@ -76,7 +76,7 @@ const makeStyles = ({ colors }: Theme) =>
 			overflow: 'hidden',
 		},
 		duplicateChip: {
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fill,
 		},
 		dimmed: {
 			opacity: 0.45,

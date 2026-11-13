@@ -133,7 +133,7 @@ const makeStyles = ({ colors }: Theme) =>
 			paddingHorizontal: 16,
 		},
 		unitContainer: {
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fillOnElevated,
 		},
 		totalContainer: {
 			justifyContent: 'flex-end',

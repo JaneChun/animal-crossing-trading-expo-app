@@ -63,48 +63,40 @@ module.exports = {
 	},
 	overrides: [
 		// 4. 디자인 시스템 가드레일 (agent_docs/design-system.md)
-		// 기존 위반이 남아 있어 warn으로 둔다. 다크 모드 활성화 Phase에서 error로 올린다.
 		{
 			files: ['src/**/*.{ts,tsx}', 'App.tsx'],
 			rules: {
 				'no-restricted-imports': [
-					'warn',
+					'error',
 					{
 						paths: [
 							{
 								name: 'react-native',
 								importNames: ['Text'],
-								message: "공통 Text를 사용하세요: import Text from '@/components/ui/Text'",
-							},
-							{
-								name: '@/theme/Color',
-								importNames: ['Colors'],
 								message:
-									'정적 Colors는 다크 모드를 따르지 않습니다. useTheme() 또는 useThemedStyles()를 사용하세요.',
-							},
-							{
-								name: '@/theme',
-								importNames: ['Colors'],
-								message:
-									'정적 Colors는 다크 모드를 따르지 않습니다. useTheme() 또는 useThemedStyles()를 사용하세요.',
+									"공통 Text를 사용하세요: import Text from '@/components/ui/Text'",
 							},
 						],
 					},
 				],
 				'no-restricted-syntax': [
-					'warn',
+					'error',
 					{
-						selector: 'Literal[value=/^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/]',
+						selector:
+							'Literal[value=/^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/]',
 						message: 'hex 색 리터럴 대신 theme의 semantic 색 토큰을 사용하세요.',
 					},
 					{
-						selector: 'Property[key.name=/[cC]olor$/] > Literal[value=/^(white|black|red)$/i]',
-						message: "색 이름 리터럴 대신 theme의 semantic 색 토큰을 사용하세요. ('transparent'는 허용)",
+						selector:
+							'Property[key.name=/[cC]olor$/] > Literal[value=/^(white|black|red)$/i]',
+						message:
+							"색 이름 리터럴 대신 theme의 semantic 색 토큰을 사용하세요. ('transparent'는 허용)",
 					},
 					{
 						selector:
 							"JSXOpeningElement[name.name!='Text'] > JSXAttribute[name.name=/[cC]olor$/] > Literal[value=/^(white|black|red)$/i]",
-						message: "색 이름 리터럴 대신 theme의 semantic 색 토큰을 사용하세요. ('transparent'는 허용)",
+						message:
+							"색 이름 리터럴 대신 theme의 semantic 색 토큰을 사용하세요. ('transparent'는 허용)",
 					},
 				],
 			},

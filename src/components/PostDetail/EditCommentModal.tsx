@@ -9,9 +9,8 @@ import { PADDING } from '@/components/ui/layout/Layout';
 import { showToast } from '@/components/ui/Toast';
 import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { MAX_COMMENT_LENGTH } from '@/constants/post';
-import { FontSizes } from '@/constants/Typography';
 import { goBack } from '@/navigation/RootNavigation';
-import { Theme, useThemedStyles } from '@/theme';
+import { FontSizes , Theme, useThemedStyles } from '@/theme';
 
 type EditCommentModalProps = {
 	comment: string;

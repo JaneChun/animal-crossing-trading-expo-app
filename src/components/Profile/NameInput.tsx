@@ -3,9 +3,8 @@ import { StyleSheet, TextInput, View } from 'react-native';
 
 import ValidationInput from '@/components/ui/inputs/ValidationInput';
 import Text from '@/components/ui/Text';
-import { FontSizes } from '@/constants/Typography';
 import { ProfileFormValues } from '@/hooks/profile/form/profileFormSchema';
-import { Theme, useThemedStyles } from '@/theme';
+import { FontSizes, Theme, useThemedStyles } from '@/theme';
 import { NameInputProp } from '@/types/components';
 
 const NameInput = ({
@@ -52,11 +51,12 @@ const makeStyles = ({ colors }: Theme) =>
 		},
 		input: {
 			fontSize: FontSizes.md,
+			color: colors.text.primary,
 			padding: 12,
 			borderWidth: 1,
-			borderColor: colors.bg.secondary,
+			borderColor: colors.bg.fill,
 			borderRadius: 8,
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fill,
 			marginBottom: 8,
 			textAlignVertical: 'center',
 			height: 45,

@@ -6,8 +6,7 @@ import Button from '@/components/ui/Button';
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 import Text from '@/components/ui/Text';
 import { REPORT_CATEGORIES } from '@/constants/post';
-import { FontSizes } from '@/constants/Typography';
-import { Theme, useThemedStyles } from '@/theme';
+import { FontSizes, Theme, useThemedStyles } from '@/theme';
 import { ReportUserParams } from '@/types/components';
 
 type ReportModalProps = {
@@ -141,6 +140,7 @@ const makeStyles = ({ colors }: Theme) =>
 			color: colors.brand.primary,
 		},
 		textInput: {
+			color: colors.text.primary,
 			borderWidth: 1,
 			borderColor: colors.border.default,
 			borderRadius: 8,

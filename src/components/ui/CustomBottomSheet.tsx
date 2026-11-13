@@ -5,7 +5,14 @@ import { useGenericKeyboardHandler } from 'react-native-keyboard-controller';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
 import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
-import { BorderRadius, Spacing, Theme, useTheme, useThemedStyles } from '@/theme';
+import {
+	BorderRadius,
+	SheetThemeProvider,
+	Spacing,
+	Theme,
+	useTheme,
+	useThemedStyles,
+} from '@/theme';
 
 import Text from './Text';
 
@@ -121,7 +128,9 @@ const CustomBottomSheet = ({
 						)}
 					</View>
 				)}
-				<View style={[styles.body, bodyStyle]}>{children}</View>
+				<View style={[styles.body, bodyStyle]}>
+					<SheetThemeProvider>{children}</SheetThemeProvider>
+				</View>
 				<Animated.View pointerEvents="none" style={keyboardToolbarSpacerStyle} />
 			</View>
 		</BottomSheet>

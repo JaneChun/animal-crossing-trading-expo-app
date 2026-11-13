@@ -73,7 +73,7 @@ const makeStyles = ({ colors }: Theme) =>
 			alignItems: 'center',
 			paddingHorizontal: 16,
 			height: 70,
-			backgroundColor: colors.bg.primary,
+			backgroundColor: colors.bg.raised,
 			borderRadius: 8,
 		},
 		thumbnailContainer: {

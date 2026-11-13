@@ -56,7 +56,7 @@ const makeStyles = ({ colors }: Theme) =>
 		},
 		addImageButtonContainer: {
 			padding: Spacing.s,
-			backgroundColor: colors.bg.secondary,
+			backgroundColor: colors.bg.fill,
 			borderWidth: 1,
 			borderColor: colors.border.default,
 			justifyContent: 'center',
