@@ -79,27 +79,14 @@ const Login = () => {
 					style={{ width: '95%' }}
 					// disabled
 				/> */}
-				{VISIBLE_OAUTH_TYPES.includes('naver') && (
+				{VISIBLE_OAUTH_TYPES.map((oauthType) => (
 					<SocialLoginButton
-						oauthType="naver"
-						onPress={() => handleLogin('naver')}
+						key={oauthType}
+						oauthType={oauthType}
+						onPress={() => handleLogin(oauthType)}
 						style={{ width: '95%' }}
 					/>
-				)}
-				{VISIBLE_OAUTH_TYPES.includes('google') && (
-					<SocialLoginButton
-						oauthType="google"
-						onPress={() => handleLogin('google')}
-						style={{ width: '95%' }}
-					/>
-				)}
-				{VISIBLE_OAUTH_TYPES.includes('apple') && (
-					<SocialLoginButton
-						oauthType="apple"
-						onPress={() => handleLogin('apple')}
-						style={{ width: '95%', borderWidth: 1 }}
-					/>
-				)}
+				))}
 			</View>
 		</View>
 	);

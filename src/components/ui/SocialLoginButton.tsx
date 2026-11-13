@@ -4,6 +4,7 @@ import FastImage from 'react-native-fast-image';
 import { FontSizes, FontWeights } from '@/constants/Typography';
 import { Colors } from '@/theme/Color';
 import { SocialLoginButtonProps } from '@/types/components';
+import { OauthType } from '@/types/user';
 import appleImage from '@assets/images/apple.webp';
 import googleImage from '@assets/images/google.png';
 import kakaoImage from '@assets/images/kakao.png';
@@ -18,6 +19,20 @@ const socialImages: Record<string, number> = {
 	naver_round: naverRoundImage,
 	apple: appleImage,
 	google: googleImage,
+};
+
+const socialLabels: Record<OauthType, string> = {
+	kakao: '카카오로 로그인',
+	naver: '네이버로 로그인',
+	apple: 'Apple로 로그인',
+	google: 'Google로 로그인',
+};
+
+const socialTextColors: Record<OauthType, string> = {
+	kakao: Colors.social.kakaoText,
+	naver: Colors.social.naverText,
+	apple: Colors.social.appleText,
+	google: Colors.social.googleText,
 };
 
 const SocialLoginButton = ({
@@ -37,6 +52,7 @@ const SocialLoginButton = ({
 			style={[
 				styles.buttonContainer,
 				{ backgroundColor: Colors.social[oauthType] },
+				oauthType === 'apple' && styles.appleButton,
 				oauthType === 'google' && styles.googleButton,
 				style,
 			]}
@@ -51,28 +67,8 @@ const SocialLoginButton = ({
 				]}
 				resizeMode={FastImage.resizeMode.contain}
 			/>
-			<Text
-				style={[
-					styles.text,
-					{
-						color:
-							oauthType === 'naver'
-								? Colors.social.naverText
-								: oauthType === 'kakao'
-									? Colors.social.kakaoText
-									: oauthType === 'google'
-										? Colors.social.googleText
-										: Colors.social.appleText,
-					},
-				]}
-			>
-				{oauthType === 'naver'
-					? '네이버로 로그인'
-					: oauthType === 'kakao'
-						? '카카오로 로그인'
-						: oauthType === 'google'
-							? 'Google로 로그인'
-							: 'Apple로 로그인'}
+			<Text style={[styles.text, { color: socialTextColors[oauthType] }]}>
+				{socialLabels[oauthType]}
 			</Text>
 			{disabled && (
 				<View style={styles.bubbleWrapper}>
@@ -102,6 +98,9 @@ const styles = StyleSheet.create({
 		width: 36,
 		height: 36,
 		marginLeft: 8,
+	},
+	appleButton: {
+		borderWidth: 1,
 	},
 	appleIcon: {
 		width: 22,
