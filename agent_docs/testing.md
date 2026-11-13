@@ -5,6 +5,7 @@
 - `jest.config.js`에 `unit`(`src/__tests__/**/*.test.ts(x)`)과 `maestro` 두 프로젝트 정의 → `npm test`는 둘 다 실행.
 - 앱 단위 테스트: `src/__tests__/` 하위 — `utilities/`(유틸리티), `components/`(컴포넌트) 등. 단위 테스트만 실행: `npx jest --selectProjects unit`
 - `src/__tests__/firebase-utils/`는 테스트가 아니라 Firebase 시드/정리 유틸.
+- Admin SDK로 에뮬레이터에 직접 쓸 때도 Functions 에뮬레이터가 떠 있으면 Firestore 트리거가 실행된다. 댓글·대댓글 생성은 `commentCount`를, 리뷰 생성은 유저 `review` 집계를 올리므로, 이 값을 직접 계산해 넣는 시드는 두 배가 된다. 시드 중에는 Emulator Hub `PUT http://127.0.0.1:4400/functions/disableBackgroundTriggers`로 트리거를 끄고 끝나면 `enableBackgroundTriggers`로 켠다.
 
 ## 단위 테스트 작성 규칙
 
