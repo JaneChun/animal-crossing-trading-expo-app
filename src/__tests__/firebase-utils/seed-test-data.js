@@ -94,6 +94,16 @@ const ITEMS = {
 
 const toCartItem = (item, quantity, price, unit) => ({ ...item, quantity, price, unit });
 
+// ─── 주민 ID ──────────────────────────────────────────────────────────────────
+
+// 운영 Villagers 문서 ID(= Algolia Villagers 인덱스 objectID). seed-villagers.js가 같은 ID로 저장한다.
+const VILLAGERS = {
+	jjuni: 'l0C3N8sEjk9f5bVzqdHf', // 쭈니
+	jackson: 'kDOWTsAXaNZyc2DL2HjT', // 잭슨
+	himdeureo: 'a5GusDEqyRzz5mV9haxO', // 힘드러
+	miae: 'uWbBlJSAABCgNGjLnm2I', // 미애
+};
+
 // ─── 이미지 배정 ──────────────────────────────────────────────────────────────
 
 // 이미지 URL 목록에서 offset부터 count개를 차례로 고른다. 모자라면 처음부터 다시 쓴다.
@@ -229,7 +239,6 @@ function buildSeedData({ userPhotoUrls = [], communityImageUrls = [] } = {}) {
 	];
 
 	// 커뮤니티 게시글 (Communities) — imageCount만큼 communityImageUrls에서 차례로 배정
-	// villagers: 에뮬레이터에는 Villagers 컬렉션 원본이 없어 빈 배열로 둔다
 	const communityDrafts = [
 		{
 			id: 'community1',
@@ -239,6 +248,7 @@ function buildSeedData({ userPhotoUrls = [], communityImageUrls = [] } = {}) {
 			creatorId: USER_1,
 			createdAt: ago(1 * HOUR),
 			imageCount: 2,
+			villagers: [VILLAGERS.jjuni, VILLAGERS.jackson, VILLAGERS.miae],
 		},
 		{
 			id: 'community2',
@@ -265,7 +275,9 @@ function buildSeedData({ userPhotoUrls = [], communityImageUrls = [] } = {}) {
 			body: '힘드러가 이사 간다고 해서 분양해요. 데려가실 분 댓글 주세요!',
 			creatorId: USER_2,
 			createdAt: ago(4 * HOUR),
+			// 이미지가 없으면 섬네일에 첫 번째 주민 이미지가 보인다 (CommunityThumbnail)
 			imageCount: 0,
+			villagers: [VILLAGERS.himdeureo],
 		},
 		{
 			id: 'community5',
@@ -279,10 +291,10 @@ function buildSeedData({ userPhotoUrls = [], communityImageUrls = [] } = {}) {
 	];
 
 	let communityImageOffset = 0;
-	const communities = communityDrafts.map(({ imageCount, ...post }) => {
+	const communities = communityDrafts.map(({ imageCount, villagers = [], ...post }) => {
 		const images = pickImages(communityImageUrls, communityImageOffset, imageCount);
 		communityImageOffset += imageCount;
-		return { ...post, images, villagers: [] };
+		return { ...post, images, villagers };
 	});
 
 	// 댓글·대댓글 — {collection}/{postId}/Comments/{commentId}/Replies

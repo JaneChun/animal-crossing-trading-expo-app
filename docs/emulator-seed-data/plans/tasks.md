@@ -30,7 +30,7 @@
 - [x] 커뮤니티 게시글(`Communities`) 정리 (`seed-test-data.js` — `testCommunities`)
   - 패턴: `CommunityPost` — `images`, `villagers` 필수. `chatRoomIds`, `reviewPromptSent`는 마켓 전용이라 제거한다. `type`은 `src/constants/post.ts`의 `COMMUNITY_TYPES` 값만 쓴다.
   - 현재 문제: `villagers`가 없고, 이미지가 `via.placeholder.com`이다.
-  - 결정: `villagers`는 빈 배열로 둔다. 앱은 주민 ID로 `Villagers` 컬렉션을 조회하는데(`src/hooks/villager/query/useVillagersByIds.ts`), 에뮬레이터에는 이 컬렉션의 원본 데이터가 없다(구현 중 확인).
+  - 결정: `villagers`에는 운영 `Villagers` 문서 ID(= Algolia `objectID`)를 직접 적는다. 이미지 없는 분양 글에 주민을 넣어 섬네일이 주민 이미지로 대체되는 경우(`CommunityThumbnail`)도 확인할 수 있게 한다(사용자 지시).
   - 결정: `images`는 데이터에 직접 적지 않고, Phase 3 이미지 업로드 단계가 `seed-images/communities/`의 파일을 올린 뒤 받은 URL을 넣는다. 게시글마다 0~4장으로 개수를 다르게 해 이미지 없는 경우와 여러 장인 경우를 모두 확인할 수 있게 한다(사용자 지시).
 - [x] 채팅방·메시지 정리 (`seed-test-data.js` — `testChats`, `testMessages`)
   - 재사용: 채팅방 ID는 `src/firebase/services/chatService.ts:33`의 `generateChatId`와 같은 규칙(두 uid를 정렬해 `_`로 연결)을 따른다.
@@ -43,17 +43,22 @@
   - 리뷰는 거래완료(`done`) 게시글과 그 채팅방을 참조하고, 받은 유저의 `review` 집계(`positive`, `negative`, `total`)와 개수가 맞아야 한다. 알림은 실제로 시드된 댓글·대댓글에 대응하게 만들고, 읽음·안 읽음을 섞는다.
   - 결정: 추가한다(사용자 지시).
 
-## Phase 2: 카탈로그 seed를 운영 구조로 통합
+## Phase 2: 카탈로그·주민 seed를 운영 구조로 통합
 
-검증: 카탈로그만 시드한 뒤 앱의 새 글 작성 화면에서 아이템 검색 → 색상 선택이 동작하고, Emulator UI에서 variants 문서 ID가 `"0_0"` 형식이다.
+검증: 카탈로그·주민만 시드한 뒤 Emulator UI에서 variants 문서 ID가 `"0_0"` 형식이고, `Villagers` 문서 ID가 Algolia `objectID`와 같다.
 
-- [ ] 카탈로그 seed 모듈 작성 (`src/__tests__/firebase-utils/seed-catalog.js` 신규)
+- [x] 카탈로그 seed 모듈 작성 (`src/__tests__/firebase-utils/seed-catalog.js` 신규)
   - 재사용: 문서 구조는 `functions/scripts/import-catalog.ts`의 `docData`·`variantData` 필드 선택을 그대로 따른다(부모 6개 필드, variant 문서 ID는 `variantId`).
   - 재사용: Admin 초기화는 `src/__tests__/firebase-utils/firebase-admin-setup.js`의 `db`를 쓴다.
   - 패턴: 500개 단위 배치 커밋(`import-catalog.ts`와 동일).
-- [ ] `catalog.json`이 없을 때 처리 (`seed-catalog.js`)
+- [x] `catalog.json`이 없을 때 처리 (`seed-catalog.js`)
   - 원본 `functions/scripts/output/catalog.json`은 gitignore 대상이라 새 환경에는 없다. 이 경우 경고를 출력하고 카탈로그만 건너뛴다(spec 참조).
-- [ ] 로컬 전용 `scripts/seed-test-data.js` 삭제
+- [x] 주민 seed 모듈 작성 (`src/__tests__/firebase-utils/seed-villagers.js` 신규)
+  - 이유: 앱은 주민 검색을 운영 Algolia `Villagers` 인덱스로 하고(`src/hooks/villager/query/useSearchVillagers.ts`), 표시는 Firestore `Villagers` 컬렉션에서 ID로 조회한다(`useVillagersByIds.ts`). 에뮬레이터에는 이 컬렉션이 없어 주민이 표시되지 않는다.
+  - 재사용: `algoliasearch/lite`의 `liteClient`와 `.env`의 `EXPO_PUBLIC_ALGOLIA_APP_ID`, `EXPO_PUBLIC_ALGOLIA_SEARCH_KEY`(`src/config/firebase.ts`와 같은 키). 빈 검색어 + `hitsPerPage: 1000`으로 한 번에 417명을 받는다.
+  - 저장: `Villagers/{objectID}`에 `Villager` 타입(`src/types/villager.ts`)의 `name`, `imageUrl`, `species`, `personality`만 넣는다. Algolia 동기화 확장이 붙인 `path`, `lastmodified` 등은 버린다.
+  - 결정: 시드할 때마다 Algolia에서 가져온다. 비밀 키가 필요 없고, 앱 검색과 같은 출처라 ID가 항상 맞는다(사용자 지시).
+- [x] 로컬 전용 `scripts/seed-test-data.js` 삭제
   - git으로 추적되지 않는 파일이라 커밋에는 나타나지 않는다. 기능이 `seed-catalog.js`로 옮겨진 것을 확인한 뒤 삭제한다.
 
 ## Phase 3: 단일 진입점과 재실행 안전성
@@ -76,7 +81,7 @@
 - [ ] 환경 변수 파일 로드 (`package.json`)
   - Node는 `.env.local`을 자동으로 읽지 않는다. `emulator:seed`를 `node --env-file-if-exists=.env --env-file-if-exists=.env.local src/__tests__/firebase-utils/seed-test-data.js`로 실행한다(Node 22.9 이상 지원, 현재 v22.13). 뒤에 적은 `.env.local`이 같은 키를 덮어쓴다.
 - [ ] 단일 진입점 정리 (`src/__tests__/firebase-utils/seed-test-data.js`)
-  - 초기화 → 이미지 업로드 → 카탈로그 → 유저 → 게시글 → 채팅 → 댓글 → 리뷰·알림 순서로 실행한다(유저·게시글이 이미지 URL을, 게시글 `cart`가 카탈로그 데이터를 참조하므로).
+  - 초기화 → 이미지 업로드 → 카탈로그 → 주민 → 유저 → 게시글 → 채팅 → 댓글 → 리뷰·알림 순서로 실행한다(유저·게시글이 이미지 URL을, 게시글 `cart`가 카탈로그 데이터를 참조하므로).
   - 현재 문제: `catch`에서 로그만 찍고 정상 종료(exit 0)한다. 실패하면 exit 1로 끝나게 한다.
 - [ ] 안전장치 (`src/__tests__/firebase-utils/firebase-admin-setup.js`는 수정하지 않음)
   - 패턴: 이 파일이 `FIRESTORE_EMULATOR_HOST`, `FIREBASE_AUTH_EMULATOR_HOST`를 강제로 설정하므로 운영 연결 위험은 없다. 진입점에서 이 파일을 반드시 거치게만 한다.
@@ -101,3 +106,7 @@
 - 검증: `firebase emulators:start --only auth,firestore`에 `node src/__tests__/firebase-utils/seed-test-data.js` 실행 → 성공. 저장된 문서를 다시 읽어 게시글 필드, `commentCount`, 채팅 `unreadCount` 키, 유저 `review` 집계, 알림 12개(안 읽음 6개)가 시드 정의와 일치함을 확인
 - 결정: 댓글·대댓글·메시지·리뷰·알림은 고정 문서 ID로 저장하고, 앱처럼 `id` 필드는 문서 본문에 넣지 않는다(채팅방만 앱이 `id`를 저장하므로 유지)
 - 계획 변경: 구현 중 Functions 트리거가 시드 값을 두 배로 만드는 문제를 발견해 Phase 3에 트리거 끄기 항목을 추가
+
+- Phase 2 완료
+- 검증: `firebase emulators:start --only auth,firestore`에서 `seedCatalog()` → 아이템 7,156개·variants 21,788개(약 3초), `seedVillagers()` → 417명 저장. variant 문서 ID `0_0`, 부모 6개 필드, `Villagers` 문서 필드를 다시 읽어 확인. `catalog.json`이 없거나 Algolia 키가 없으면 경고 후 `null`을 반환하는 것도 확인
+- 결정: Phase 1 커뮤니티 데이터에 주민 ID를 넣는 작업은 주민 seed 결정(사용자 지시)에 따라 Phase 2에서 함께 처리
