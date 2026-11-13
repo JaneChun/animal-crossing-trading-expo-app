@@ -1,11 +1,9 @@
 import { StyleSheet, View } from 'react-native';
 
-import { BorderRadius, ColorScheme, Spacing, useTheme } from '@/theme';
+import { BorderRadius, Spacing, ToneColorKey, useTheme } from '@/theme';
 import { BadgeProps, BadgeTone } from '@/types/components';
 
 import Text from './Text';
-
-type ToneColorKey = keyof ColorScheme['text'] & keyof ColorScheme['bg'];
 
 /** tone별로 짝지어진 `text.{key}` 글자색과 `bg.{key}` 배경색의 키 */
 const TONE_COLOR_KEYS: Record<BadgeTone, ToneColorKey> = {

@@ -112,6 +112,9 @@ type ColorTokens<T> = {
 
 export type ColorScheme = ColorTokens<typeof lightColors>;
 
+/** `text.{key}` 글자색과 `bg.{key}` 배경색이 짝지어진 tone 키 (Badge·SectionBanner) */
+export type ToneColorKey = keyof ColorScheme['text'] & keyof ColorScheme['bg'];
+
 export const darkColors: ColorScheme = {
 	brand: {
 		primary: Palette.mint[400],

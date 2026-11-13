@@ -2,13 +2,11 @@ import { Feather } from '@expo/vector-icons';
 import { StyleSheet, View } from 'react-native';
 
 import Text from '@/components/ui/Text';
-import { ColorScheme, useTheme } from '@/theme';
+import { ToneColorKey, useTheme } from '@/theme';
 import { BorderRadius } from '@/theme/BorderRadius';
 import { Spacing } from '@/theme/Spacing';
 
 type BannerVariant = 'found' | 'review' | 'failed';
-
-type ToneColorKey = keyof ColorScheme['text'] & keyof ColorScheme['bg'];
 
 type SectionBannerProps = {
 	variant: BannerVariant;
