@@ -44,6 +44,8 @@ const NewPost = () => {
 	const collectionName = route.params?.collectionName ?? 'Boards';
 	const insets = useSafeAreaInsets();
 	const headerHeight = useHeaderHeight();
+	// Android는 버튼이 홈 제스처 영역에 붙지 않도록 여백을 조금 더 둔다
+	const buttonBottomPadding = insets.bottom + (Platform.OS === 'android' ? 8 : 0);
 
 	// ─────────────────────────────────────────────────────────────
 	// Auth
@@ -254,7 +256,7 @@ const NewPost = () => {
 					/>
 				</KeyboardAvoidingView>
 
-				<View style={styles.buttonContainer}>
+				<View style={[styles.buttonContainer, { paddingBottom: buttonBottomPadding }]}>
 					{collectionName === 'Boards' && (
 						<Button
 							variant="outline"

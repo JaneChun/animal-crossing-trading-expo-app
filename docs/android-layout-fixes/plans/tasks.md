@@ -30,11 +30,15 @@ Android 출시 대응 이후 실기기(SM-F711N, 3버튼 내비게이션)에서 
 
 ## Phase 2: 새 글 작성 하단 버튼 여백 (#60)
 
-- [ ] 하단 버튼 영역에 하단 inset 여백 추가 (`src/screens/NewPost.tsx`의 `buttonContainer`)
+- [x] 하단 버튼 영역에 하단 inset 여백 추가 (`src/screens/NewPost.tsx`의 `buttonContainer`)
   - 재사용: 이미 선언된 `const insets = useSafeAreaInsets()` (`NewPost.tsx:45`)
-  - 패턴: 정적 스타일 `padding: PADDING`은 그대로 두고, 렌더링 시 `paddingBottom`만 `PADDING + insets.bottom`으로 덮어쓴다
-  - 결정: iOS·Android 모두 적용한다(사용자 지시). 기존 여백은 플랫폼 공통 24 하드코딩이라 iOS도 홈 인디케이터에 약 10pt 걸쳐 있었고, 다른 화면처럼 하단 inset을 반영하도록 맞춘다. iOS 버튼은 34pt 위로 올라간다.
-- [ ] 검증: 3버튼 내비게이션과 제스처 내비게이션 양쪽에서 촬영. 기기의 현재 모드는 3버튼(`navigation_mode=0`)이며, 제스처 모드 전환은 사용자에게 요청하고 끝나면 원래대로 되돌린다. 키보드를 올린 상태도 촬영한다.
+  - 패턴: 정적 스타일 `padding: PADDING`은 그대로 두고, 렌더링 시 `paddingBottom`만 `insets.bottom`으로 덮어쓴다
+  - 결정: 하단 여백은 `PADDING + insets.bottom`이 아니라 `insets.bottom`만 쓴다(사용자가 직접 수정). Android만 8을 더한다(사용자 지시). `insets.bottom`만 주면 제스처 모드에서 버튼이 내비게이션 바에 딱 붙어 홈 제스처 영역에 걸치기 때문이다.
+  - 결정: iOS·Android 모두 적용한다(사용자 지시). 기존 여백은 플랫폼 공통 24 하드코딩이라 iOS도 홈 인디케이터에 약 10pt 걸쳐 있었고, 다른 화면처럼 하단 inset을 반영하도록 맞춘다. iOS 버튼은 약 10pt 위로 올라간다.
+- [x] 본문 인풋 placeholder가 Android에서 세로 가운데에 표시되는 문제 수정 (`src/components/NewPost/BodyInput.tsx`)
+  - 패턴: `verticalAlign: 'middle'` 삭제. RN `TextInput`은 `verticalAlign`을 `textAlignVertical`로 변환해 덮어쓰므로(`'middle'` → `'center'`), 같은 스타일의 `textAlignVertical: 'top'`이 무시되고 있었다.
+  - 결정: 계획 밖 수정이지만 이번 브랜치에 포함한다(사용자 지시). 이슈 목록에 없던 기존 문제다.
+- [x] 검증: 3버튼 내비게이션과 제스처 내비게이션 양쪽에서 촬영. 기기의 현재 모드는 3버튼(`navigation_mode=0`)이며, 제스처 모드 전환은 사용자에게 요청하고 끝나면 원래대로 되돌린다. 키보드를 올린 상태도 촬영한다.
 
 ## Phase 3: Android 키보드 회피 (#59, #61)
 
@@ -54,6 +58,7 @@ Android 출시 대응 이후 실기기(SM-F711N, 3버튼 내비게이션)에서 
 - [ ] `npm run lint`, `npm run typecheck` 통과
 - [ ] 함정 기록 (`agent_docs/architecture.md`의 키보드 항목 근처)
   - edge-to-edge + `KeyboardProvider` 환경의 Android는 창이 키보드에 맞춰 줄어들지 않으므로, RN 기본 `KeyboardAvoidingView`의 `'height'`·`undefined`에 기대면 안 된다는 점
+  - `TextInput` 스타일의 `verticalAlign`은 `textAlignVertical`을 덮어쓴다는 점
   - 고정 `height`에 세로 `padding`을 함께 주면 Android에서 글자가 위로 치우친다는 점. 세로 padding을 빼기만 하면 Android 기본 세로 여백이 적용되므로 `paddingVertical: 0`을 명시해야 한다는 점
 
 ## 진행 기록
@@ -65,3 +70,13 @@ Android 출시 대응 이후 실기기(SM-F711N, 3버튼 내비게이션)에서 
 - 검증: 프로필 수정 모달의 닉네임·섬 이름·칭호(입력값)와 닉네임·섬 이름(placeholder)을 앱 재시작 후 촬영해 글자 중심과 박스 중심의 차이를 픽셀로 측정. iOS 0~0.5px(정중앙, 수정 전과 같음), Android 수정 전 위로 4.5~5.5px → 수정 후 아래로 3.5px(약 1.2dp)
 - 검증: 회원가입 닉네임·섬 이름 화면은 직접 촬영하지 못함(로그인된 계정을 로그아웃하고 새 계정으로 가입해야 진입 가능). 같은 `NameInput` 스타일을 쓰므로 모달 측정 결과로 갈음
 - 사용자 확인 사항: 키보드가 회원가입 화면 하단 버튼을 가리는 문제는 Phase 3(#59) 범위
+- Phase 2 코드 변경 완료, Android 기기 검증 남음
+- 검증: `npx tsc --noEmit` 통과, `npx eslint src/screens/NewPost.tsx` 에러 0건(경고 1건은 변경 전부터 있던 것)
+- 검증: iOS 시뮬레이터(iPhone 17 Pro)에서 키보드 닫힘·열림 상태를 촬영해 Before와 비교. 버튼이 홈 인디케이터 위에 놓이고, 키보드가 열리면 버튼 영역은 키보드 뒤에 가려짐
+- 검증: Android 실기기 3버튼 모드에서 키보드 닫힘·열림 상태를 촬영해 Before와 비교. 버튼 전체가 내비게이션 바 위로 올라오고, 키보드가 열리면 버튼 영역은 키보드 뒤에 가려짐(수정 전과 같음)
+- 검증: 본문 placeholder 수정 후 Android 실기기(placeholder·두 줄 입력)와 iOS 시뮬레이터를 촬영. 양쪽 모두 박스 위쪽부터 표시됨
+- 검증: Android 제스처 모드에서 키보드 닫힘·열림 상태를 촬영. 버튼 아래 끝이 내비게이션 바 영역 바로 위(2594px, 내비게이션 바는 2595px부터)에 붙고 제스처 핸들과 겹치지 않음. 키보드가 열리면 버튼 영역은 키보드 뒤에 가려짐
+- 검증: Android 하단 여백 +8 적용 후 제스처 모드 재촬영. 버튼 아래 끝이 2594px → 2570px로 8dp 올라가 내비게이션 바와 약 8dp 띄워짐. `tsc` 통과, `eslint` 에러 0건
+- 검증: 3버튼 모드로 되돌린 뒤 재촬영. 버튼 아래 끝 2471px, 내비게이션 바 2496px부터로 약 8dp 띄워짐
+- Phase 2 완료
+

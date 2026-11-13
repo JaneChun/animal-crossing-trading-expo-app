@@ -58,7 +58,6 @@ const styles = StyleSheet.create({
 		minHeight: 300,
 		lineHeight: 26,
 		textAlignVertical: 'top',
-		verticalAlign: 'middle',
 		paddingBottom: 12,
 	},
 });
