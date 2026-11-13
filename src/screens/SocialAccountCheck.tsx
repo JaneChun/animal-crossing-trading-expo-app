@@ -6,7 +6,9 @@ import { PADDING } from '@/components/ui/layout/Layout';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import SocialLoginButton from '@/components/ui/SocialLoginButton';
-import { pop } from '@/navigation/RootNavigation';
+import { showToast } from '@/components/ui/Toast';
+import { auth } from '@/config/firebase';
+import { pop, popToTop } from '@/navigation/RootNavigation';
 import { LoginResult, useAuthStore, useUserInfo } from '@/stores/auth';
 import { Colors } from '@/theme/Color'; // 프로젝트 컬러 상수
 import { OauthType } from '@/types/user';
@@ -17,9 +19,15 @@ const SocialAccountCheck = () => {
 	const kakaoLogin = useAuthStore((state) => state.kakaoLogin);
 	const naverLogin = useAuthStore((state) => state.naverLogin);
 	const googleLogin = useAuthStore((state) => state.googleLogin);
+	const kakaoLogout = useAuthStore((state) => state.kakaoLogout);
+	const naverLogout = useAuthStore((state) => state.naverLogout);
+	const googleLogout = useAuthStore((state) => state.googleLogout);
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 
 	const handleLogin = async (oauthType: OauthType) => {
+		// 재인증 도중 다른 계정으로 로그인하면 userInfo가 바뀔 수 있으므로 로그인 전에 원래 uid를 저장
+		const originalUid = userInfo?.uid;
+
 		let loginResult: LoginResult = {
 			isSuccess: false,
 			isNewUser: false,
@@ -30,9 +38,21 @@ const SocialAccountCheck = () => {
 		else if (oauthType === 'naver') loginResult = await naverLogin();
 		else if (oauthType === 'google') loginResult = await googleLogin();
 
-		if (loginResult.isSuccess) {
-			navigateToDeleteAccount();
+		if (!loginResult.isSuccess) return;
+
+		// 가입한 계정과 다른 계정으로 인증하면 세션이 섞이므로 로그아웃하고 탈퇴를 중단
+		const isSameAccount = auth.currentUser?.uid === originalUid;
+		if (!isSameAccount) {
+			if (oauthType === 'kakao') await kakaoLogout();
+			else if (oauthType === 'naver') await naverLogout();
+			else if (oauthType === 'google') await googleLogout();
+
+			showToast('error', '가입한 계정과 다른 계정입니다. 다시 로그인해주세요.');
+			popToTop(); // 프로필 탭으로 복귀 (로그아웃 상태라 로그인 화면이 렌더링됨)
+			return;
 		}
+
+		navigateToDeleteAccount();
 	};
 
 	const backToAccount = () => {
