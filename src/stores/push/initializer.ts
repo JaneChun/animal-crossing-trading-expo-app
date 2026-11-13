@@ -44,7 +44,8 @@ export const usePushNotificationInitializer = () => {
 				notificationOpenedApp.current = true;
 				logAppOpen('push_notification');
 
-				const { url } = response.notification.request.content.data;
+				const data = response.notification.request.content.data;
+				const url = data?.url;
 				if (!url) return;
 
 				// Deep Link URL을 통해 앱 내 특정 화면으로 이동
@@ -54,7 +55,7 @@ export const usePushNotificationInitializer = () => {
 					} else {
 						Alert.alert('유효하지 않은 URL', '유효하지 않은 URL입니다.');
 					}
-				} catch (e) {
+				} catch {
 					Alert.alert('링크 열기 실패', '링크를 여는 도중 문제가 발생했습니다.');
 				}
 			},

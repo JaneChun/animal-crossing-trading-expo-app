@@ -25,6 +25,7 @@
 - 통합 테스트(`triggers/*.integration.test.ts`): 실제 Firestore 에뮬레이터에 읽기/쓰기 — 에뮬레이터 없이 실행하면 실패
 - 공용 헬퍼(에뮬레이터 연결, 픽스처, mock, 전역 setup): `functions/__tests__/helpers/`
 - Jest 설정: `functions/jest.config.js` — 통합 테스트가 에뮬레이터를 공유하므로 `maxWorkers: 1` 순차 실행
+- **타임존 함정**: Cloud Functions와 CI 러너는 UTC, 로컬은 KST. `new Date(now.toLocaleString(..., { timeZone: 'Asia/Seoul' }))` + `setHours(0,0,0,0)`은 실행 환경 타임존으로 재해석되어 UTC에서는 KST 09:00이 됨 → 로컬에선 통과하고 CI는 KST 00~09시에만 실패. KST 날짜 계산은 고정 오프셋(+9h, DST 없음)으로 하고(`functions/src/triggers/reports.ts`의 `getKstMidnightAfterDays`), 시각 검증 테스트는 `TZ=UTC`로도 돌려 볼 것.
 
 ### 실행
 
