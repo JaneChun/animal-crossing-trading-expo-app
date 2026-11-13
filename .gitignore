@@ -56,5 +56,5 @@ functions/lib/
 temp.ini
 
 # firebase export
-scripts/*
 emulator-data/*
+scripts/emulator/seed-images/

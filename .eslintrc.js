@@ -117,6 +117,13 @@ module.exports = {
 				'unused-imports/no-unused-vars': 'off', // 테스트에선 유연하게 적용
 			},
 		},
+		{
+			// Node로 직접 실행하는 CommonJS 스크립트 (에뮬레이터 시드 등)
+			files: ['scripts/**/*.js'],
+			rules: {
+				'@typescript-eslint/no-require-imports': 'off',
+			},
+		},
 	],
 	ignorePatterns: ['/dist/*', '.expo/*', 'node_modules/*', 'functions/*'],
 };

@@ -4,7 +4,17 @@
 
 - `jest.config.js`에 `unit`(`src/__tests__/**/*.test.ts(x)`)과 `maestro` 두 프로젝트 정의 → `npm test`는 둘 다 실행.
 - 앱 단위 테스트: `src/__tests__/` 하위 — `utilities/`(유틸리티), `components/`(컴포넌트) 등. 단위 테스트만 실행: `npx jest --selectProjects unit`
-- `src/__tests__/firebase-utils/`는 테스트가 아니라 Firebase 시드/정리 유틸.
+- `src/__tests__/firebase-utils/`는 테스트가 아니라 Maestro E2E용 Firebase 헬퍼(`test-helpers.js`, `cleanup-test-data.js`)와 Admin SDK 초기화(`firebase-admin-setup.js`). 에뮬레이터 시드는 `scripts/emulator/`에 있다.
+
+## 에뮬레이터 시드 (`npm run emulator:seed`)
+
+- 진입점 `scripts/emulator/seed-test-data.js`. Admin 초기화는 `src/__tests__/firebase-utils/firebase-admin-setup.js`를 함께 쓴다. 실행하면 에뮬레이터의 Auth·Firestore·Storage를 **모두 비운 뒤** 이미지 → 카탈로그 → 주민 → 테스트 데이터(유저·게시글·채팅·댓글·리뷰·알림) 순서로 넣는다. `.env`, `.env.local`을 읽는다.
+- 카탈로그(`seed-catalog.js`)의 원본 `functions/scripts/output/catalog.json`은 gitignore 대상이다. 없으면 경고 후 카탈로그만 건너뛴다.
+- 주민(`seed-villagers.js`)은 실행할 때마다 운영 Algolia `Villagers` 인덱스에서 가져온다. 문서 ID가 Algolia `objectID`(= 운영 문서 ID)와 같아야 앱에서 검색한 주민이 표시된다. 네트워크나 키가 없으면 경고 후 건너뛴다.
+- 이미지(`seed-images.js`): `scripts/emulator/seed-images/users/`(프로필)와 `communities/`(커뮤니티 글)에 `jpg`·`jpeg`·`png`·`webp`를 넣으면 이름순으로 배정해 Storage에 올린다. 이 폴더는 gitignore 대상이라 직접 만들어 넣는다. 비어 있으면 이미지 없이 시드한다.
+- 본인 계정으로 시드 데이터 보기: 에뮬레이터 모드에서 한 번 로그인해 Emulator UI(http://localhost:4000) Auth 탭에서 uid를 확인하고, `.env.local`에 `SEED_MY_UID=<uid>`를 넣고 시드하면 1번 시드 유저 자리에 들어간다. 시드 유저 uid로는 앱에서 로그인할 수 없다(소셜 로그인 → 커스텀 토큰 흐름이라).
+- 이미지 URL에는 `EXPO_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST` 호스트가 그대로 저장된다. 실기기 테스트로 Mac IP를 쓰다가 IP가 바뀌면 이미지가 깨지므로, 호스트를 고친 뒤 시드를 다시 실행한다.
+- Admin SDK로 에뮬레이터에 직접 쓸 때도 Functions 에뮬레이터가 떠 있으면 Firestore 트리거가 실행된다. 댓글·대댓글 생성은 `commentCount`를, 리뷰 생성은 유저 `review` 집계를 올리므로, 이 값을 직접 계산해 넣는 시드는 두 배가 된다. 시드 중에는 Emulator Hub `PUT http://127.0.0.1:4400/functions/disableBackgroundTriggers`로 트리거를 끄고 끝나면 `enableBackgroundTriggers`로 켠다.
 
 ## 단위 테스트 작성 규칙
 

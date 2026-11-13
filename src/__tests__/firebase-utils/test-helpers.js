@@ -6,7 +6,7 @@ const TEST_USER_A = {
 	uid: 'Zrc3ke0dYXcskivyQIba4ZJKpEJp5VbQ7Ms-snLbkhM',
 	displayName: '네이버유저',
 	islandName: '네이버섬',
-	email: 'wlehf97@naver.com',
+	email: 'test-naver@example.com',
 	photoURL: '',
 	oauthType: 'naver',
 	createdAt: Timestamp.now(),
