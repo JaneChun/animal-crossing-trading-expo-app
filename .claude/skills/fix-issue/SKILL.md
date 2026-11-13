@@ -30,7 +30,7 @@ gh issue view <번호> --json number,title,body,state
 | 작업 트리 | `git status --porcelain --untracked-files=no` — 변경이 있으면 멈추고 어떻게 할지 묻는다 |
 | iOS 시뮬레이터 | `xcrun simctl list devices booted` → UDID 기록. `xcrun simctl listapps <UDID> \| grep com.janechun.animalcrossingtradingapp` |
 | Android 실기기 (USB) | `adb devices -l` → `emulator-`로 시작하지 않는 기기의 serial 기록. `adb -s <serial> shell pm list packages \| grep com.janechun.animalcrossingtradingapp` |
-| Firebase 에뮬레이터 | `lsof -nP -iTCP:8080 -sTCP:LISTEN` — 없으면 `npm run emulator:start-with-data`를 백그라운드로 실행 |
+| Firebase 에뮬레이터 | `lsof -nP -iTCP:8080 -sTCP:LISTEN` — 없으면 백그라운드로 실행한다. `./emulator-data`가 있으면 `npm run emulator:start-with-data`, 없으면(새 클론·워크트리, gitignore 대상) `npm run emulator:start`를 띄운 뒤 `npm run emulator:seed`로 데이터를 채운다 |
 | Metro (에뮬레이터 모드) | `lsof -nP -iTCP:8081 -sTCP:LISTEN` — 이미 떠 있으면 어떤 모드로 띄웠는지 알 수 없으므로, 사용자에게 종료를 요청한 뒤 `npm run dev:emulator`를 백그라운드로 직접 실행한다 |
 | 실기기 ↔ Mac 포트 연결 | `for p in 8081 9099 8080 5001 9199; do adb -s <serial> reverse tcp:$p tcp:$p; done` (매번 실행해도 무방) |
 | 실기기 화면 | `adb -s <serial> shell input keyevent KEYCODE_WAKEUP` 후 캡처해서 잠금 화면이 아닌지 확인 |
