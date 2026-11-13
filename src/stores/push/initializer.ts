@@ -38,10 +38,21 @@ export const usePushNotificationInitializer = () => {
 			},
 		);
 
+		// launchResponseId: 앱 시작 시점의 마지막으로 탭한 알림 응답 ID
+		// - 알림 탭으로 실행된 경우: 그 알림의 identifier
+		// - 아이콘 탭 등 일반 실행인 경우: undefined
+		const launchResponseId =
+			ExpoNotifications.getLastNotificationResponse()?.notification.request.identifier;
+
 		// 사용자가 알림을 탭했을 때 처리하는 리스너
 		const responseListener = ExpoNotifications.addNotificationResponseReceivedListener(
 			async (response) => {
 				notificationOpenedApp.current = true;
+				// 콜드 스타트 알림의 화면 이동은 getInitialURL(App.tsx)이 처리한다.
+				// - Android: 콜드 스타트에서는 리스너가 호출되지 않으므로 별도 처리가 필요 없다
+				// - iOS: 보관해 둔 응답을 리스너에 다시 전달하므로, 중복 이동을 막기 위해 launch 응답은 건너뛴다
+				if (response.notification.request.identifier === launchResponseId) return;
+
 				logAppOpen('push_notification');
 
 				const data = response.notification.request.content.data;

@@ -8,13 +8,12 @@ export const useAppLifecycle = () => {
 	const appState = useRef<AppStateStatus>(AppState.currentState);
 	const sessionStartRef = useRef<number>(Date.now());
 
-	// cold start 로깅 — 푸시 알림 탭으로 열린 경우 중복 로깅 방지
+	// 앱 실행 시 1회 app_open 기록: 알림 탭으로 실행됐으면 push_notification, 아니면 cold_start
+	// 콜드 스타트 알림은 응답 리스너가 기록하지 않으므로 여기서 기록한다
+	// (Android는 리스너가 호출되지 않고, iOS는 호출되지만 initializer.ts에서 건너뜀)
 	useEffect(() => {
 		const response = ExpoNotifications.getLastNotificationResponse();
-		if (!response) {
-			logAppOpen('cold_start');
-		}
-		// push_notification은 addNotificationResponseReceivedListener에서 처리
+		logAppOpen(response ? 'push_notification' : 'cold_start');
 	}, []);
 
 	useEffect(() => {
