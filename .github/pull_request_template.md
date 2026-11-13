@@ -56,6 +56,7 @@
 
 ## 체크리스트
 - [ ] `npm run lint`, `npm run typecheck`를 통과했습니다
+- [ ] (functions 변경 시) `npm --prefix functions run lint`, `npm --prefix functions run typecheck`, `npm --prefix functions test`를 통과했습니다
 - [ ] 관련 테스트를 추가하거나 갱신했습니다 (해당 시)
 - [ ] 프로젝트 규칙(`CLAUDE.md`)을 확인했습니다
 - [ ] 관련 문서(`agent_docs/`, `CLAUDE.md`)를 갱신했습니다 (해당 시)
