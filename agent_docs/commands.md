@@ -52,6 +52,9 @@ npm --prefix functions run test:coverage
 
 ## GitHub Actions (Claude)
 
-- `claude-code-review.yml`: master 대상 PR에서 공식 `code-review` 플러그인이 한국어로 리뷰한다. 플러그인은 Claude가 이미 코멘트한 PR을 다시 리뷰하지 않으므로, 자동 리뷰는 PR당 사실상 한 번이다.
+- `claude-code-review.yml`: master 대상 PR이 열리거나 ready로 바뀔 때 한 번, Claude Code 내장 `/code-review`(Opus, medium)가 `REVIEW.md` 기준을 적용해 한국어로 리뷰한다. 끝나면 요약과 실행 통계(소요 시간·비용·모델)를 PR 코멘트로 남긴다.
+  - **`code-review` 플러그인을 쓰지 않는 이유**: Claude Code 2.1.279+에서 플러그인이 리뷰 에이전트를 띄우지 않고 17초 안팎에 "No issues found" 한 줄만 남긴다([anthropics/claude-code#100401](https://github.com/anthropics/claude-code/issues/100401)). 도구 허용이나 `CLAUDE_CODE_DISABLE_BACKGROUND_TASKS`로는 해결되지 않았다.
+  - **리뷰가 실제로 수행됐는지는 통계 코멘트로 판단한다**: 정상 리뷰는 수 분, $0.5 이상이 든다. 수십 초·$0.1 수준이면 형식적으로 끝난 것이다. 내장 `/code-review`는 별도 컨텍스트에서 실행되어 `num_turns`가 항상 0이므로 턴 수는 기준으로 쓸 수 없다.
+  - **워크플로 수정 PR에서는 리뷰가 실행되지 않는다**: claude-code-action은 PR의 워크플로 파일이 master와 다르면 리뷰를 건너뛰는데, job은 `success`로 표시된다. 변경은 머지한 뒤 다른 PR에서 검증한다.
 - `claude.yml`: PR 댓글·리뷰에 `@claude`를 쓰면 작업 후 PR 브랜치에 푸시한다. 댓글 이벤트 워크플로는 기본 브랜치(master)의 파일로 실행되므로, 워크플로 수정은 머지 후에야 반영된다.
 - 두 워크플로 모두 `CLAUDE_CODE_OAUTH_TOKEN` 시크릿(`claude setup-token`으로 발급)이 필요하다.

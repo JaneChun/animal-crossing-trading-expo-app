@@ -6,7 +6,7 @@ import SocialLoginButton from '@/components/ui/SocialLoginButton';
 import { showToast } from '@/components/ui/Toast';
 import { auth } from '@/config/firebase';
 import { LoginResult, useAuthStore } from '@/stores/auth';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 import { OauthType } from '@/types/user';
 import {
 	navigateToAgreeToTermsAndConditions,
@@ -19,6 +19,7 @@ const VISIBLE_OAUTH_TYPES: OauthType[] =
 	Platform.OS === 'android' ? ['naver', 'google'] : ['naver', 'apple'];
 
 const Login = () => {
+	const styles = useThemedStyles(makeStyles);
 	const kakaoLogin = useAuthStore((state) => state.kakaoLogin);
 	const naverLogin = useAuthStore((state) => state.naverLogin);
 	const appleLogin = useAuthStore((state) => state.appleLogin);
@@ -92,34 +93,35 @@ const Login = () => {
 	);
 };
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		padding: PADDING,
-		backgroundColor: Colors.bg.primary,
-	},
-	header: {
-		flex: 1,
-		width: '100%',
-		paddingTop: '20%',
-	},
-	titleContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center',
-		marginTop: 10,
-	},
-	title: {
-		fontWeight: 'bold',
-		fontSize: 24,
-	},
-	body: {
-		width: '100%',
-		alignItems: 'center',
-		gap: 12,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		container: {
+			flex: 1,
+			justifyContent: 'center',
+			alignItems: 'center',
+			padding: PADDING,
+			backgroundColor: colors.bg.primary,
+		},
+		header: {
+			flex: 1,
+			width: '100%',
+			paddingTop: '20%',
+		},
+		titleContainer: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'center',
+			marginTop: 10,
+		},
+		title: {
+			fontWeight: 'bold',
+			fontSize: 24,
+		},
+		body: {
+			width: '100%',
+			alignItems: 'center',
+			gap: 12,
+		},
+	});
 
 export default Login;

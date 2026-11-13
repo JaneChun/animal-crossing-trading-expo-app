@@ -1,13 +1,14 @@
 import { FontAwesome6 } from '@expo/vector-icons';
 import { useCallback, useMemo } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 
+import Text from '@/components/ui/Text';
 import { showLongToast, showToast } from '@/components/ui/Toast';
 import { auth } from '@/config/firebase';
 import { useInfinitePosts } from '@/hooks/post/query/useInfinitePosts';
 import { useAdConfig } from '@/stores/ads';
 import { useUserInfo } from '@/stores/auth';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 import { insertAds } from '@/utilities/insertAds';
 import {
 	navigateToLogin,
@@ -27,6 +28,7 @@ const PostList = ({
 	isAddPostButtonVisible = false,
 	containerStyle,
 }: PostListProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const userInfo = useUserInfo();
 	const { isNativeAdsEnabled, nativeAdInterval } = useAdConfig();
 	const {
@@ -84,8 +86,12 @@ const PostList = ({
 
 	const getListFooterComponent = useMemo(() => {
 		if (hasNextPage) return null;
-		return <Text style={styles.endText}>마지막 글입니다.</Text>;
-	}, [hasNextPage]);
+		return (
+			<Text variant="body2" color="tertiary" style={styles.endText}>
+				마지막 글입니다.
+			</Text>
+		);
+	}, [hasNextPage, styles]);
 
 	if (isLoading) {
 		return <PostListSkeleton />;
@@ -113,7 +119,7 @@ const PostList = ({
 					onPress={onPressAddPostButton}
 					testID="addPostButton"
 				>
-					<FontAwesome6 name="circle-plus" size={48} color={Colors.brand.primary} />
+					<FontAwesome6 name="circle-plus" size={48} color={styles.addPostIcon.color} />
 					<View style={styles.whiteBackground} />
 				</Pressable>
 			)}
@@ -121,29 +127,32 @@ const PostList = ({
 	);
 };
 
-const styles = StyleSheet.create({
-	endText: {
-		textAlign: 'center',
-		color: Colors.text.tertiary,
-		marginVertical: 16,
-	},
-	addPostButton: {
-		position: 'absolute',
-		bottom: 20,
-		right: 20,
-		width: 50,
-		height: 50,
-	},
-	whiteBackground: {
-		position: 'absolute',
-		top: 10,
-		left: 10,
-		width: 30,
-		height: 30,
-		zIndex: -1,
-		backgroundColor: Colors.bg.primary,
-		borderRadius: '50%',
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		endText: {
+			textAlign: 'center',
+			marginVertical: 16,
+		},
+		addPostIcon: {
+			color: colors.brand.primary,
+		},
+		addPostButton: {
+			position: 'absolute',
+			bottom: 20,
+			right: 20,
+			width: 50,
+			height: 50,
+		},
+		whiteBackground: {
+			position: 'absolute',
+			top: 10,
+			left: 10,
+			width: 30,
+			height: 30,
+			zIndex: -1,
+			backgroundColor: colors.text.onBrand,
+			borderRadius: '50%',
+		},
+	});
 
 export default PostList;

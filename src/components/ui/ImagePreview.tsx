@@ -1,13 +1,16 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { Colors } from '@/theme/Color';
+import { BorderRadius, Theme, useTheme, useThemedStyles } from '@/theme';
 import { ImagePreviewProps } from '@/types/components';
 import notFoundImage from '@assets/images/image-not-found.png';
 
 import ImageWithFallback from './ImageWithFallback';
 
 const ImagePreview = ({ uri, onDelete }: ImagePreviewProps) => {
+	const styles = useThemedStyles(makeStyles);
+	const { colors } = useTheme();
+
 	return (
 		<View>
 			<Pressable
@@ -18,7 +21,7 @@ const ImagePreview = ({ uri, onDelete }: ImagePreviewProps) => {
 				<Ionicons
 					name="close-circle"
 					size={20}
-					color={Colors.text.tertiary}
+					color={colors.text.tertiary}
 					style={styles.deleteButtonIcon}
 				/>
 				<View style={styles.deleteButtonBackground} />
@@ -34,31 +37,32 @@ const ImagePreview = ({ uri, onDelete }: ImagePreviewProps) => {
 
 export default ImagePreview;
 
-const styles = StyleSheet.create({
-	imageContainer: {
-		width: 100,
-		height: 100,
-		margin: 6,
-		borderRadius: 12,
-	},
-	deleteButton: {
-		position: 'absolute',
-		zIndex: 2,
-		top: 10,
-		right: 10,
-		borderRadius: 10,
-	},
-	deleteButtonIcon: {
-		zIndex: 2,
-	},
-	deleteButtonBackground: {
-		position: 'absolute',
-		zIndex: 1,
-		width: 16,
-		height: 16,
-		top: 2,
-		right: 2,
-		borderRadius: 10,
-		backgroundColor: Colors.bg.primary,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		imageContainer: {
+			width: 100,
+			height: 100,
+			margin: 6,
+			borderRadius: BorderRadius.m,
+		},
+		deleteButton: {
+			position: 'absolute',
+			zIndex: 2,
+			top: 10,
+			right: 10,
+			borderRadius: BorderRadius.full,
+		},
+		deleteButtonIcon: {
+			zIndex: 2,
+		},
+		deleteButtonBackground: {
+			position: 'absolute',
+			zIndex: 1,
+			width: 16,
+			height: 16,
+			top: 2,
+			right: 2,
+			borderRadius: BorderRadius.full,
+			backgroundColor: colors.bg.primary,
+		},
+	});

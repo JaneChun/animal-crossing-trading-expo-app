@@ -31,7 +31,7 @@ import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useReportUser } from '@/hooks/shared/useReportUser';
 import { useVillagersByIds } from '@/hooks/villager/query/useVillagersByIds';
 import { useUserInfo } from '@/stores/auth';
-import { Colors } from '@/theme/Color';
+import { Theme, useTheme, useThemedStyles } from '@/theme';
 import { PostDetailRouteProp } from '@/types/navigation';
 import { Collection, CommunityType, MarketType } from '@/types/post';
 import { HandleReplyClickParams } from '@/types/reply';
@@ -39,6 +39,8 @@ import { navigateToEditPost } from '@/utilities/navigationHelpers';
 import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
 
 const PostDetail = () => {
+	const { colors } = useTheme();
+	const styles = useThemedStyles(makeStyles);
 	const headerHeight = useHeaderHeight();
 	const insets = useSafeAreaInsets();
 	const screenKeyboardOffset = headerHeight + insets.top + insets.bottom + 10;
@@ -189,7 +191,7 @@ const PostDetail = () => {
 					headerRightComponent={
 						userInfo ? (
 							<ActionSheetButton
-								color={Colors.text.primary}
+								color={colors.text.primary}
 								size={18}
 								destructiveButtonIndex={
 									isAuthor ? (showDoneOption ? 2 : 1) : undefined
@@ -356,34 +358,35 @@ const PostDetail = () => {
 
 export default PostDetail;
 
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: Colors.bg.primary,
-	},
-	content: {
-		padding: 24,
-		paddingTop: 16,
-	},
-	typeAndMenuRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-	},
-	header: {
-		borderBottomWidth: 1,
-		borderColor: Colors.border.default,
-		paddingBottom: 16,
-		marginBottom: 16,
-	},
-	body: {
-		borderBottomWidth: 1,
-		borderColor: Colors.border.default,
-		marginBottom: 16,
-	},
-	infoContainer: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		screen: {
+			flex: 1,
+			backgroundColor: colors.bg.primary,
+		},
+		content: {
+			padding: 24,
+			paddingTop: 16,
+		},
+		typeAndMenuRow: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+		},
+		header: {
+			borderBottomWidth: 1,
+			borderColor: colors.border.default,
+			paddingBottom: 16,
+			marginBottom: 16,
+		},
+		body: {
+			borderBottomWidth: 1,
+			borderColor: colors.border.default,
+			marginBottom: 16,
+		},
+		infoContainer: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+		},
+	});

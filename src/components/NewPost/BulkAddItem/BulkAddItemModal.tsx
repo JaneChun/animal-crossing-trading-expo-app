@@ -1,11 +1,10 @@
 import { useCallback, useEffect } from 'react';
-import { Keyboard, StyleSheet, Text, View } from 'react-native';
+import { Keyboard, StyleSheet, View } from 'react-native';
 
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
+import Text from '@/components/ui/Text';
 import { showToast } from '@/components/ui/Toast';
-import { FontSizes, FontWeights, LineHeights } from '@/constants/Typography';
 import { useBulkAddSelection } from '@/hooks/item/useBulkAddSelection';
-import { Colors } from '@/theme/Color';
 import { type BulkAddItemModalProps } from '@/types/components';
 import { logBulkAddConfirm } from '@/utilities/analytics';
 
@@ -68,7 +67,7 @@ const BulkAddItemModal = ({
 			{isPending ? (
 				<View style={styles.loadingContainer}>
 					<ThreeDotsLoadingIndicator style={styles.loadingIndicator} />
-					<Text style={styles.loadingText}>
+					<Text variant="title" style={styles.loadingText}>
 						{'붙여넣은 텍스트에서\n아이템을 찾고 있어요…'}
 					</Text>
 				</View>
@@ -109,10 +108,6 @@ const styles = StyleSheet.create({
 		width: 132,
 	},
 	loadingText: {
-		fontSize: FontSizes.xl,
-		fontWeight: FontWeights.bold,
-		lineHeight: LineHeights.xl,
 		textAlign: 'center',
-		color: Colors.text.primary,
 	},
 });

@@ -1,12 +1,12 @@
-import { Alert, Linking, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Linking, Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { BorderRadius, Spacing, Theme, useThemedStyles } from '@/theme';
 import appIconImage from '@assets/images/app_icon.webp';
 
 import Button from './Button';
+import Text from './Text';
 
 interface UpdateModalProps {
 	isVisible: boolean;
@@ -23,6 +23,8 @@ export const UpdateModal = ({
 	storeUrl,
 	onClose,
 }: UpdateModalProps) => {
+	const styles = useThemedStyles(makeStyles);
+
 	const handleUpdate = async () => {
 		try {
 			if (storeUrl) {
@@ -76,12 +78,14 @@ export const UpdateModal = ({
 						/>
 
 						{/* 제목 */}
-						<Text style={styles.title}>새로운 버전이 업데이트되었어요!</Text>
+						<Text variant="heading" weight="bold" style={styles.title}>
+							새로운 버전이 업데이트되었어요!
+						</Text>
 
 						{/* 메시지 */}
 						<View style={styles.description}>
 							{messages?.map((message, index) => (
-								<Text key={index} style={styles.message}>
+								<Text key={index} variant="body2" style={styles.message}>
 									• {message}
 								</Text>
 							))}
@@ -89,8 +93,8 @@ export const UpdateModal = ({
 
 						{/* 버튼 영역 */}
 						<View style={styles.buttonContainer}>
-							<Button size="lg" color="mint" onPress={handleUpdate}>
-								<Text>업데이트 하러가기</Text>
+							<Button size="lg" variant="primary" onPress={handleUpdate}>
+								업데이트 하러가기
 							</Button>
 
 							{!isForceUpdate && (
@@ -98,7 +102,9 @@ export const UpdateModal = ({
 									style={styles.laterButton}
 									onPress={onClose}
 								>
-									<Text style={styles.laterButtonText}>다음에 할게요</Text>
+									<Text variant="body2" style={styles.laterButtonText}>
+										다음에 할게요
+									</Text>
 								</TouchableWithoutFeedback>
 							)}
 						</View>
@@ -109,62 +115,59 @@ export const UpdateModal = ({
 	);
 };
 
-const styles = StyleSheet.create({
-	overlay: {
-		flex: 1,
-		backgroundColor: Colors.overlay.dim,
-		justifyContent: 'center',
-		alignItems: 'center',
-		padding: 20,
-	},
-	modalContainer: {
-		backgroundColor: Colors.bg.primary,
-		borderRadius: 20,
-		padding: 24,
-		width: '90%',
-		maxWidth: 400,
-		maxHeight: '80%',
-		// 그림자 효과
-		shadowColor: Colors.bg.inverse,
-		shadowOffset: {
-			width: 0,
-			height: 10,
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		overlay: {
+			flex: 1,
+			backgroundColor: colors.overlay.dim,
+			justifyContent: 'center',
+			alignItems: 'center',
+			padding: Spacing.xl,
 		},
-		shadowOpacity: 0.25,
-		shadowRadius: 10,
-		elevation: 10,
-	},
-	content: {
-		alignItems: 'center',
-	},
-	image: {
-		width: 100,
-		height: 100,
-		marginBottom: 12,
-	},
-	title: {
-		fontSize: FontSizes.lg,
-		fontWeight: FontWeights.bold,
-		color: Colors.text.primary,
-		textAlign: 'center',
-		marginBottom: 18,
-	},
-	description: {
-		marginBottom: 32,
-	},
-	message: {
-		fontSize: FontSizes.sm,
-		color: Colors.text.secondary,
-		lineHeight: 20,
-	},
-	buttonContainer: {
-		width: '100%',
-	},
-	laterButton: {
-		marginTop: 12,
-	},
-	laterButtonText: {
-		color: Colors.text.tertiary,
-		textAlign: 'center',
-	},
-});
+		modalContainer: {
+			backgroundColor: colors.bg.elevated,
+			borderRadius: BorderRadius.xl,
+			padding: Spacing.xxl,
+			width: '90%',
+			maxWidth: 400,
+			maxHeight: '80%',
+			// 그림자 효과
+			shadowColor: colors.bg.inverse,
+			shadowOffset: {
+				width: 0,
+				height: 10,
+			},
+			shadowOpacity: 0.25,
+			shadowRadius: 10,
+			elevation: 10,
+		},
+		content: {
+			alignItems: 'center',
+		},
+		image: {
+			width: 100,
+			height: 100,
+			marginBottom: Spacing.m,
+		},
+		title: {
+			color: colors.text.primary,
+			textAlign: 'center',
+			marginBottom: 18,
+		},
+		description: {
+			marginBottom: Spacing.xxxl,
+		},
+		message: {
+			color: colors.text.secondary,
+		},
+		buttonContainer: {
+			width: '100%',
+		},
+		laterButton: {
+			marginTop: Spacing.m,
+		},
+		laterButtonText: {
+			color: colors.text.tertiary,
+			textAlign: 'center',
+		},
+	});

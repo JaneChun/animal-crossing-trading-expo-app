@@ -2,11 +2,12 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Pressable, StyleSheet, TextInput, View } from 'react-native';
 
-import { FontSizes } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { FontSizes , Theme, useTheme, useThemedStyles } from '@/theme';
 import { ChatInputProps } from '@/types/components';
 
 const ChatInput = ({ disabled, onSubmit, onImagePress }: ChatInputProps) => {
+	const { colors } = useTheme();
+	const styles = useThemedStyles(makeStyles);
 	const [chatInput, setChatInput] = useState('');
 
 	const handleSubmit = () => {
@@ -22,13 +23,13 @@ const ChatInput = ({ disabled, onSubmit, onImagePress }: ChatInputProps) => {
 			<Pressable
 				style={[
 					styles.imageButtonContainer,
-					{ backgroundColor: disabled ? Colors.icon.default : Colors.brand.primary },
+					{ backgroundColor: disabled ? colors.icon.default : colors.brand.primary },
 				]}
 				onPress={onImagePress}
 				disabled={disabled}
 				testID="chatImageButton"
 			>
-				<FontAwesome6 name="paperclip" size={18} color={Colors.text.inverse} />
+				<FontAwesome6 name="paperclip" size={18} color={colors.text.onBrand} />
 			</Pressable>
 
 			{/* 텍스트 인풋 */}
@@ -37,7 +38,7 @@ const ChatInput = ({ disabled, onSubmit, onImagePress }: ChatInputProps) => {
 				value={chatInput}
 				onChangeText={setChatInput}
 				placeholder={disabled ? '메세지를 보낼 수 없습니다.' : '메세지 보내기'}
-				placeholderTextColor={Colors.text.tertiary}
+				placeholderTextColor={colors.text.tertiary}
 				multiline
 				scrollEnabled
 				enterKeyHint="send"
@@ -55,7 +56,7 @@ const ChatInput = ({ disabled, onSubmit, onImagePress }: ChatInputProps) => {
 				<FontAwesome6
 					name="circle-arrow-up"
 					size={28}
-					color={disabled ? Colors.icon.default : Colors.brand.primary}
+					color={disabled ? colors.icon.default : colors.brand.primary}
 				/>
 			</Pressable>
 		</View>
@@ -64,36 +65,37 @@ const ChatInput = ({ disabled, onSubmit, onImagePress }: ChatInputProps) => {
 
 export default ChatInput;
 
-const styles = StyleSheet.create({
-	inputContainer: {
-		flexDirection: 'row',
-		backgroundColor: Colors.bg.primary,
-		alignItems: 'center',
-		borderColor: Colors.border.default,
-	},
-	inputText: {
-		flex: 1,
-		borderWidth: 1,
-		borderColor: Colors.border.default,
-		backgroundColor: Colors.bg.secondary,
-		borderRadius: 20,
-		paddingVertical: 10,
-		paddingHorizontal: 16,
-		margin: 8,
-		fontSize: FontSizes.md,
-		color: Colors.text.tertiary,
-		minHeight: 42,
-		maxHeight: 90,
-	},
-	imageButtonContainer: {
-		marginLeft: 16,
-		width: 32,
-		height: 32,
-		borderRadius: 16,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	iconContainer: {
-		marginRight: 16,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		inputContainer: {
+			flexDirection: 'row',
+			backgroundColor: colors.bg.primary,
+			alignItems: 'center',
+			borderColor: colors.border.default,
+		},
+		inputText: {
+			flex: 1,
+			borderWidth: 1,
+			borderColor: colors.border.default,
+			backgroundColor: colors.bg.secondary,
+			borderRadius: 20,
+			paddingVertical: 10,
+			paddingHorizontal: 16,
+			margin: 8,
+			fontSize: FontSizes.md,
+			color: colors.text.tertiary,
+			minHeight: 42,
+			maxHeight: 90,
+		},
+		imageButtonContainer: {
+			marginLeft: 16,
+			width: 32,
+			height: 32,
+			borderRadius: 16,
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+		iconContainer: {
+			marginRight: 16,
+		},
+	});

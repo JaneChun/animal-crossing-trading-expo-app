@@ -6,8 +6,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import DropdownInput from '@/components/ui/inputs/DropdownInput';
 import { PADDING } from '@/components/ui/layout/Layout';
 import { COMMUNITY_TYPES } from '@/constants/post';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { FontSizes, FontWeights , Theme, useThemedStyles } from '@/theme';
 import { PostFormProps } from '@/types/components';
 import { MarketType } from '@/types/post';
 
@@ -28,6 +27,7 @@ const PostForm = ({
 	selectedVillagers,
 	onPasteItemText,
 }: PostFormProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const { control, watch, setValue } = useFormContext();
 	const currentType = watch('type');
 
@@ -169,25 +169,23 @@ const PostForm = ({
 
 export default PostForm;
 
-const styles = StyleSheet.create({
-	inputContainer: {
-		borderColor: Colors.border.default,
-		borderBottomWidth: 1,
-		marginBottom: 16,
-	},
-	label: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-		color: Colors.text.primary,
-		marginBottom: 12,
-	},
-	input: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.regular,
-	},
-	titleInput: {
-		fontSize: FontSizes.lg,
-		fontWeight: FontWeights.semibold,
-		paddingVertical: 12,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		inputContainer: {
+			borderColor: colors.border.default,
+			borderBottomWidth: 1,
+			marginBottom: 16,
+		},
+		label: {
+			marginBottom: 12,
+		},
+		input: {
+			fontSize: FontSizes.md,
+			fontWeight: FontWeights.regular,
+		},
+		titleInput: {
+			fontSize: FontSizes.lg,
+			fontWeight: FontWeights.semibold,
+			paddingVertical: 12,
+		},
+	});

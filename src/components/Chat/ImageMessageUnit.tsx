@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { IMessage } from 'react-native-gifted-chat';
 
 import ImageViewerModal from '@/components/ui/ImageViewerModal';
-import { FontSizes, FontWeights } from '@/constants/Typography';
+import Text from '@/components/ui/Text';
 import { useUserInfo } from '@/stores/auth';
-import { Colors } from '@/theme/Color';
 
 import ImageWithFallback from '../ui/ImageWithFallback';
 
@@ -26,8 +25,14 @@ const ImageMessageUnit = ({ message }: { message: IMessage }) => {
 			>
 				{isMine && (
 					<View style={styles.infoContainer}>
-						{!message.received && <Text style={styles.infoText}>안읽음</Text>}
-						<Text style={styles.infoText}>{formattedDate}</Text>
+						{!message.received && (
+							<Text variant="micro" weight="light" color="tertiary">
+								안읽음
+							</Text>
+						)}
+						<Text variant="micro" weight="light" color="tertiary">
+							{formattedDate}
+						</Text>
 					</View>
 				)}
 
@@ -39,7 +44,11 @@ const ImageMessageUnit = ({ message }: { message: IMessage }) => {
 					<ImageWithFallback uri={message.image} style={styles.image} />
 				</Pressable>
 
-				{!isMine && <Text style={styles.infoText}>{formattedDate}</Text>}
+				{!isMine && (
+					<Text variant="micro" weight="light" color="tertiary">
+						{formattedDate}
+					</Text>
+				)}
 			</View>
 
 			{isViewerVisible && (
@@ -75,10 +84,5 @@ const styles = StyleSheet.create({
 	},
 	infoContainer: {
 		alignItems: 'flex-end',
-	},
-	infoText: {
-		fontSize: FontSizes.xxs,
-		color: Colors.text.tertiary,
-		fontWeight: FontWeights.light,
 	},
 });

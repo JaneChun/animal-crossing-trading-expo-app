@@ -3,12 +3,8 @@ name: Claude Code Review
 on:
     pull_request:
         branches: [master]
-        types: [opened, synchronize, ready_for_review, reopened]
-
-# 같은 PR에 새 커밋이 푸시되면 진행 중인 리뷰를 취소
-concurrency:
-    group: claude-review-${{ github.ref }}
-    cancel-in-progress: true
+        # PR당 한 번만 리뷰: 생성 시, 또는 draft로 생성한 PR이 ready로 바뀔 때. 이후 푸시는 다시 리뷰하지 않음
+        types: [opened, ready_for_review]
 
 jobs:
     claude-review:
@@ -24,12 +20,35 @@ jobs:
               with:
                   fetch-depth: 1
 
+            # code-review 플러그인 대신 Claude Code 내장 /code-review를 사용
+            # 플러그인은 Claude Code 2.1.279+에서 리뷰 에이전트를 띄우지 않고 "No issues found"만 남김
+            # https://github.com/anthropics/claude-code/issues/100401
             - name: Run Claude Code Review
+              id: review
               uses: anthropics/claude-code-action@v1
               with:
                   claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-                  plugin_marketplaces: https://github.com/anthropics/claude-plugins-official.git
-                  plugins: code-review@claude-plugins-official
-                  prompt: /code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }} --comment
+                  # 하위 에이전트가 백그라운드로 뜨면 액션이 첫 result에서 종료해 리뷰가 누락됨
+                  # https://github.com/anthropics/claude-code-action/issues/1499
+                  settings: '{"env": {"CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"}}'
+                  # 한 줄 유지: 플래그 뒤의 텍스트는 모두 리뷰 대상으로 해석됨
+                  prompt: /code-review medium --comment ${{ github.event.pull_request.number }}
                   claude_args: |
-                      --append-system-prompt "모든 리뷰 코멘트(인라인 코멘트와 요약 코멘트)는 한국어로 작성한다. 코드, 파일 경로, 식별자는 원문 그대로 둔다."
+                      --model claude-opus-5-5
+                      --allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr diff:*),Bash(gh pr view:*)"
+                      --append-system-prompt "모든 리뷰 코멘트(인라인 코멘트와 요약 코멘트)는 한국어로 작성한다. 코드, 파일 경로, 식별자는 원문 그대로 둔다. 저장소 루트의 REVIEW.md를 먼저 읽고, 거기 적힌 프로젝트 리뷰 기준도 함께 적용한다."
+
+            # 리뷰 요약과 실행 통계(소요 시간, 비용, 모델)를 PR에 남겨 리뷰가 실제로 수행됐는지 확인
+            - name: Post review summary
+              if: always() && steps.review.outputs.execution_file != ''
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+                  EXEC_FILE: ${{ steps.review.outputs.execution_file }}
+                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+              run: |
+                  result=$(jq -r '[.[] | select(.type == "result")] | last // {}' "$EXEC_FILE")
+                  summary=$(jq -r '.result // "리뷰가 요약 없이 종료되었습니다."' <<<"$result" | head -c 60000)
+                  stats=$(jq -r '"\(((.duration_ms // 0) / 60000 * 10 | round) / 10)분 · $\(.total_cost_usd // "?") · 모델: \((.modelUsage // {}) | keys | join(", "))"' <<<"$result")
+                  printf '## 🤖 Claude 코드 리뷰\n\n%s\n\n<sub>%s · [실행 로그](%s)</sub>\n' "$summary" "$stats" "$RUN_URL" > "$RUNNER_TEMP/summary.md"
+                  gh pr comment "$PR_NUMBER" -R "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/summary.md"

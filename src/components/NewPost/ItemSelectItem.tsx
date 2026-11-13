@@ -1,16 +1,18 @@
 import { Feather } from '@expo/vector-icons';
 import { memo } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import HighlightMatchText from '@/components/ui/HighlightMatchText';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
-import { Colors } from '@/theme/Color';
+import Text from '@/components/ui/Text';
+import { Theme, useThemedStyles } from '@/theme';
 import { ItemSelectItemProps } from '@/types/components';
 import { getCatalogItemDisplayName, hasCatalogItemVariants } from '@/utilities/catalogItemToItem';
 
 export const ITEM_HEIGHT = 53;
 
 const ItemSelectItem = ({ item, searchInput, onSelect, index }: ItemSelectItemProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const hasVariants = hasCatalogItemVariants(item);
 	const displayName = getCatalogItemDisplayName(item);
 
@@ -23,7 +25,12 @@ const ItemSelectItem = ({ item, searchInput, onSelect, index }: ItemSelectItemPr
 			>
 				<ImageWithFallback uri={item?.imageUrl} style={styles.itemImage} priority="high" />
 				<View style={styles.itemTextContainer}>
-					<Text numberOfLines={1} ellipsizeMode="tail" style={styles.itemNameText}>
+					<Text
+						variant="body1"
+						numberOfLines={1}
+						ellipsizeMode="tail"
+						style={styles.itemNameText}
+					>
 						{HighlightMatchText({
 							text: displayName,
 							keyword: searchInput,
@@ -33,7 +40,7 @@ const ItemSelectItem = ({ item, searchInput, onSelect, index }: ItemSelectItemPr
 					</Text>
 				</View>
 				{hasVariants && (
-					<Feather name="chevron-right" size={20} color={Colors.text.tertiary} />
+					<Feather name="chevron-right" size={20} color={styles.chevron.color} />
 				)}
 			</TouchableOpacity>
 		</View>
@@ -46,34 +53,37 @@ export default memo(ItemSelectItem, (prevProps, nextProps) => {
 	);
 });
 
-const styles = StyleSheet.create({
-	container: {
-		paddingHorizontal: 24,
-	},
-	item: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		height: ITEM_HEIGHT,
-		borderBottomWidth: 1,
-		borderBottomColor: Colors.border.default,
-	},
-	itemImage: {
-		width: 40,
-		height: 40,
-		borderRadius: 12,
-		marginRight: 12,
-	},
-	itemTextContainer: {
-		flexDirection: 'row',
-		flex: 1,
-		alignItems: 'center',
-	},
-	itemNameText: {
-		fontSize: 16,
-		flex: 1,
-	},
-	highlight: {
-		fontWeight: 800,
-		color: Colors.brand.primary,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		container: {
+			paddingHorizontal: 24,
+		},
+		item: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			height: ITEM_HEIGHT,
+			borderBottomWidth: 1,
+			borderBottomColor: colors.border.default,
+		},
+		itemImage: {
+			width: 40,
+			height: 40,
+			borderRadius: 12,
+			marginRight: 12,
+		},
+		itemTextContainer: {
+			flexDirection: 'row',
+			flex: 1,
+			alignItems: 'center',
+		},
+		itemNameText: {
+			flex: 1,
+		},
+		chevron: {
+			color: colors.text.tertiary,
+		},
+		highlight: {
+			fontWeight: 800,
+			color: colors.brand.primary,
+		},
+	});

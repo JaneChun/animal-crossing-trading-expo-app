@@ -1,13 +1,14 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { FontSizes } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import Text from '@/components/ui/Text';
 import { BodyProps } from '@/types/components';
 
 const Body = ({ body, containerStyle }: BodyProps) => {
 	return (
 		<View style={containerStyle}>
-			<Text style={styles.body}>{body}</Text>
+			<Text variant="body1" color="secondary" style={styles.body}>
+				{body}
+			</Text>
 		</View>
 	);
 };
@@ -16,8 +17,6 @@ export default Body;
 
 const styles = StyleSheet.create({
 	body: {
-		fontSize: FontSizes.md,
-		color: Colors.text.secondary,
 		lineHeight: 26,
 	},
 });

@@ -4,13 +4,14 @@ import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 import ImageViewerModal from '@/components/ui/ImageViewerModal';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
-import { Colors } from '@/theme/Color';
+import { useTheme } from '@/theme';
 import { ImageCarouselProps } from '@/types/components';
 import notFoundImage from '@assets/images/image-not-found.png';
 
 const { width } = Dimensions.get('window');
 
 const ImageCarousel = ({ images, containerStyle }: ImageCarouselProps) => {
+	const { colors } = useTheme();
 	const [activeIndex, setActiveIndex] = useState(0);
 	const [isViewerOpen, setIsViewerOpen] = useState(false);
 
@@ -48,7 +49,7 @@ const ImageCarousel = ({ images, containerStyle }: ImageCarouselProps) => {
 					dotStyle={{
 						width: 8,
 						height: 8,
-						backgroundColor: Colors.brand.primary,
+						backgroundColor: colors.brand.primary,
 					}}
 					inactiveDotOpacity={0.4}
 					inactiveDotScale={0.8}
