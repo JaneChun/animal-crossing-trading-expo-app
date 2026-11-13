@@ -24,10 +24,10 @@ const ToastView = ({ type, text }: { type: ToastType; text?: string }) => {
 		info: colors.status.info,
 	};
 	const icons: Record<ToastType, ReactNode> = {
-		success: <FontAwesome6 name="check-circle" size={20} color={colors.text.inverse} />,
-		error: <FontAwesome6 name="xmark-circle" size={20} color={colors.text.inverse} />,
-		warn: <FontAwesome name="warning" size={20} color={colors.text.inverse} />,
-		info: <FontAwesome6 name="circle-info" size={20} color={colors.text.inverse} />,
+		success: <FontAwesome6 name="check-circle" size={20} color={colors.text.onBrand} />,
+		error: <FontAwesome6 name="xmark-circle" size={20} color={colors.text.onBrand} />,
+		warn: <FontAwesome name="warning" size={20} color={colors.text.onBrand} />,
+		info: <FontAwesome6 name="circle-info" size={20} color={colors.text.onBrand} />,
 	};
 
 	return (
@@ -95,7 +95,7 @@ const makeStyles = ({ colors }: Theme) =>
 			marginLeft: Spacing.s,
 		},
 		text: {
-			color: colors.text.inverse,
+			color: colors.text.onBrand,
 			flexWrap: 'wrap',
 			textAlign: 'center',
 		},
