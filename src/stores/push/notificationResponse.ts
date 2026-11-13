@@ -45,10 +45,10 @@ export const addNotificationResponseHandler = () => {
 		ExpoNotifications.getLastNotificationResponse()?.notification.request.identifier;
 
 	return ExpoNotifications.addNotificationResponseReceivedListener(async (response) => {
-		notificationOpenedApp.current = true;
 		// iOS가 다시 전달한 콜드 스타트 응답은 getLaunchNotificationURL·logLaunchAppOpen이 처리했으므로 건너뛴다
 		if (response.notification.request.identifier === launchResponseId) return;
 
+		notificationOpenedApp.current = true;
 		logAppOpen('push_notification');
 
 		const data = response.notification.request.content.data;
