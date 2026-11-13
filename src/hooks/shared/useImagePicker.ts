@@ -5,6 +5,7 @@ import {
 	useCameraPermissions,
 	useMediaLibraryPermissions,
 } from 'expo-image-picker';
+import { Platform } from 'react-native';
 
 import { showToast } from '@/components/ui/Toast';
 import { UseImagePickerOptions } from '@/types/image';
@@ -38,8 +39,11 @@ export const useImagePicker = (options: UseImagePickerOptions = { multiple: fals
 	};
 
 	const pickImage = async (selectionLimit: number) => {
-		const hasPermission = await verifyPhotosPermissions();
-		if (!hasPermission) return null;
+		// Android는 시스템 사진 선택기가 권한 없이 동작하고, 사진 권한은 매니페스트에서 차단되어 있음
+		if (Platform.OS === 'ios') {
+			const hasPermission = await verifyPhotosPermissions();
+			if (!hasPermission) return null;
+		}
 
 		const limit =
 			selectionLimit != null // selectionLimit이 있으면 selectionLimit

@@ -104,5 +104,7 @@ export const Palette = {
 		naver: '#03C75A',
 		kakao: '#FEE500',
 		kakaoText: '#3B1E1E',
+		googleText: '#1F1F1F',
+		googleBorder: '#747775',
 	},
 } as const;

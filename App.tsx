@@ -25,7 +25,7 @@ import { useBlockSubscriptionInitializer } from '@/stores/block';
 import { useChatSubscriptionInitializer } from '@/stores/chat';
 import { useNotificationSubscriptionInitializer } from '@/stores/notification';
 import { useOnboardingInitializer } from '@/stores/onboarding/initializer';
-import { usePushNotificationInitializer } from '@/stores/push';
+import { getLaunchNotificationURL, usePushNotificationInitializer } from '@/stores/push';
 import { getNavigationTheme } from '@/theme/navigationTheme';
 import { Theme, ThemeProvider, useTheme } from '@/theme/ThemeProvider';
 import { useThemedStyles } from '@/theme/useThemedStyles';
@@ -39,6 +39,11 @@ if (__DEV__) {
 const prefix = Linking.createURL('/');
 const linking: LinkingOptions<RootStackParamList> = {
 	prefixes: [prefix, 'animal-crossing-trading-app://'],
+	// 앱이 꺼진 상태에서 푸시 알림을 탭해 열리면 알림의 url을 첫 화면 주소로 쓴다
+	async getInitialURL() {
+		const initialUrl = await Linking.getInitialURL();
+		return initialUrl || getLaunchNotificationURL();
+	},
 	config: {
 		screens: {
 			PostDetail: {

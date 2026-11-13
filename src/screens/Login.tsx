@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { PADDING } from '@/components/ui/layout/Layout';
@@ -14,11 +14,16 @@ import {
 } from '@/utilities/navigationHelpers';
 import landingImage from '@assets/images/landing.webp';
 
+// 플랫폼별로 노출할 소셜 로그인 버튼 — Android Apple 로그인, iOS Google 로그인을 추가할 때 이 목록만 수정한다
+const VISIBLE_OAUTH_TYPES: OauthType[] =
+	Platform.OS === 'android' ? ['naver', 'google'] : ['naver', 'apple'];
+
 const Login = () => {
 	const styles = useThemedStyles(makeStyles);
 	const kakaoLogin = useAuthStore((state) => state.kakaoLogin);
 	const naverLogin = useAuthStore((state) => state.naverLogin);
 	const appleLogin = useAuthStore((state) => state.appleLogin);
+	const googleLogin = useAuthStore((state) => state.googleLogin);
 
 	const handleLogin = async (oauthType: OauthType) => {
 		let loginResult: LoginResult = {
@@ -30,6 +35,7 @@ const Login = () => {
 		if (oauthType === 'kakao') loginResult = await kakaoLogin();
 		else if (oauthType === 'naver') loginResult = await naverLogin();
 		else if (oauthType === 'apple') loginResult = await appleLogin();
+		else if (oauthType === 'google') loginResult = await googleLogin();
 
 		if (loginResult.isSuccess) {
 			// 신규 유저
@@ -74,16 +80,14 @@ const Login = () => {
 					style={{ width: '95%' }}
 					// disabled
 				/> */}
-				<SocialLoginButton
-					oauthType="naver"
-					onPress={() => handleLogin('naver')}
-					style={{ width: '95%' }}
-				/>
-				<SocialLoginButton
-					oauthType="apple"
-					onPress={() => handleLogin('apple')}
-					style={{ width: '95%', borderWidth: 1 }}
-				/>
+				{VISIBLE_OAUTH_TYPES.map((oauthType) => (
+					<SocialLoginButton
+						key={oauthType}
+						oauthType={oauthType}
+						onPress={() => handleLogin(oauthType)}
+						style={{ width: '95%' }}
+					/>
+				))}
 			</View>
 		</View>
 	);

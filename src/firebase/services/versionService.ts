@@ -12,7 +12,8 @@ export interface VersionCheckResult {
 }
 
 interface AppVersionConfig {
-	minimum_version: string;
+	minimum_version: string; // iOS
+	minimum_version_android?: string;
 	force_update: boolean;
 	update_message: string[];
 	store_urls: {
@@ -40,6 +41,10 @@ const getCurrentVersion = (): string => {
 	return Application.nativeApplicationVersion || '1.0.0';
 };
 
+const getMinimumVersion = (config: AppVersionConfig): string | undefined => {
+	return Platform.OS === 'ios' ? config.minimum_version : config.minimum_version_android;
+};
+
 const getStoreUrl = (config: AppVersionConfig): string => {
 	return Platform.OS === 'ios' ? config.store_urls?.ios : config.store_urls?.android;
 };
@@ -61,11 +66,14 @@ export const checkAppVersion = async (): Promise<VersionCheckResult> => {
 
 		const config = configSnap.data() as AppVersionConfig;
 		const currentVersion = getCurrentVersion();
+		const minimumVersion = getMinimumVersion(config);
 
 		console.log('📱 Current version:', currentVersion);
-		console.log('🔧 Minimum version:', config.minimum_version);
+		console.log('🔧 Minimum version:', minimumVersion);
 
-		const isUpdateRequired = compareVersions(currentVersion, config.minimum_version) < 0;
+		// 해당 플랫폼의 최소 버전 필드가 없으면 업데이트가 필요 없는 것으로 처리
+		const isUpdateRequired =
+			!!minimumVersion && compareVersions(currentVersion, minimumVersion) < 0;
 
 		const result = {
 			isUpdateRequired,

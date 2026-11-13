@@ -103,6 +103,9 @@ export const lightColors = {
 		kakaoText: Palette.social.kakaoText,
 		apple: Palette.gray[0],
 		appleText: Palette.gray[1000],
+		google: Palette.gray[0],
+		googleText: Palette.social.googleText,
+		googleBorder: Palette.social.googleBorder,
 	},
 } as const;
 
@@ -189,5 +192,8 @@ export const darkColors: ColorScheme = {
 		kakaoText: Palette.social.kakaoText,
 		apple: Palette.gray[0],
 		appleText: Palette.gray[1000],
+		google: Palette.gray[0],
+		googleText: Palette.social.googleText,
+		googleBorder: Palette.social.googleBorder,
 	},
 };

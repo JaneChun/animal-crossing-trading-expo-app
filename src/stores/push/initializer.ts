@@ -1,10 +1,9 @@
 import * as ExpoNotifications from 'expo-notifications';
 import { useEffect } from 'react';
-import { Alert, Linking } from 'react-native';
 
-import { logAppOpen, notificationOpenedApp } from '@/utilities/analytics';
 import { registerForPushNotificationsAsync } from '@/utilities/registerForPushNotificationsAsync';
 
+import { addNotificationResponseHandler } from './notificationResponse';
 import { usePushNotificationStore } from './store';
 
 export const usePushNotificationInitializer = () => {
@@ -38,28 +37,8 @@ export const usePushNotificationInitializer = () => {
 			},
 		);
 
-		// 사용자가 알림을 탭했을 때 처리하는 리스너
-		const responseListener = ExpoNotifications.addNotificationResponseReceivedListener(
-			async (response) => {
-				notificationOpenedApp.current = true;
-				logAppOpen('push_notification');
-
-				const data = response.notification.request.content.data;
-				const url = data?.url;
-				if (!url) return;
-
-				// Deep Link URL을 통해 앱 내 특정 화면으로 이동
-				try {
-					if (typeof url === 'string' && url.trim() !== '') {
-						await Linking.openURL(url);
-					} else {
-						Alert.alert('유효하지 않은 URL', '유효하지 않은 URL입니다.');
-					}
-				} catch {
-					Alert.alert('링크 열기 실패', '링크를 여는 도중 문제가 발생했습니다.');
-				}
-			},
-		);
+		// 사용자가 알림을 탭했을 때 처리하는 리스너 (흐름은 notificationResponse.ts 참조)
+		const responseListener = addNotificationResponseHandler();
 
 		return () => {
 			notificationListener.remove();

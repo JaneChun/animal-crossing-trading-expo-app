@@ -1,21 +1,16 @@
-import * as ExpoNotifications from 'expo-notifications';
 import { useEffect, useRef } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
 
-import { logAppOpen, logSessionEnd, notificationOpenedApp } from '@/utilities/analytics';
+import { logLaunchAppOpen, notificationOpenedApp } from '@/stores/push';
+import { logAppOpen, logSessionEnd } from '@/utilities/analytics';
 
 export const useAppLifecycle = () => {
 	const appState = useRef<AppStateStatus>(AppState.currentState);
 	const sessionStartRef = useRef<number>(Date.now());
 
-	// cold start 로깅 — 푸시 알림 탭으로 열린 경우 중복 로깅 방지
+	// 앱 실행 시 1회 app_open 기록 (흐름은 notificationResponse.ts 참조)
 	useEffect(() => {
-		ExpoNotifications.getLastNotificationResponseAsync().then((response) => {
-			if (!response) {
-				logAppOpen('cold_start');
-			}
-			// push_notification은 addNotificationResponseReceivedListener에서 처리
-		});
+		logLaunchAppOpen();
 	}, []);
 
 	useEffect(() => {

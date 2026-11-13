@@ -2,6 +2,7 @@ import { Alert, StyleSheet, View } from 'react-native';
 
 import SettingListItem from '@/components/Profile/SettingListItem';
 import Apple from '@/components/ui/Icons/Apple';
+import Google from '@/components/ui/Icons/Google';
 import Kakao from '@/components/ui/Icons/Kakao';
 import Naver from '@/components/ui/Icons/Naver';
 import { PADDING } from '@/components/ui/layout/Layout';
@@ -23,6 +24,7 @@ const Account = () => {
 	const kakaoLogout = useAuthStore((state) => state.kakaoLogout);
 	const naverLogout = useAuthStore((state) => state.naverLogout);
 	const appleLogout = useAuthStore((state) => state.appleLogout);
+	const googleLogout = useAuthStore((state) => state.googleLogout);
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 
 	const handleLogout = () => {
@@ -40,6 +42,7 @@ const Account = () => {
 		if (userInfo.oauthType === 'kakao') isSuccess = await kakaoLogout();
 		else if (userInfo.oauthType === 'naver') isSuccess = await naverLogout();
 		else if (userInfo.oauthType === 'apple') isSuccess = await appleLogout();
+		else if (userInfo.oauthType === 'google') isSuccess = await googleLogout();
 
 		if (isSuccess) {
 			logLogout();
@@ -57,7 +60,11 @@ const Account = () => {
 	const handleNavigateToDeleteAccount = () => {
 		if (!userInfo) return;
 
-		if (userInfo.oauthType === 'kakao' || userInfo.oauthType === 'naver') {
+		if (
+			userInfo.oauthType === 'kakao' ||
+			userInfo.oauthType === 'naver' ||
+			userInfo.oauthType === 'google'
+		) {
 			navigateToSocialAccountCheck();
 		} else if (userInfo.oauthType === 'apple') {
 			navigateToDeleteAccount();
@@ -77,6 +84,8 @@ const Account = () => {
 								<Naver style={styles.icon} />
 							) : userInfo?.oauthType === 'kakao' ? (
 								<Kakao style={styles.icon} />
+							) : userInfo?.oauthType === 'google' ? (
+								<Google style={styles.icon} />
 							) : (
 								<Apple style={styles.appleIcon} />
 							)}

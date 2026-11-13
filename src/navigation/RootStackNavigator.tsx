@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Platform } from 'react-native';
 
 import { UpdateModal } from '@/components/ui/UpdateModal';
 import { useVersionCheck } from '@/hooks/shared/useVersionCheck';
@@ -47,7 +48,9 @@ const RootStackNavigator = () => {
 	const isAppInitializing = isOnboardingLoading || isVersionCheckLoading;
 
 	const commonOptions = {
-		headerShown: isAuthLoading ? false : true, // 로그인/로그아웃/탈퇴 시 로딩화면 표시할 때 상단 헤더 숨김 처리
+		// 로그인/로그아웃/탈퇴 시 로딩화면 표시할 때 상단 헤더 숨김 처리 (iOS만)
+		// Android는 숨긴 헤더를 다시 표시하는 순간 pop으로 화면이 닫히면 react-native-screens가 크래시해서 숨기지 않는다
+		headerShown: Platform.OS === 'android' || !isAuthLoading,
 		title: '',
 		headerTintColor: colors.text.primary,
 		headerBackButtonDisplayMode: 'minimal' as const,

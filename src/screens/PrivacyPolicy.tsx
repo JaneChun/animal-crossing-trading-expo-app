@@ -76,7 +76,7 @@ const PrivacyPolicy = () => {
 					경우에는 예외로 합니다.
 				</Text>
 				<Text variant="body2" color="secondary" style={styles.paragraph}>
-					• 카카오주식회사, 네이버주식회사, Apple Inc.(소셜 로그인 제공)
+					• 카카오주식회사, 네이버주식회사, Apple Inc., Google LLC(소셜 로그인 제공)
 				</Text>
 				<Text variant="body2" color="secondary" style={styles.listItem}>
 					• 제공항목: 이메일

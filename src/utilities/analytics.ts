@@ -3,7 +3,7 @@ import analytics from '@react-native-firebase/analytics';
 import { Collection, CommunityType, MarketType } from '@/types/post';
 import { ReportCategory } from '@/types/report';
 
-type LoginMethod = 'naver' | 'apple';
+type LoginMethod = 'naver' | 'apple' | 'google';
 type MessageType = 'text' | 'image';
 type CommentType = 'comment' | 'reply';
 export type InteractionSource = 'post' | 'comment' | 'chat_room' | 'profile';
@@ -92,9 +92,6 @@ export const logUserBlock = (source: InteractionSource) => log('user_block', { s
 
 export const logUserReport = (source: InteractionSource, category: ReportCategory) =>
 	log('user_report', { source, category });
-
-// push_notification으로 앱이 열린 경우 background_resume 중복 로깅 방지
-export const notificationOpenedApp = { current: false };
 
 // R0 — 앱 재방문 빈도
 export const logAppOpen = (source: 'cold_start' | 'push_notification' | 'background_resume') =>

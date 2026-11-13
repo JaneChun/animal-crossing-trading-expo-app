@@ -1,5 +1,6 @@
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
 
 import { showToast } from '@/components/ui/Toast';
 
@@ -11,6 +12,14 @@ export async function registerForPushNotificationsAsync() {
 		);
 
 		return null;
+	}
+
+	// Android 13 이상은 알림 채널이 하나도 없으면 권한 팝업이 뜨지 않으므로 권한 확인 전에 생성
+	if (Platform.OS === 'android') {
+		await Notifications.setNotificationChannelAsync('default', {
+			name: '알림',
+			importance: Notifications.AndroidImportance.MAX,
+		});
 	}
 
 	const { status: existingStatus } = await Notifications.getPermissionsAsync();

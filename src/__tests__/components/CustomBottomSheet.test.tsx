@@ -1,5 +1,5 @@
-import React, { createElement } from 'react';
-import { act, create, ReactTestRenderer } from 'react-test-renderer';
+import React, { act, createElement } from 'react';
+import { create, ReactTestRenderer } from 'react-test-renderer';
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean; React: typeof React }).React =
 	React;
@@ -27,7 +27,11 @@ jest.mock('@gorhom/bottom-sheet', () => {
 	};
 });
 
+const mockRemoveBackHandler = jest.fn();
+const mockAddBackHandler = jest.fn(() => ({ remove: mockRemoveBackHandler }));
+
 jest.mock('react-native', () => ({
+	BackHandler: { addEventListener: mockAddBackHandler },
 	StyleSheet: {
 		absoluteFillObject: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 },
 		create: (styles: object) => styles,
@@ -75,6 +79,11 @@ describe('CustomBottomSheet', () => {
 		jest.restoreAllMocks();
 	});
 
+	beforeEach(() => {
+		mockAddBackHandler.mockClear();
+		mockRemoveBackHandler.mockClear();
+	});
+
 	it('내부 콘텐츠를 바텀시트의 애니메이션 경계 안에 고정한다', () => {
 		let renderer: ReactTestRenderer;
 
@@ -97,5 +106,42 @@ describe('CustomBottomSheet', () => {
 				left: 0,
 			}),
 		);
+	});
+
+	it('열려 있는 동안 Android 뒤로가기를 가로채 시트를 닫는다', () => {
+		const onClose = jest.fn();
+		let renderer: ReactTestRenderer;
+
+		act(() => {
+			renderer = create(
+				<CustomBottomSheet isVisible onClose={onClose}>
+					{createElement('View')}
+				</CustomBottomSheet>,
+			);
+		});
+
+		expect(mockAddBackHandler).toHaveBeenCalledWith('hardwareBackPress', expect.any(Function));
+
+		const handleBackPress = (mockAddBackHandler.mock.calls[0] as unknown[])[1] as () => boolean;
+		expect(handleBackPress()).toBe(true);
+		expect(onClose).toHaveBeenCalledTimes(1);
+
+		act(() => {
+			renderer!.unmount();
+		});
+
+		expect(mockRemoveBackHandler).toHaveBeenCalled();
+	});
+
+	it('닫혀 있을 때는 뒤로가기를 가로채지 않는다', () => {
+		act(() => {
+			create(
+				<CustomBottomSheet isVisible={false} onClose={jest.fn()}>
+					{createElement('View')}
+				</CustomBottomSheet>,
+			);
+		});
+
+		expect(mockAddBackHandler).not.toHaveBeenCalled();
 	});
 });
