@@ -6,7 +6,7 @@ import Button from '@/components/ui/Button';
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 import Text from '@/components/ui/Text';
 import { REPORT_CATEGORIES } from '@/constants/post';
-import { FontSizes, Theme, useThemedStyles } from '@/theme';
+import { FontSizes, Theme, useTheme, useThemedStyles } from '@/theme';
 import { ReportUserParams } from '@/types/components';
 
 type ReportModalProps = {
@@ -16,6 +16,7 @@ type ReportModalProps = {
 };
 
 const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
+	const { colors } = useTheme();
 	const styles = useThemedStyles(makeStyles);
 	const [step, setStep] = useState<1 | 2>(1);
 	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -104,6 +105,7 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 						<BottomSheetTextInput
 							style={styles.textInput}
 							placeholder="자세한 내용을 입력해주세요"
+							placeholderTextColor={colors.text.tertiary}
 							value={detail}
 							onChangeText={setDetail}
 							multiline

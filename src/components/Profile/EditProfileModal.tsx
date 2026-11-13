@@ -323,6 +323,7 @@ const EditProfileModal = ({
 												value={value}
 												onChangeText={onChange}
 												placeholder="초면의"
+												placeholderTextColor={colors.text.tertiary}
 												style={styles.titleInput}
 											/>
 										)}
@@ -335,6 +336,7 @@ const EditProfileModal = ({
 												value={value}
 												onChangeText={onChange}
 												placeholder="이주민"
+												placeholderTextColor={colors.text.tertiary}
 												style={styles.titleInput}
 											/>
 										)}
@@ -363,6 +365,7 @@ const EditProfileModal = ({
 												value={value}
 												onChangeText={onChange}
 												placeholder="한마디를 적어주세요!"
+												placeholderTextColor={colors.text.tertiary}
 												style={styles.bioInput}
 												maxLength={20}
 											/>
