@@ -1,4 +1,17 @@
+/**
+ * 에뮬레이터 시드 진입점 — npm run emulator:seed
+ * 에뮬레이터 Auth·Firestore·Storage를 모두 비운 뒤 이미지 → 카탈로그 → 주민 → 테스트 데이터 순서로 넣는다.
+ * firebase-admin-setup.js가 에뮬레이터 호스트를 강제로 설정하므로 운영 DB에는 연결되지 않는다.
+ */
+const {
+	disableBackgroundTriggers,
+	enableBackgroundTriggers,
+	resetEmulator,
+} = require('./emulator-control');
 const { auth, db } = require('./firebase-admin-setup');
+const { seedCatalog } = require('./seed-catalog');
+const { uploadSeedImages } = require('./seed-images');
+const { seedVillagers } = require('./seed-villagers');
 
 // ─── 시간 ─────────────────────────────────────────────────────────────────────
 
@@ -573,80 +586,114 @@ function buildSeedData({ userPhotoUrls = [], communityImageUrls = [] } = {}) {
 // 문서 ID로만 쓰는 id 필드는 앱이 저장하는 형태와 같게 본문에서 뺀다
 const withoutId = ({ id, ...data }) => data;
 
-async function seedData() {
-	try {
-		console.log('🌱 테스트 데이터 생성 시작...');
-		const { users, boards, communities, commentThreads, chats, reviews, notifications } =
-			buildSeedData();
-
-		for (const user of users) {
-			const { uid, ...profile } = user;
-			await auth.createUser({
-				uid,
-				email: user.email,
-				displayName: user.displayName,
-				...(user.photoURL && { photoURL: user.photoURL }),
-			});
-			await db.collection('Users').doc(uid).set(profile);
-		}
-		console.log(`✅ 유저 ${users.length}명`);
-
-		for (const board of boards) {
-			await db.collection('Boards').doc(board.id).set(withoutId(board));
-		}
-		console.log(`✅ 마켓 게시글 ${boards.length}개`);
-
-		for (const community of communities) {
-			await db.collection('Communities').doc(community.id).set(withoutId(community));
-		}
-		console.log(`✅ 커뮤니티 게시글 ${communities.length}개`);
-
-		let commentTotal = 0;
-		let replyTotal = 0;
-		for (const { collection, postId, comments } of commentThreads) {
-			for (const { replies, ...comment } of comments) {
-				const commentRef = db
-					.collection(collection)
-					.doc(postId)
-					.collection('Comments')
-					.doc(comment.id);
-				await commentRef.set(withoutId(comment));
-				commentTotal++;
-
-				for (const reply of replies) {
-					await commentRef.collection('Replies').doc(reply.id).set(withoutId(reply));
-					replyTotal++;
-				}
-			}
-		}
-		console.log(`✅ 댓글 ${commentTotal}개, 대댓글 ${replyTotal}개`);
-
-		let messageTotal = 0;
-		for (const { messages, ...chat } of chats) {
-			const chatRef = db.collection('Chats').doc(chat.id);
-			await chatRef.set(chat);
-
-			for (const message of messages) {
-				await chatRef.collection('Messages').doc(message.id).set(withoutId(message));
-				messageTotal++;
-			}
-		}
-		console.log(`✅ 채팅방 ${chats.length}개, 메시지 ${messageTotal}개`);
-
-		for (const review of reviews) {
-			await db.collection('Reviews').doc(review.id).set(withoutId(review));
-		}
-		console.log(`✅ 리뷰 ${reviews.length}개`);
-
-		for (const notification of notifications) {
-			await db.collection('Notifications').doc(notification.id).set(withoutId(notification));
-		}
-		console.log(`✅ 알림 ${notifications.length}개`);
-
-		console.log('🎉 테스트 데이터 생성 완료! 에뮬레이터 UI에서 확인: http://localhost:4000');
-	} catch (error) {
-		console.error('❌ 테스트 데이터 생성 실패:', error);
+async function seedTestData({
+	users,
+	boards,
+	communities,
+	commentThreads,
+	chats,
+	reviews,
+	notifications,
+}) {
+	for (const user of users) {
+		const { uid, ...profile } = user;
+		await auth.createUser({
+			uid,
+			email: user.email,
+			displayName: user.displayName,
+			...(user.photoURL && { photoURL: user.photoURL }),
+		});
+		await db.collection('Users').doc(uid).set(profile);
 	}
+	console.log(`✅ 유저 ${users.length}명`);
+
+	for (const board of boards) {
+		await db.collection('Boards').doc(board.id).set(withoutId(board));
+	}
+	console.log(`✅ 마켓 게시글 ${boards.length}개`);
+
+	for (const community of communities) {
+		await db.collection('Communities').doc(community.id).set(withoutId(community));
+	}
+	console.log(`✅ 커뮤니티 게시글 ${communities.length}개`);
+
+	let commentTotal = 0;
+	let replyTotal = 0;
+	for (const { collection, postId, comments } of commentThreads) {
+		for (const { replies, ...comment } of comments) {
+			const commentRef = db
+				.collection(collection)
+				.doc(postId)
+				.collection('Comments')
+				.doc(comment.id);
+			await commentRef.set(withoutId(comment));
+			commentTotal++;
+
+			for (const reply of replies) {
+				await commentRef.collection('Replies').doc(reply.id).set(withoutId(reply));
+				replyTotal++;
+			}
+		}
+	}
+	console.log(`✅ 댓글 ${commentTotal}개, 대댓글 ${replyTotal}개`);
+
+	let messageTotal = 0;
+	for (const { messages, ...chat } of chats) {
+		const chatRef = db.collection('Chats').doc(chat.id);
+		await chatRef.set(chat);
+
+		for (const message of messages) {
+			await chatRef.collection('Messages').doc(message.id).set(withoutId(message));
+			messageTotal++;
+		}
+	}
+	console.log(`✅ 채팅방 ${chats.length}개, 메시지 ${messageTotal}개`);
+
+	for (const review of reviews) {
+		await db.collection('Reviews').doc(review.id).set(withoutId(review));
+	}
+	console.log(`✅ 리뷰 ${reviews.length}개`);
+
+	for (const notification of notifications) {
+		await db.collection('Notifications').doc(notification.id).set(withoutId(notification));
+	}
+	console.log(`✅ 알림 ${notifications.length}개`);
 }
 
-seedData();
+async function main() {
+	console.log('🌱 에뮬레이터 시드 시작...');
+	const triggersDisabled = await disableBackgroundTriggers();
+	if (triggersDisabled) console.log('⏸️  Functions 트리거를 껐습니다');
+
+	try {
+		await resetEmulator();
+		console.log('🧹 Auth·Firestore·Storage 초기화');
+
+		const { userPhotoUrls, communityImageUrls } = await uploadSeedImages();
+		console.log(`✅ 이미지 업로드: 프로필 ${userPhotoUrls.length}장, 커뮤니티 ${communityImageUrls.length}장`);
+
+		const catalog = await seedCatalog();
+		if (catalog) {
+			console.log(`✅ 카탈로그 아이템 ${catalog.itemCount}개, variants ${catalog.variantCount}개`);
+		}
+
+		const villagerCount = await seedVillagers();
+		if (villagerCount !== null) console.log(`✅ 주민 ${villagerCount}명`);
+
+		await seedTestData(buildSeedData({ userPhotoUrls, communityImageUrls }));
+	} finally {
+		if (triggersDisabled) {
+			await enableBackgroundTriggers();
+			console.log('▶️  Functions 트리거를 다시 켰습니다');
+		}
+	}
+
+	console.log('🎉 시드 완료! 에뮬레이터 UI에서 확인: http://localhost:4000');
+}
+
+main()
+	.then(() => process.exit(0))
+	.catch((error) => {
+		console.error('❌ 시드 실패:', error);
+		process.exit(1);
+	});

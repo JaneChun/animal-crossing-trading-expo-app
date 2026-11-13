@@ -58,3 +58,4 @@ temp.ini
 # firebase export
 scripts/*
 emulator-data/*
+src/__tests__/firebase-utils/seed-images/

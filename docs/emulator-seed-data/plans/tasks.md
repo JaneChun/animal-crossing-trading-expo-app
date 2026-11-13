@@ -65,25 +65,25 @@
 
 검증: 에뮬레이터를 띄운 상태에서 `npm run emulator:seed`를 두 번 연속 실행해도 두 번 모두 성공하고, 문서 수가 늘어나지 않는다.
 
-- [ ] 초기화 단계 추가 (`src/__tests__/firebase-utils/seed-test-data.js` 또는 신규 `reset-emulator.js`)
+- [x] 초기화 단계 추가 (`src/__tests__/firebase-utils/seed-test-data.js` 또는 신규 `reset-emulator.js`)
   - 패턴: 에뮬레이터 REST API `DELETE http://127.0.0.1:8080/emulator/v1/projects/{projectId}/databases/(default)/documents`와 `DELETE http://127.0.0.1:9099/emulator/v1/projects/{projectId}/accounts`. `projectId`는 `firebase-admin-setup.js`와 같은 `animal-crossing-trade-expo-app`.
   - 패턴: Storage는 Admin SDK `getStorage().bucket(EXPO_PUBLIC_STORAGE_BUCKET).deleteFiles()`. 이 스크립트 안에서 `FIREBASE_STORAGE_EMULATOR_HOST=127.0.0.1:9199`를 먼저 설정해 에뮬레이터 버킷만 대상으로 한다.
   - 현재 문제: `auth.createUser`는 같은 uid가 있으면 실패하고, 메시지·대댓글은 `.add()`라 실행할 때마다 중복된다.
   - 결정: 시드 전에 Auth·Firestore·Storage를 전부 비운다(사용자 지시).
-- [ ] 시드하는 동안 Functions 백그라운드 트리거 끄기 (`seed-test-data.js`)
+- [x] 시드하는 동안 Functions 백그라운드 트리거 끄기 (`seed-test-data.js`)
   - 이유: Functions 에뮬레이터가 떠 있으면 `onCommentCreated`·`onReplyCreated`가 `commentCount`를, `updateUserReview`가 유저 `review` 집계를 한 번 더 올리고, `onMessageCreated`·`onNotificationCreated`가 푸시를 시도한다(`functions/src/index.ts`). 시드는 이 값들을 직접 계산해 넣으므로 두 배가 된다.
   - 패턴: Emulator Hub `PUT http://127.0.0.1:4400/functions/disableBackgroundTriggers`로 끄고, 끝나면(실패해도) `enableBackgroundTriggers`로 다시 켠다. Hub에 연결되지 않으면(Functions 에뮬레이터 미실행) 건너뛴다.
-- [ ] 이미지 업로드 단계 추가 (`src/__tests__/firebase-utils/seed-images.js` 신규, 이미지 폴더 `src/__tests__/firebase-utils/seed-images/{users,communities}/`)
-  - 이미지 파일은 사용자가 직접 넣고 git으로 추적한다. 폴더에는 빈 상태로도 커밋되도록 `.gitkeep`을 둔다.
+- [x] 이미지 업로드 단계 추가 (`src/__tests__/firebase-utils/seed-images.js` 신규, 이미지 폴더 `src/__tests__/firebase-utils/seed-images/{users,communities}/`)
+  - 결정: 이미지 파일은 사용자가 로컬에 직접 넣고, 폴더 전체를 `.gitignore`에 추가해 커밋하지 않는다. 폴더 위치와 사용법은 `agent_docs/testing.md`에 적는다. 저장소 용량과 이미지 출처 문제를 피하기 위함(사용자 지시).
   - 폴더 안 파일을 이름순으로 정렬해 유저·게시글에 차례로(모자라면 처음부터 다시) 배정한다. 시드 데이터에 파일명을 직접 적지 않으므로 파일을 바꿔 넣어도 코드는 그대로다.
   - 업로드 경로는 앱과 같은 `Users/{fileName}`, `Communities/{fileName}`(`src/firebase/services/imageService.ts:53`). 두 경로는 `storage.rules`에서 `allow read: if true`라 로그인 없이 표시된다.
   - URL 형식: `http://{EXPO_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST}/v0/b/{bucket}/o/{encodeURIComponent(path)}?alt=media`. 호스트를 `.env.local` 값으로 써야 실기기에서도 열린다. 값이 없으면 `127.0.0.1:9199`.
-- [ ] 환경 변수 파일 로드 (`package.json`)
+- [x] 환경 변수 파일 로드 (`package.json`)
   - Node는 `.env.local`을 자동으로 읽지 않는다. `emulator:seed`를 `node --env-file-if-exists=.env --env-file-if-exists=.env.local src/__tests__/firebase-utils/seed-test-data.js`로 실행한다(Node 22.9 이상 지원, 현재 v22.13). 뒤에 적은 `.env.local`이 같은 키를 덮어쓴다.
-- [ ] 단일 진입점 정리 (`src/__tests__/firebase-utils/seed-test-data.js`)
+- [x] 단일 진입점 정리 (`src/__tests__/firebase-utils/seed-test-data.js`)
   - 초기화 → 이미지 업로드 → 카탈로그 → 주민 → 유저 → 게시글 → 채팅 → 댓글 → 리뷰·알림 순서로 실행한다(유저·게시글이 이미지 URL을, 게시글 `cart`가 카탈로그 데이터를 참조하므로).
   - 현재 문제: `catch`에서 로그만 찍고 정상 종료(exit 0)한다. 실패하면 exit 1로 끝나게 한다.
-- [ ] 안전장치 (`src/__tests__/firebase-utils/firebase-admin-setup.js`는 수정하지 않음)
+- [x] 안전장치 (`src/__tests__/firebase-utils/firebase-admin-setup.js`는 수정하지 않음)
   - 패턴: 이 파일이 `FIRESTORE_EMULATOR_HOST`, `FIREBASE_AUTH_EMULATOR_HOST`를 강제로 설정하므로 운영 연결 위험은 없다. 진입점에서 이 파일을 반드시 거치게만 한다.
 
 ## Phase 4: 문서 정리와 export
@@ -110,3 +110,8 @@
 - Phase 2 완료
 - 검증: `firebase emulators:start --only auth,firestore`에서 `seedCatalog()` → 아이템 7,156개·variants 21,788개(약 3초), `seedVillagers()` → 417명 저장. variant 문서 ID `0_0`, 부모 6개 필드, `Villagers` 문서 필드를 다시 읽어 확인. `catalog.json`이 없거나 Algolia 키가 없으면 경고 후 `null`을 반환하는 것도 확인
 - 결정: Phase 1 커뮤니티 데이터에 주민 ID를 넣는 작업은 주민 seed 결정(사용자 지시)에 따라 Phase 2에서 함께 처리
+
+- Phase 3 완료
+- 검증: 에뮬레이터를 끈 채 `npm run emulator:seed` → ECONNREFUSED와 함께 exit 1
+- 검증: 전체 에뮬레이터(Functions 포함)에서 `npm run emulator:seed`를 두 번 연속 실행 → 두 번 모두 성공. 실행 후 `board1.commentCount` 5, 유저 `review` 집계, 게시글 6개·알림 12개·Auth 3명으로 늘어나지 않음. 임시 이미지(프로필 2장, 커뮤니티 4장)로 Storage 업로드와 URL 응답(200, image/png) 확인. 시드 후 댓글을 하나 추가하면 `commentCount`가 1 오르는 것으로 트리거가 다시 켜진 것도 확인
+- 결정: 초기화·트리거·버킷 함수는 계획의 `reset-emulator.js` 대신 `emulator-control.js` 한 파일에 둔다(초기화 외 기능도 담기 때문)
