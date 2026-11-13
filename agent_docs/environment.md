@@ -14,6 +14,7 @@
   - Algolia: `EXPO_PUBLIC_ALGOLIA_APP_ID`, `EXPO_PUBLIC_ALGOLIA_SEARCH_KEY`
   - 소셜 로그인: `EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY`, `EXPO_PUBLIC_NAVER_CLIENT_ID`, `EXPO_PUBLIC_NAVER_SECRET` 등
   - AdMob/EAS: `EXPO_PUBLIC_ADMOB_IOS_APP_ID`, `EXPO_PUBLIC_ADMOB_ANDROID_APP_ID`, `EXPO_PUBLIC_EAS_PROJECT_ID`, `GOOGLE_SERVICE_INFO_PLIST`, `GOOGLE_SERVICES_JSON`(상대 경로 `./google-services.json`)
+  - iOS 서명: `APPLE_TEAM_ID` — 로컬 실기기 빌드용. 없으면 prebuild가 `DEVELOPMENT_TEAM`을 비워 Xcode에서 "requires a development team" 오류. EAS Build는 자체 자격 증명으로 서명하므로 불필요
 - `.env.local` (에뮬레이터용): `EXPO_PUBLIC_USE_FIREBASE_EMULATOR`, `EXPO_PUBLIC_FIREBASE_*_EMULATOR_HOST`
 - `GoogleService-Info.plist`, `google-services.json`도 git 미추적
 
