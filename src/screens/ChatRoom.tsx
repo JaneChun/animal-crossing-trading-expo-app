@@ -3,7 +3,7 @@ import { useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
-import { GiftedChat, IMessage } from 'react-native-gifted-chat';
+import { GiftedChat, IMessage, InputToolbar } from 'react-native-gifted-chat';
 import { AnimatedList } from 'react-native-gifted-chat/lib/MessageContainer';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -266,6 +266,9 @@ const ChatRoom = () => {
 								renderLoadEarlier={() => null}
 								renderMessage={renderMessage}
 								renderDay={renderDay}
+								renderInputToolbar={(props) => (
+									<InputToolbar {...props} containerStyle={styles.inputToolbar} />
+								)}
 								renderComposer={() =>
 									renderComposer({
 										disabled:
@@ -313,6 +316,10 @@ const makeStyles = ({ colors }: Theme) =>
 		},
 		blockMessageText: {
 			textAlign: 'center',
+		},
+		// 라이브러리 기본 위쪽 테두리(#b2b2b2)가 눈에 띄어 댓글 입력창과 같은 색으로 맞춘다
+		inputToolbar: {
+			borderTopColor: colors.border.default,
 		},
 	});
 export default ChatRoom;
