@@ -34,6 +34,7 @@ npm run deploy:rules:storage   # firebase deploy --only storage
 ## Firebase 에뮬레이터
 
 ```bash
+npm run dev:emulator:all          # 에뮬레이터(데이터 유지) + 에뮬레이터 모드 Metro 한 번에 실행. 로그는 $TMPDIR/firebase-emulator.log
 npm run emulator:start            # firebase emulators:start
 npm run emulator:start-with-data  # 데이터 import + 종료 시 export
 npm run emulator:stop             # 프로세스 kill + 포트(4000,8080,9099,5001,9199 등) 정리

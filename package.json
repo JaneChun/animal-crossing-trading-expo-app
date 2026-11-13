@@ -6,6 +6,7 @@
     "start": "expo start",
     "dev": "expo start --dev-client",
     "dev:emulator": "EXPO_PUBLIC_USE_FIREBASE_EMULATOR=true expo start --dev-client",
+    "dev:emulator:all": "bash scripts/dev-emulator-all.sh",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
