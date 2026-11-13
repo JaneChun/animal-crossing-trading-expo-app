@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext } from 'react';
-import { ColorSchemeName, useColorScheme } from 'react-native';
+import { Appearance, ColorSchemeName, useColorScheme } from 'react-native';
 
 import { ColorScheme, darkColors, lightColors } from './Color';
 
@@ -8,6 +8,12 @@ import { ColorScheme, darkColors, lightColors } from './Color';
  * false로 바꾸면 기기 설정과 관계없이 앱 화면을 라이트로 고정한다.
  */
 export const DARK_MODE_ENABLED = true;
+
+// 앱 화면만 라이트로 바꾸면 키보드·KeyboardToolbar·Alert 같은 네이티브 UI는 기기 설정을 따라 다크로 남는다.
+// 앱 전체의 색 설정을 라이트로 덮어써서 네이티브 UI도 함께 라이트로 고정한다.
+if (!DARK_MODE_ENABLED) {
+	Appearance.setColorScheme('light');
+}
 
 export type ThemeScheme = 'light' | 'dark';
 
