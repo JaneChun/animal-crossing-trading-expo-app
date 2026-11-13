@@ -4,13 +4,14 @@ import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import Login from '@/screens/Login';
 import Profile from '@/screens/Profile';
 import { useAuthStore, useUserInfo } from '@/stores/auth';
-import { Colors } from '@/theme/Color';
+import { useTheme } from '@/theme';
 
 const ProfileStack = createNativeStackNavigator();
 
 const ProfileStackNavigator = () => {
 	const userInfo = useUserInfo();
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
+	const { colors } = useTheme();
 
 	if (isAuthLoading) {
 		return <LoadingIndicator />;
@@ -20,7 +21,7 @@ const ProfileStackNavigator = () => {
 		<ProfileStack.Navigator
 			screenOptions={{
 				headerShown: false,
-				headerTintColor: Colors.text.primary,
+				headerTintColor: colors.text.primary,
 				headerBackButtonDisplayMode: 'minimal',
 			}}
 		>

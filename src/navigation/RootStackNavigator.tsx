@@ -21,7 +21,7 @@ import SplashScreen from '@/screens/SplashScreen';
 import TermsOfService from '@/screens/TermsOfService';
 import { useAuthStore } from '@/stores/auth';
 import { useOnboardingStore } from '@/stores/onboarding/store';
-import { Colors } from '@/theme/Color';
+import { useTheme } from '@/theme';
 
 import MainTabNavigator from './MainTabNavigator';
 
@@ -42,12 +42,14 @@ const RootStackNavigator = () => {
 		handleCloseUpdateModal,
 	} = useVersionCheck();
 
+	const { colors } = useTheme();
+
 	const isAppInitializing = isOnboardingLoading || isVersionCheckLoading;
 
 	const commonOptions = {
 		headerShown: isAuthLoading ? false : true, // 로그인/로그아웃/탈퇴 시 로딩화면 표시할 때 상단 헤더 숨김 처리
 		title: '',
-		headerTintColor: Colors.text.primary,
+		headerTintColor: colors.text.primary,
 		headerBackButtonDisplayMode: 'minimal' as const,
 	};
 

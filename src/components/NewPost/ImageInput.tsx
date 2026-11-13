@@ -1,10 +1,11 @@
 import { ImagePickerAsset } from 'expo-image-picker';
 import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
 import AddImageButton from '@/components/ui/AddImageButton';
 import ImagePreview from '@/components/ui/ImagePreview';
+import Text from '@/components/ui/Text';
 import { showToast } from '@/components/ui/Toast';
 import { MAX_IMAGES } from '@/constants/post';
 import { useImagePicker } from '@/hooks/shared/useImagePicker';
@@ -46,7 +47,9 @@ const ImageInput = ({ images, setImages, containerStyle, labelStyle }: ImageInpu
 
 	return (
 		<View style={containerStyle}>
-			<Text style={labelStyle}>사진</Text>
+			<Text variant="body1" weight="semibold" style={labelStyle}>
+				사진
+			</Text>
 
 			<FlatList
 				data={images}

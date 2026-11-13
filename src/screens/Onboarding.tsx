@@ -15,13 +15,14 @@ import Button from '@/components/ui/Button';
 import { ONBOARDING_DATA, OnboardingStep } from '@/constants/onboardingData';
 import { useOnboardingStore } from '@/stores/onboarding/store';
 import { saveOnboardingAsCompleted } from '@/stores/onboarding/utils/storage';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 import { logOnboardingComplete } from '@/utilities/analytics';
 import { replaceToHome } from '@/utilities/navigationHelpers';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const Onboarding = () => {
+	const styles = useThemedStyles(makeStyles);
 	const currentStep = useOnboardingStore((state) => state.currentStep);
 	const setCurrentStep = useOnboardingStore((state) => state.setCurrentStep);
 	const setHasCompletedOnboarding = useOnboardingStore(
@@ -85,7 +86,7 @@ const Onboarding = () => {
 				<PageIndicator totalPages={ONBOARDING_DATA.length} currentIndex={currentStep} />
 
 				{/* 버튼  */}
-				<Button onPress={handleNext} color="mint" size="lg2" style={styles.button}>
+				<Button onPress={handleNext} variant="primary" size="lg" style={styles.button}>
 					{currentData.buttonText}
 				</Button>
 			</View>
@@ -93,20 +94,21 @@ const Onboarding = () => {
 	);
 };
 
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: Colors.bg.primary,
-	},
-	container: {
-		flex: 1,
-	},
-	flatList: {
-		flex: 1,
-	},
-	button: {
-		marginHorizontal: 24,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		screen: {
+			flex: 1,
+			backgroundColor: colors.bg.primary,
+		},
+		container: {
+			flex: 1,
+		},
+		flatList: {
+			flex: 1,
+		},
+		button: {
+			marginHorizontal: 24,
+		},
+	});
 
 export default Onboarding;

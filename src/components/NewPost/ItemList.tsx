@@ -1,6 +1,7 @@
-import { Text, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import Total from '@/components/PostDetail/Total';
+import Text from '@/components/ui/Text';
 import { ItemListProps } from '@/types/components';
 
 import EditableItem from './EditableItem';
@@ -14,7 +15,9 @@ const ItemList = ({
 }: ItemListProps) => {
 	return (
 		<View style={containerStyle}>
-			<Text style={labelStyle}>아이템 ({cart?.length})</Text>
+			<Text variant="body1" weight="semibold" style={labelStyle}>
+				아이템 ({cart?.length})
+			</Text>
 
 			{cart.map((item) => (
 				<TouchableOpacity key={item.id} onPress={() => handleEditItemPress(item)}>

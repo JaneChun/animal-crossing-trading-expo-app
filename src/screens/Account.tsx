@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 
 import SettingListItem from '@/components/Profile/SettingListItem';
 import Apple from '@/components/ui/Icons/Apple';
@@ -6,11 +6,11 @@ import Kakao from '@/components/ui/Icons/Kakao';
 import Naver from '@/components/ui/Icons/Naver';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
+import Text from '@/components/ui/Text';
 import { showToast } from '@/components/ui/Toast';
-import { FontSizes, FontWeights } from '@/constants/Typography';
 import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore, useUserInfo } from '@/stores/auth';
-import { Colors } from '@/theme/Color';
+import { FontSizes, FontWeights , Theme, useThemedStyles } from '@/theme';
 import { logLogout } from '@/utilities/analytics';
 import {
 	navigateToDeleteAccount,
@@ -18,6 +18,7 @@ import {
 } from '@/utilities/navigationHelpers';
 
 const Account = () => {
+	const styles = useThemedStyles(makeStyles);
 	const userInfo = useUserInfo();
 	const kakaoLogout = useAuthStore((state) => state.kakaoLogout);
 	const naverLogout = useAuthStore((state) => state.naverLogout);
@@ -70,7 +71,7 @@ const Account = () => {
 			<View style={styles.container}>
 				<SettingListItem borderRound="all">
 					<View style={styles.emailRow}>
-						<Text style={styles.text}>이메일</Text>
+						<Text variant="body1">이메일</Text>
 						<View style={styles.email}>
 							{userInfo?.oauthType === 'naver' ? (
 								<Naver style={styles.icon} />
@@ -80,9 +81,11 @@ const Account = () => {
 								<Apple style={styles.appleIcon} />
 							)}
 							<Text
+								variant="body1"
+								color="secondary"
 								numberOfLines={1}
 								ellipsizeMode="tail"
-								style={[styles.text, styles.emailText]}
+								style={styles.emailText}
 							>
 								{userInfo?.email}
 							</Text>
@@ -92,7 +95,7 @@ const Account = () => {
 			</View>
 			<View style={styles.container}>
 				<SettingListItem borderRound="top" onPress={handleLogout} testID="logoutButton">
-					<Text style={styles.text}>로그아웃</Text>
+					<Text variant="body1">로그아웃</Text>
 				</SettingListItem>
 				<SettingListItem
 					borderRound="bottom"
@@ -100,7 +103,7 @@ const Account = () => {
 					onPress={handleNavigateToDeleteAccount}
 					testID="deleteAccountButton"
 				>
-					<Text style={styles.text}>탈퇴하기</Text>
+					<Text variant="body1">탈퇴하기</Text>
 				</SettingListItem>
 			</View>
 		</View>
@@ -109,47 +112,43 @@ const Account = () => {
 
 export default Account;
 
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: Colors.bg.primary,
-		padding: PADDING,
-	},
-	container: {
-		marginBottom: 32,
-	},
-	title: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-		marginBottom: 16,
-	},
-	text: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.regular,
-	},
-	emailRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		gap: 16,
-	},
-	email: {
-		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'flex-end',
-		alignItems: 'center',
-		gap: 6,
-	},
-	icon: {
-		width: 16,
-		height: 16,
-	},
-	appleIcon: {
-		width: 14,
-		height: 14,
-	},
-	emailText: {
-		flexShrink: 1,
-		color: Colors.text.secondary,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		screen: {
+			flex: 1,
+			backgroundColor: colors.bg.primary,
+			padding: PADDING,
+		},
+		container: {
+			marginBottom: 32,
+		},
+		title: {
+			fontSize: FontSizes.md,
+			fontWeight: FontWeights.semibold,
+			marginBottom: 16,
+		},
+		emailRow: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'space-between',
+			gap: 16,
+		},
+		email: {
+			flex: 1,
+			flexDirection: 'row',
+			justifyContent: 'flex-end',
+			alignItems: 'center',
+			gap: 6,
+		},
+		icon: {
+			width: 16,
+			height: 16,
+		},
+		appleIcon: {
+			width: 14,
+			height: 14,
+		},
+		emailText: {
+			flexShrink: 1,
+		},
+	});

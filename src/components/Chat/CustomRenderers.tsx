@@ -5,7 +5,7 @@ import DateSeparator from '@/components/Chat/DateSeparator';
 import ImageMessageUnit from '@/components/Chat/ImageMessageUnit';
 import MessageUnit from '@/components/Chat/MessageUnit';
 import SystemMessageUnit from '@/components/Chat/SystemMessageUnit';
-import { Colors } from '@/theme/Color';
+import { useTheme } from '@/theme';
 import { ExtendedIMessage } from '@/types/chat';
 import { RenderDayProps } from '@/types/components';
 import { isReviewMessage, isSystemMessage } from '@/utilities/typeGuards/messageGuards';
@@ -73,11 +73,17 @@ export const renderComposer = ({
 	return <ChatInput disabled={disabled} onSubmit={onSend} onImagePress={onImagePress} />;
 };
 
-export const renderScrollToBottomComponent = () => (
-	<View style={styles.downButtonContainer}>
-		<FontAwesome5 name="chevron-down" size={20} style={styles.downIcon} />
-	</View>
-);
+const ScrollToBottomButton = () => {
+	const { colors } = useTheme();
+
+	return (
+		<View style={styles.downButtonContainer}>
+			<FontAwesome5 name="chevron-down" size={20} color={colors.brand.primary} />
+		</View>
+	);
+};
+
+export const renderScrollToBottomComponent = () => <ScrollToBottomButton />;
 
 const styles = StyleSheet.create({
 	downButtonContainer: {
@@ -87,9 +93,5 @@ const styles = StyleSheet.create({
 		// backgroundColor: Colors.brand.primary,
 		justifyContent: 'center',
 		alignItems: 'center',
-	},
-	downIcon: {
-		// color: 'white',
-		color: Colors.brand.primary,
 	},
 });

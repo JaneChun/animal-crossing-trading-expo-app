@@ -1,21 +1,16 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 
-import { FontWeights } from '@/constants/Typography';
+import Text from '@/components/ui/Text';
 import { TitleProps } from '@/types/components';
 
 const Title = ({ title, containerStyle }: TitleProps) => {
 	return (
 		<View style={containerStyle}>
-			<Text style={styles.title}>{title}</Text>
+			<Text variant="title" weight="semibold">
+				{title}
+			</Text>
 		</View>
 	);
 };
 
 export default Title;
-
-const styles = StyleSheet.create({
-	title: {
-		fontSize: 20,
-		fontWeight: FontWeights.semibold,
-	},
-});

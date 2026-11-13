@@ -1,12 +1,13 @@
 import { Entypo } from '@expo/vector-icons';
 import { useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { BorderRadius, Spacing, Theme, useThemedStyles } from '@/theme';
 import { CategoriesProps } from '@/types/components';
 import { Category, CategoryItem, ItemCategory, ItemCategoryItem } from '@/types/post';
 import { VillagerSpecies, VillagerSpeciesItem } from '@/types/villager';
+
+import Text from './Text';
 
 const Categories = <
 	T extends Category | ItemCategory | VillagerSpecies,
@@ -17,6 +18,7 @@ const Categories = <
 	setCategory,
 	containerStyle,
 }: CategoriesProps<T, U>) => {
+	const styles = useThemedStyles(makeStyles);
 	const [showAll, setShowAll] = useState(false);
 
 	const renderCategoryButton = (item: U) => (
@@ -26,6 +28,8 @@ const Categories = <
 			onPress={() => setCategory(item.EN as T)}
 		>
 			<Text
+				variant="body2"
+				weight="semibold"
 				style={[styles.categoryText, category === item.EN && styles.categoryTextSelected]}
 			>
 				{item.KR}
@@ -41,7 +45,7 @@ const Categories = <
 			<Entypo
 				name={showAll ? 'chevron-up' : 'chevron-down'}
 				size={20}
-				color={Colors.brand.primary}
+				color={styles.categoryTextSelected.color}
 			/>
 		</Pressable>
 	);
@@ -72,44 +76,43 @@ const Categories = <
 
 export default Categories;
 
-const styles = StyleSheet.create({
-	flexWrapContainer: {
-		flexDirection: 'row',
-		flexWrap: 'wrap',
-		alignItems: 'center',
-		gap: 6,
-	},
-	flatListContainer: {
-		flexDirection: 'row',
-	},
-	flatListContentContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 6,
-	},
-	category: {
-		paddingVertical: 8,
-		paddingHorizontal: 14,
-		borderRadius: 50,
-		backgroundColor: Colors.bg.secondary,
-		borderWidth: 1,
-		borderColor: Colors.bg.secondary,
-	},
-	categorySelected: {
-		backgroundColor: Colors.bg.primary,
-		borderColor: Colors.brand.primary,
-	},
-	categoryText: {
-		color: Colors.text.tertiary,
-		fontSize: FontSizes.sm,
-		fontWeight: FontWeights.semibold,
-	},
-	categoryTextSelected: {
-		color: Colors.brand.primary,
-	},
-	toggleButton: {
-		padding: 6,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		flexWrapContainer: {
+			flexDirection: 'row',
+			flexWrap: 'wrap',
+			alignItems: 'center',
+			gap: 6,
+		},
+		flatListContainer: {
+			flexDirection: 'row',
+		},
+		flatListContentContainer: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			gap: 6,
+		},
+		category: {
+			paddingVertical: Spacing.s,
+			paddingHorizontal: 14,
+			borderRadius: BorderRadius.full,
+			backgroundColor: colors.bg.fill,
+			borderWidth: 1,
+			borderColor: colors.bg.fill,
+		},
+		categorySelected: {
+			backgroundColor: colors.bg.primary,
+			borderColor: colors.brand.primary,
+		},
+		categoryText: {
+			color: colors.text.tertiary,
+		},
+		categoryTextSelected: {
+			color: colors.brand.primary,
+		},
+		toggleButton: {
+			padding: 6,
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+	});

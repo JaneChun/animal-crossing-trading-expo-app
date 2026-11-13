@@ -20,13 +20,14 @@ import useLoading from '@/hooks/shared/useLoading';
 import { useReportUser } from '@/hooks/shared/useReportUser';
 import { useActiveTabStore } from '@/stores/ActiveTabstore';
 import { useUserInfo } from '@/stores/auth';
-import { Colors } from '@/theme/Color';
+import { useTheme } from '@/theme';
 import { ProfileRouteProp, RootStackNavigation } from '@/types/navigation';
 import { Tab } from '@/types/post';
 import { logProfileView } from '@/utilities/analytics';
 import emptyProfileImage from '@assets/images/empty_profile_image.png';
 
 const Profile = () => {
+	const { colors } = useTheme();
 	const route = useRoute<ProfileRouteProp>();
 	const { userId: targetUserId } = route?.params ?? {};
 
@@ -82,7 +83,7 @@ const Profile = () => {
 				userInfo &&
 				profileInfo && (
 					<ActionSheetButton
-						color={Colors.text.primary}
+						color={colors.text.primary}
 						size={18}
 						cancelIndex={2}
 						options={[
@@ -133,7 +134,7 @@ const Profile = () => {
 
 	return (
 		<>
-			<Layout title="프로필" headerRightComponent={isMyProfile && SettingIcon}>
+			<Layout title="프로필" headerRightComponent={isMyProfile && <SettingIcon />}>
 				<FlatList
 					data={[]}
 					renderItem={null}

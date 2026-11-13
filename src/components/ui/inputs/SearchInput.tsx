@@ -3,8 +3,7 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import { Pressable } from 'react-native-gesture-handler';
 
 import SearchIcon from '@/components/Search/SearchIcon';
-import { FontSizes } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { FontSizes, BorderRadius, Spacing, Theme, useTheme, useThemedStyles } from '@/theme';
 import { SearchInputProps } from '@/types/components';
 
 const SearchInput = ({
@@ -16,15 +15,18 @@ const SearchInput = ({
 	placeholder,
 	InputComponent = TextInput,
 }: SearchInputProps) => {
+	const styles = useThemedStyles(makeStyles);
+	const { colors } = useTheme();
+
 	return (
 		<View style={[styles.searchContainer, containerStyle]}>
-			<SearchIcon containerStyle={styles.searchIcon} color={Colors.text.tertiary} />
+			<SearchIcon containerStyle={styles.searchIcon} color={colors.text.tertiary} />
 			<InputComponent
 				style={styles.searchInput}
 				value={searchInput}
 				onChangeText={onChangeText}
 				placeholder={placeholder}
-				placeholderTextColor={Colors.text.tertiary}
+				placeholderTextColor={colors.text.tertiary}
 				enterKeyHint="search"
 				onSubmitEditing={() => {
 					if (searchInput.trim()) {
@@ -35,7 +37,7 @@ const SearchInput = ({
 			/>
 			{searchInput && (
 				<Pressable onPress={resetSearchInput}>
-					<Ionicons name="close-circle" size={20} color={Colors.icon.default} />
+					<Ionicons name="close-circle" size={20} color={colors.icon.default} />
 				</Pressable>
 			)}
 		</View>
@@ -44,19 +46,21 @@ const SearchInput = ({
 
 export default SearchInput;
 
-const styles = StyleSheet.create({
-	searchContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		padding: 12,
-		borderRadius: 8,
-		backgroundColor: Colors.bg.secondary,
-	},
-	searchIcon: {
-		marginRight: 8,
-	},
-	searchInput: {
-		flex: 1,
-		fontSize: FontSizes.md,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		searchContainer: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			padding: Spacing.m,
+			borderRadius: BorderRadius.s,
+			backgroundColor: colors.bg.fill,
+		},
+		searchIcon: {
+			marginRight: Spacing.s,
+		},
+		searchInput: {
+			flex: 1,
+			fontSize: FontSizes.md,
+			color: colors.text.primary,
+		},
+	});

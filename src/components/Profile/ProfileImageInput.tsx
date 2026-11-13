@@ -4,13 +4,15 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { useImagePicker } from '@/hooks/shared/useImagePicker';
-import { Colors } from '@/theme/Color';
+import { Theme, useTheme, useThemedStyles } from '@/theme';
 import { ProfileImageInputProps } from '@/types/components';
 import { compressImage } from '@/utilities/compressImage';
 import { isLocalImage } from '@/utilities/typeGuards/imageGuards';
 import emptyProfileImage from '@assets/images/empty_profile_image.png';
 
 const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
+	const { colors } = useTheme();
+	const styles = useThemedStyles(makeStyles);
 	const { pickImage } = useImagePicker({ multiple: false });
 	const { showActionSheetWithOptions } = useActionSheet();
 
@@ -60,7 +62,7 @@ const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 
 			<View style={[styles.image, styles.imageEditIconContainer]}>
 				<View style={styles.imageEditIcon}>
-					<Entypo name="camera" size={16} color={Colors.text.tertiary} />
+					<Entypo name="camera" size={16} color={colors.text.tertiary} />
 				</View>
 			</View>
 		</TouchableOpacity>
@@ -69,33 +71,34 @@ const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 
 export default ProfileImageInput;
 
-const styles = StyleSheet.create({
-	imageContainer: {
-		position: 'relative',
-		marginTop: 16,
-		marginBottom: 24,
-	},
-	image: {
-		width: 100,
-		height: 100,
-		borderRadius: 50,
-	},
-	emptyImage: {
-		backgroundColor: Colors.border.default,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	imageEditIconContainer: {
-		position: 'absolute',
-		bottom: -75,
-		right: -75,
-	},
-	imageEditIcon: {
-		width: 25,
-		height: 25,
-		borderRadius: 10,
-		backgroundColor: Colors.bg.primary,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		imageContainer: {
+			position: 'relative',
+			marginTop: 16,
+			marginBottom: 24,
+		},
+		image: {
+			width: 100,
+			height: 100,
+			borderRadius: 50,
+		},
+		emptyImage: {
+			backgroundColor: colors.border.default,
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+		imageEditIconContainer: {
+			position: 'absolute',
+			bottom: -75,
+			right: -75,
+		},
+		imageEditIcon: {
+			width: 25,
+			height: 25,
+			borderRadius: 10,
+			backgroundColor: colors.bg.primary,
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+	});

@@ -1,12 +1,12 @@
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo } from '@expo/vector-icons';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 
 import PostList from '@/components/Home/PostList';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import Text from '@/components/ui/Text';
+import { useTheme } from '@/theme';
 import { MyPostsProps } from '@/types/components';
 import { Collection } from '@/types/post';
 
@@ -16,6 +16,7 @@ const OPTIONS = [
 ];
 
 const MyPosts = ({ isMyProfile, profileInfo }: MyPostsProps) => {
+	const { colors } = useTheme();
 	const { showActionSheetWithOptions } = useActionSheet();
 	const [selectedCollection, setSelectedCollection] = useState<Collection>('Boards');
 
@@ -50,8 +51,15 @@ const MyPosts = ({ isMyProfile, profileInfo }: MyPostsProps) => {
 			headerStyle={{ paddingBottom: 0 }}
 			headerRightComponent={
 				<Pressable style={styles.filterButtonContainer} onPress={showOptionSelect}>
-					<Text style={styles.filterButtonText}>{selectedOption?.label}</Text>
-					<Entypo name="chevron-down" size={16} color={Colors.text.tertiary} />
+					<Text
+						variant="body2"
+						weight="semibold"
+						color="tertiary"
+						style={styles.filterButtonText}
+					>
+						{selectedOption?.label}
+					</Text>
+					<Entypo name="chevron-down" size={16} color={colors.text.tertiary} />
 				</Pressable>
 			}
 		>
@@ -71,9 +79,6 @@ const styles = StyleSheet.create({
 		padding: 6,
 	},
 	filterButtonText: {
-		fontSize: FontSizes.sm,
-		fontWeight: FontWeights.semibold,
-		color: Colors.text.tertiary,
 		marginRight: 2,
 	},
 });

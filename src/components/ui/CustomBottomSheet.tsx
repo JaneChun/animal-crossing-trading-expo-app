@@ -1,12 +1,20 @@
 import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
 import { ReactNode, useCallback, useEffect, useRef } from 'react';
-import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { useGenericKeyboardHandler } from 'react-native-keyboard-controller';
 import Animated, { useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 
 import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import {
+	BorderRadius,
+	SheetThemeProvider,
+	Spacing,
+	Theme,
+	useTheme,
+	useThemedStyles,
+} from '@/theme';
+
+import Text from './Text';
 
 const CustomBottomSheet = ({
 	children,
@@ -27,6 +35,8 @@ const CustomBottomSheet = ({
 	bodyStyle?: StyleProp<ViewStyle>;
 	onClose: () => void;
 }) => {
+	const styles = useThemedStyles(makeStyles);
+	const { colors } = useTheme();
 	const bottomSheetRef = useRef<BottomSheet>(null);
 	const keyboardProgress = useSharedValue(0);
 
@@ -93,11 +103,11 @@ const CustomBottomSheet = ({
 			backdropComponent={renderBackdrop}
 			enablePanDownToClose={true}
 			backgroundStyle={{
-				backgroundColor: Colors.bg.primary,
-				borderTopLeftRadius: 16,
-				borderTopRightRadius: 16,
+				backgroundColor: colors.bg.elevated,
+				borderTopLeftRadius: BorderRadius.l,
+				borderTopRightRadius: BorderRadius.l,
 			}}
-			handleIndicatorStyle={{ width: 60, backgroundColor: Colors.icon.default }}
+			handleIndicatorStyle={{ width: 60, backgroundColor: colors.icon.default }}
 		>
 			{/*
 			 * Gorhom은 시트 높이를 애니메이션으로 계산해 flex:1 자식이 높이 제약을 못 받는다.
@@ -110,13 +120,17 @@ const CustomBottomSheet = ({
 						{leftButton && (
 							<View style={[styles.headerButton, { left: 0 }]}>{leftButton}</View>
 						)}
-						<Text style={styles.title}>{title}</Text>
+						<Text variant="heading" weight="bold" style={styles.title}>
+							{title}
+						</Text>
 						{rightButton && (
 							<View style={[styles.headerButton, { right: 0 }]}>{rightButton}</View>
 						)}
 					</View>
 				)}
-				<View style={[styles.body, bodyStyle]}>{children}</View>
+				<View style={[styles.body, bodyStyle]}>
+					<SheetThemeProvider>{children}</SheetThemeProvider>
+				</View>
 				<Animated.View pointerEvents="none" style={keyboardToolbarSpacerStyle} />
 			</View>
 		</BottomSheet>
@@ -125,35 +139,34 @@ const CustomBottomSheet = ({
 
 export default CustomBottomSheet;
 
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-	},
-	content: {
-		...StyleSheet.absoluteFillObject,
-	},
-	header: {
-		position: 'relative',
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		borderBottomWidth: 1,
-		borderColor: Colors.border.default,
-		paddingTop: 20,
-		paddingBottom: 16,
-		marginHorizontal: 12,
-	},
-	headerButton: {
-		position: 'absolute',
-	},
-	title: {
-		fontSize: FontSizes.lg,
-		fontWeight: FontWeights.bold,
-		flex: 1,
-		textAlign: 'center',
-	},
-	body: {
-		flex: 1,
-		padding: 30,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		screen: {
+			flex: 1,
+		},
+		content: {
+			...StyleSheet.absoluteFillObject,
+		},
+		header: {
+			position: 'relative',
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+			borderBottomWidth: 1,
+			borderColor: colors.border.default,
+			paddingTop: Spacing.xl,
+			paddingBottom: Spacing.l,
+			marginHorizontal: Spacing.m,
+		},
+		headerButton: {
+			position: 'absolute',
+		},
+		title: {
+			flex: 1,
+			textAlign: 'center',
+		},
+		body: {
+			flex: 1,
+			padding: Spacing.xxxl,
+		},
+	});

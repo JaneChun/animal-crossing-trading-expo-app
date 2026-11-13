@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { useChatStore } from '@/stores/chat';
 import { useNotificationStore } from '@/stores/notification';
-import { Colors } from '@/theme/Color';
+import { useTheme } from '@/theme';
 
 import ChatStackNavigator from './ChatStackNavigator';
 import CommunityStackNavigator from './CommunityStackNavigator';
@@ -14,14 +14,15 @@ import ProfileStackNavigator from './ProfileStackNavigator';
 
 const MainTab = createBottomTabNavigator();
 
-const getIconColor = (focused: boolean) =>
-	focused ? Colors.brand.primary : Colors.text.secondary;
-
 const MainTabNavigator = () => {
 	const userInfo = useUserInfo();
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 	const unreadChatCount = useChatStore((state) => state.unreadCount);
 	const unreadNotificationCount = useNotificationStore((state) => state.unreadCount);
+	const { colors } = useTheme();
+
+	const getIconColor = (focused: boolean) =>
+		focused ? colors.brand.primary : colors.text.secondary;
 
 	return (
 		<MainTab.Navigator
@@ -32,7 +33,7 @@ const MainTabNavigator = () => {
 					display: isAuthLoading ? 'none' : 'flex',
 				},
 				tabBarIconStyle: { flex: 1 },
-				tabBarActiveTintColor: Colors.brand.primary,
+				tabBarActiveTintColor: colors.brand.primary,
 			}}
 		>
 			<MainTab.Screen

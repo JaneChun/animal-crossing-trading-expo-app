@@ -1,17 +1,17 @@
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
-import { Alert, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import Text from '@/components/ui/Text';
 import { showToast } from '@/components/ui/Toast';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
-import { FontSizes, FontWeights } from '@/constants/Typography';
 import { generateChatId } from '@/firebase/services/chatService';
 import { useDeleteComment } from '@/hooks/comment/mutation/useDeleteComment';
 import { useReplies } from '@/hooks/reply/query/useReplies';
 import { useBlockUser } from '@/hooks/shared/useBlockUser';
 import { useUserInfo } from '@/stores/auth';
-import { Colors } from '@/theme/Color';
+import { FontSizes , Theme, useThemedStyles } from '@/theme';
 import { CreateChatRoomParams, SendChatMessageParams } from '@/types/chat';
 import { CommentUnitProps } from '@/types/components';
 import { Collection } from '@/types/post';
@@ -41,6 +41,7 @@ const CommentUnit = ({
 	creatorIslandName,
 	creatorPhotoURL,
 }: CommentUnitProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const userInfo = useUserInfo();
 
 	// 답글 조회
@@ -176,17 +177,21 @@ const CommentUnit = ({
 					{/* 작성자 */}
 					<View style={styles.creatorInfo}>
 						<Pressable onPress={onPressUserProfile}>
-							<Text style={styles.creatorDisplayNameText}>{creatorDisplayName}</Text>
+							<Text variant="body2" weight="semibold">
+								{creatorDisplayName}
+							</Text>
 						</Pressable>
 						{postCreatorId === creatorId && (
-							<Text style={styles.authorTag}>작성자</Text>
+							<Text variant="caption" color="primaryBrand" style={styles.authorTag}>
+								작성자
+							</Text>
 						)}
 					</View>
 					{/* 액션 시트 버튼 */}
 					<View style={styles.actionContainer}>
 						{userInfo && (
 							<ActionSheetButton
-								color={Colors.text.tertiary}
+								color={styles.actionIcon.color}
 								size={14}
 								options={options}
 							/>
@@ -195,12 +200,14 @@ const CommentUnit = ({
 				</View>
 
 				{/* 섬 이름, 작성 시간 */}
-				<Text
-					style={styles.infoText}
-				>{`${creatorIslandName} · ${elapsedTime(createdAt)}`}</Text>
+				<Text variant="caption" color="tertiary" style={styles.infoText}>
+					{`${creatorIslandName} · ${elapsedTime(createdAt)}`}
+				</Text>
 
 				{/* 바디 */}
-				<Text style={styles.commentBody}>{body}</Text>
+				<Text variant="body1" color="secondary" style={styles.commentBody}>
+					{body}
+				</Text>
 
 				{/* 푸터 */}
 				<View style={styles.commentFooter}>
@@ -217,12 +224,11 @@ const CommentUnit = ({
 							}
 						>
 							<View style={styles.replyIconContainer}>
-								<FontAwesome
-									name="reply"
-									style={[styles.replyText, styles.replyIcon]}
-								/>
+								<FontAwesome name="reply" style={styles.replyIcon} />
 							</View>
-							<Text style={styles.replyText}>답글 달기</Text>
+							<Text variant="caption" color="tertiary">
+								답글 달기
+							</Text>
 						</TouchableOpacity>
 					)}
 
@@ -241,10 +247,12 @@ const CommentUnit = ({
 								}
 								testID="startChatButton"
 							>
-								<Text style={styles.chatText}>채팅하기</Text>
+								<Text variant="body2" weight="semibold" style={styles.chatText}>
+									채팅하기
+								</Text>
 								<AntDesign
 									name="arrow-right"
-									color={Colors.brand.primary}
+									color={styles.chatText.color}
 									size={14}
 								/>
 							</TouchableOpacity>
@@ -283,98 +291,84 @@ const CommentUnit = ({
 	);
 };
 
-const styles = StyleSheet.create({
-	container: {
-		flexDirection: 'row',
-		paddingTop: 16, // paddingTop
-	},
-	profileImage: {
-		width: 50,
-		height: 50,
-		borderRadius: 25,
-		marginRight: 12,
-	},
-	content: {
-		flex: 1,
-	},
-	commentHeader: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-	},
-	creatorInfo: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	creatorDisplayNameText: {
-		fontSize: FontSizes.sm,
-		fontWeight: FontWeights.semibold,
-		color: Colors.text.primary,
-	},
-	authorTag: {
-		backgroundColor: Colors.bg.primaryBrand,
-		color: Colors.text.primaryBrand,
-		fontSize: FontSizes.xs,
-		padding: 4,
-		borderRadius: 4,
-		marginHorizontal: 6,
-	},
-	actionContainer: {
-		height: 28,
-		alignItems: 'flex-end',
-	},
-	infoText: {
-		fontSize: FontSizes.xs,
-		color: Colors.text.tertiary,
-		marginBottom: 6,
-	},
-	commentBody: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.regular,
-		color: Colors.text.secondary,
-		lineHeight: 24,
-	},
-	commentFooter: {
-		paddingBottom: 16, // paddingBottom
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		// alignItems: 'center',
-		gap: 12,
-		marginTop: 8,
-	},
-	replyButton: {
-		flexDirection: 'row',
-		alignItems: 'flex-start',
-		gap: 4,
-	},
-	replyIconContainer: {
-		transform: [{ rotateX: '180deg' }, { rotateY: '180deg' }],
-	},
-	replyIcon: {
-		color: Colors.icon.default,
-	},
-	replyText: {
-		fontSize: FontSizes.xs,
-		color: Colors.text.tertiary,
-		fontWeight: FontWeights.regular,
-	},
-	chatButtonContainer: {
-		flexDirection: 'row',
-		alignItems: 'flex-start',
-		gap: 4,
-		paddingVertical: 10,
-		paddingHorizontal: 14,
-		backgroundColor: Colors.bg.primary,
-		borderRadius: 50,
-		borderWidth: 1,
-		borderColor: Colors.brand.primary,
-	},
-	chatText: {
-		fontSize: FontSizes.sm,
-		color: Colors.brand.primary,
-		fontWeight: FontWeights.semibold,
-	},
-	repliesContainer: {},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		container: {
+			flexDirection: 'row',
+			paddingTop: 16, // paddingTop
+		},
+		profileImage: {
+			width: 50,
+			height: 50,
+			borderRadius: 25,
+			marginRight: 12,
+		},
+		content: {
+			flex: 1,
+		},
+		commentHeader: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+		},
+		creatorInfo: {
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		authorTag: {
+			backgroundColor: colors.bg.primaryBrand,
+			padding: 4,
+			borderRadius: 4,
+			marginHorizontal: 6,
+		},
+		actionContainer: {
+			height: 28,
+			alignItems: 'flex-end',
+		},
+		actionIcon: {
+			color: colors.text.tertiary,
+		},
+		infoText: {
+			marginBottom: 6,
+		},
+		commentBody: {
+			lineHeight: 24,
+		},
+		commentFooter: {
+			paddingBottom: 16, // paddingBottom
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			// alignItems: 'center',
+			gap: 12,
+			marginTop: 8,
+		},
+		replyButton: {
+			flexDirection: 'row',
+			alignItems: 'flex-start',
+			gap: 4,
+		},
+		replyIconContainer: {
+			transform: [{ rotateX: '180deg' }, { rotateY: '180deg' }],
+		},
+		replyIcon: {
+			fontSize: FontSizes.xs,
+			color: colors.icon.default,
+		},
+		chatButtonContainer: {
+			flexDirection: 'row',
+			alignItems: 'flex-start',
+			gap: 4,
+			paddingVertical: 10,
+			paddingHorizontal: 14,
+			backgroundColor: colors.bg.primary,
+			borderRadius: 50,
+			borderWidth: 1,
+			borderColor: colors.brand.primary,
+		},
+		chatText: {
+			color: colors.brand.primary,
+		},
+		repliesContainer: {},
+	});
 
 export default CommentUnit;

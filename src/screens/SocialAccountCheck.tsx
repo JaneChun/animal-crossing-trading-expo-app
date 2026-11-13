@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import CloseButton from '@/components/ui/CloseButton';
@@ -6,13 +6,16 @@ import { PADDING } from '@/components/ui/layout/Layout';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import SocialLoginButton from '@/components/ui/SocialLoginButton';
+import Text from '@/components/ui/Text';
 import { pop } from '@/navigation/RootNavigation';
 import { LoginResult, useAuthStore, useUserInfo } from '@/stores/auth';
-import { Colors } from '@/theme/Color'; // 프로젝트 컬러 상수
+import { Theme, useThemedStyles } from '@/theme';
+// 프로젝트 컬러 상수
 import { OauthType } from '@/types/user';
 import { navigateToDeleteAccount } from '@/utilities/navigationHelpers';
 
 const SocialAccountCheck = () => {
+	const styles = useThemedStyles(makeStyles);
 	const userInfo = useUserInfo();
 	const kakaoLogin = useAuthStore((state) => state.kakaoLogin);
 	const naverLogin = useAuthStore((state) => state.naverLogin);
@@ -46,8 +49,12 @@ const SocialAccountCheck = () => {
 				hasBorderBottom={false}
 			>
 				<View style={styles.container}>
-					<Text style={styles.title}>{'계정 확인을 위한\n본인 인증이 필요해요'}</Text>
-					<Text style={styles.subtitle}>계정 확인 후 탈퇴 절차를 이어갈게요</Text>
+					<Text variant="title" weight="bold" style={styles.title}>
+						{'계정 확인을 위한\n본인 인증이 필요해요'}
+					</Text>
+					<Text variant="body2" color="tertiary" style={styles.subtitle}>
+						계정 확인 후 탈퇴 절차를 이어갈게요
+					</Text>
 
 					<View style={styles.bottom}>
 						{userInfo?.oauthType === 'naver' ? (
@@ -72,28 +79,24 @@ const SocialAccountCheck = () => {
 
 export default SocialAccountCheck;
 
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: Colors.bg.primary,
-	},
-	container: {
-		flex: 1,
-		padding: PADDING,
-	},
-	title: {
-		fontSize: 22,
-		fontWeight: 'bold',
-		marginBottom: 8,
-		color: Colors.text.primary,
-	},
-	subtitle: {
-		fontSize: 14,
-		color: Colors.text.tertiary,
-		marginBottom: 24,
-	},
-	bottom: {
-		flex: 1,
-		justifyContent: 'flex-end',
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		screen: {
+			flex: 1,
+			backgroundColor: colors.bg.primary,
+		},
+		container: {
+			flex: 1,
+			padding: PADDING,
+		},
+		title: {
+			marginBottom: 8,
+		},
+		subtitle: {
+			marginBottom: 24,
+		},
+		bottom: {
+			flex: 1,
+			justifyContent: 'flex-end',
+		},
+	});

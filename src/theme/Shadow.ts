@@ -8,7 +8,7 @@ type ShadowStyle = Pick<
 /**
  * Shadow 프리셋
  */
-export const Shadow: Record<'sm' | 'md', ShadowStyle> = {
+export const Shadow: Record<'sm' | 'md' | 'lg', ShadowStyle> = {
 	/** 가벼운 그림자 — 카드, 리스트 아이템 */
 	sm: {
 		shadowColor: '#000',
@@ -24,5 +24,13 @@ export const Shadow: Record<'sm' | 'md', ShadowStyle> = {
 		shadowOpacity: 0.12,
 		shadowRadius: 4,
 		elevation: 4,
+	},
+	/** 큰 그림자 — 모달, 바텀시트 */
+	lg: {
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 4 },
+		shadowOpacity: 0.16,
+		shadowRadius: 8,
+		elevation: 8,
 	},
 };

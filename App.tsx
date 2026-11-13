@@ -3,6 +3,7 @@ import { LinkingOptions, NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as Linking from 'expo-linking';
 import * as ExpoSplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -25,7 +26,9 @@ import { useChatSubscriptionInitializer } from '@/stores/chat';
 import { useNotificationSubscriptionInitializer } from '@/stores/notification';
 import { useOnboardingInitializer } from '@/stores/onboarding/initializer';
 import { usePushNotificationInitializer } from '@/stores/push';
-import { Colors } from '@/theme/Color';
+import { getNavigationTheme } from '@/theme/navigationTheme';
+import { Theme, ThemeProvider, useTheme } from '@/theme/ThemeProvider';
+import { useThemedStyles } from '@/theme/useThemedStyles';
 import { RootStackParamList } from '@/types/navigation';
 import { logScreenView } from '@/utilities/analytics';
 
@@ -92,17 +95,32 @@ function AppContent() {
 	useNotificationSubscriptionInitializer();
 	useChatSubscriptionInitializer();
 
+	return (
+		<ErrorBoundary>
+			<ThemeProvider>
+				<ThemedAppContent />
+			</ThemeProvider>
+		</ErrorBoundary>
+	);
+}
+
+function ThemedAppContent() {
+	const { scheme } = useTheme();
+	const styles = useThemedStyles(makeStyles);
+
 	// 이전 화면 이름을 저장하는 ref (for Analytics)
 	const prevRouteNameRef = useRef<string | undefined>(undefined);
 
 	return (
-		<ErrorBoundary>
+		<>
+			<StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
 			<ActionSheetProvider>
 				<GestureHandlerRootView style={styles.flex}>
 					<SafeAreaProvider>
 						<NavigationContainer
 							ref={navigationRef}
 							linking={linking}
+							theme={getNavigationTheme(scheme)}
 							onReady={() => {
 								prevRouteNameRef.current = navigationRef.getCurrentRoute()?.name;
 							}}
@@ -125,16 +143,17 @@ function AppContent() {
 					</SafeAreaProvider>
 				</GestureHandlerRootView>
 			</ActionSheetProvider>
-		</ErrorBoundary>
+		</>
 	);
 }
 
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: Colors.bg.primary,
-	},
-	flex: {
-		flex: 1,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		screen: {
+			flex: 1,
+			backgroundColor: colors.bg.primary,
+		},
+		flex: {
+			flex: 1,
+		},
+	});
