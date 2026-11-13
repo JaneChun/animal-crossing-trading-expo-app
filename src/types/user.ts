@@ -39,12 +39,12 @@ export interface UserInfo extends PublicUserInfo {
 	lastLogin: Timestamp;
 }
 
-export type OauthType = 'kakao' | 'naver' | 'apple';
+export type OauthType = 'kakao' | 'naver' | 'apple' | 'google';
 
 export type GetFirebaseCustomTokenParams = {
 	oauthType: OauthType;
 	accessToken?: string; // 네이버, 카카오
-	idToken?: string; // Apple
+	idToken?: string; // Apple, Google
 	rawNonce?: string; // Apple
 };
 

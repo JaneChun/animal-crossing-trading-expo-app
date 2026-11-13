@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import { PADDING } from '@/components/ui/layout/Layout';
@@ -6,7 +6,7 @@ import SocialLoginButton from '@/components/ui/SocialLoginButton';
 import { showToast } from '@/components/ui/Toast';
 import { auth } from '@/config/firebase';
 import { LoginResult, useAuthStore } from '@/stores/auth';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 import { OauthType } from '@/types/user';
 import {
 	navigateToAgreeToTermsAndConditions,
@@ -14,10 +14,16 @@ import {
 } from '@/utilities/navigationHelpers';
 import landingImage from '@assets/images/landing.webp';
 
+// 플랫폼별로 노출할 소셜 로그인 버튼 — Android Apple 로그인, iOS Google 로그인을 추가할 때 이 목록만 수정한다
+const VISIBLE_OAUTH_TYPES: OauthType[] =
+	Platform.OS === 'android' ? ['naver', 'google'] : ['naver', 'apple'];
+
 const Login = () => {
+	const styles = useThemedStyles(makeStyles);
 	const kakaoLogin = useAuthStore((state) => state.kakaoLogin);
 	const naverLogin = useAuthStore((state) => state.naverLogin);
 	const appleLogin = useAuthStore((state) => state.appleLogin);
+	const googleLogin = useAuthStore((state) => state.googleLogin);
 
 	const handleLogin = async (oauthType: OauthType) => {
 		let loginResult: LoginResult = {
@@ -29,6 +35,7 @@ const Login = () => {
 		if (oauthType === 'kakao') loginResult = await kakaoLogin();
 		else if (oauthType === 'naver') loginResult = await naverLogin();
 		else if (oauthType === 'apple') loginResult = await appleLogin();
+		else if (oauthType === 'google') loginResult = await googleLogin();
 
 		if (loginResult.isSuccess) {
 			// 신규 유저
@@ -73,49 +80,48 @@ const Login = () => {
 					style={{ width: '95%' }}
 					// disabled
 				/> */}
-				<SocialLoginButton
-					oauthType="naver"
-					onPress={() => handleLogin('naver')}
-					style={{ width: '95%' }}
-				/>
-				<SocialLoginButton
-					oauthType="apple"
-					onPress={() => handleLogin('apple')}
-					style={{ width: '95%', borderWidth: 1 }}
-				/>
+				{VISIBLE_OAUTH_TYPES.map((oauthType) => (
+					<SocialLoginButton
+						key={oauthType}
+						oauthType={oauthType}
+						onPress={() => handleLogin(oauthType)}
+						style={{ width: '95%' }}
+					/>
+				))}
 			</View>
 		</View>
 	);
 };
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		padding: PADDING,
-		backgroundColor: Colors.bg.primary,
-	},
-	header: {
-		flex: 1,
-		width: '100%',
-		paddingTop: '20%',
-	},
-	titleContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center',
-		marginTop: 10,
-	},
-	title: {
-		fontWeight: 'bold',
-		fontSize: 24,
-	},
-	body: {
-		width: '100%',
-		alignItems: 'center',
-		gap: 12,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		container: {
+			flex: 1,
+			justifyContent: 'center',
+			alignItems: 'center',
+			padding: PADDING,
+			backgroundColor: colors.bg.primary,
+		},
+		header: {
+			flex: 1,
+			width: '100%',
+			paddingTop: '20%',
+		},
+		titleContainer: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'center',
+			marginTop: 10,
+		},
+		title: {
+			fontWeight: 'bold',
+			fontSize: 24,
+		},
+		body: {
+			width: '100%',
+			alignItems: 'center',
+			gap: 12,
+		},
+	});
 
 export default Login;

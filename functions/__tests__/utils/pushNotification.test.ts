@@ -44,7 +44,7 @@ describe('notification 유틸리티 함수 테스트', () => {
 			// 2. toHaveBeenCalledWith: mock 함수가 특정 인자로 호출되었는지 확인
 			expect(mockedAxios.post).toHaveBeenCalledWith(
 				'https://exp.host/--/api/v2/push/send', // 첫 번째 인자: URL
-				payload, // 두 번째 인자: 요청 본문
+				{ ...payload, channelId: 'default' }, // 두 번째 인자: 요청 본문 (Android 채널 지정 포함)
 				{
 					// 세 번째 인자: 설정 객체
 					headers: {
@@ -99,7 +99,7 @@ describe('notification 유틸리티 함수 테스트', () => {
 
 			expect(mockedAxios.post).toHaveBeenCalledWith(
 				'https://exp.host/--/api/v2/push/send',
-				payload,
+				{ ...payload, channelId: 'default' },
 				{
 					headers: {
 						'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ describe('notification 유틸리티 함수 테스트', () => {
 
 			expect(mockedAxios.post).toHaveBeenCalledWith(
 				'https://exp.host/--/api/v2/push/send',
-				payload,
+				{ ...payload, channelId: 'default' },
 				{
 					headers: {
 						'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ describe('notification 유틸리티 함수 테스트', () => {
 
 			expect(mockedAxios.post).toHaveBeenCalledWith(
 				'https://exp.host/--/api/v2/push/send',
-				payload,
+				{ ...payload, channelId: 'default' },
 				{
 					headers: {
 						'Content-Type': 'application/json',

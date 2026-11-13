@@ -28,6 +28,7 @@ jest.mock('../../src/utils/common', () => ({
 const mockHandleKakaoLogin = jest.fn();
 const mockHandleNaverLogin = jest.fn();
 const mockHandleAppleLogin = jest.fn();
+const mockHandleGoogleLogin = jest.fn();
 
 jest.mock('../../src/auth/kakao', () => ({
 	handleKakaoLogin: mockHandleKakaoLogin,
@@ -39,6 +40,10 @@ jest.mock('../../src/auth/naver', () => ({
 
 jest.mock('../../src/auth/apple', () => ({
 	handleAppleLogin: mockHandleAppleLogin,
+}));
+
+jest.mock('../../src/auth/google', () => ({
+	handleGoogleLogin: mockHandleGoogleLogin,
 }));
 
 import { createFirebaseCustomToken } from '../../src/auth/customToken';
@@ -164,6 +169,37 @@ describe('Custom Token 생성 테스트', () => {
 				);
 				expect(mockCreateCustomToken).toHaveBeenCalledWith('apple_user_789');
 			});
+
+			it('Google OAuth로 Custom Token을 성공적으로 생성해야 한다', async () => {
+				const googleUserInfo = {
+					providerId: 'google_user_101',
+					email: 'googleuser@gmail.com',
+				};
+
+				mockHandleGoogleLogin.mockResolvedValue(googleUserInfo);
+				mockIsUserRestrictedFromRejoining.mockResolvedValue(false);
+				mockCreateCustomToken.mockResolvedValue('firebase_custom_token_101');
+
+				const request = {
+					oauthType: 'google',
+					idToken: 'valid_google_id_token',
+				};
+
+				const result = await createFirebaseCustomToken(request);
+
+				expect(result).toEqual({
+					firebaseToken: 'firebase_custom_token_101',
+					user: { email: 'googleuser@gmail.com' },
+				});
+
+				expect(mockHandleGoogleLogin).toHaveBeenCalledWith(
+					'valid_google_id_token',
+				);
+				expect(mockIsUserRestrictedFromRejoining).toHaveBeenCalledWith(
+					'google_user_101',
+				);
+				expect(mockCreateCustomToken).toHaveBeenCalledWith('google_user_101');
+			});
 		});
 
 		describe('실패 케이스', () => {
@@ -195,11 +231,12 @@ describe('Custom Token 생성 테스트', () => {
 				expect(mockHandleKakaoLogin).not.toHaveBeenCalled();
 				expect(mockHandleNaverLogin).not.toHaveBeenCalled();
 				expect(mockHandleAppleLogin).not.toHaveBeenCalled();
+				expect(mockHandleGoogleLogin).not.toHaveBeenCalled();
 			});
 
 			it('지원하지 않는 oauthType이면 invalid-argument 에러를 throw해야 한다', async () => {
 				const request = {
-					oauthType: 'google', // 지원하지 않는 타입
+					oauthType: 'facebook', // 지원하지 않는 타입
 					accessToken: 'valid_token',
 				};
 
@@ -211,6 +248,7 @@ describe('Custom Token 생성 테스트', () => {
 				expect(mockHandleKakaoLogin).not.toHaveBeenCalled();
 				expect(mockHandleNaverLogin).not.toHaveBeenCalled();
 				expect(mockHandleAppleLogin).not.toHaveBeenCalled();
+				expect(mockHandleGoogleLogin).not.toHaveBeenCalled();
 			});
 
 			it('Kakao 로그인에서 에러가 발생하면 그대로 전파해야 한다', async () => {
@@ -277,6 +315,27 @@ describe('Custom Token 생성 테스트', () => {
 				);
 
 				expect(mockHandleAppleLogin).toHaveBeenCalledWith('', '');
+				expect(mockIsUserRestrictedFromRejoining).not.toHaveBeenCalled();
+				expect(mockCreateCustomToken).not.toHaveBeenCalled();
+			});
+
+			it('Google 로그인에서 에러가 발생하면 그대로 전파해야 한다', async () => {
+				const googleError = new MockHttpsError(
+					'unauthenticated',
+					'유효하지 않은 Google ID 토큰입니다.',
+				);
+				mockHandleGoogleLogin.mockRejectedValue(googleError);
+
+				const request = {
+					oauthType: 'google',
+					idToken: 'invalid_token',
+				};
+
+				await expect(createFirebaseCustomToken(request)).rejects.toThrow(
+					'유효하지 않은 Google ID 토큰입니다.',
+				);
+
+				expect(mockHandleGoogleLogin).toHaveBeenCalledWith('invalid_token');
 				expect(mockIsUserRestrictedFromRejoining).not.toHaveBeenCalled();
 				expect(mockCreateCustomToken).not.toHaveBeenCalled();
 			});

@@ -1,8 +1,7 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
+import Text from '@/components/ui/Text';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
 import { UserInfoProps } from '@/types/components';
 import { navigateToUserProfile } from '@/utilities/navigationHelpers';
 
@@ -18,11 +17,15 @@ const UserInfo = ({ userId, displayName, islandName, containerStyle }: UserInfoP
 	return (
 		<View style={[styles.container, containerStyle]}>
 			<Pressable onPress={onPressUserProfile}>
-				<Text style={styles.displayName}>{displayName}</Text>
+				<Text variant="body2" color="tertiary">
+					{displayName}
+				</Text>
 			</Pressable>
 			<View style={styles.IslandContainer}>
 				<Island style={styles.logoImage} />
-				<Text style={styles.islandName}>{islandName}</Text>
+				<Text variant="body2" color="tertiary" style={styles.islandName}>
+					{islandName}
+				</Text>
 			</View>
 		</View>
 	);
@@ -36,11 +39,6 @@ const styles = StyleSheet.create({
 		justifyContent: 'flex-start',
 		alignItems: 'center',
 	},
-	displayName: {
-		fontSize: FontSizes.sm,
-		fontWeight: FontWeights.regular,
-		color: Colors.text.tertiary,
-	},
 	IslandContainer: {
 		flexDirection: 'row',
 		alignItems: 'center',
@@ -51,8 +49,6 @@ const styles = StyleSheet.create({
 		marginLeft: 8,
 	},
 	islandName: {
-		color: Colors.text.tertiary,
-		fontWeight: FontWeights.regular,
 		marginLeft: 1,
 	},
 });

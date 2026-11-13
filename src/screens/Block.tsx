@@ -7,10 +7,11 @@ import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import { PADDING } from '@/components/ui/layout/Layout';
 import { getPublicUserInfo } from '@/firebase/services/userService';
 import { useBlockStore } from '@/stores/block';
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 import { BlockedUser } from '@/types/user';
 
 const Block = () => {
+	const styles = useThemedStyles(makeStyles);
 	const blockedUsers = useBlockStore((state) => state.blockedUsers);
 	const [usersList, setUsersList] = useState<BlockedUser[]>([]);
 	const usersListRef = useRef(usersList);
@@ -84,18 +85,19 @@ const Block = () => {
 
 export default Block;
 
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: Colors.bg.primary,
-	},
-	content: {
-		flexGrow: 1,
-		paddingVertical: PADDING,
-	},
-	separator: {
-		height: 1,
-		backgroundColor: Colors.border.default,
-		marginHorizontal: 16,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		screen: {
+			flex: 1,
+			backgroundColor: colors.bg.primary,
+		},
+		content: {
+			flexGrow: 1,
+			paddingVertical: PADDING,
+		},
+		separator: {
+			height: 1,
+			backgroundColor: colors.border.default,
+			marginHorizontal: 16,
+		},
+	});

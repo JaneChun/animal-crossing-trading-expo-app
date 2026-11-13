@@ -5,7 +5,7 @@
 "모동숲 마켓" — 한국 '모여봐요 동물의 숲' 플레이어를 위한 아이템 거래 마켓플레이스 모바일 앱.
 
 - **스택**
-  - React Native 0.81 + Expo SDK 54 (New Architecture)
+  - React Native 0.83 + Expo SDK 55 (New Architecture)
   - Firebase JS SDK — Auth, Firestore, Functions, Storage
   - Zustand 5 (전역 상태), React Query 5 (서버 상태)
   - React Navigation 7, React Hook Form + Zod, Algolia 검색
@@ -59,4 +59,5 @@ npm run test         # jest — unit(src/__tests__) + Maestro E2E 프로젝트 �
 | [agent_docs/firebase-patterns.md](agent_docs/firebase-patterns.md) | firestoreRequest 패턴, `in` 쿼리 10개 제한, 초기화 함정 | Firebase 서비스 레이어 작업 |
 | [agent_docs/testing.md](agent_docs/testing.md) | 테스트 전략 (Maestro E2E, functions 테스트) | 테스트 작성/수정 |
 | [agent_docs/environment.md](agent_docs/environment.md) | 설치 함정, 환경 변수 목록 | 환경 셋업·의존성 문제 |
+| [agent_docs/design-system.md](agent_docs/design-system.md) | 토큰·공통 컴포넌트 API, 다크 모드 마이그레이션 레시피, ESLint 가드레일 | UI 작성·스타일 수정, `Colors`/RN `Text` 경고 처리 |
 | [agent_docs/features/](agent_docs/features/) | 기능별 동작 설명 (카트 아이템 등) | 해당 기능 수정·분석 |

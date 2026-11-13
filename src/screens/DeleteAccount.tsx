@@ -1,4 +1,4 @@
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import Button from '@/components/ui/Button';
@@ -6,9 +6,11 @@ import CloseButton from '@/components/ui/CloseButton';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
+import Text from '@/components/ui/Text';
 import { pop } from '@/navigation/RootNavigation';
 import { useAuthStore, useUserInfo } from '@/stores/auth';
-import { Colors } from '@/theme/Color'; // 프로젝트 컬러 상수
+import { Theme, useThemedStyles } from '@/theme';
+// 프로젝트 컬러 상수
 
 const guideList = [
 	{
@@ -28,11 +30,13 @@ const guideList = [
 ];
 
 const DeleteAccount = () => {
+	const styles = useThemedStyles(makeStyles);
 	const userInfo = useUserInfo();
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
 	const kakaoDeleteAccount = useAuthStore((state) => state.kakaoDeleteAccount);
 	const naverDeleteAccount = useAuthStore((state) => state.naverDeleteAccount);
 	const appleDeleteAccount = useAuthStore((state) => state.appleDeleteAccount);
+	const googleDeleteAccount = useAuthStore((state) => state.googleDeleteAccount);
 
 	const handleDeleteAccount = async () => {
 		Alert.alert(
@@ -56,6 +60,7 @@ const DeleteAccount = () => {
 		if (userInfo.oauthType === 'kakao') isSuccess = await kakaoDeleteAccount(userInfo.uid);
 		else if (userInfo.oauthType === 'naver') isSuccess = await naverDeleteAccount(userInfo.uid);
 		else if (userInfo.oauthType === 'apple') isSuccess = await appleDeleteAccount(userInfo.uid);
+		else if (userInfo.oauthType === 'google') isSuccess = await googleDeleteAccount(userInfo.uid);
 
 		if (isSuccess) {
 			Alert.alert('탈퇴 완료', '회원 탈퇴가 완료되었습니다.');
@@ -85,21 +90,29 @@ const DeleteAccount = () => {
 				hasBorderBottom={false}
 			>
 				<View style={styles.container}>
-					<Text style={styles.title}>{'탈퇴 전, 아래 내용을\n꼭 확인해주세요'}</Text>
-					<Text style={styles.subtitle}>탈퇴 시 유의사항 안내</Text>
+					<Text variant="title" weight="bold" style={styles.title}>
+						{'탈퇴 전, 아래 내용을\n꼭 확인해주세요'}
+					</Text>
+					<Text variant="body2" color="tertiary" style={styles.subtitle}>
+						탈퇴 시 유의사항 안내
+					</Text>
 
 					{guideList.map((item, index) => (
 						<View key={index} style={styles.infoBox}>
-							<Text style={styles.infoTitle}>{item.title}</Text>
-							<Text style={styles.infoDescription}>{item.description}</Text>
+							<Text variant="body1" weight="bold" style={styles.infoTitle}>
+								{item.title}
+							</Text>
+							<Text variant="body2" color="tertiary" style={styles.infoDescription}>
+								{item.description}
+							</Text>
 						</View>
 					))}
 					<View style={styles.bottom}>
 						<View style={styles.buttonsContainer}>
-							<Button onPress={backToAccount} color="gray" size="lg2" flex>
+							<Button onPress={backToAccount} variant="secondary" size="lg" flex>
 								취소
 							</Button>
-							<Button onPress={handleDeleteAccount} color="mint" size="lg2" flex>
+							<Button onPress={handleDeleteAccount} variant="primary" size="lg" flex>
 								탈퇴할래요
 							</Button>
 						</View>
@@ -112,51 +125,42 @@ const DeleteAccount = () => {
 
 export default DeleteAccount;
 
-const styles = StyleSheet.create({
-	screen: {
-		flex: 1,
-		backgroundColor: Colors.bg.primary,
-	},
-	container: {
-		flex: 1,
-		padding: PADDING,
-	},
-	title: {
-		fontSize: 22,
-		fontWeight: 'bold',
-		marginBottom: 8,
-		color: Colors.text.primary,
-	},
-	subtitle: {
-		fontSize: 14,
-		color: Colors.text.tertiary,
-		marginBottom: 24,
-	},
-	infoBox: {
-		backgroundColor: Colors.bg.secondary,
-		borderRadius: 10,
-		padding: 16,
-		marginBottom: 16,
-	},
-	infoTitle: {
-		fontSize: 16,
-		fontWeight: 'bold',
-		color: Colors.text.primary,
-		marginBottom: 6,
-	},
-	infoDescription: {
-		fontSize: 14,
-		color: Colors.text.tertiary,
-		lineHeight: 18,
-	},
-	bottom: {
-		flex: 1,
-		justifyContent: 'flex-end',
-	},
-	buttonsContainer: {
-		marginTop: 8,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		gap: 10,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		screen: {
+			flex: 1,
+			backgroundColor: colors.bg.primary,
+		},
+		container: {
+			flex: 1,
+			padding: PADDING,
+		},
+		title: {
+			marginBottom: 8,
+		},
+		subtitle: {
+			marginBottom: 24,
+		},
+		infoBox: {
+			backgroundColor: colors.bg.fill,
+			borderRadius: 10,
+			padding: 16,
+			marginBottom: 16,
+		},
+		infoTitle: {
+			marginBottom: 6,
+		},
+		infoDescription: {
+			lineHeight: 18,
+		},
+		bottom: {
+			flex: 1,
+			justifyContent: 'flex-end',
+		},
+		buttonsContainer: {
+			marginTop: 8,
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			gap: 10,
+		},
+	});

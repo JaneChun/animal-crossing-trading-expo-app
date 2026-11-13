@@ -1,162 +1,153 @@
 import { memo } from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
-import { ButtonColor, ButtonProps, ButtonSize } from '@/types/components';
+import { BorderRadius, Spacing, Theme, useThemedStyles } from '@/theme';
+import { ButtonProps, ButtonSize } from '@/types/components';
+
+import Text from './Text';
+
+const PRESSED_OPACITY = 0.7;
+
+const SIZE_TEXT_PROPS = {
+	sm: { variant: 'body2', weight: 'semibold' },
+	md: { variant: 'body1', weight: 'bold' },
+	lg: { variant: 'body1', weight: 'bold' },
+} as const satisfies Record<ButtonSize, object>;
 
 const Button = ({
 	children,
 	onPress,
-	color,
-	size,
+	variant = 'primary',
+	size = 'md',
+	isLoading = false,
+	leftIcon,
 	flex = false,
 	style,
-	disabled,
+	disabled = false,
 	testID,
 }: ButtonProps) => {
-	const getColorStyles = (color: ButtonColor) => {
-		switch (color) {
-			case 'mint':
-				return styles.mint;
-			case 'white':
-				return styles.white;
-			case 'gray':
-				return styles.gray;
-			case 'red': {
-				return styles.red;
-			}
-			case 'redWhite': {
-				return styles.redWhite;
-			}
-			default:
-				return {};
-		}
-	};
+	const styles = useThemedStyles(makeStyles);
 
-	const getTextStyles = (color: ButtonColor) => {
-		switch (color) {
-			case 'mint':
-				return { color: Colors.text.inverse };
-			case 'white':
-				return { color: Colors.brand.primary };
-			case 'gray':
-				return { color: Colors.text.primary };
-			case 'red': {
-				return { color: Colors.text.inverse };
-			}
-			case 'redWhite': {
-				return { color: Colors.badge.red };
-			}
-			default:
-				return {};
-		}
-	};
-
-	const getSizeStyles = (size: ButtonSize) => {
-		switch (size) {
-			case 'sm':
-				return styles.sm;
-			case 'md':
-				return styles.md;
-			case 'md2':
-				return styles.md2;
-			case 'lg':
-				return styles.lg;
-			case 'lg2':
-				return styles.lg2;
-			default:
-				return {};
-		}
-	};
-
-	const colorStyles = getColorStyles(color);
-	const textStyles = getTextStyles(color);
-	const sizeStyles = getSizeStyles(size);
+	// disabled이면서 loading이면 loading 표시를 우선하되 색은 disabled 색을 쓴다
+	const colorKey = disabled ? 'disabled' : variant;
+	const containerColorStyle = styles[colorKey];
+	const textColorStyle = styles[`${colorKey}Text`];
 
 	return (
-		<TouchableOpacity
+		<Pressable
 			onPress={onPress}
-			disabled={disabled}
-			style={[
+			disabled={disabled || isLoading}
+			style={({ pressed }) => [
 				styles.button,
-				sizeStyles,
-				disabled ? styles.disabledStyle : colorStyles,
-				flex && { flex: 1 },
+				styles[size],
+				containerColorStyle,
+				pressed && styles.pressed,
+				flex && styles.flex,
 				style,
 			]}
 			testID={testID}
 		>
-			<Text style={[styles.text, disabled ? styles.disabledText : textStyles]}>
-				{children}
-			</Text>
-		</TouchableOpacity>
+			{/* 로딩 중에도 버튼 너비를 유지하도록 내용은 숨기기만 하고 자리를 남긴다 */}
+			<View style={[styles.content, isLoading && styles.hidden]}>
+				{leftIcon}
+				<Text {...SIZE_TEXT_PROPS[size]} numberOfLines={1} style={textColorStyle}>
+					{children}
+				</Text>
+			</View>
+			{isLoading && (
+				<ActivityIndicator style={StyleSheet.absoluteFill} color={textColorStyle.color} />
+			)}
+		</Pressable>
 	);
 };
 
-const styles = StyleSheet.create({
-	button: {
-		borderRadius: 8,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	disabledStyle: {
-		backgroundColor: Colors.border.default,
-		borderWidth: 1,
-		borderColor: Colors.border.default,
-	},
-	disabledText: {
-		color: Colors.text.tertiary,
-	},
-	mint: {
-		backgroundColor: Colors.brand.primary,
-		borderWidth: 1,
-		borderColor: Colors.brand.primary,
-	},
-	white: {
-		backgroundColor: 'transparent',
-		borderWidth: 1,
-		borderColor: Colors.brand.primary,
-	},
-	gray: {
-		backgroundColor: 'transparent',
-		borderWidth: 1,
-		borderColor: Colors.border.default,
-	},
-	red: {
-		backgroundColor: Colors.badge.red,
-		borderWidth: 1,
-		borderColor: Colors.badge.red,
-	},
-	redWhite: {
-		backgroundColor: 'transparent',
-		borderWidth: 1,
-		borderColor: Colors.badge.red,
-	},
-	text: {
-		fontWeight: FontWeights.bold,
-		fontSize: FontSizes.md,
-	},
-	sm: {
-		paddingVertical: 6,
-		paddingHorizontal: 12,
-	},
-	md: {
-		paddingVertical: 8,
-		paddingHorizontal: 16,
-	},
-	md2: {
-		paddingVertical: 10,
-		paddingHorizontal: 16,
-	},
-	lg: {
-		paddingVertical: 14,
-		paddingHorizontal: 16,
-	},
-	lg2: {
-		paddingVertical: 16,
-		paddingHorizontal: 16,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		button: {
+			borderRadius: BorderRadius.s,
+			borderWidth: 1,
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+		content: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			gap: Spacing.xs,
+		},
+		hidden: {
+			opacity: 0,
+		},
+		pressed: {
+			opacity: PRESSED_OPACITY,
+		},
+		flex: {
+			flex: 1,
+		},
+
+		// size
+		sm: {
+			height: 32,
+			paddingHorizontal: Spacing.m,
+		},
+		md: {
+			height: 40,
+			paddingHorizontal: Spacing.l,
+		},
+		lg: {
+			height: 52,
+			paddingHorizontal: Spacing.l,
+		},
+
+		// variant
+		primary: {
+			backgroundColor: colors.brand.primary,
+			borderColor: colors.brand.primary,
+		},
+		primaryText: {
+			color: colors.text.onBrand,
+		},
+		outline: {
+			backgroundColor: 'transparent',
+			borderColor: colors.brand.primary,
+		},
+		outlineText: {
+			color: colors.brand.primary,
+		},
+		secondary: {
+			backgroundColor: 'transparent',
+			borderColor: colors.border.default,
+		},
+		secondaryText: {
+			color: colors.text.primary,
+		},
+		danger: {
+			backgroundColor: colors.status.danger,
+			borderColor: colors.status.danger,
+		},
+		dangerText: {
+			color: colors.text.onBrand,
+		},
+		dangerOutline: {
+			backgroundColor: 'transparent',
+			borderColor: colors.status.danger,
+		},
+		dangerOutlineText: {
+			color: colors.status.danger,
+		},
+		ghost: {
+			backgroundColor: 'transparent',
+			borderColor: 'transparent',
+		},
+		ghostText: {
+			color: colors.text.secondary,
+		},
+		disabled: {
+			backgroundColor: colors.border.default,
+			borderColor: colors.border.default,
+		},
+		disabledText: {
+			color: colors.text.tertiary,
+		},
+	});
 
 export default memo(Button);

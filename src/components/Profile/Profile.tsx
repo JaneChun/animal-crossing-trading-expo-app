@@ -1,11 +1,11 @@
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Pressable, StyleSheet, TouchableOpacity, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import Text from '@/components/ui/Text';
 import { FRUIT_IMAGES, FRUIT_NAMES } from '@/constants/profile';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { Theme, useTheme, useThemedStyles } from '@/theme';
 import { ProfileProps } from '@/types/components';
 import emptyProfileImage from '@assets/images/empty_profile_image.png';
 import islandBackgroundImage from '@assets/images/profile/island_background.webp';
@@ -20,6 +20,8 @@ const Profile = ({
 	openEditProfileModal,
 	openImageViewerModal,
 }: ProfileProps) => {
+	const { colors } = useTheme();
+	const styles = useThemedStyles(makeStyles);
 	const fruitName = profileInfo?.fruit ? FRUIT_NAMES[profileInfo?.fruit] : '';
 	const fruitImage = profileInfo?.fruit ? FRUIT_IMAGES[profileInfo?.fruit] : '';
 
@@ -28,7 +30,9 @@ const Profile = ({
 			{/* Header */}
 			<View style={styles.header}>
 				<View style={styles.headerLine} />
-				<Text style={styles.headerText}>PASSPORT</Text>
+				<Text variant="body2" weight="medium" color="tertiary" style={styles.headerText}>
+					PASSPORT
+				</Text>
 				<View style={styles.headerLine} />
 
 				{isMyProfile && (
@@ -41,7 +45,7 @@ const Profile = ({
 						<MaterialCommunityIcons
 							name="lead-pencil"
 							size={20}
-							color={Colors.brand.primary}
+							color={colors.brand.primary}
 						/>
 					</TouchableOpacity>
 				)}
@@ -67,7 +71,7 @@ const Profile = ({
 						{/* Chat Bubble */}
 						<View style={styles.chatBubbleContainer}>
 							<View style={styles.chatBubble}>
-								<Text style={styles.chatText}>
+								<Text variant="caption" color="tertiary">
 									{profileInfo?.bio || '한마디를 적어주세요!'}
 								</Text>
 							</View>
@@ -79,14 +83,16 @@ const Profile = ({
 							<View style={styles.islandFruitRow}>
 								<View style={styles.islandInfoContainer}>
 									<Island style={styles.islandIcon} />
-									<Text style={styles.islandLabel}>
+									<Text variant="body2" weight="medium" color="secondary">
 										{profileInfo?.islandName || '어떤 섬에 사시나요?'}
 									</Text>
 								</View>
 								{fruitName && fruitImage && (
 									<View style={styles.islandInfoContainer}>
 										<FastImage source={fruitImage} style={styles.islandIcon} />
-										<Text style={styles.fruitLabel}>{fruitName}</Text>
+										<Text variant="body2" weight="medium" color="tertiary">
+											{fruitName}
+										</Text>
 									</View>
 								)}
 							</View>
@@ -95,10 +101,10 @@ const Profile = ({
 						{/* Title */}
 						<View style={styles.rowWithDivider}>
 							<View style={styles.titleInfoContainer}>
-								<Text style={styles.titleText}>
+								<Text variant="body2" weight="medium" color="secondary">
 									{profileInfo?.titleFirst || '초면의'}
 								</Text>
-								<Text style={styles.titleText}>
+								<Text variant="body2" weight="medium" color="secondary">
 									{profileInfo?.titleLast || '이주민'}
 								</Text>
 							</View>
@@ -106,11 +112,13 @@ const Profile = ({
 
 						{/* Name */}
 						<View style={styles.nameRow}>
-							<Text style={styles.displayName}>{profileInfo?.displayName}</Text>
+							<Text variant="heading" weight="bold">
+								{profileInfo?.displayName}
+							</Text>
 							{profileInfo?.review?.badgeGranted && (
 								<MaterialIcons
 									name="verified"
-									color={Colors.icon.primary}
+									color={colors.brand.primary}
 									size={20}
 									style={styles.verifiedIcon}
 								/>
@@ -119,7 +127,12 @@ const Profile = ({
 					</View>
 				</View>
 
-				<FastImage style={styles.islandBackground} source={islandBackgroundImage} />
+				{/* 흰 실루엣 이미지라서 카드 면 색으로 칠해 다크에서도 은은하게 보이게 한다.
+				    FastImage의 tintColor는 iOS에서 크래시가 나므로 RN Image를 쓴다 */}
+				<Image
+					source={islandBackgroundImage}
+					style={[styles.islandBackground, { tintColor: colors.bg.primary }]}
+				/>
 			</View>
 
 			{/* Footer */}
@@ -132,175 +145,148 @@ const Profile = ({
 
 export default Profile;
 
-const styles = StyleSheet.create({
-	container: {
-		width: '100%',
-		backgroundColor: Colors.bg.primary,
-		borderRadius: 16,
-		borderWidth: 1,
-		borderColor: Colors.border.default,
-		overflow: 'hidden',
-		elevation: 4,
-		shadowColor: Colors.text.primary,
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.1,
-		shadowRadius: 8,
-	},
-	header: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center',
-		paddingVertical: 12,
-		backgroundColor: Colors.bg.primary,
-	},
-	headerLine: {
-		width: 40,
-		height: 1.5,
-		backgroundColor: Colors.divider.thick,
-	},
-	headerText: {
-		marginHorizontal: 16,
-		fontSize: FontSizes.sm,
-		color: Colors.text.tertiary,
-		fontWeight: FontWeights.medium,
-	},
-	editButton: {
-		position: 'absolute',
-		top: 0,
-		bottom: 0,
-		right: 16,
-		justifyContent: 'center',
-	},
-	body: {
-		zIndex: -2,
-		backgroundColor: Colors.bg.secondary,
-		paddingHorizontal: 12,
-		paddingVertical: 16,
-		borderLeftWidth: 6,
-		borderRightWidth: 6,
-		borderColor: Colors.bg.primary,
-	},
-	islandBackground: {
-		zIndex: -1,
-		position: 'absolute',
-		bottom: -16, // padding bottom
-		right: 0,
-		width: 150,
-		height: 150,
-	},
-	contentRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	imageWrapper: {
-		padding: 6,
-		borderWidth: 1,
-		borderColor: Colors.border.default,
-		backgroundColor: Colors.bg.primary,
-		borderRadius: 28,
-	},
-	image: {
-		width: 120,
-		height: 120,
-		borderRadius: 24,
-	},
-	rightContent: {
-		flex: 1,
-		marginLeft: 16,
-	},
-	chatBubbleContainer: {
-		alignSelf: 'flex-start',
-		position: 'relative',
-		marginBottom: 6,
-	},
-	chatBubble: {
-		backgroundColor: Colors.bg.primary,
-		paddingHorizontal: 12,
-		paddingVertical: 8,
-		borderRadius: 12,
-		zIndex: 2,
-	},
-	chatBubbleTail: {
-		position: 'absolute',
-		bottom: -3,
-		left: 2,
-		width: 0,
-		height: 0,
-		backgroundColor: 'transparent',
-		borderStyle: 'solid',
-		borderLeftWidth: 8,
-		borderRightWidth: 8,
-		borderBottomWidth: 8,
-		borderLeftColor: 'transparent',
-		borderRightColor: 'transparent',
-		borderBottomColor: Colors.bg.primary,
-		transform: [{ rotate: '110deg' }],
-	},
-	chatText: {
-		fontSize: FontSizes.xs,
-		color: Colors.text.tertiary,
-		fontWeight: FontWeights.regular,
-	},
-	rowWithDivider: {
-		borderBottomWidth: 1.5,
-		borderBottomColor: Colors.bg.primary,
-		paddingVertical: 8,
-	},
-	islandFruitRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		flexWrap: 'wrap',
-		gap: 8,
-	},
-	islandInfoContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	islandIcon: {
-		width: 16,
-		height: 16,
-		marginRight: 4,
-	},
-	islandLabel: {
-		fontSize: FontSizes.sm,
-		fontWeight: FontWeights.medium,
-		color: Colors.text.secondary,
-	},
-	fruitLabel: {
-		fontSize: FontSizes.sm,
-		fontWeight: FontWeights.medium,
-		color: Colors.text.tertiary,
-	},
-	titleInfoContainer: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		flexWrap: 'wrap',
-		gap: 4,
-	},
-	titleText: {
-		fontSize: FontSizes.sm,
-		fontWeight: FontWeights.medium,
-		color: Colors.text.secondary,
-	},
-	nameRow: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		paddingVertical: 8,
-	},
-	displayName: {
-		fontSize: FontSizes.lg,
-		fontWeight: FontWeights.bold,
-		color: Colors.text.primary,
-	},
-	verifiedIcon: {
-		marginLeft: 6,
-	},
-	footer: {
-		height: 50,
-		flexDirection: 'row',
-		justifyContent: 'flex-end',
-		alignItems: 'flex-end',
-		paddingHorizontal: 20,
-		backgroundColor: Colors.bg.primary,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		container: {
+			width: '100%',
+			backgroundColor: colors.bg.primary,
+			borderRadius: 16,
+			borderWidth: 1,
+			borderColor: colors.border.default,
+			overflow: 'hidden',
+			elevation: 4,
+			shadowColor: colors.text.primary,
+			shadowOffset: { width: 0, height: 2 },
+			shadowOpacity: 0.1,
+			shadowRadius: 8,
+		},
+		header: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			justifyContent: 'center',
+			paddingVertical: 12,
+			backgroundColor: colors.bg.primary,
+		},
+		headerLine: {
+			width: 40,
+			height: 1.5,
+			backgroundColor: colors.divider.thick,
+		},
+		headerText: {
+			marginHorizontal: 16,
+		},
+		editButton: {
+			position: 'absolute',
+			top: 0,
+			bottom: 0,
+			right: 16,
+			justifyContent: 'center',
+		},
+		body: {
+			zIndex: -2,
+			backgroundColor: colors.bg.secondary,
+			paddingHorizontal: 12,
+			paddingVertical: 16,
+			borderLeftWidth: 6,
+			borderRightWidth: 6,
+			borderColor: colors.bg.primary,
+		},
+		islandBackground: {
+			zIndex: -1,
+			position: 'absolute',
+			bottom: -16, // padding bottom
+			right: 0,
+			width: 150,
+			height: 150,
+		},
+		contentRow: {
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		imageWrapper: {
+			padding: 6,
+			borderWidth: 1,
+			borderColor: colors.border.default,
+			backgroundColor: colors.bg.primary,
+			borderRadius: 28,
+		},
+		image: {
+			width: 120,
+			height: 120,
+			borderRadius: 24,
+		},
+		rightContent: {
+			flex: 1,
+			marginLeft: 16,
+		},
+		chatBubbleContainer: {
+			alignSelf: 'flex-start',
+			position: 'relative',
+			marginBottom: 6,
+		},
+		chatBubble: {
+			backgroundColor: colors.bg.primary,
+			paddingHorizontal: 12,
+			paddingVertical: 8,
+			borderRadius: 12,
+			zIndex: 2,
+		},
+		chatBubbleTail: {
+			position: 'absolute',
+			bottom: -3,
+			left: 2,
+			width: 0,
+			height: 0,
+			backgroundColor: 'transparent',
+			borderStyle: 'solid',
+			borderLeftWidth: 8,
+			borderRightWidth: 8,
+			borderBottomWidth: 8,
+			borderLeftColor: 'transparent',
+			borderRightColor: 'transparent',
+			borderBottomColor: colors.bg.primary,
+			transform: [{ rotate: '110deg' }],
+		},
+		rowWithDivider: {
+			borderBottomWidth: 1.5,
+			borderBottomColor: colors.bg.primary,
+			paddingVertical: 8,
+		},
+		islandFruitRow: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			flexWrap: 'wrap',
+			gap: 8,
+		},
+		islandInfoContainer: {
+			flexDirection: 'row',
+			alignItems: 'center',
+		},
+		islandIcon: {
+			width: 16,
+			height: 16,
+			marginRight: 4,
+		},
+		titleInfoContainer: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			flexWrap: 'wrap',
+			gap: 4,
+		},
+		nameRow: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			paddingVertical: 8,
+		},
+		verifiedIcon: {
+			marginLeft: 6,
+		},
+		footer: {
+			height: 50,
+			flexDirection: 'row',
+			justifyContent: 'flex-end',
+			alignItems: 'flex-end',
+			paddingHorizontal: 20,
+			backgroundColor: colors.bg.primary,
+		},
+	});

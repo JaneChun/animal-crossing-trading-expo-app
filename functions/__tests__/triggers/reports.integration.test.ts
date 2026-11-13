@@ -202,9 +202,13 @@ describe('사용자 신고 처리 통합 테스트', () => {
 				const sevenDaysInMillis = 7 * 24 * 60 * 60 * 1000;
 				const oneDayInMillis = 24 * 60 * 60 * 1000;
 
-				// 7일 정지인지 확인 (setHours(0,0,0,0)으로 자정 기준 설정되므로 최대 24시간 차이 가능)
+				// 7일 정지인지 확인 (한국 시간 자정 기준으로 설정되므로 최대 24시간 차이 가능)
 				expect(suspendDuration).toBeGreaterThan(sevenDaysInMillis - oneDayInMillis);
 				expect(suspendDuration).toBeLessThanOrEqual(sevenDaysInMillis);
+
+				// 실행 환경 타임존과 무관하게 정확히 한국 시간 00:00:00이어야 함
+				const kstOffsetInMillis = 9 * 60 * 60 * 1000;
+				expect((suspendUntil.toMillis() + kstOffsetInMillis) % oneDayInMillis).toBe(0);
 
 				expect(userData?.report.recent30Days).toBe(3);
 				expect(userData?.report.needsAdminReview).toBeUndefined();
@@ -323,9 +327,13 @@ describe('사용자 신고 처리 통합 테스트', () => {
 				const thirtyDaysInMillis = 30 * 24 * 60 * 60 * 1000;
 				const oneDayInMillis = 24 * 60 * 60 * 1000;
 
-				// 30일 정지인지 확인 (setHours(0,0,0,0)으로 자정 기준 설정되므로 최대 24시간 차이 가능)
+				// 30일 정지인지 확인 (한국 시간 자정 기준으로 설정되므로 최대 24시간 차이 가능)
 				expect(suspendDuration).toBeGreaterThan(thirtyDaysInMillis - oneDayInMillis);
 				expect(suspendDuration).toBeLessThanOrEqual(thirtyDaysInMillis);
+
+				// 실행 환경 타임존과 무관하게 정확히 한국 시간 00:00:00이어야 함
+				const kstOffsetInMillis = 9 * 60 * 60 * 1000;
+				expect((suspendUntil.toMillis() + kstOffsetInMillis) % oneDayInMillis).toBe(0);
 
 				// 관리자 검토 플래그 확인
 				expect(userData?.report.needsAdminReview).toBe(true);
@@ -392,9 +400,13 @@ describe('사용자 신고 처리 통합 테스트', () => {
 				const thirtyDaysInMillis = 30 * 24 * 60 * 60 * 1000;
 				const oneDayInMillis = 24 * 60 * 60 * 1000;
 
-				// 30일 정지인지 확인 (setHours(0,0,0,0)으로 자정 기준 설정되므로 최대 24시간 차이 가능)
+				// 30일 정지인지 확인 (한국 시간 자정 기준으로 설정되므로 최대 24시간 차이 가능)
 				expect(suspendDuration).toBeGreaterThan(thirtyDaysInMillis - oneDayInMillis);
 				expect(suspendDuration).toBeLessThanOrEqual(thirtyDaysInMillis);
+
+				// 실행 환경 타임존과 무관하게 정확히 한국 시간 00:00:00이어야 함
+				const kstOffsetInMillis = 9 * 60 * 60 * 1000;
+				expect((suspendUntil.toMillis() + kstOffsetInMillis) % oneDayInMillis).toBe(0);
 
 				// 관리자 검토 플래그도 설정되어야 함
 				expect(userData?.report.needsAdminReview).toBe(true);

@@ -10,7 +10,7 @@ import Animated, {
 	withTiming,
 } from 'react-native-reanimated';
 
-import { Colors } from '@/theme/Color';
+import { useTheme } from '@/theme';
 
 type Props = {
 	width?: number | `${number}%`;
@@ -24,6 +24,7 @@ const SHIMMER_RATIO = 0.4;
 const MIN_SHIMMER_WIDTH = 60;
 
 const SkeletonBox = ({ width, height, borderRadius = 4, style }: Props) => {
+	const { colors } = useTheme();
 	const translateX = useSharedValue(-MIN_SHIMMER_WIDTH);
 	const [containerWidth, setContainerWidth] = useState(0);
 
@@ -63,7 +64,7 @@ const SkeletonBox = ({ width, height, borderRadius = 4, style }: Props) => {
 					width,
 					height,
 					borderRadius,
-					backgroundColor: Colors.bg.tertiary,
+					backgroundColor: colors.bg.tertiary,
 					overflow: 'hidden',
 				},
 				style,
@@ -71,7 +72,7 @@ const SkeletonBox = ({ width, height, borderRadius = 4, style }: Props) => {
 		>
 			<Animated.View style={[StyleSheet.absoluteFill, animatedStyle]}>
 				<LinearGradient
-					colors={[Colors.bg.tertiary, '#fafafa', Colors.bg.tertiary]}
+					colors={[colors.bg.tertiary, colors.skeleton.highlight, colors.bg.tertiary]}
 					start={{ x: 0, y: 0 }}
 					end={{ x: 1, y: 0 }}
 					style={{ width: shimmerWidth, height: '100%' }}

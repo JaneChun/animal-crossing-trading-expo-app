@@ -1,64 +1,26 @@
 import Badge from '@/components/ui/Badge';
-import { Colors } from '@/theme/Color';
 import { BadgeProps, TypeBadgeProps } from '@/types/components';
 import { CommunityType } from '@/types/post';
 
-const CommunityTypeBadge = ({ type, containerStyle }: TypeBadgeProps<CommunityType>) => {
-	const communityTypeBadgeMap: Record<CommunityType, BadgeProps> = {
-		general: {
-			text: '자유',
-			textColor: Colors.text.tertiary,
-			bgColor: Colors.bg.tertiary,
-		},
-		giveaway: {
-			text: '분양',
-			textColor: Colors.text.blue,
-			bgColor: Colors.bg.blue,
-		},
-		adopt: {
-			text: '입양',
-			textColor: Colors.text.green,
-			bgColor: Colors.bg.green,
-		},
-		guide: {
-			text: '공략/팁',
-			textColor: Colors.text.yellow,
-			bgColor: Colors.bg.yellow,
-		},
-		trade: {
-			text: '만지작',
-			textColor: Colors.text.purple,
-			bgColor: Colors.bg.purple,
-		},
-		turnip: {
-			text: '무 주식',
-			textColor: Colors.text.primaryBrand,
-			bgColor: Colors.bg.primaryBrand,
-		},
-		dream: {
-			text: '꿈번지',
-			textColor: Colors.text.lavender,
-			bgColor: Colors.bg.lavender,
-		},
-		design: {
-			text: '마이디자인',
-			textColor: Colors.text.red,
-			bgColor: Colors.bg.red,
-		},
-		parttime: {
-			text: '알바',
-			textColor: Colors.text.orange,
-			bgColor: Colors.bg.orange,
-		},
-	};
+const communityTypeBadgeMap: Record<CommunityType, Pick<BadgeProps, 'text' | 'tone'>> = {
+	general: { text: '자유', tone: 'neutral' },
+	giveaway: { text: '분양', tone: 'blue' },
+	adopt: { text: '입양', tone: 'green' },
+	guide: { text: '공략/팁', tone: 'yellow' },
+	trade: { text: '만지작', tone: 'purple' },
+	turnip: { text: '무 주식', tone: 'brand' },
+	dream: { text: '꿈번지', tone: 'lavender' },
+	design: { text: '마이디자인', tone: 'red' },
+	parttime: { text: '알바', tone: 'orange' },
+};
 
+const CommunityTypeBadge = ({ type, containerStyle }: TypeBadgeProps<CommunityType>) => {
 	return (
 		<>
 			{type in communityTypeBadgeMap && (
 				<Badge
 					text={communityTypeBadgeMap[type].text}
-					textColor={communityTypeBadgeMap[type].textColor}
-					bgColor={communityTypeBadgeMap[type].bgColor}
+					tone={communityTypeBadgeMap[type].tone}
 					containerStyle={containerStyle}
 				/>
 			)}

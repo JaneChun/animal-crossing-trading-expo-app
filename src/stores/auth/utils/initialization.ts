@@ -1,3 +1,4 @@
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { initializeKakaoSDK as initKakaoSDK } from '@react-native-kakao/core';
 import NaverLogin from '@react-native-seoul/naver-login';
 
@@ -27,7 +28,19 @@ export const initializeNaverSDK = (): void => {
 	NaverLogin.initialize(naverConfig);
 };
 
+export const initializeGoogleSDK = (): void => {
+	const webClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
+
+	if (!webClientId) {
+		console.warn('Google 웹 클라이언트 ID가 설정되지 않았습니다.');
+		return;
+	}
+
+	GoogleSignin.configure({ webClientId });
+};
+
 export const initializeAllSDKs = (): void => {
 	initializeKakaoSDK();
 	initializeNaverSDK();
+	initializeGoogleSDK();
 };

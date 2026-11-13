@@ -127,13 +127,13 @@ export abstract class BaseAuthProvider implements AuthProvider {
 		// 로딩 상태를 보여주면서 회원탈퇴 처리
 		const isSuccess = await executeWithLoading(
 			async () => {
-				// 1. Firebase Cloud Function을 통해 사용자 데이터 삭제
-				await httpsCallable(functions, 'deleteUserAndArchive')({ uid: userInfo.uid });
-
-				// 2. provider별 회원탈퇴 (토큰 삭제 등)
+				// 1. provider별 회원탈퇴
 				if (providerDeleteAccount) {
 					await providerDeleteAccount();
 				}
+
+				// 2. Firebase Cloud Function을 통해 사용자 데이터 삭제
+				await httpsCallable(functions, 'deleteUserAndArchive')({ uid: userInfo.uid });
 
 				// 3. 앱 내 사용자 세션 정리 (상태 + 저장소)
 				await clearUserSession(this.stateManager);

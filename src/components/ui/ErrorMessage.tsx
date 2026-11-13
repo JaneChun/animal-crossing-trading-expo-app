@@ -1,8 +1,9 @@
 import { FontAwesome6 } from '@expo/vector-icons';
-import { StyleSheet, Text, View, StyleProp, ViewStyle } from 'react-native';
+import { StyleSheet, View, StyleProp, ViewStyle } from 'react-native';
 
-import { FontSizes } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import { Spacing, Theme, useThemedStyles } from '@/theme';
+
+import Text from './Text';
 
 interface ErrorMessageProps {
 	message: string;
@@ -10,27 +11,31 @@ interface ErrorMessageProps {
 }
 
 const ErrorMessage = ({ message, containerStyle }: ErrorMessageProps) => {
+	const styles = useThemedStyles(makeStyles);
+
 	if (!message) return null;
 
 	return (
 		<View style={[styles.container, containerStyle]}>
-			<FontAwesome6 name="circle-exclamation" color="red" size={12} />
-			<Text style={styles.text}>{message}</Text>
+			<FontAwesome6 name="circle-exclamation" color={styles.text.color} size={12} />
+			<Text variant="caption" style={styles.text}>
+				{message}
+			</Text>
 		</View>
 	);
 };
 
 export default ErrorMessage;
 
-const styles = StyleSheet.create({
-	container: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 4,
-		marginTop: 6,
-	},
-	text: {
-		color: Colors.badge.red,
-		fontSize: FontSizes.xs,
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		container: {
+			flexDirection: 'row',
+			alignItems: 'center',
+			gap: Spacing.xs,
+			marginTop: 6,
+		},
+		text: {
+			color: colors.status.danger,
+		},
+	});

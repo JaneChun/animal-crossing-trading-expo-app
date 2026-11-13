@@ -1,11 +1,11 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { memo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import CommunityTypeBadge from '@/components/Community/CommunityTypeBadge';
 import ItemThumbnail from '@/components/ui/ItemThumbnail';
-import { FontSizes, FontWeights } from '@/constants/Typography';
-import { Colors } from '@/theme/Color';
+import Text from '@/components/ui/Text';
+import { Theme, useThemedStyles } from '@/theme';
 import { PostUnitProps } from '@/types/components';
 import { Collection } from '@/types/post';
 import { logFeedItemClick } from '@/utilities/analytics';
@@ -16,13 +16,19 @@ import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGua
 import CommunityThumbnail from './CommunityThumbnail';
 import MarketTypeBadge from './MarketTypeBadge';
 
-export const POST_UNIT_HEIGHT = 95;
+/**
+ * 제목이 한 줄인 항목의 높이 — 배지 25 + 간격 6 + 제목 24 + 간격 10 + 작성자·시간 17 + 위아래 여백 20 + 구분선 1.
+ * 제목이 두 줄이면 항목이 이보다 길어진다.
+ */
+export const POST_UNIT_MIN_HEIGHT = 103;
 
 const PostUnit = <C extends Collection>({
 	post,
 	collectionName,
 	index,
 }: PostUnitProps<C>) => {
+	const styles = useThemedStyles(makeStyles);
+
 	return (
 		<Pressable
 			style={styles.container}
@@ -46,7 +52,13 @@ const PostUnit = <C extends Collection>({
 							)}
 						</View>
 						{/* 타이틀 */}
-						<Text style={styles.title} numberOfLines={2} ellipsizeMode="tail">
+						<Text
+							variant="body1"
+							weight="semibold"
+							style={styles.title}
+							numberOfLines={2}
+							ellipsizeMode="tail"
+						>
 							{post.title}
 						</Text>
 					</View>
@@ -68,17 +80,23 @@ const PostUnit = <C extends Collection>({
 				{/* 작성자, 시간, 댓글 */}
 				<View style={styles.bottomRow}>
 					<View style={styles.infoContainer}>
-						<Text style={styles.infoText}>{post.creatorDisplayName} </Text>
-						<Text style={styles.infoText}>{elapsedTime(post.createdAt)}</Text>
+						<Text variant="caption" color="tertiary">
+							{post.creatorDisplayName}{' '}
+						</Text>
+						<Text variant="caption" color="tertiary">
+							{elapsedTime(post.createdAt)}
+						</Text>
 					</View>
 					<View style={styles.commentContainer}>
 						<View style={styles.commentBox}>
 							<MaterialIcons
 								name="mode-comment"
-								color={Colors.icon.default}
+								color={styles.commentIcon.color}
 								size={15}
 							/>
-							<Text style={styles.infoText}>{post.commentCount}</Text>
+							<Text variant="caption" color="tertiary">
+								{post.commentCount}
+							</Text>
 						</View>
 					</View>
 				</View>
@@ -87,58 +105,55 @@ const PostUnit = <C extends Collection>({
 	);
 };
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: 'center',
-		height: POST_UNIT_HEIGHT,
-		borderBottomWidth: 1,
-		borderBottomColor: Colors.border.default,
-	},
-	topRow: {
-		flexDirection: 'row',
-		width: '100%',
-		gap: 8,
-	},
-	typeAndTitle: {
-		gap: 6,
-		flex: 1,
-	},
-	thumbnail: {
-		flexShrink: 0,
-		alignSelf: 'flex-end',
-	},
-	title: {
-		flexShrink: 1,
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
-		color: Colors.text.primary,
-	},
-	bottomRow: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		marginTop: 8,
-	},
-	infoContainer: {
-		flexDirection: 'row',
-		gap: 2,
-		marginTop: 2,
-	},
-	infoText: {
-		fontSize: FontSizes.xs,
-		fontWeight: FontWeights.regular,
-		color: Colors.text.tertiary,
-	},
-	commentContainer: {
-		width: 30,
-	},
-	commentBox: {
-		flexDirection: 'row',
-		gap: 2,
-	},
-	badgeContainer: {
-		flexDirection: 'row',
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		container: {
+			flex: 1,
+			justifyContent: 'center',
+			minHeight: POST_UNIT_MIN_HEIGHT,
+			paddingVertical: 10,
+			borderBottomWidth: 1,
+			borderBottomColor: colors.border.default,
+		},
+		topRow: {
+			flexDirection: 'row',
+			width: '100%',
+			gap: 8,
+		},
+		typeAndTitle: {
+			gap: 6,
+			flex: 1,
+		},
+		thumbnail: {
+			flexShrink: 0,
+			alignSelf: 'flex-end',
+		},
+		title: {
+			flexShrink: 1,
+		},
+		bottomRow: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			marginTop: 8,
+		},
+		infoContainer: {
+			flexDirection: 'row',
+			gap: 2,
+			marginTop: 2,
+		},
+		commentIcon: {
+			color: colors.icon.default,
+		},
+		commentContainer: {
+			width: 30,
+		},
+		commentBox: {
+			flexDirection: 'row',
+			gap: 2,
+		},
+		badgeContainer: {
+			flexDirection: 'row',
+		},
+	});
 
 export default memo(PostUnit);

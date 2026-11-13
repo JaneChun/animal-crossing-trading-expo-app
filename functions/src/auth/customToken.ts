@@ -2,13 +2,14 @@ import * as functions from 'firebase-functions';
 import { auth } from '../utils/common';
 import { isUserRestrictedFromRejoining } from '../utils/common';
 import { handleAppleLogin } from './apple';
+import { handleGoogleLogin } from './google';
 import { handleKakaoLogin } from './kakao';
 import { handleNaverLogin } from './naver';
 
 export interface CustomTokenRequest {
   oauthType: string;
   accessToken?: string; // 네이버, 카카오
-  idToken?: string; // Apple
+  idToken?: string; // Apple, Google
   rawNonce?: string; // Apple
 }
 
@@ -50,6 +51,9 @@ export async function createFirebaseCustomToken(
         break;
       case 'apple':
         ({ providerId, email } = await handleAppleLogin(idToken!, rawNonce!));
+        break;
+      case 'google':
+        ({ providerId, email } = await handleGoogleLogin(idToken!));
         break;
       default:
         throw new functions.https.HttpsError(

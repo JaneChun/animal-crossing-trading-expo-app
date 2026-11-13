@@ -23,7 +23,7 @@ const PushNotificationToggle = () => {
 
 	// 토글 스위치 누르면 설정 화면으로 이동
 	const onToggle = () => {
-		Linking.openURL('app-settings:');
+		Linking.openSettings();
 	};
 
 	return (

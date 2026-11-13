@@ -2,17 +2,18 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo } from '@expo/vector-icons';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 
-import { Colors } from '@/theme/Color';
+import { Spacing, useTheme } from '@/theme';
 import { ActionSheetButtonProps } from '@/types/components';
 
 const ActionSheetButton = ({
-	color = Colors.text.primary,
+	color,
 	size = 24,
 	options,
 	destructiveButtonIndex,
 	cancelIndex,
 }: ActionSheetButtonProps) => {
 	const { showActionSheetWithOptions } = useActionSheet();
+	const { colors } = useTheme();
 
 	const handlePress = () => {
 		showActionSheetWithOptions(
@@ -34,7 +35,7 @@ const ActionSheetButton = ({
 			onPress={handlePress}
 			testID="actionSheetButton"
 		>
-			<Entypo name="dots-three-vertical" size={size} color={color} />
+			<Entypo name="dots-three-vertical" size={size} color={color ?? colors.text.primary} />
 		</TouchableOpacity>
 	);
 };
@@ -43,6 +44,6 @@ export default ActionSheetButton;
 
 const styles = StyleSheet.create({
 	iconContainer: {
-		padding: 5,
+		padding: Spacing.xs,
 	},
 });

@@ -1,10 +1,12 @@
 import React, { ReactNode } from 'react';
-import { Button, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import Text from '@/components/ui/Text';
 import { showToast } from '@/components/ui/Toast';
-import { FontSizes, FontWeights } from '@/constants/Typography';
 import { reportError } from '@/firebase/services/errorService';
-import { Colors } from '@/theme/Color';
+import { FontSizes } from '@/theme';
+// ThemeProvider 바깥에서 렌더링되므로 테마와 관계없이 라이트 색으로 고정한다
+import { lightColors } from '@/theme/Color';
 
 interface ErrorBoundaryProps {
 	children: ReactNode;
@@ -59,7 +61,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 			return (
 				<ScrollView contentContainerStyle={styles.container}>
 					<View style={styles.infoContainer}>
-						<Text style={styles.title}>앱에 문제가 발생했습니다.</Text>
+						<Text variant="heading">앱에 문제가 발생했습니다.</Text>
 						<Button title="재시도" onPress={this.resetError} />
 					</View>
 
@@ -69,7 +71,9 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 							style={styles.toggleButton}
 							onPress={this.reportErrorToFirestore}
 						>
-							<Text style={styles.toggleButtonText}>에러 리포트 보내기 📩</Text>
+							<Text variant="body2" color="tertiary">
+								에러 리포트 보내기 📩
+							</Text>
 						</TouchableOpacity>
 					</View>
 				</ScrollView>
@@ -97,19 +101,11 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
-	title: {
-		fontSize: FontSizes.lg,
-		fontWeight: FontWeights.semibold,
-	},
 	toggleButton: {
 		marginVertical: 10,
 		paddingVertical: 8,
 		paddingHorizontal: 15,
 		borderRadius: 5,
-	},
-	toggleButtonText: {
-		color: Colors.text.tertiary,
-		fontSize: FontSizes.sm,
 	},
 	logContainer: {
 		width: '100%',
@@ -119,6 +115,6 @@ const styles = StyleSheet.create({
 	},
 	logText: {
 		fontSize: FontSizes.xs,
-		color: Colors.text.tertiary,
+		color: lightColors.text.tertiary,
 	},
 });

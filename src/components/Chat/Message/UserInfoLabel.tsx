@@ -1,8 +1,8 @@
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
+import Text from '@/components/ui/Text';
 import { DEFAULT_USER_DISPLAY_NAME } from '@/constants/defaultUserInfo';
-import { FontWeights } from '@/constants/Typography';
 import { PublicUserInfo } from '@/types/user';
 import { navigateToUserProfile } from '@/utilities/navigationHelpers';
 import EmptyProfileImage from '@assets/images/empty_profile_image.png';
@@ -22,7 +22,9 @@ const UserInfoLabel = ({ userInfo }: { userInfo: PublicUserInfo }) => {
 				style={styles.profileImage}
 			/>
 
-			<Text style={styles.displayName}>{userInfo?.displayName}</Text>
+			<Text variant="body1" weight="semibold">
+				{userInfo?.displayName}
+			</Text>
 		</Pressable>
 	);
 };
@@ -41,9 +43,5 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 		marginLeft: 4,
 		marginRight: 8,
-	},
-	displayName: {
-		fontSize: 16,
-		fontWeight: FontWeights.semibold,
 	},
 });

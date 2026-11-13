@@ -10,23 +10,14 @@ export default {
 		scheme: 'animal-crossing-trading-app',
 		userInterfaceStyle: 'automatic',
 		newArchEnabled: true,
-		splash: {
-			image: './assets/images/splash_image.jpg',
-			resizeMode: 'contain',
-			backgroundColor: '#ffffff',
-		},
 		ios: {
 			supportsTablet: true,
 			bundleIdentifier: 'com.janechun.animalcrossingtradingapp',
+			appleTeamId: process.env.APPLE_TEAM_ID,
 			usesAppleSignIn: true,
 			infoPlist: {
 				ITSAppUsesNonExemptEncryption: false,
 				FirebaseAutomaticScreenReportingEnabled: false,
-			},
-			splash: {
-				image: './assets/images/splash_image.jpg',
-				resizeMode: 'contain',
-				backgroundColor: '#ffffff',
 			},
 			googleServicesFile: process.env.GOOGLE_SERVICE_INFO_PLIST,
 		},
@@ -36,6 +27,15 @@ export default {
 				backgroundColor: '#ffffff',
 			},
 			package: 'com.janechun.animalcrossingtradingapp',
+			googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
+			blockedPermissions: [
+				'android.permission.READ_MEDIA_IMAGES',
+				'android.permission.READ_MEDIA_VIDEO',
+				'android.permission.READ_EXTERNAL_STORAGE',
+				'android.permission.WRITE_EXTERNAL_STORAGE',
+				'android.permission.SYSTEM_ALERT_WINDOW',
+				'android.permission.RECORD_AUDIO',
+			],
 		},
 		web: {
 			bundler: 'metro',
@@ -44,6 +44,21 @@ export default {
 		},
 		plugins: [
 			'expo-font',
+			[
+				'expo-splash-screen',
+				{
+					image: './assets/images/splash_icon.png',
+					// SplashScreen.tsx의 SPLASH_ICON_WIDTH와 같아야 전환할 때 로고가 움직이지 않는다.
+					// Android 12+는 288dp 캔버스 중앙 지름 192dp 원 밖을 자르므로 잎 대각선이 그 안에 들어가는 150으로 둔다.
+					imageWidth: 150,
+					resizeMode: 'contain',
+					backgroundColor: '#ffffff',
+					dark: {
+						image: './assets/images/splash_icon.png',
+						backgroundColor: '#111118',
+					},
+				},
+			],
 			'expo-web-browser',
 			'@react-native-firebase/app',
 			[
@@ -92,12 +107,14 @@ export default {
 					urlScheme: 'com.janechun.animalcrossingtradingapp',
 				},
 			],
+			'@react-native-google-signin/google-signin',
 			['expo-apple-authentication'],
 			['expo-tracking-transparency'],
 			[
 				'react-native-google-mobile-ads',
 				{
 					iosAppId: process.env.EXPO_PUBLIC_ADMOB_IOS_APP_ID,
+					androidAppId: process.env.EXPO_PUBLIC_ADMOB_ANDROID_APP_ID,
 					userTrackingUsageDescription:
 						'맞춤형 광고 제공을 위해 기기 식별자에 접근합니다. 설정에서 언제든 변경할 수 있습니다.',
 					skAdNetworkItems: ['wzmmz9fp6w.skadnetwork', '22mmun2rn5.skadnetwork'],

@@ -1,3 +1,4 @@
+import { GoogleSignin, isSuccessResponse } from '@react-native-google-signin/google-signin';
 import { login } from '@react-native-kakao/user';
 import NaverLogin from '@react-native-seoul/naver-login';
 import * as AppleAuthentication from 'expo-apple-authentication';
@@ -89,6 +90,33 @@ export const loginWithApple = async (): Promise<{
 		oauthType: 'apple',
 		idToken: identityToken,
 		rawNonce,
+	});
+
+	const result = await signInWithCustomToken(auth, firebaseToken);
+
+	return { user: result.user, email };
+};
+
+export const loginWithGoogle = async (): Promise<{
+	user: User;
+	email: string;
+} | null> => {
+	// Google Play 서비스가 없거나 오래된 기기에서는 예외 → 로그인 실패로 처리
+	await GoogleSignin.hasPlayServices();
+
+	// 계정 선택 창에서 취소하면 type이 'cancelled'
+	const response = await GoogleSignin.signIn();
+	if (!isSuccessResponse(response)) return null;
+
+	const { idToken } = response.data;
+	if (!idToken) return null;
+
+	const {
+		firebaseToken,
+		user: { email },
+	} = await getFirebaseCustomToken({
+		oauthType: 'google',
+		idToken,
 	});
 
 	const result = await signInWithCustomToken(auth, firebaseToken);

@@ -1,9 +1,9 @@
 import { Feather } from '@expo/vector-icons';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
-import { FontSizes, FontWeights, LineHeights } from '@/constants/Typography';
+import Text from '@/components/ui/Text';
+import { ToneColorKey, useTheme } from '@/theme';
 import { BorderRadius } from '@/theme/BorderRadius';
-import { Colors } from '@/theme/Color';
 import { Spacing } from '@/theme/Spacing';
 
 type BannerVariant = 'found' | 'review' | 'failed';
@@ -15,14 +15,33 @@ type SectionBannerProps = {
 	spaced: boolean;
 };
 
+/** variant별 아이콘과, Badge처럼 `text.{key}` 글자색·`bg.{key}` 배경색으로 짝지어진 tone 키 */
+const BANNER_CONFIG: Record<
+	BannerVariant,
+	{ icon: React.ComponentProps<typeof Feather>['name']; colorKey: ToneColorKey }
+> = {
+	found: { icon: 'search', colorKey: 'primaryBrand' },
+	review: { icon: 'alert-circle', colorKey: 'yellow' },
+	failed: { icon: 'help-circle', colorKey: 'red' },
+};
+
 // 찾음/재확인/실패 세 섹션의 머리말 배너
 const SectionBanner = ({ variant, text, spaced }: SectionBannerProps) => {
-	const config = BANNER_CONFIG[variant];
+	const { colors } = useTheme();
+	const { icon, colorKey } = BANNER_CONFIG[variant];
 
 	return (
-		<View style={[styles.banner, config.container, spaced && styles.bannerSpaced]}>
-			<Feather name={config.icon} size={15} color={config.iconColor} />
-			<Text style={[styles.bannerText, config.text]}>{text}</Text>
+		<View
+			style={[
+				styles.banner,
+				{ backgroundColor: colors.bg[colorKey] },
+				spaced && styles.bannerSpaced,
+			]}
+		>
+			<Feather name={icon} size={15} color={colors.text[colorKey]} />
+			<Text variant="body2" weight="semibold" color={colorKey}>
+				{text}
+			</Text>
 		</View>
 	);
 };
@@ -42,56 +61,4 @@ const styles = StyleSheet.create({
 	bannerSpaced: {
 		marginTop: Spacing.l,
 	},
-	bannerFound: {
-		backgroundColor: Colors.bg.primaryBrand,
-	},
-	bannerReview: {
-		backgroundColor: Colors.bg.yellow,
-	},
-	bannerFailed: {
-		backgroundColor: Colors.bg.red,
-	},
-	bannerText: {
-		fontSize: FontSizes.sm,
-		fontWeight: FontWeights.semibold,
-		lineHeight: LineHeights.sm,
-	},
-	bannerTextFound: {
-		color: Colors.text.primaryBrand,
-	},
-	bannerTextReview: {
-		color: Colors.text.yellow,
-	},
-	bannerTextFailed: {
-		color: Colors.text.red,
-	},
 });
-
-const BANNER_CONFIG: Record<
-	BannerVariant,
-	{
-		icon: React.ComponentProps<typeof Feather>['name'];
-		iconColor: string;
-		container: object;
-		text: object;
-	}
-> = {
-	found: {
-		icon: 'search',
-		iconColor: Colors.text.primaryBrand,
-		container: styles.bannerFound,
-		text: styles.bannerTextFound,
-	},
-	review: {
-		icon: 'alert-circle',
-		iconColor: Colors.text.yellow,
-		container: styles.bannerReview,
-		text: styles.bannerTextReview,
-	},
-	failed: {
-		icon: 'help-circle',
-		iconColor: Colors.text.red,
-		container: styles.bannerFailed,
-		text: styles.bannerTextFailed,
-	},
-};

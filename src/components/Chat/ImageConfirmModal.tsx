@@ -3,7 +3,7 @@ import { ImagePickerAsset } from 'expo-image-picker';
 import { Image, Modal, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Colors } from '@/theme/Color';
+import { Theme, useThemedStyles } from '@/theme';
 
 interface ImageConfirmModalProps {
 	visible: boolean;
@@ -13,6 +13,7 @@ interface ImageConfirmModalProps {
 }
 
 const ImageConfirmModal = ({ visible, image, onSend, onClose }: ImageConfirmModalProps) => {
+	const styles = useThemedStyles(makeStyles);
 	const insets = useSafeAreaInsets();
 
 	if (!image) return null;
@@ -28,13 +29,17 @@ const ImageConfirmModal = ({ visible, image, onSend, onClose }: ImageConfirmModa
 				{/* 하단 버튼 영역 */}
 				<View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
 					<Pressable onPress={onClose} hitSlop={12} testID="closeImageConfirm">
-						<FontAwesome6 name="chevron-left" size={24} color={Colors.text.inverse} />
+						<FontAwesome6
+							name="chevron-left"
+							size={24}
+							color={styles.closeIcon.color}
+						/>
 					</Pressable>
 					<Pressable style={styles.sendButton} onPress={onSend} testID="sendImageButton">
 						<FontAwesome6
 							name="circle-arrow-up"
 							size={36}
-							color={Colors.brand.primary}
+							color={styles.sendIcon.color}
 							style={styles.arrowIcon}
 						/>
 					</Pressable>
@@ -46,36 +51,43 @@ const ImageConfirmModal = ({ visible, image, onSend, onClose }: ImageConfirmModa
 
 export default ImageConfirmModal;
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: Colors.bg.inverse,
-	},
-	imageContainer: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	image: {
-		width: '100%',
-		height: '100%',
-	},
-	footer: {
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-		paddingHorizontal: 20,
-		paddingTop: 16,
-	},
-	sendButton: {
-		backgroundColor: Colors.bg.primary,
-		width: 36,
-		height: 36,
-		borderRadius: 18,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	arrowIcon: {
-		position: 'absolute',
-	},
-});
+const makeStyles = ({ colors }: Theme) =>
+	StyleSheet.create({
+		container: {
+			flex: 1,
+			backgroundColor: colors.media.background,
+		},
+		imageContainer: {
+			flex: 1,
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+		image: {
+			width: '100%',
+			height: '100%',
+		},
+		footer: {
+			flexDirection: 'row',
+			justifyContent: 'space-between',
+			alignItems: 'center',
+			paddingHorizontal: 20,
+			paddingTop: 16,
+		},
+		sendButton: {
+			backgroundColor: colors.text.onBrand,
+			width: 36,
+			height: 36,
+			borderRadius: 18,
+			justifyContent: 'center',
+			alignItems: 'center',
+		},
+		arrowIcon: {
+			position: 'absolute',
+		},
+		closeIcon: {
+			color: colors.media.foreground,
+		},
+		sendIcon: {
+			color: colors.brand.primary,
+		},
+	});

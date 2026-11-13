@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Platform } from 'react-native';
 
 import { UpdateModal } from '@/components/ui/UpdateModal';
 import { useVersionCheck } from '@/hooks/shared/useVersionCheck';
@@ -21,7 +22,7 @@ import SplashScreen from '@/screens/SplashScreen';
 import TermsOfService from '@/screens/TermsOfService';
 import { useAuthStore } from '@/stores/auth';
 import { useOnboardingStore } from '@/stores/onboarding/store';
-import { Colors } from '@/theme/Color';
+import { useTheme } from '@/theme';
 
 import MainTabNavigator from './MainTabNavigator';
 
@@ -42,12 +43,16 @@ const RootStackNavigator = () => {
 		handleCloseUpdateModal,
 	} = useVersionCheck();
 
+	const { colors } = useTheme();
+
 	const isAppInitializing = isOnboardingLoading || isVersionCheckLoading;
 
 	const commonOptions = {
-		headerShown: isAuthLoading ? false : true, // 로그인/로그아웃/탈퇴 시 로딩화면 표시할 때 상단 헤더 숨김 처리
+		// 로그인/로그아웃/탈퇴 시 로딩화면 표시할 때 상단 헤더 숨김 처리 (iOS만)
+		// Android는 숨긴 헤더를 다시 표시하는 순간 pop으로 화면이 닫히면 react-native-screens가 크래시해서 숨기지 않는다
+		headerShown: Platform.OS === 'android' || !isAuthLoading,
 		title: '',
-		headerTintColor: Colors.text.primary,
+		headerTintColor: colors.text.primary,
 		headerBackButtonDisplayMode: 'minimal' as const,
 	};
 

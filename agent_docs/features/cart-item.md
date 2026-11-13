@@ -42,7 +42,7 @@ CatalogItem (+ CatalogVariant)
 
 - `_any` id·`'색상 무관'` 라벨·합성 variant 생성 규칙은 `src/utilities/catalogItemToItem.ts`의 `createAnyVariant`/`ANY_VARIANT_LABEL`이 **단일 원천**이다. `ItemVariantSelect`(모달)와 `catalogItemToBulkAddItem`(일괄 추가) 모두 이를 사용하고, 변환은 둘 다 `catalogVariantToItem`을 통과한다. 중복 판정용 `getBulkAddCartId`는 변환 결과에서 id를 파생시켜 실제 담기는 id와 항상 일치한다.
 - 변형 보유 판정(`bodyTitle || patternTitle`)도 `hasCatalogItemVariants`로 단일화 — 변형 선택 화면 진입 분기와 카트 id 규칙이 공유한다.
-- 모달의 "색상 무관" 옵션은 `item.bodyTitle`이 있을 때만 주입되므로 pattern만 있는 아이템에는 선택지가 없다. 반면 일괄 추가는 `bodyTitle || patternTitle`이면 `_any`로 변환한다 (사용자 확정 — docs/task-2 참조).
+- 모달의 "색상 무관" 옵션은 `item.bodyTitle`이 있을 때만 주입되므로 pattern만 있는 아이템에는 선택지가 없다. 반면 일괄 추가는 `bodyTitle || patternTitle`이면 `_any`로 변환한다 (사용자 확정 — docs/bulk-add-items/plans/task-2-bulk-add-any-variant.md 참조).
 - 이미지만 다르다:
   - 모달의 색상 무관은 `0_0` variant 이미지 (`createAnyVariant(item, firstVariant.imageUrl)`),
   - 일괄 추가는 부모 `CatalogItem.imageUrl` (`createAnyVariant(item, item.imageUrl)` — 변형 서브컬렉션 조회 0회).

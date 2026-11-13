@@ -1,12 +1,12 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
-import { FontSizes, FontWeights } from '@/constants/Typography';
+import Text from '@/components/ui/Text';
 import { VillagerSummaryListProps } from '@/types/components';
 import { Villager } from '@/types/villager';
+import movingBoxIcon from '@assets/images/moving_box.png';
 
 import VillagerItem from './VillagerItem';
-import movingBoxIcon from '../../../assets/images/moving_box.png';
 
 const VillagerSummaryList = ({ type, villagers, containerStyle }: VillagerSummaryListProps) => {
 	if (villagers.length === 0) return null;
@@ -17,7 +17,7 @@ const VillagerSummaryList = ({ type, villagers, containerStyle }: VillagerSummar
 		<View style={containerStyle}>
 			<View style={styles.labelContainer}>
 				<FastImage source={movingBoxIcon} style={styles.boxIcon} />
-				<Text style={styles.label}>
+				<Text variant="body1" weight="semibold" style={styles.label}>
 					{type === 'adopt' ? '입양하고 싶어요' : '분양 보내요'}
 				</Text>
 			</View>
@@ -40,8 +40,6 @@ const styles = StyleSheet.create({
 		alignItems: 'flex-start',
 	},
 	label: {
-		fontSize: FontSizes.md,
-		fontWeight: FontWeights.semibold,
 		marginBottom: 16,
 		marginTop: 6,
 	},

@@ -58,6 +58,3 @@ temp.ini
 # firebase export
 scripts/*
 emulator-data/*
-
-# docs
-docs/*
