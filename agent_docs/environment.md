@@ -35,7 +35,7 @@
 - **dev client가 리로드/재접속 후 스플래시에서 멈추면 네이티브 문제부터 의심** (2026-07, RN 0.81 New Architecture) — JS 로그가 정상이면 `isAppInitializing` 등 JS 초기화 버그로 오진하지 말 것. 확인된 원인 3가지: ① TurboModule 초기화 데드락(이 앱에 대한 `simctl launch/terminate`까지 무한 대기), ② Fabric 서페이스 마운트 실패(`xcrun simctl io booted screenshot`으로 화면 확인), ③ expo-splash-screen auto-hide 옵저버 소실(CDP에서 `globalThis.expo.modules.ExpoSplashScreen.hide()` 호출 시 화면이 나오면 확정). 복구는 공통 — 호스트에서 앱 프로세스 `kill -9` 후 재실행(`simctl terminate`는 같이 멈출 수 있어 소용없음).
 - **dev client는 마지막으로 연결한 Metro에 다시 붙는다**: 워크트리마다 Metro를 다른 포트로 띄우면, 알림 탭이나 아이콘으로 앱을 새로 켤 때 다른 워크트리(예: 메인 저장소 8081)의 번들을 받아 수정 전 코드로 테스트하게 될 수 있다. 실기기는 `adb reverse tcp:<포트> tcp:<포트>` 후 `adb shell am start -a android.intent.action.VIEW -d "exp+animal-crossing-trading-app://expo-development-client/?url=http%3A%2F%2Flocalhost%3A<포트>"`로 한 번 열어 연결 대상을 바꾸고, Metro 로그에 `Bundled`나 앱 로그가 찍히는지로 확인한다. 이렇게 연 실행에서는 `Linking.getInitialURL()`이 이 dev client 주소를 반환한다.
 - **포트 8081을 이전 세션의 `expo start`가 점유하면** 새 dev 서버가 8082로 밀리거나 앱이 엉뚱한 서버에 붙음. `lsof -iTCP:8081 -sTCP:LISTEN`으로 확인 후 정리.
-- **SDK 54: 셸에서 준 `EXPO_PUBLIC_*` 변수를 env 파일 값이 덮어씀** — `.env.local`에 같은 키가 있으면 셸 주입 값이 무시됨(`--clear`로도 해결 안 됨). `npm run dev:emulator`가 조용히 **프로덕션 Firebase에 붙을 수 있으므로**, 셸로 주입하는 키는 `.env.local`에서 제거. 검증: 번들에서 `grep -o 'EXPO_PUBLIC_USE_FIREBASE_EMULATOR": "[a-z]*"'`.
+- **dev:emulator인데 운영 Firebase에 붙는 경우** — SDK 55 기준으로 Metro를 시작할 때는 셸에서 준 `EXPO_PUBLIC_*` 값이 `.env*` 값보다 우선한다(`@expo/env`는 이미 정의된 키를 덮어쓰지 않는다). 운영에 붙었다면 앱이 이전에 `npm run dev`로 띄운 Metro에 다시 붙었는지부터 확인한다. 연결 여부는 Metro 로그의 `Firebase Emulator 연결 완료`와 앱 화면의 에뮬레이터 데이터로 판단한다.
 
 ## 참고
 
