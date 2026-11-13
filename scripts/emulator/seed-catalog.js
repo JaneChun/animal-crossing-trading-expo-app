@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const { db } = require('./firebase-admin-setup');
+const { db } = require('../../src/__tests__/firebase-utils/firebase-admin-setup');
 
 // functions/scripts/parse-catalog.ts가 만드는 원본. gitignore 대상이라 새 환경에는 없을 수 있다.
-const CATALOG_JSON_PATH = path.join(__dirname, '../../../functions/scripts/output/catalog.json');
+const CATALOG_JSON_PATH = path.join(__dirname, '../../functions/scripts/output/catalog.json');
 const MAX_BATCH = 500;
 
 /**

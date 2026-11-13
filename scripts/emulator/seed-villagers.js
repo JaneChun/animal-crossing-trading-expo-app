@@ -1,6 +1,6 @@
 const { liteClient } = require('algoliasearch/lite');
 
-const { db } = require('./firebase-admin-setup');
+const { db } = require('../../src/__tests__/firebase-utils/firebase-admin-setup');
 
 const MAX_BATCH = 500;
 

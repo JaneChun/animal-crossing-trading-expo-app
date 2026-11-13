@@ -16,7 +16,8 @@
   - 소셜 로그인: `EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY`, `EXPO_PUBLIC_NAVER_CLIENT_ID`, `EXPO_PUBLIC_NAVER_SECRET` 등
   - AdMob/EAS: `EXPO_PUBLIC_ADMOB_IOS_APP_ID`, `EXPO_PUBLIC_ADMOB_ANDROID_APP_ID`, `EXPO_PUBLIC_EAS_PROJECT_ID`, `GOOGLE_SERVICE_INFO_PLIST`, `GOOGLE_SERVICES_JSON`(상대 경로 `./google-services.json`)
   - iOS 서명: `APPLE_TEAM_ID` — 로컬 실기기 빌드용. 없으면 prebuild가 `DEVELOPMENT_TEAM`을 비워 Xcode에서 "requires a development team" 오류. EAS Build는 자체 자격 증명으로 서명하므로 불필요
-- `.env.local` (에뮬레이터용): `EXPO_PUBLIC_USE_FIREBASE_EMULATOR`, `EXPO_PUBLIC_FIREBASE_*_EMULATOR_HOST`
+- `.env.local` (에뮬레이터용): `EXPO_PUBLIC_FIREBASE_*_EMULATOR_HOST`, `SEED_MY_UID`(시드 1번 유저를 본인 uid로 바꿀 때)
+- `EXPO_PUBLIC_USE_FIREBASE_EMULATOR`는 env 파일에 두지 않는다. `npm run dev:emulator`·`dev:emulator:all`이 셸에서만 `true`로 주입한다(아래 함정 참조).
 - `functions/.env` (Functions 배포용): `GOOGLE_WEB_CLIENT_ID`(Google 로그인 토큰 검증 audience, 앱의 `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`와 같은 값). Functions는 루트 `.env`를 읽지 않는다. git 미추적이라 워크트리·새 클론마다 직접 복사해야 하며, 없으면 `firebase deploy`가 값을 대화형으로 묻는다(`--non-interactive`에서는 실패)
 - `GoogleService-Info.plist`, `google-services.json`도 git 미추적
 
@@ -35,7 +36,9 @@
 - **dev client가 리로드/재접속 후 스플래시에서 멈추면 네이티브 문제부터 의심** (2026-07, RN 0.81 New Architecture) — JS 로그가 정상이면 `isAppInitializing` 등 JS 초기화 버그로 오진하지 말 것. 확인된 원인 3가지: ① TurboModule 초기화 데드락(이 앱에 대한 `simctl launch/terminate`까지 무한 대기), ② Fabric 서페이스 마운트 실패(`xcrun simctl io booted screenshot`으로 화면 확인), ③ expo-splash-screen auto-hide 옵저버 소실(CDP에서 `globalThis.expo.modules.ExpoSplashScreen.hide()` 호출 시 화면이 나오면 확정). 복구는 공통 — 호스트에서 앱 프로세스 `kill -9` 후 재실행(`simctl terminate`는 같이 멈출 수 있어 소용없음).
 - **dev client는 마지막으로 연결한 Metro에 다시 붙는다**: 워크트리마다 Metro를 다른 포트로 띄우면, 알림 탭이나 아이콘으로 앱을 새로 켤 때 다른 워크트리(예: 메인 저장소 8081)의 번들을 받아 수정 전 코드로 테스트하게 될 수 있다. 실기기는 `adb reverse tcp:<포트> tcp:<포트>` 후 `adb shell am start -a android.intent.action.VIEW -d "exp+animal-crossing-trading-app://expo-development-client/?url=http%3A%2F%2Flocalhost%3A<포트>"`로 한 번 열어 연결 대상을 바꾸고, Metro 로그에 `Bundled`나 앱 로그가 찍히는지로 확인한다. 이렇게 연 실행에서는 `Linking.getInitialURL()`이 이 dev client 주소를 반환한다.
 - **포트 8081을 이전 세션의 `expo start`가 점유하면** 새 dev 서버가 8082로 밀리거나 앱이 엉뚱한 서버에 붙음. `lsof -iTCP:8081 -sTCP:LISTEN`으로 확인 후 정리.
-- **dev:emulator인데 운영 Firebase에 붙는 경우** — SDK 55 기준으로 Metro를 시작할 때는 셸에서 준 `EXPO_PUBLIC_*` 값이 `.env*` 값보다 우선한다(`@expo/env`는 이미 정의된 키를 덮어쓰지 않는다). 운영에 붙었다면 앱이 이전에 `npm run dev`로 띄운 Metro에 다시 붙었는지부터 확인한다. 연결 여부는 Metro 로그의 `Firebase Emulator 연결 완료`와 앱 화면의 에뮬레이터 데이터로 판단한다.
+- **dev:emulator인데 운영 Firebase에 붙는 경우** — SDK 55 기준으로 Metro를 시작할 때는 셸에서 준 `EXPO_PUBLIC_*` 값이 `.env*` 값보다 우선한다(`@expo/env`는 이미 정의된 키를 덮어쓰지 않는다). 하지만 **Metro 실행 중 `.env*`를 저장하면** Expo가 env 파일을 `force`로 다시 읽으면서, 처음 다시 읽을 때는 셸 주입 값까지 파일 값으로 덮어쓴다(`@expo/cli` `reloadEnvFiles`). env 파일에 `EXPO_PUBLIC_USE_FIREBASE_EMULATOR=false`가 있으면 그 순간부터 운영에 붙는다. 그래서 이 키는 env 파일에 두지 않는다. 파일에 없는 키는 다시 읽어도 덮어쓰지 않는다.
+  - 운영에 붙었다면 ① env 파일에 이 키가 있는지, ② 앱이 이전에 `npm run dev`로 띄운 Metro에 다시 붙었는지 확인한다.
+  - 확인 방법: `ps eww -p <Metro PID>`의 값은 시작 시점 값이라 믿을 수 없다. 앱과 같은 옵션으로 받은 번들(`curl "http://localhost:8081/node_modules/expo/AppEntry.bundle?platform=ios&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.bytecode=1&unstable_transformProfile=hermes-stable"`)에서 `"EXPO_PUBLIC_USE_FIREBASE_EMULATOR": "..."` 값을 보거나, Metro 로그의 `Firebase Emulator 연결 완료`와 앱 화면의 에뮬레이터 데이터로 판단한다.
 
 ## 참고
 

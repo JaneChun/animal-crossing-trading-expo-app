@@ -8,10 +8,10 @@ const {
 	enableBackgroundTriggers,
 	resetEmulator,
 } = require('./emulator-control');
-const { auth, db } = require('./firebase-admin-setup');
 const { seedCatalog } = require('./seed-catalog');
 const { uploadSeedImages } = require('./seed-images');
 const { seedVillagers } = require('./seed-villagers');
+const { auth, db } = require('../../src/__tests__/firebase-utils/firebase-admin-setup');
 
 // ─── 시간 ─────────────────────────────────────────────────────────────────────
 
@@ -584,7 +584,7 @@ function buildSeedData({ userPhotoUrls = [], communityImageUrls = [] } = {}) {
 // ─── 저장 ─────────────────────────────────────────────────────────────────────
 
 // 문서 ID로만 쓰는 id 필드는 앱이 저장하는 형태와 같게 본문에서 뺀다
-const withoutId = ({ id, ...data }) => data;
+const withoutId = ({ id: _id, ...data }) => data;
 
 async function seedTestData({
 	users,

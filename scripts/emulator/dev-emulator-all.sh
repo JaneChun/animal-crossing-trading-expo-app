@@ -3,7 +3,7 @@
 # Metro를 종료하면 에뮬레이터에 SIGINT를 보내 ./emulator-data로 export한 뒤 함께 종료한다.
 # npm run dev:emulator:all 로 실행한다 (node_modules/.bin의 firebase를 PATH에 넣기 위해).
 set -e
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 
 EMULATOR_LOG="${TMPDIR:-/tmp}/firebase-emulator.log"
 READY_TIMEOUT_SECONDS=120

@@ -2,7 +2,7 @@
 
 > 이슈: 없음
 > 작업 종류: 기능 수정
-> 상태: 진행중
+> 상태: 완료
 > 생성일: 2026-11-13
 
 ## 개요
@@ -90,13 +90,30 @@
 
 검증: `npm run dev:emulator:all` 실행 → 다른 터미널에서 `npm run emulator:seed` → Metro를 Ctrl+C로 종료 → 다시 `npm run dev:emulator:all`로 띄웠을 때 시드 데이터가 그대로 보인다.
 
-- [ ] 명령어 문서 갱신 (`agent_docs/commands.md`)
+- [x] 명령어 문서 갱신 (`agent_docs/commands.md`)
   - `emulator:seed` 설명을 "카탈로그 + 테스트 데이터"로 바꾸고, 시드 후 `dev:emulator:all` 종료 시 `emulator-data/`로 export된다는 흐름을 한 줄로 적는다.
-- [ ] 테스트 문서 갱신 (`agent_docs/testing.md`)
+- [x] 테스트 문서 갱신 (`agent_docs/testing.md`)
   - `firebase-utils/` 설명에 seed 진입점, `seed-images/` 폴더 사용법, `SEED_MY_UID`(`.env.local`) 사용법, 카탈로그 원본(`catalog.json`)이 gitignore 대상이라는 제약을 추가한다.
   - 함정 기록: 이미지 URL에 에뮬레이터 호스트가 들어가므로, Mac IP가 바뀌면 시드를 다시 실행해야 이미지가 보인다.
-- [ ] 실제 export 확인
+- [x] 실제 export 확인
+  - 결정: 기존 `emulator-data/`(8월 16일 데이터)는 `emulator-data.bak/`으로 백업한 뒤 시드 데이터로 덮어쓴다(사용자 지시).
   - 위 검증 절차를 실행하고 `emulator-data/`의 수정 시각이 바뀌었는지 확인한다.
+
+## Phase 5: 시드 파일 위치 정리
+
+검증: `npm run lint`, `npm run emulator:seed`(에뮬레이터 실행 중), `bash -n scripts/emulator/dev-emulator-all.sh`가 통과하고, Maestro 헬퍼 import 경로(`@/__tests__/firebase-utils/...`)는 그대로다.
+
+- [x] `.gitignore`에서 `scripts/*` 제거 (`.gitignore`)
+  - 이유: #32에서 로컬 전용 `scripts/seed-test-data.js`를 숨기려고 넣은 규칙인데, 그 파일은 Phase 2에서 삭제했다. 남겨 두면 `scripts/`에 파일을 추가할 때마다 `git add -f`가 필요하다.
+- [x] 시드 파일을 `scripts/emulator/`로 이동 (`git mv`)
+  - 대상: `src/__tests__/firebase-utils/`의 `seed-test-data.js`, `seed-catalog.js`, `seed-villagers.js`, `seed-images.js`, `emulator-control.js`, 그리고 `scripts/dev-emulator-all.sh`
+  - 로컬 이미지 폴더 `seed-images/`도 옮기고 `.gitignore` 경로를 `scripts/emulator/seed-images/`로 바꾼다.
+  - 결정: Maestro가 쓰는 `test-helpers.js`, `cleanup-test-data.js`, `firebase-admin-setup.js`는 그대로 두고, 시드는 `firebase-admin-setup.js`를 상대 경로로 가져다 쓴다. 시드 파일이 `src/__tests__/`에 있으면 테스트 코드로 오해되기 때문(사용자 지시).
+- [x] 이동에 따른 경로 수정 (`scripts/emulator/*.js`, `dev-emulator-all.sh`, `package.json`)
+  - `require('./firebase-admin-setup')` → `src/__tests__/firebase-utils/firebase-admin-setup` 상대 경로, `seed-catalog.js`의 `catalog.json` 경로, `dev-emulator-all.sh`의 저장소 루트 계산(`cd "$(dirname "$0")/../.."`), `dev:emulator:all`·`emulator:seed` 스크립트 경로
+- [x] ESLint 예외 추가 (`.eslintrc.js`)
+  - 이유: `no-require-imports` 예외가 `**/__tests__/**`에만 있어, 옮긴 CommonJS 시드 파일에서 오류가 났다. `scripts/**/*.js`에 같은 규칙만 꺼 두는 override를 추가했다(구현 중 추가).
+- [x] 문서 경로 수정 (`agent_docs/commands.md`, `agent_docs/testing.md`)
 
 ## 진행 기록
 
@@ -115,3 +132,22 @@
 - 검증: 에뮬레이터를 끈 채 `npm run emulator:seed` → ECONNREFUSED와 함께 exit 1
 - 검증: 전체 에뮬레이터(Functions 포함)에서 `npm run emulator:seed`를 두 번 연속 실행 → 두 번 모두 성공. 실행 후 `board1.commentCount` 5, 유저 `review` 집계, 게시글 6개·알림 12개·Auth 3명으로 늘어나지 않음. 임시 이미지(프로필 2장, 커뮤니티 4장)로 Storage 업로드와 URL 응답(200, image/png) 확인. 시드 후 댓글을 하나 추가하면 `commentCount`가 1 오르는 것으로 트리거가 다시 켜진 것도 확인
 - 결정: 초기화·트리거·버킷 함수는 계획의 `reset-emulator.js` 대신 `emulator-control.js` 한 파일에 둔다(초기화 외 기능도 담기 때문)
+
+- Phase 5 완료
+- 검증: `bash -n scripts/emulator/dev-emulator-all.sh` 통과. `npx eslint scripts/emulator src/__tests__/firebase-utils` 통과(`npm run lint`의 남은 오류 3건은 `UpdateModal.tsx`·`ErrorBoundary.tsx`의 기존 오류). Auth·Firestore·Storage 에뮬레이터에서 옮긴 경로로 `npm run emulator:seed` 실행 → 성공(사용자가 넣은 이미지 프로필 10장·커뮤니티 8장 업로드 포함)
+
+- Phase 4 완료
+- 검증: `firebase emulators:start --import ./emulator-data --export-on-exit ./emulator-data` → `npm run emulator:seed` → SIGINT 종료 시 "Export complete", `emulator-data/` 수정 시각 갱신. `--import`만으로 다시 띄워 Users 3, Boards 6, Communities 5, Chats 3, Reviews 4, Notifications 12, Villagers 417, CatalogItems 7156, Auth 3, Storage 파일 18개, `board1.commentCount` 5 복원 확인
+- 전체 구현 완료
+- 결정: `dev:emulator:all`이 운영에 붙은 원인(Metro 실행 중 env 파일 저장 시 셸 값 덮어쓰기)을 확인하고, `EXPO_PUBLIC_USE_FIREBASE_EMULATOR`는 env 파일에 두지 않고 셸에서만 주입하기로 함. `agent_docs/environment.md`에 기록(사용자 지시)
+
+## 기기 확인
+
+- [ ] `.env.local`에 `SEED_MY_UID`를 넣고 `npm run dev:emulator:all` 실행 → 다른 터미널에서 `npm run emulator:seed` → 앱을 새로고침하고 본인 계정으로 로그인하면 1번 유저(모동숲러버)의 게시글·채팅 2개·알림이 내 것으로 보인다
+- [ ] 마켓 탭: 6개 게시글에 아이템 이미지·이름·수량·가격이 보이고, 구해요·팔아요·거래완료가 모두 있다
+- [ ] 커뮤니티 탭: 게시글 이미지가 `seed-images/communities/` 이미지로 보이고, 힘드러 분양 글은 섬네일에 힘드러 이미지가 보인다
+- [ ] 커뮤니티 "다들 최애 주민이 누구인가요?!" 상세: 쭈니·잭슨·미애가 이름·이미지와 함께 보인다
+- [ ] 게시글 상세: 댓글·대댓글이 보이고 목록의 댓글 수와 일치한다
+- [ ] 채팅 목록: 마지막 메시지와 안 읽은 수가 보인다
+- [ ] 프로필: 프로필 사진이 `seed-images/users/` 이미지로 보이고, 받은 리뷰 수가 맞다
+- [ ] 새 글 작성: 아이템 검색 → 색상 선택, 주민 검색 → 작성 후 상세에 주민 표시가 동작한다

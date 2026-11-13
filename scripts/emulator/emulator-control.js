@@ -5,7 +5,7 @@ process.env.FIREBASE_STORAGE_EMULATOR_HOST = '127.0.0.1:9199';
 const { getApp } = require('firebase-admin/app');
 const { getStorage } = require('firebase-admin/storage');
 
-require('./firebase-admin-setup');
+require('../../src/__tests__/firebase-utils/firebase-admin-setup');
 
 const HUB_URL = 'http://127.0.0.1:4400';
 // 트리거를 다시 켜기 전에 기다리는 시간. 마지막 쓰기의 트리거 이벤트가 켜진 뒤에 도착하지 않게 한다.

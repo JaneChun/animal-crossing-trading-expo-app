@@ -6,7 +6,7 @@
     "start": "expo start",
     "dev": "expo start --dev-client",
     "dev:emulator": "EXPO_PUBLIC_USE_FIREBASE_EMULATOR=true expo start --dev-client",
-    "dev:emulator:all": "bash scripts/dev-emulator-all.sh",
+    "dev:emulator:all": "bash scripts/emulator/dev-emulator-all.sh",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
@@ -31,7 +31,7 @@
     "emulator:start": "firebase emulators:start",
     "emulator:start-with-data": "firebase emulators:start --import ./emulator-data --export-on-exit",
     "emulator:stop": "pkill -f 'firebase emulators' || true && lsof -ti:4000,4400,4401,4500,4501,8080,9099,5001,9199 | xargs kill -9 2>/dev/null || true && echo 'Firebase emulators stopped'",
-    "emulator:seed": "node --env-file-if-exists=.env --env-file-if-exists=.env.local src/__tests__/firebase-utils/seed-test-data.js",
+    "emulator:seed": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/emulator/seed-test-data.js",
     "postinstall": "patch-package",
     "prepare": "husky"
   },

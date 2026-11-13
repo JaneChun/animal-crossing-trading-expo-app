@@ -38,8 +38,10 @@ npm run dev:emulator:all          # 에뮬레이터(데이터 유지) + 에뮬�
 npm run emulator:start            # firebase emulators:start
 npm run emulator:start-with-data  # 데이터 import + 종료 시 export
 npm run emulator:stop             # 프로세스 kill + 포트(4000,8080,9099,5001,9199 등) 정리
-npm run emulator:seed             # node scripts/seed-test-data.js
+npm run emulator:seed             # 에뮬레이터 Auth·Firestore·Storage를 비우고 카탈로그·주민·테스트 데이터 시드 (에뮬레이터가 떠 있어야 함)
 ```
+
+시드 데이터를 다음 실행에도 쓰려면: `npm run dev:emulator:all` 실행 → 다른 터미널에서 `npm run emulator:seed` → Metro를 Ctrl+C로 종료하면 `emulator-data/`로 export된다. 시드 상세는 [testing.md](testing.md) 참조.
 
 ## Functions (`functions/`, 별도 npm 프로젝트)
 
