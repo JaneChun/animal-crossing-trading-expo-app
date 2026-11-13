@@ -3,12 +3,8 @@ name: Claude Code Review
 on:
     pull_request:
         branches: [master]
-        types: [opened, synchronize, ready_for_review, reopened]
-
-# 같은 PR에 새 커밋이 푸시되면 진행 중인 리뷰를 취소
-concurrency:
-    group: claude-review-${{ github.ref }}
-    cancel-in-progress: true
+        # PR당 한 번만 리뷰: 생성 시, 또는 draft로 생성한 PR이 ready로 바뀔 때. 이후 푸시는 다시 리뷰하지 않음
+        types: [opened, ready_for_review]
 
 jobs:
     claude-review:
