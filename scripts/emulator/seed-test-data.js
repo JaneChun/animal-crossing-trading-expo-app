@@ -103,6 +103,78 @@ const ITEMS = {
 		imageUrl: 'https://nh-cdn.catalogue.ac/FtrIcon/StarpieceRare.png',
 		name: '커다란 별의 조각',
 	},
+	logBed: {
+		id: 'Wg9uF8DBwAYuXe2bP',
+		category: 'Housewares',
+		color: '다크 우드, 킬림',
+		imageUrl: 'https://nh-cdn.catalogue.ac/FtrIcon/FtrLogBedW_Remake_0_0.png',
+		name: '통나무 침대',
+	},
+	crown: {
+		id: 's8RSxedxt7JkFnGCw',
+		category: 'Headwears',
+		imageUrl: 'https://nh-cdn.catalogue.ac/FtrIcon/CapHatCrownRed.png',
+		name: '왕관',
+	},
+	boxSofa: {
+		id: 'pu6EP3DibieFgjoik',
+		category: 'Housewares',
+		color: '에메랄드',
+		imageUrl: 'https://nh-cdn.catalogue.ac/FtrIcon/FtrBoxsofa_Remake_0_0.png',
+		name: '사각 소파',
+	},
+	parasolBed: {
+		id: 'A9mdF3umjmiAQxLFX',
+		category: 'Housewares',
+		color: '화이트, 블루×화이트',
+		imageUrl: 'https://nh-cdn.catalogue.ac/FtrIcon/FtrBeachparasol_Remake_0_0.png',
+		name: '파라솔 선베드',
+	},
+	arch2021: {
+		id: 'kzegJttZt8DzxwamN',
+		category: 'Housewares',
+		imageUrl: 'https://nh-cdn.catalogue.ac/FtrIcon/Ftr2021Arch.png',
+		name: '2021년 아치',
+	},
+	astronaut: {
+		id: 'mBhzWedMXNB5HSrKa',
+		category: 'Housewares',
+		imageUrl: 'https://nh-cdn.catalogue.ac/FtrIcon/FtrSpacesuit.png',
+		name: '우주 비행사',
+	},
+	xmasTree: {
+		id: 'Map2ykX5ezxwnyEDr',
+		category: 'Housewares',
+		color: '컬러풀',
+		imageUrl: 'https://nh-cdn.catalogue.ac/FtrIcon/FtrTreeXmasL_Remake_0_0.png',
+		name: '큰 크리스마스트리',
+	},
+	snowman: {
+		id: 'ctnJAyfZZ39QEnK5G',
+		category: 'Housewares',
+		color: '블루',
+		imageUrl: 'https://nh-cdn.catalogue.ac/FtrIcon/FtrSnowman_Remake_0_0.png',
+		name: '3단 눈사람',
+	},
+	goldAltar: {
+		id: 'F4Xz5nt5LuyWyoEbt',
+		category: 'Housewares',
+		imageUrl: 'https://nh-cdn.catalogue.ac/FtrIcon/FtrGoldAltar.png',
+		name: '황금 제단',
+	},
+	bambooBasket: {
+		id: 'EhqChmN8mmQb5Xbrs',
+		category: 'Housewares',
+		color: '푸른 대나무',
+		imageUrl: 'https://nh-cdn.catalogue.ac/FtrIcon/FtrBambooBasket_Remake_0_0.png',
+		name: '대나무 바구니',
+	},
+	bellRug: {
+		id: 'KfRapmYKpizqQWzCg',
+		category: 'Rugs',
+		imageUrl: 'https://nh-cdn.catalogue.ac/FtrIcon/RugOtherBellM00.png',
+		name: '벨 주머니 러그',
+	},
 };
 
 const toCartItem = (item, quantity, price, unit) => ({ ...item, quantity, price, unit });
@@ -116,6 +188,237 @@ const VILLAGERS = {
 	himdeureo: 'a5GusDEqyRzz5mV9haxO', // 힘드러
 	miae: 'uWbBlJSAABCgNGjLnm2I', // 미애
 };
+
+// ─── 목록 스크롤용 추가 게시글 ────────────────────────────────────────────────
+
+// 채팅·리뷰가 참조하지 않는 게시글. 작성자는 1→2→3번 유저 순으로 돌아가며,
+// 작성 시각은 손으로 쓴 게시글(최근 3일)보다 조금씩 이전으로 퍼뜨린다.
+const EXTRA_BOARD_DRAFTS = [
+	{
+		type: 'buy',
+		title:
+			'[급구] 벚꽃 시즌 한정 가구 전부 구합니다 벚꽃 초롱, 벚꽃 시계 말고도 벚꽃 관련 가구 있으신 분들 연락 주세요 마일 넉넉하게 드려요',
+		body: '제목 그대로입니다. 벚꽃 가구 세트 맞추는 중이에요. 하나만 있어도 괜찮으니 편하게 연락 주세요!',
+		cart: [
+			['sakuraLantern', 2, 3, 'mileticket'],
+			['sakuraClock', 1, 2, 'mileticket'],
+		],
+	},
+	{
+		type: 'sell',
+		title: '통나무 침대 팔아요',
+		body: '리폼한 통나무 침대 팝니다.',
+		cart: [['logBed', 1, 4, 'bell']],
+	},
+	{
+		type: 'sell',
+		title: '왕관 판매 (한정 수량)',
+		body: '왕관 두 개 있어요. 선착순!',
+		cart: [['crown', 2, 15, 'mileticket']],
+	},
+	{
+		type: 'buy',
+		title: '사각 소파 에메랄드 색 구해요',
+		body: '거실 꾸미는 중이에요.',
+		cart: [['boxSofa', 2, 3, 'bell']],
+	},
+	{
+		type: 'sell',
+		title: '여름 해변 세트 정리합니다',
+		body: '파라솔 선베드랑 대나무 바구니 같이 팔아요. 따로도 가능합니다.',
+		cart: [
+			['parasolBed', 2, 2, 'bell'],
+			['bambooBasket', 3, 1, 'bell'],
+		],
+	},
+	{
+		type: 'done',
+		title: '2021년 아치 거래완료',
+		body: '좋은 분께 보냈습니다.',
+		cart: [['arch2021', 1, 5, 'mileticket']],
+	},
+	{
+		type: 'buy',
+		title: '우주 비행사 있으신 분?',
+		body: '우주 테마 섬 만들고 있어요!',
+		cart: [['astronaut', 1, 20, 'bell']],
+	},
+	{
+		type: 'sell',
+		title: '크리스마스 가구 미리 팔아요',
+		body: '큰 크리스마스트리, 3단 눈사람 있어요. 겨울 준비하세요~',
+		cart: [
+			['xmasTree', 1, 6, 'bell'],
+			['snowman', 2, 3, 'bell'],
+		],
+	},
+	{
+		type: 'sell',
+		title: '황금 제단 팝니다',
+		body: '흔하지 않은 가구예요. 가격 제안 받아요.',
+		cart: [['goldAltar', 1, 50, 'bell']],
+	},
+	{
+		type: 'buy',
+		title: '벨 주머니 러그 구해요',
+		body: '부자 느낌 나는 방 꾸미고 싶어요 ㅎㅎ',
+		cart: [['bellRug', 1, 2, 'mileticket']],
+	},
+	{
+		type: 'done',
+		title: '피아노 세트 거래완료',
+		body: '거래 끝났습니다. 감사합니다!',
+		cart: [
+			['grandPiano', 1, 25, 'bell'],
+			['pianoChair', 2, 1, 'mileticket'],
+		],
+	},
+	{
+		type: 'sell',
+		title: '별의 조각 대량 판매',
+		body: '유성우 날이라 많이 주웠어요.',
+		cart: [
+			['starFragment', 30, 1, 'bell'],
+			['largeStarFragment', 3, 3, 'bell'],
+		],
+	},
+	{
+		type: 'buy',
+		title: '페더 사진 구합니다',
+		body: '최애 주민 사진 모으는 중이에요.',
+		cart: [['featherPhoto', 1, 3, 'mileticket']],
+	},
+	{
+		type: 'sell',
+		title: '금 도구 세트 팔아요',
+		body: '금 삽 레시피, 금 물뿌리개 같이 드려요.',
+		cart: [
+			['goldShovelRecipe', 1, 2, 'mileticket'],
+			['goldWateringCan', 1, 12, 'bell'],
+		],
+	},
+];
+
+const EXTRA_COMMUNITY_DRAFTS = [
+	{
+		type: 'general',
+		title:
+			'동숲 3년 차인데 아직도 섬 꾸미기를 못 끝냈어요 다들 섬 완성하는 데 얼마나 걸리셨나요 저만 이렇게 오래 걸리는 건지 궁금해요',
+		body: '꾸미다 갈아엎다를 반복하고 있어요. 다들 어떻게 하시나요?',
+		imageCount: 2,
+	},
+	{ type: 'adopt', title: '쭈니 입양하고 싶어요', body: '쭈니 보내실 분 계신가요?', imageCount: 0, villagers: ['jjuni'] },
+	{ type: 'guide', title: '무 주식 기본 패턴 정리', body: '월요일 오전 가격으로 패턴을 대충 예측할 수 있어요.', imageCount: 1 },
+	{ type: 'dream', title: '벚꽃섬 꿈번지 열었어요', body: '벚꽃 시즌 섬 구경 오세요!', imageCount: 3 },
+	{ type: 'trade', title: '만지작 구경 오실 분', body: '오늘 만지작 열어요. 댓글 주세요.', imageCount: 0 },
+	{ type: 'design', title: '마이디자인 원피스 공유', body: '봄 원피스 만들어 봤어요.', imageCount: 2 },
+	{ type: 'parttime', title: '섬 정리 알바 구해요', body: '잡초 뽑기 도와주실 분! 사례는 마일로 드려요.', imageCount: 0 },
+	{
+		type: 'giveaway',
+		title: '잭슨, 미애 분양합니다',
+		body: '두 주민 모두 이사 준비 중이에요.',
+		imageCount: 0,
+		villagers: ['jackson', 'miae'],
+	},
+	{ type: 'turnip', title: '무 가격 610벨 떴어요!!', body: '오후까지 열어둘게요.', imageCount: 1 },
+	{ type: 'general', title: '오늘 너굴 상점 뭐 팔아요?', body: '저희 섬은 소파가 나왔어요.', imageCount: 0 },
+	{ type: 'guide', title: '화석 빨리 모으는 법', body: '매일 4개씩 꼭 파세요. 친구 섬도 돌면 더 빨라요.', imageCount: 1 },
+	{ type: 'dream', title: '야경 테마 꿈번지', body: '밤에 오시면 더 예뻐요.', imageCount: 4 },
+	{ type: 'general', title: '다들 몇 시에 접속하세요?', body: '저는 퇴근하고 밤에 해요.', imageCount: 0 },
+	{ type: 'design', title: '바닥 길 디자인 공유합니다', body: '돌길 디자인이에요. 자유롭게 쓰세요!', imageCount: 3 },
+	{ type: 'adopt', title: '힘드러 다시 데려오고 싶어요', body: '떠나보낸 걸 후회 중이에요 ㅠㅠ', imageCount: 1, villagers: ['himdeureo'] },
+];
+
+const EXTRA_POST_CREATORS = [USER_1, USER_2, USER_3];
+const extraPostCreatedAt = (index) => ago(3 * DAY + (index + 1) * 7 * HOUR);
+
+// ─── 댓글·답글 생성 ───────────────────────────────────────────────────────────
+
+// 모든 게시글에 같은 규칙으로 댓글을 붙여, 시드를 다시 돌려도 같은 결과가 나오게 한다.
+const COMMENT_COUNTS = [5, 3, 8, 0, 4, 6, 2, 7, 3, 5];
+const REPLY_COUNTS = [2, 0, 1, 3, 0, 1, 0, 2];
+
+const COMMENT_BODIES = {
+	Boards: [
+		'아직 거래 가능한가요?',
+		'가격 조정 가능할까요?',
+		'채팅 드렸어요! 확인 부탁드려요',
+		'저도 관심 있어요',
+		'다른 색상도 있나요?',
+		'오늘 저녁에 거래 가능하신가요?',
+		'혹시 마일로도 가능할까요?',
+		'수량 더 있으신가요?',
+		'예약 가능할까요?',
+		'좋은 가격이네요!',
+	],
+	Communities: [
+		'완전 공감해요 ㅋㅋ',
+		'좋은 정보 감사합니다!',
+		'저도 그래요 ㅠㅠ',
+		'사진 너무 예뻐요',
+		'저도 놀러 가고 싶어요',
+		'오 처음 알았어요',
+		'저희 섬도 비슷해요',
+		'다음에 또 올려주세요!',
+		'이거 진짜 꿀팁이네요',
+		'부럽습니다…',
+	],
+};
+const REPLY_BODIES = [
+	'네 가능해요!',
+	'감사합니다 ㅎㅎ',
+	'채팅으로 이야기해요',
+	'맞아요 맞아요',
+	'아쉽지만 이미 나갔어요 ㅠㅠ',
+	'조금만 기다려 주세요',
+	'좋아요!',
+	'저도 궁금했어요',
+];
+
+// 작성 시점에서 지금까지를 (count + 1)등분해 k번째 시각을 고른다
+const spreadUntilNow = (startedAt, index, count) => {
+	const age = Date.now() - startedAt.getTime();
+	return new Date(Date.now() - age * (1 - (index + 1) / (count + 1)));
+};
+
+function generateThreads(collection, posts) {
+	const users = [USER_1, USER_2, USER_3];
+
+	return posts.map((post, postIndex) => {
+		const commentCount = COMMENT_COUNTS[postIndex % COMMENT_COUNTS.length];
+		const comments = Array.from({ length: commentCount }, (_, commentIndex) => {
+			const seed = postIndex + commentIndex;
+			const commentId = `${post.id}-c${commentIndex + 1}`;
+			const commentCreatorId = users[(postIndex + commentIndex + 1) % users.length];
+			const commentCreatedAt = spreadUntilNow(post.createdAt, commentIndex, commentCount);
+			const replyCount = REPLY_COUNTS[seed % REPLY_COUNTS.length];
+
+			const replies = [];
+			for (let replyIndex = 0; replyIndex < replyCount; replyIndex++) {
+				// 짝수 번째는 댓글에, 홀수 번째는 바로 앞 답글에 단다 (대댓글의 대댓글)
+				const parentId = replyIndex % 2 === 0 ? commentId : replies[replyIndex - 1].id;
+				replies.push({
+					id: `${commentId}-r${replyIndex + 1}`,
+					body: REPLY_BODIES[(seed + replyIndex) % REPLY_BODIES.length],
+					// 게시글 작성자와 댓글 작성자가 번갈아 답한다
+					creatorId: replyIndex % 2 === 0 ? post.creatorId : commentCreatorId,
+					parentId,
+					createdAt: spreadUntilNow(commentCreatedAt, replyIndex, replyCount),
+				});
+			}
+
+			return {
+				id: commentId,
+				body: COMMENT_BODIES[collection][seed % COMMENT_BODIES[collection].length],
+				creatorId: commentCreatorId,
+				createdAt: commentCreatedAt,
+				replies,
+			};
+		});
+
+		return { collection, postId: post.id, comments };
+	});
+}
 
 // ─── 이미지 배정 ──────────────────────────────────────────────────────────────
 
@@ -249,6 +552,17 @@ function buildSeedData({ userPhotoUrls = [], communityImageUrls = [] } = {}) {
 			createdAt: ago(3 * DAY),
 			reviewPromptSent: true,
 		},
+		...EXTRA_BOARD_DRAFTS.map(({ cart, ...post }, index) => ({
+			id: `board${index + 7}`,
+			...post,
+			cart: cart.map(([itemKey, quantity, price, unit]) =>
+				toCartItem(ITEMS[itemKey], quantity, price, unit),
+			),
+			chatRoomIds: [],
+			creatorId: EXTRA_POST_CREATORS[index % EXTRA_POST_CREATORS.length],
+			createdAt: extraPostCreatedAt(index),
+			reviewPromptSent: post.type === 'done',
+		})),
 	];
 
 	// 커뮤니티 게시글 (Communities) — imageCount만큼 communityImageUrls에서 차례로 배정
@@ -301,6 +615,13 @@ function buildSeedData({ userPhotoUrls = [], communityImageUrls = [] } = {}) {
 			createdAt: ago(5 * HOUR),
 			imageCount: 4,
 		},
+		...EXTRA_COMMUNITY_DRAFTS.map(({ villagers = [], ...post }, index) => ({
+			id: `community${index + 6}`,
+			...post,
+			villagers: villagers.map((key) => VILLAGERS[key]),
+			creatorId: EXTRA_POST_CREATORS[(index + 1) % EXTRA_POST_CREATORS.length],
+			createdAt: extraPostCreatedAt(index),
+		})),
 	];
 
 	let communityImageOffset = 0;
@@ -311,7 +632,8 @@ function buildSeedData({ userPhotoUrls = [], communityImageUrls = [] } = {}) {
 	});
 
 	// 댓글·대댓글 — {collection}/{postId}/Comments/{commentId}/Replies
-	const commentThreads = [
+	// 손으로 쓴 대화 + 모든 게시글에 규칙대로 생성한 댓글
+	const handWrittenThreads = [
 		{
 			collection: 'Boards',
 			postId: 'board1',
@@ -432,13 +754,20 @@ function buildSeedData({ userPhotoUrls = [], communityImageUrls = [] } = {}) {
 		},
 	];
 
+	const commentThreads = [
+		...handWrittenThreads,
+		...generateThreads('Boards', boards),
+		...generateThreads('Communities', communities),
+	];
+
 	// 게시글의 commentCount는 댓글 + 대댓글 수 (functions/src/triggers/comments.ts, replies.ts와 같은 기준)
-	const countByPost = new Map(
-		commentThreads.map(({ collection, postId, comments }) => {
-			const replyCount = comments.reduce((sum, comment) => sum + comment.replies.length, 0);
-			return [`${collection}/${postId}`, comments.length + replyCount];
-		}),
-	);
+	// 한 게시글에 스레드가 여러 개(손으로 쓴 것 + 생성한 것)일 수 있어 합산한다
+	const countByPost = new Map();
+	for (const { collection, postId, comments } of commentThreads) {
+		const replyCount = comments.reduce((sum, comment) => sum + comment.replies.length, 0);
+		const key = `${collection}/${postId}`;
+		countByPost.set(key, (countByPost.get(key) ?? 0) + comments.length + replyCount);
+	}
 	const withCommentCount = (collection) => (post) => ({
 		...post,
 		commentCount: countByPost.get(`${collection}/${post.id}`) ?? 0,
