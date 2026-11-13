@@ -93,9 +93,6 @@ export const logUserBlock = (source: InteractionSource) => log('user_block', { s
 export const logUserReport = (source: InteractionSource, category: ReportCategory) =>
 	log('user_report', { source, category });
 
-// push_notification으로 앱이 열린 경우 background_resume 중복 로깅 방지
-export const notificationOpenedApp = { current: false };
-
 // R0 — 앱 재방문 빈도
 export const logAppOpen = (source: 'cold_start' | 'push_notification' | 'background_resume') =>
 	log('app_open_custom', { source });
