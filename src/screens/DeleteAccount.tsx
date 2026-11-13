@@ -134,7 +134,6 @@ const makeStyles = ({ colors }: Theme) =>
 			padding: PADDING,
 		},
 		title: {
-			fontSize: 22,
 			marginBottom: 8,
 		},
 		subtitle: {
