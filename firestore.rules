@@ -12,7 +12,7 @@ service cloud.firestore {
       allow read: if true; // 누구나
       allow create: if request.auth != null && 
         request.auth.uid == request.resource.data.creatorId; // 로그인한 유저만, 본인 ID만
-      allow update: if request.auth.uid == resource.data.creatorId || // 본인
+      allow update: if isOwnerPostUpdate() || // 본인 (관리자 숨김 해제 불가)
         (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'hiddenByAdmin', 'commentCount'])); // 관리자는 숨김 관련 필드만
       allow delete: if request.auth.uid == resource.data.creatorId; // 본인만
     }
@@ -46,7 +46,7 @@ service cloud.firestore {
       allow read: if true; // 누구나
       allow create: if request.auth != null && 
         request.auth.uid == request.resource.data.creatorId; // 로그인한 유저만, 본인 ID만
-      allow update: if request.auth.uid == resource.data.creatorId || // 본인
+      allow update: if isOwnerPostUpdate() || // 본인 (관리자 숨김 해제 불가)
         (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'hiddenByAdmin', 'commentCount'])); // 관리자는 숨김 관련 필드만
       allow delete: if request.auth.uid == resource.data.creatorId; // 본인만
     }
@@ -56,7 +56,8 @@ service cloud.firestore {
       allow read: if true; // 누구나
       allow create: if request.auth != null && 
         request.auth.uid == request.resource.data.creatorId; // 로그인한 유저만, 본인 ID만
-      allow update: if request.auth.uid == resource.data.creatorId || // 본인
+      allow update: if (request.auth.uid == resource.data.creatorId && // 본인 (관리자 숨김 해제 불가)
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['hiddenByAdmin'])) ||
         (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hiddenByAdmin'])); // 관리자는 숨김 필드만
       allow delete: if request.auth.uid == resource.data.creatorId; // 본인만
     }
@@ -165,6 +166,14 @@ service cloud.firestore {
     function isAdmin() {
       return request.auth != null &&
         get(/databases/$(database)/documents/Users/$(request.auth.uid)).data.get('role', null) == 'admin';
+    }
+
+    // 작성자의 게시글 수정. 관리자 숨김(hiddenByAdmin)은 건드릴 수 없고, status는 삭제('deleted')로만 바꿀 수 있다
+    function isOwnerPostUpdate() {
+      let affectedKeys = request.resource.data.diff(resource.data).affectedKeys();
+      return request.auth.uid == resource.data.creatorId &&
+        !affectedKeys.hasAny(['hiddenByAdmin']) &&
+        (!affectedKeys.hasAny(['status']) || request.resource.data.status == 'deleted');
     }
 
     // 함수가 채팅 신고 시 기록한 reportedAt이 있어야 관리자가 열람할 수 있다
