@@ -59,6 +59,9 @@ const makeStyles = ({ colors }: Theme) =>
 		container: {
 			width: '31%',
 			aspectRatio: '1/1',
+			// 화면 폭이 좁은 기기(Android 약 360dp)에서 정사각형이면 이름이 잘리므로,
+			// 이미지 60 + 위아래 패딩 16 + 이름 여백 4 + 이름 줄 높이 20만큼은 확보한다
+			minHeight: 100,
 			alignItems: 'center',
 			padding: 8,
 			backgroundColor: colors.bg.fill,

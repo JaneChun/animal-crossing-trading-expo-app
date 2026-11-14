@@ -8,6 +8,9 @@ import { LayoutWithHeaderProps } from '@/types/components';
 const { width } = Dimensions.get('window');
 const isIphoneMini = width <= 375;
 export const PADDING = isIphoneMini ? 18 : 24;
+// 헤더(뒤로가기 줄) 높이: 아이콘 34 + 상하 패딩 8 + 아래 테두리 1에 아이콘 글리프 여백이 더해져 실측 약 44.
+// 헤더 아래 콘텐츠의 키보드 offset 계산에 쓴다. 헤더 스타일을 바꾸면 이 값도 다시 잰다
+export const LAYOUT_HEADER_HEIGHT = 44;
 
 const LayoutWithHeader = ({
 	containerStyle,
