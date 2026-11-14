@@ -9,6 +9,9 @@ export interface LoginResult {
 export interface AuthState {
 	userInfo: UserInfo | null;
 	setUserInfo: (user: UserInfo | null) => void;
+	// 앱 시작 시 로컬 저장소에서 유저 정보를 복원하는 중인지. 끝날 때까지 스플래시를 유지한다
+	isUserLoading: boolean;
+	setIsUserLoading: (loading: boolean) => void;
 	isAuthLoading: boolean;
 	setIsAuthLoading: (loading: boolean) => void;
 	kakaoLogin: () => Promise<LoginResult>;

@@ -27,6 +27,7 @@ npm run deploy:app             # eas submit -p ios --latest
 npm run deploy:functions       # firebase deploy --only functions
 npm run deploy:rules:firestore # firebase deploy --only firestore:rules
 npm run deploy:rules:storage   # firebase deploy --only storage
+npx firebase deploy --only firestore:indexes  # firestore.indexes.json 반영 (agent_docs/firebase-patterns.md 참조)
 ```
 
 > **iOS 제출**: Apple은 2026-04부터 iOS 26 SDK(Xcode 26) 빌드만 업로드 허용(오류 90725). EAS 빌드 이미지는 `eas.json`에 `image` 미지정 시 Expo SDK 버전 기본값을 따르므로, 제출 거부 시 Expo SDK·빌드 이미지 버전부터 확인.

@@ -52,6 +52,9 @@ const linking: LinkingOptions<RootStackParamList> = {
 			ChatRoom: {
 				path: 'chat/:chatId',
 			},
+			AdminReportDetail: {
+				path: 'admin/report/:reportId',
+			},
 		},
 	},
 };

@@ -36,6 +36,9 @@ const PrivacyPolicy = () => {
 					• 게시글·댓글·채팅 작성자 식별
 				</Text>
 				<Text variant="body2" color="secondary" style={styles.listItem}>
+					• 신고 접수 시 신고 대상 게시글·댓글·채팅 내용 확인 및 운영정책 위반 조치
+				</Text>
+				<Text variant="body2" color="secondary" style={styles.listItem}>
 					• 고객 문의 응대 및 불만 처리
 				</Text>
 				<Text variant="body2" color="secondary" style={styles.listItem}>

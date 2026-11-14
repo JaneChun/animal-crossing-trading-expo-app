@@ -29,6 +29,9 @@ const DEFAULT_USER_1_UID = '001827.95fec4cf29524bfbb08744e92ef6050a.0427';
 const USER_1 = process.env.SEED_MY_UID || DEFAULT_USER_1_UID;
 const USER_2 = 'u_s_e_r_2';
 const USER_3 = 'user3';
+// 신고만 하는 유저 — 신고 문서는 신고자·피신고자 쌍마다 하나라서 신고 시나리오에 쌍이 더 필요하다
+const USER_4 = 'user4';
+const USER_5 = 'user5';
 
 // src/firebase/services/chatService.ts의 generateChatId와 같은 규칙
 const generateChatId = (user1, user2) => [user1, user2].sort().join('_');
@@ -470,6 +473,26 @@ function buildSeedData({ userPhotoUrls = [], communityImageUrls = [] } = {}) {
 			createdAt: ago(14 * DAY),
 			lastLogin: ago(2 * HOUR),
 		},
+		{
+			uid: USER_4,
+			email: 'test4@example.com',
+			displayName: '신고하는주민',
+			islandName: '바람섬',
+			photoURL: userPhotoUrl(3),
+			oauthType: 'google',
+			createdAt: ago(5 * DAY),
+			lastLogin: ago(3 * HOUR),
+		},
+		{
+			uid: USER_5,
+			email: 'test5@example.com',
+			displayName: '새내기섬주민',
+			islandName: '별빛섬',
+			photoURL: userPhotoUrl(4),
+			oauthType: 'kakao',
+			createdAt: ago(1 * DAY),
+			lastLogin: ago(5 * HOUR),
+		},
 	];
 
 	// 마켓 게시글 (Boards) — commentCount는 아래 comments에서 계산해 채운다
@@ -563,6 +586,18 @@ function buildSeedData({ userPhotoUrls = [], communityImageUrls = [] } = {}) {
 			createdAt: extraPostCreatedAt(index),
 			reviewPromptSent: post.type === 'done',
 		})),
+		{
+			// 정지 직전 유저(USER_4)의 글 — 자동 정지되면 숨겨지는지 확인용
+			id: 'board21',
+			type: 'sell',
+			title: '통나무 침대 팔아요',
+			body: '통나무 침대 하나 남았어요. 벨로 거래해요.',
+			cart: [toCartItem(ITEMS.logBed, 1, 15, 'bell')],
+			chatRoomIds: [],
+			creatorId: USER_4,
+			createdAt: ago(6 * HOUR),
+			reviewPromptSent: false,
+		},
 	];
 
 	// 커뮤니티 게시글 (Communities) — imageCount만큼 communityImageUrls에서 차례로 배정
@@ -622,6 +657,16 @@ function buildSeedData({ userPhotoUrls = [], communityImageUrls = [] } = {}) {
 			creatorId: EXTRA_POST_CREATORS[(index + 1) % EXTRA_POST_CREATORS.length],
 			createdAt: extraPostCreatedAt(index),
 		})),
+		{
+			// 정지 직전 유저(USER_4)의 글
+			id: 'community21',
+			type: 'general',
+			title: '오늘 섬에 무지개 떴어요',
+			body: '비 그치고 무지개가 떴어요. 다들 섬 날씨 어때요?',
+			creatorId: USER_4,
+			createdAt: ago(7 * HOUR),
+			imageCount: 0,
+		},
 	];
 
 	let communityImageOffset = 0;
@@ -895,18 +940,205 @@ function buildSeedData({ userPhotoUrls = [], communityImageUrls = [] } = {}) {
 		isRead: index % 2 === 0,
 	}));
 
+	// ─── 신고·관리자 ──────────────────────────────────────────────────────────
+	// 관리자 화면의 상태를 한 번씩 볼 수 있게 구성한다
+	// - USER_1: 관리자(role). SEED_MY_UID로 본인 계정을 넣으면 바로 관리자 메뉴가 보인다
+	// - USER_3: 최근 30일 신고 7회로 30일 정지 + 검토 필요. 정지로 게시글이 숨겨졌고(community3은 관리자 숨김), board6은 본인이 삭제
+	// - USER_2: 최근 30일 신고 3회(주의 표시)
+	// - USER_4: 최근 7일 신고 2회. 본인 계정(USER_1)으로 한 번 더 신고하면 updateUserReport 트리거가 7일 정지를 건다
+	// 누적 신고 수는 피신고자 report 필드에 직접 넣으므로 신고 문서 수와 다를 수 있다
+	const SUSPENDED_USER = USER_3;
+	const userReports = {
+		[USER_2]: { total: 3, recent30Days: 3, suspendUntil: null },
+		[USER_4]: { total: 2, recent30Days: 2, suspendUntil: null },
+		[USER_3]: {
+			total: 7,
+			recent30Days: 7,
+			suspendUntil: new Date(Date.now() + 29 * DAY),
+			needsAdminReview: true,
+		},
+	};
+
+	const moderatePost = (collection) => (post) => {
+		if (collection === 'Boards' && post.id === 'board6') {
+			return { ...post, status: 'deleted', deletedAt: ago(1 * DAY) };
+		}
+		if (collection === 'Communities' && post.id === 'community3') {
+			return { ...post, status: 'hidden', hiddenByAdmin: true };
+		}
+		if (post.creatorId === SUSPENDED_USER) return { ...post, status: 'hidden' };
+		return post;
+	};
+	const moderatedBoards = boards.map(withCommentCount('Boards')).map(moderatePost('Boards'));
+	const moderatedCommunities = communities
+		.map(withCommentCount('Communities'))
+		.map(moderatePost('Communities'));
+
+	// 스냅샷은 onReportWritten 함수가 대상 문서 전체를 복사한 값과 같은 형태로 넣는다 (시드 중에는 트리거가 꺼져 있다)
+	const findPost = (list, postId) => withoutId(list.find((post) => post.id === postId));
+	const findThreadComment = (postId, commentId) =>
+		commentThreads
+			.find((thread) => thread.postId === postId)
+			.comments.find((comment) => comment.id === commentId);
+	const board1Comment2 = findThreadComment('board1', 'comment2');
+	const { replies: _replies, ...comment2Doc } = board1Comment2;
+	const reply3Doc = board1Comment2.replies.find((reply) => reply.id === 'reply3');
+
+	const board3 = moderatedBoards.find((post) => post.id === 'board3');
+	const reports = [
+		{
+			// 게시글 신고: 신고 뒤 작성자가 본문을 고쳐, 스냅샷과 현재 원문이 다르다
+			id: 'report1',
+			reporterId: USER_2,
+			reporteeId: USER_3,
+			collectionName: 'Boards',
+			postId: 'board3',
+			category: 'fraud',
+			detail: '선입금하면 레시피를 주겠다고 하고 받은 뒤 연락이 끊겼어요.',
+			createdAt: ago(3 * HOUR),
+			resolved: false,
+			snapshot: {
+				...withoutId(board3),
+				status: 'active',
+				body: '금 삽 레시피 여러 장 있어요. 선입금 먼저 보내주시면 바로 드릴게요!',
+			},
+		},
+		{
+			id: 'report2',
+			reporterId: USER_1,
+			reporteeId: USER_2,
+			collectionName: 'Boards',
+			postId: 'board1',
+			commentId: 'comment2',
+			category: 'abuse',
+			detail: '댓글로 비꼬는 말을 계속 해요.',
+			createdAt: ago(40 * MINUTE),
+			resolved: false,
+			snapshot: withoutId(comment2Doc),
+		},
+		{
+			// 답글 신고: commentId는 부모 댓글, replyId가 답글
+			id: 'report3',
+			reporterId: USER_3,
+			reporteeId: USER_2,
+			collectionName: 'Boards',
+			postId: 'board1',
+			commentId: 'comment2',
+			replyId: 'reply3',
+			category: 'spam',
+			detail: '',
+			createdAt: ago(2 * HOUR),
+			resolved: false,
+			snapshot: withoutId(reply3Doc),
+		},
+		{
+			// 채팅 신고: 채팅방에 reportedAt이 있어야 관리자가 열람할 수 있다
+			id: 'report4',
+			reporterId: USER_1,
+			reporteeId: USER_3,
+			chatId: CHAT_1_3,
+			category: 'fraud',
+			detail: '마일 티켓을 먼저 받고 아이템을 주지 않았어요.',
+			createdAt: ago(1 * HOUR),
+			resolved: false,
+		},
+		{
+			// 관리자가 숨긴 게시글 신고
+			id: 'report5',
+			reporterId: USER_4,
+			reporteeId: USER_3,
+			collectionName: 'Communities',
+			postId: 'community3',
+			category: 'inappropriate',
+			detail: '게시글 이미지가 부적절해요.',
+			createdAt: ago(1 * DAY),
+			resolved: false,
+			snapshot: findPost(moderatedCommunities, 'community3'),
+		},
+		{
+			// 작성자가 삭제한 게시글 신고 (처리 완료)
+			id: 'report6',
+			reporterId: USER_5,
+			reporteeId: USER_3,
+			collectionName: 'Boards',
+			postId: 'board6',
+			category: 'spam',
+			detail: '같은 글을 계속 올려요.',
+			createdAt: ago(2 * DAY),
+			resolved: true,
+			// 신고 시점에는 삭제 전이었다
+			snapshot: (({ deletedAt: _deletedAt, ...post }) => ({ ...post, status: 'active' }))(
+				findPost(moderatedBoards, 'board6'),
+			),
+		},
+		{
+			// 프로필 신고 (처리 완료, 상세 내용 없음)
+			id: 'report7',
+			reporterId: USER_4,
+			reporteeId: USER_2,
+			category: 'other',
+			detail: '',
+			createdAt: ago(4 * DAY),
+			resolved: true,
+		},
+		{
+			// 정상 상태 게시글 신고 — 게시글 숨기기·숨김 해제 확인용
+			id: 'report8',
+			reporterId: USER_5,
+			reporteeId: USER_2,
+			collectionName: 'Boards',
+			postId: 'board2',
+			category: 'spam',
+			detail: '같은 아이템 판매글을 여러 번 올렸어요.',
+			createdAt: ago(20 * MINUTE),
+			resolved: false,
+			snapshot: findPost(moderatedBoards, 'board2'),
+		},
+		{
+			// 정지 직전 유저(USER_4)의 최근 7일 신고 1/2 (처리 완료)
+			id: 'report9',
+			reporterId: USER_2,
+			reporteeId: USER_4,
+			collectionName: 'Boards',
+			postId: 'board21',
+			category: 'fraud',
+			detail: '가격을 거래 직전에 올렸어요.',
+			createdAt: ago(2 * DAY),
+			resolved: true,
+			snapshot: findPost(moderatedBoards, 'board21'),
+		},
+		{
+			// 정지 직전 유저(USER_4)의 최근 7일 신고 2/2 (처리 완료)
+			id: 'report10',
+			reporterId: USER_5,
+			reporteeId: USER_4,
+			category: 'abuse',
+			detail: '프로필 소개글이 불쾌해요.',
+			createdAt: ago(3 * DAY),
+			resolved: true,
+		},
+	];
+	const reportedChatIds = new Map(
+		reports.filter((report) => report.chatId).map((report) => [report.chatId, report.createdAt]),
+	);
+
 	return {
 		users: users.map((user) => ({
 			...user,
-			report: { total: 0, recent30Days: 0, suspendUntil: null },
+			...(user.uid === USER_1 && { role: 'admin' }),
+			lastActiveAt: user.lastLogin,
+			report: userReports[user.uid] ?? { total: 0, recent30Days: 0, suspendUntil: null },
 			review: reviewSummary(user.uid),
 		})),
-		boards: boards.map(withCommentCount('Boards')),
-		communities: communities.map(withCommentCount('Communities')),
+		boards: moderatedBoards,
+		communities: moderatedCommunities,
 		commentThreads,
-		chats,
+		chats: chats.map((chat) =>
+			reportedChatIds.has(chat.id) ? { ...chat, reportedAt: reportedChatIds.get(chat.id) } : chat,
+		),
 		reviews,
 		notifications,
+		reports,
 	};
 }
 
@@ -923,6 +1155,7 @@ async function seedTestData({
 	chats,
 	reviews,
 	notifications,
+	reports,
 }) {
 	for (const user of users) {
 		const { uid, ...profile } = user;
@@ -987,6 +1220,11 @@ async function seedTestData({
 		await db.collection('Notifications').doc(notification.id).set(withoutId(notification));
 	}
 	console.log(`✅ 알림 ${notifications.length}개`);
+
+	for (const report of reports) {
+		await db.collection('Reports').doc(report.id).set(withoutId(report));
+	}
+	console.log(`✅ 신고 ${reports.length}개`);
 }
 
 async function main() {

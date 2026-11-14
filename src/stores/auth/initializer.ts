@@ -1,8 +1,13 @@
 import { onAuthStateChanged } from 'firebase/auth';
+import { Timestamp } from 'firebase/firestore';
 import { useEffect } from 'react';
 
 import { auth } from '@/config/firebase';
-import { getUserInfo, savePushTokenToFirestore } from '@/firebase/services/userService';
+import {
+	getUserInfo,
+	savePushTokenToFirestore,
+	saveUserInfo,
+} from '@/firebase/services/userService';
 import { usePushNotificationStore } from '@/stores/push';
 
 import { useAuthStore } from './store';
@@ -10,7 +15,7 @@ import { initializeAllSDKs } from './utils/initialization';
 import { clearUserStorage, getUserFromStorage, saveUserToStorage } from './utils/storage';
 
 export const useAuthInitializer = () => {
-	const { userInfo, setUserInfo } = useAuthStore.getState();
+	const { userInfo, setUserInfo, setIsUserLoading } = useAuthStore.getState();
 	const expoPushToken = usePushNotificationStore.getState().expoPushToken;
 
 	// 🔹 SDK 초기화
@@ -37,6 +42,9 @@ export const useAuthInitializer = () => {
 				return;
 			}
 
+			// 최근 접속 시간. 앱 실행(자동 로그인 포함)마다 1회 갱신한다
+			saveUserInfo({ uid: user.uid, lastActiveAt: Timestamp.now() });
+
 			// 로그인 상태 & 정상적인 유저 정보 → 상태와 저장소에 동기화
 			setUserInfo(fetchedUserInfo);
 			await saveUserToStorage(fetchedUserInfo);
@@ -47,13 +55,18 @@ export const useAuthInitializer = () => {
 
 	// 🔹 앱 실행 시 로컬 저장소에서 유저 정보 복원
 	useEffect(() => {
+		// 복원이 실패해도 스플래시에 갇히지 않도록 로딩은 항상 끝낸다. 유저 정보는 onAuthStateChanged가 다시 채운다
 		const loadUser = async () => {
-			const storedUser = await getUserFromStorage();
-			setUserInfo(storedUser);
+			try {
+				const storedUser = await getUserFromStorage();
+				setUserInfo(storedUser);
+			} finally {
+				setIsUserLoading(false);
+			}
 		};
 
 		loadUser();
-	}, [setUserInfo]);
+	}, [setUserInfo, setIsUserLoading]);
 
 	// 🔹 푸시 토큰 저장
 	useEffect(() => {

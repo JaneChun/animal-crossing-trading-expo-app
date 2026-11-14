@@ -4,6 +4,16 @@ import { Platform } from 'react-native';
 import { UpdateModal } from '@/components/ui/UpdateModal';
 import { useVersionCheck } from '@/hooks/shared/useVersionCheck';
 import Account from '@/screens/Account';
+import AdminChatViewer from '@/screens/admin/AdminChatViewer';
+import AdminErrors from '@/screens/admin/AdminErrors';
+import AdminHome from '@/screens/admin/AdminHome';
+import AdminReportDetail from '@/screens/admin/AdminReportDetail';
+import AdminReports from '@/screens/admin/AdminReports';
+import AdminReviewUsers from '@/screens/admin/AdminReviewUsers';
+import AdminStats from '@/screens/admin/AdminStats';
+import AdminUserDetail from '@/screens/admin/AdminUserDetail';
+import AdminUsers from '@/screens/admin/AdminUsers';
+import DesignSystem from '@/screens/admin/DesignSystem';
 import AgreeToTermsAndConditions from '@/screens/AgreeToTermsAndConditions';
 import Block from '@/screens/Block';
 import ChatRoom from '@/screens/ChatRoom';
@@ -30,6 +40,7 @@ const RootStack = createNativeStackNavigator();
 
 const RootStackNavigator = () => {
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
+	const isUserLoading = useAuthStore((state) => state.isUserLoading);
 	const isOnboardingLoading = useOnboardingStore((state) => state.isLoading);
 
 	// 온보딩 완료 여부 체크
@@ -45,7 +56,7 @@ const RootStackNavigator = () => {
 
 	const { colors } = useTheme();
 
-	const isAppInitializing = isOnboardingLoading || isVersionCheckLoading;
+	const isAppInitializing = isUserLoading || isOnboardingLoading || isVersionCheckLoading;
 
 	const commonOptions = {
 		// 로그인/로그아웃/탈퇴 시 로딩화면 표시할 때 상단 헤더 숨김 처리 (iOS만)
@@ -182,6 +193,58 @@ const RootStackNavigator = () => {
 					name="Search"
 					component={Search}
 					options={{ ...commonOptions, headerShown: false }}
+				/>
+
+				{/* 관리자 - 화면마다 AdminGuard로 role을 확인한다 */}
+				<RootStack.Screen
+					name="AdminHome"
+					component={AdminHome}
+					options={{ ...commonOptions, title: '관리자' }}
+				/>
+				<RootStack.Screen
+					name="AdminReports"
+					component={AdminReports}
+					options={{ ...commonOptions, title: '신고 관리' }}
+				/>
+				<RootStack.Screen
+					name="AdminReviewUsers"
+					component={AdminReviewUsers}
+					options={{ ...commonOptions, title: '검토 필요 유저' }}
+				/>
+				<RootStack.Screen
+					name="AdminReportDetail"
+					component={AdminReportDetail}
+					options={{ ...commonOptions, title: '신고 상세' }}
+				/>
+				<RootStack.Screen
+					name="AdminChatViewer"
+					component={AdminChatViewer}
+					options={commonOptions}
+				/>
+				<RootStack.Screen
+					name="AdminStats"
+					component={AdminStats}
+					options={{ ...commonOptions, title: '일별 통계' }}
+				/>
+				<RootStack.Screen
+					name="AdminUsers"
+					component={AdminUsers}
+					options={{ ...commonOptions, title: '유저' }}
+				/>
+				<RootStack.Screen
+					name="AdminUserDetail"
+					component={AdminUserDetail}
+					options={{ ...commonOptions, title: '유저 상세' }}
+				/>
+				<RootStack.Screen
+					name="AdminErrors"
+					component={AdminErrors}
+					options={{ ...commonOptions, title: '에러 내역' }}
+				/>
+				<RootStack.Screen
+					name="DesignSystem"
+					component={DesignSystem}
+					options={{ ...commonOptions, title: '디자인 시스템' }}
 				/>
 			</RootStack.Navigator>
 

@@ -24,6 +24,8 @@ export const lightColors = {
 		lavender: Palette.lavender[600],
 		purple: Palette.purple[500],
 		primaryBrand: Palette.mint[600],
+		/** 정지 칩·관리자 조치 패널의 위험 문구. `bg.danger`와 쌍 */
+		danger: Palette.red[600],
 	},
 
 	// Background colors
@@ -48,6 +50,8 @@ export const lightColors = {
 		lavender: Palette.lavender[50],
 		purple: Palette.purple[50],
 		primaryBrand: Palette.mint[100],
+		/** 정지 칩·관리자 조치 패널의 면. `text.danger`와 쌍 */
+		danger: Palette.red[25],
 	},
 
 	// Border colors
@@ -115,7 +119,7 @@ type ColorTokens<T> = {
 
 export type ColorScheme = ColorTokens<typeof lightColors>;
 
-/** `text.{key}` 글자색과 `bg.{key}` 배경색이 짝지어진 tone 키 (Badge·SectionBanner) */
+/** `text.{key}` 글자색과 `bg.{key}` 배경색이 짝지어진 tone 키 (Badge·Banner) */
 export type ToneColorKey = keyof ColorScheme['text'] & keyof ColorScheme['bg'];
 
 export const darkColors: ColorScheme = {
@@ -137,6 +141,7 @@ export const darkColors: ColorScheme = {
 		lavender: Palette.lavender[300],
 		purple: Palette.purple[300],
 		primaryBrand: Palette.mint[400],
+		danger: Palette.red[500],
 	},
 	bg: {
 		primary: Palette.grayDark[950],
@@ -155,6 +160,7 @@ export const darkColors: ColorScheme = {
 		lavender: Palette.lavender[950],
 		purple: Palette.purple[950],
 		primaryBrand: Palette.mint[900],
+		danger: Palette.red[900],
 	},
 	border: {
 		default: Palette.grayDark[750],

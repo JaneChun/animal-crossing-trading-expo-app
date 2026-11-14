@@ -1,7 +1,8 @@
+import { Feather } from '@expo/vector-icons';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
-import { Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
+import { ComponentProps, Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
 import {
 	GestureResponderEvent,
 	StyleProp,
@@ -58,12 +59,29 @@ export type TypeBadgeProps<T extends MarketType | CommunityType> = {
 };
 
 export type BadgeTone =
-	'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'lavender' | 'purple' | 'brand' | 'neutral';
+	| 'red'
+	| 'orange'
+	| 'yellow'
+	| 'green'
+	| 'blue'
+	| 'lavender'
+	| 'purple'
+	| 'brand'
+	| 'neutral'
+	| 'danger';
 
 export type BadgeProps = {
 	text: string;
 	tone: BadgeTone;
 	containerStyle?: ViewStyle;
+};
+
+export type BannerProps = {
+	tone: BadgeTone;
+	icon: ComponentProps<typeof Feather>['name'];
+	text: string;
+	/** 바깥 여백은 호출부에서 정한다 */
+	containerStyle?: StyleProp<ViewStyle>;
 };
 
 export type ThumabnailProps = {
@@ -263,6 +281,7 @@ export type ReportUserParams = {
 
 export type OpenReportModalParams = {
 	commentId: string;
+	replyId?: string;
 	reporteeId: string;
 };
 
@@ -293,7 +312,7 @@ export interface ReplyUnitProps extends ReplyWithCreatorInfo {
 	postCreatorId: string;
 	commentId: string;
 	mentionTag?: string;
-	onReportClick: (params: { commentId: string; reporteeId: string }) => void;
+	onReportClick: (params: OpenReportModalParams) => void;
 	onEditClick: (params: { replyId: string; replyText: string }) => void;
 	onReplyClick: (params: OnReplyClickParams) => void;
 }

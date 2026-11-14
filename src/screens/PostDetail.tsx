@@ -21,6 +21,7 @@ import Total from '@/components/PostDetail/Total';
 import UserInfo from '@/components/PostDetail/UserInfo';
 import VillagerSummaryList from '@/components/PostDetail/VillagerSummaryList';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
+import Banner from '@/components/ui/Banner';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
 import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
@@ -32,11 +33,28 @@ import { useReportUser } from '@/hooks/shared/useReportUser';
 import { useVillagersByIds } from '@/hooks/villager/query/useVillagersByIds';
 import { useUserInfo } from '@/stores/auth';
 import { Theme, useTheme, useThemedStyles } from '@/theme';
+import { BannerProps } from '@/types/components';
 import { PostDetailRouteProp } from '@/types/navigation';
-import { Collection, CommunityType, MarketType } from '@/types/post';
+import { Collection, CommunityType, MarketType, Post } from '@/types/post';
 import { HandleReplyClickParams } from '@/types/reply';
 import { navigateToEditPost } from '@/utilities/navigationHelpers';
 import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
+
+// 숨김·삭제된 게시글은 관리자에게만 조회되므로(usePost의 includeHidden) 이 배너도 관리자에게만 보인다
+const getAdminOnlyBanner = (
+	post: Pick<Post<Collection>, 'status' | 'hiddenByAdmin'>,
+): Omit<BannerProps, 'containerStyle'> | null => {
+	if (post.status === 'deleted') {
+		return { tone: 'danger', icon: 'trash-2', text: '작성자가 삭제한 게시글' };
+	}
+	if (post.status === 'hidden') {
+		const text = post.hiddenByAdmin
+			? '관리자가 숨긴 게시글'
+			: '계정 정지로 숨겨진 게시글';
+		return { tone: 'yellow', icon: 'eye-off', text };
+	}
+	return null;
+};
 
 const PostDetail = () => {
 	const { colors } = useTheme();
@@ -154,6 +172,7 @@ const PostDetail = () => {
 						label: '신고',
 						onPress: () => {
 							openReportModal({
+								collectionName: collectionName as Collection,
 								postId: id,
 								reporteeId: post!.creatorId,
 							});
@@ -184,6 +203,8 @@ const PostDetail = () => {
 		return <EmptyIndicator message="게시글을 찾을 수 없습니다." />;
 	}
 
+	const adminOnlyBanner = getAdminOnlyBanner(post);
+
 	return (
 		<>
 			<SafeAreaView style={styles.screen} edges={['bottom']}>
@@ -213,6 +234,10 @@ const PostDetail = () => {
 							<View style={styles.content}>
 								{/* 헤더 */}
 								<View style={styles.header}>
+									{adminOnlyBanner && (
+										<Banner {...adminOnlyBanner} containerStyle={{ marginBottom: 16 }} />
+									)}
+
 									<View style={[styles.typeAndMenuRow, { marginBottom: 8 }]}>
 										{isBoardPost(post, collectionName) && (
 											<MarketTypeBadge type={post.type as MarketType} />
@@ -286,10 +311,12 @@ const PostDetail = () => {
 										isBoardPost(post, collectionName) ? post.chatRoomIds : []
 									}
 									collectionName={collectionName as Collection}
-									onReportClick={({ commentId, reporteeId }) =>
+									onReportClick={({ commentId, replyId, reporteeId }) =>
 										openReportModal({
+											collectionName: collectionName as Collection,
 											postId: post.id,
 											commentId,
+											replyId,
 											reporteeId,
 										})
 									}

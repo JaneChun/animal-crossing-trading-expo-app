@@ -5,10 +5,11 @@ import SettingListItem from '@/components/Profile/SettingListItem';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import Text from '@/components/ui/Text';
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { Theme, useThemedStyles } from '@/theme';
 import {
 	navigateToAccount,
+	navigateToAdminHome,
 	navigateToBlock,
 	navigateToPrivacyPolicy,
 	navigateToTermsOfService,
@@ -17,6 +18,7 @@ import {
 const Setting = () => {
 	const styles = useThemedStyles(makeStyles);
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
+	const userInfo = useUserInfo();
 
 	if (isAuthLoading) return <LoadingIndicator />;
 
@@ -68,6 +70,17 @@ const Setting = () => {
 					<Text variant="body1">앱 버전 정보</Text>
 				</SettingListItem> */}
 			</View>
+
+			{userInfo?.role === 'admin' && (
+				<View style={styles.container}>
+					<Text variant="body1" weight="semibold" style={styles.title}>
+						관리자
+					</Text>
+					<SettingListItem borderRound="all" showChevron onPress={navigateToAdminHome}>
+						<Text variant="body1">관리자 페이지</Text>
+					</SettingListItem>
+				</View>
+			)}
 		</View>
 	);
 };

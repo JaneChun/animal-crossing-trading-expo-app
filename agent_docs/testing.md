@@ -8,7 +8,8 @@
 
 ## 에뮬레이터 시드 (`npm run emulator:seed`)
 
-- 진입점 `scripts/emulator/seed-test-data.js`. Admin 초기화는 `src/__tests__/firebase-utils/firebase-admin-setup.js`를 함께 쓴다. 실행하면 에뮬레이터의 Auth·Firestore·Storage를 **모두 비운 뒤** 이미지 → 카탈로그 → 주민 → 테스트 데이터(유저·게시글·채팅·댓글·리뷰·알림) 순서로 넣는다. `.env`, `.env.local`을 읽는다.
+- 진입점 `scripts/emulator/seed-test-data.js`. Admin 초기화는 `src/__tests__/firebase-utils/firebase-admin-setup.js`를 함께 쓴다. 실행하면 에뮬레이터의 Auth·Firestore·Storage를 **모두 비운 뒤** 이미지 → 카탈로그 → 주민 → 테스트 데이터(유저·게시글·채팅·댓글·리뷰·알림·신고) 순서로 넣는다. `.env`, `.env.local`을 읽는다.
+- 관리자 화면 확인용 데이터도 함께 넣는다. 1번 유저(`SEED_MY_UID`)는 `role: 'admin'`이고, 신고 10건(게시글·댓글·답글·채팅·프로필, 관리자 숨김 글·작성자 삭제 글, 처리 완료 4건)과 정지·검토 필요 유저(`user3`), 본인 계정으로 한 번 더 신고하면 7일 정지가 걸리는 정지 직전 유저(`user4`), 신고된 채팅의 `reportedAt`, 신고 스냅샷이 들어간다. 스냅샷은 시드 중 트리거가 꺼져 있어 `onReportWritten` 대신 시드가 직접 쓴다.
 - 카탈로그(`seed-catalog.js`)의 원본 `functions/scripts/output/catalog.json`은 gitignore 대상이다. 없으면 경고 후 카탈로그만 건너뛴다.
 - 주민(`seed-villagers.js`)은 실행할 때마다 운영 Algolia `Villagers` 인덱스에서 가져온다. 문서 ID가 Algolia `objectID`(= 운영 문서 ID)와 같아야 앱에서 검색한 주민이 표시된다. 네트워크나 키가 없으면 경고 후 건너뛴다.
 - 이미지(`seed-images.js`): `scripts/emulator/seed-images/users/`(프로필)와 `communities/`(커뮤니티 글)에 `jpg`·`jpeg`·`png`·`webp`를 넣으면 이름순으로 배정해 Storage에 올린다. 이 폴더는 gitignore 대상이라 직접 만들어 넣는다. 비어 있으면 이미지 없이 시드한다.

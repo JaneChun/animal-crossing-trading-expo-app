@@ -57,7 +57,14 @@
 
 ### Badge (`@/components/ui/Badge`)
 
-`tone`(`red`·`orange`·`yellow`·`green`·`blue`·`lavender`·`purple`·`brand`·`neutral`)으로 글자·배경 쌍을 정한다. 바깥 여백이 없으므로 옆 요소와의 간격은 호출부 레이아웃(`gap` 등)이 정한다.
+`tone`(`red`·`orange`·`yellow`·`green`·`blue`·`lavender`·`purple`·`brand`·`neutral`·`danger`)으로 글자·배경 쌍을 정한다. 바깥 여백이 없으므로 옆 요소와의 간격은 호출부 레이아웃(`gap` 등)이 정한다.
+
+### Banner (`@/components/ui/Banner`)
+
+아이콘 + 한 줄 문구의 둥근 안내 배너. `tone`은 `Badge`와 같은 값과 색 쌍을 쓰고, `icon`은 Feather 아이콘 이름이다. 바깥 여백이 없으므로 `containerStyle`로 호출부가 정한다.
+
+- 일괄 등록 결과 머리말: `brand`(찾음)·`yellow`(재확인)·`red`(실패)
+- 관리자에게만 보이는 게시글 상태(`PostDetail`): `danger`(작성자 삭제)·`yellow`(관리자 숨김·작성자 정지로 숨김)
 
 ### Divider (`@/components/ui/Divider`)
 

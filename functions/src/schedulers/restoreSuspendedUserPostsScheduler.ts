@@ -1,6 +1,6 @@
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { db } from '../utils/common';
-import { restoreUserPostsAfterSuspension } from '../triggers/reports';
+import { liftUserSuspension } from '../triggers/reports';
 
 /**
  * 매일 한국 시간 자정에 실행되는 스케줄러 함수
@@ -30,13 +30,8 @@ export const restoreSuspendedUserPostsScheduler = onSchedule(
 			for (const userDoc of usersSnapshot.docs) {
 				const userId = userDoc.id;
 
-				// 정지 해제 처리
-				await userDoc.ref.update({
-					'report.suspendUntil': null,
-				});
-
-				// 게시글 복구
-				await restoreUserPostsAfterSuspension(userId);
+				// 정지 해제 및 게시글 복구
+				await liftUserSuspension(userId);
 
 				console.log(`사용자 ${userId} 정지 해제 및 게시글 복구 완료`);
 			}

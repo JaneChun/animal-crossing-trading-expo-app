@@ -37,6 +37,8 @@ export interface UserInfo extends PublicUserInfo {
 	oauthType: OauthType;
 	createdAt: Timestamp;
 	lastLogin: Timestamp;
+	lastActiveAt?: Timestamp;
+	role?: 'admin';
 }
 
 export type OauthType = 'kakao' | 'naver' | 'apple' | 'google';

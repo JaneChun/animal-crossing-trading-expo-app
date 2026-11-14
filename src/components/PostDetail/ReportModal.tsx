@@ -110,6 +110,9 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 							onChangeText={setDetail}
 							multiline
 						/>
+						<Text variant="caption" color="tertiary" style={styles.notice}>
+							원활한 신고 처리를 위해, 신고한 대화 내용은 운영진이 확인할 수 있습니다.
+						</Text>
 					</>
 				)}
 			</View>
@@ -151,5 +154,8 @@ const makeStyles = ({ colors }: Theme) =>
 			textAlignVertical: 'top',
 			lineHeight: 26,
 			fontSize: FontSizes.md,
+		},
+		notice: {
+			marginTop: 8,
 		},
 	});

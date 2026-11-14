@@ -13,7 +13,11 @@ jest.mock('../../src/utils/common', () => ({
 	db,
 }));
 
-import { handleUserReport } from '../../src/triggers/reports';
+import {
+	handleUserReport,
+	liftUserSuspension,
+	restoreUserPostsAfterSuspension,
+} from '../../src/triggers/reports';
 
 describe('사용자 신고 처리 통합 테스트', () => {
 	const reporteeId = 'reported_user_123';
@@ -465,6 +469,63 @@ describe('사용자 신고 처리 통합 테스트', () => {
 	/**
 	 * 테스트 데이터 클린업 함수
 	 */
+	describe('restoreUserPostsAfterSuspension 함수', () => {
+		const suspendedPostId = 'restore_suspended_post';
+		const adminHiddenPostId = 'restore_admin_hidden_post';
+
+		afterEach(async () => {
+			await Promise.all([
+				db.doc(`Boards/${suspendedPostId}`).delete(),
+				db.doc(`Communities/${adminHiddenPostId}`).delete(),
+			]);
+		});
+
+		it('정지로 숨긴 글은 복구하고, 관리자가 숨긴 글은 그대로 둔다', async () => {
+			await db.doc(`Boards/${suspendedPostId}`).set({ creatorId: reporteeId, status: 'hidden' });
+			await db
+				.doc(`Communities/${adminHiddenPostId}`)
+				.set({ creatorId: reporteeId, status: 'hidden', hiddenByAdmin: true });
+
+			await restoreUserPostsAfterSuspension(reporteeId);
+
+			const [suspendedPost, adminHiddenPost] = await Promise.all([
+				db.doc(`Boards/${suspendedPostId}`).get(),
+				db.doc(`Communities/${adminHiddenPostId}`).get(),
+			]);
+			expect(suspendedPost.data()?.status).toBe('active');
+			expect(adminHiddenPost.data()?.status).toBe('hidden');
+		});
+	});
+
+	describe('liftUserSuspension 함수', () => {
+		const suspendedPostId = 'lift_suspended_post';
+
+		afterEach(async () => {
+			await db.doc(`Boards/${suspendedPostId}`).delete();
+		});
+
+		it('정지 기간이 남아 있어도 즉시 suspendUntil을 비우고 게시글을 복구한다', async () => {
+			const tomorrow = Timestamp.fromMillis(Date.now() + 24 * 60 * 60 * 1000);
+			await db
+				.doc(`Users/${reporteeId}`)
+				.set({ report: { total: 3, suspendUntil: tomorrow, needsAdminReview: true } });
+			await db.doc(`Boards/${suspendedPostId}`).set({ creatorId: reporteeId, status: 'hidden' });
+
+			await liftUserSuspension(reporteeId);
+
+			const [user, post] = await Promise.all([
+				db.doc(`Users/${reporteeId}`).get(),
+				db.doc(`Boards/${suspendedPostId}`).get(),
+			]);
+			expect(user.data()?.report).toEqual({
+				total: 3,
+				suspendUntil: null,
+				needsAdminReview: true,
+			});
+			expect(post.data()?.status).toBe('active');
+		});
+	});
+
 	async function cleanupTestData() {
 		const testUserIds = [reporteeId, 'non_existent_user'];
 

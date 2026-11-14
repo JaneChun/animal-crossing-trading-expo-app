@@ -39,6 +39,16 @@ export type RootStackParamList = {
 	TermsOfService: undefined;
 	PrivacyPolicy: undefined;
 	Search: undefined;
+	AdminHome: undefined;
+	AdminReviewUsers: undefined;
+	AdminReports: undefined;
+	AdminReportDetail: { reportId: string };
+	AdminChatViewer: { chatId: string; reporterId: string; reporteeId: string };
+	AdminStats: undefined;
+	AdminUsers: undefined;
+	AdminUserDetail: { uid: string };
+	AdminErrors: undefined;
+	DesignSystem: undefined;
 };
 
 export type RootStackNavigation = NativeStackNavigationProp<RootStackParamList>;
@@ -61,3 +71,6 @@ export type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
 export type ChatRoomRouteProp = RouteProp<RootStackParamList, 'ChatRoom'>;
 export type SignUpDisplayNameRouteProp = RouteProp<RootStackParamList, 'SignUpDisplayName'>;
 export type SignUpIslandNameRouteProp = RouteProp<RootStackParamList, 'SignUpIslandName'>;
+export type AdminReportDetailRouteProp = RouteProp<RootStackParamList, 'AdminReportDetail'>;
+export type AdminChatViewerRouteProp = RouteProp<RootStackParamList, 'AdminChatViewer'>;
+export type AdminUserDetailRouteProp = RouteProp<RootStackParamList, 'AdminUserDetail'>;

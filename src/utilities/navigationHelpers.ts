@@ -150,3 +150,52 @@ export const navigateToMyProfile = () => {
 export const navigateToSetting = () => {
 	navigate('Setting');
 };
+
+// Admin/
+export const navigateToAdminHome = () => {
+	navigate('AdminHome');
+};
+
+export const navigateToAdminReports = () => {
+	navigate('AdminReports');
+};
+
+export const navigateToAdminReviewUsers = () => {
+	navigate('AdminReviewUsers');
+};
+
+export const navigateToAdminReportDetail = ({ reportId }: { reportId: string }) => {
+	navigate('AdminReportDetail', { reportId });
+};
+
+export const navigateToAdminChatViewer = ({
+	chatId,
+	reporterId,
+	reporteeId,
+}: {
+	chatId: string;
+	reporterId: string;
+	reporteeId: string;
+}) => {
+	navigate('AdminChatViewer', { chatId, reporterId, reporteeId });
+};
+
+export const navigateToAdminStats = () => {
+	navigate('AdminStats');
+};
+
+export const navigateToAdminUsers = () => {
+	navigate('AdminUsers');
+};
+
+export const navigateToAdminUserDetail = ({ uid }: { uid: string }) => {
+	navigate('AdminUserDetail', { uid });
+};
+
+export const navigateToAdminErrors = () => {
+	navigate('AdminErrors');
+};
+
+export const navigateToDesignSystem = () => {
+	navigate('DesignSystem');
+};
