@@ -168,13 +168,12 @@ export async function restoreUserPostsAfterSuspension(
 				.get(),
 		]);
 
-		hiddenBoardPosts.docs.forEach((doc) => {
-			batch.update(doc.ref, { status: 'active' });
-		});
-
-		hiddenCommunityPosts.docs.forEach((doc) => {
-			batch.update(doc.ref, { status: 'active' });
-		});
+		// 관리자가 숨긴 글은 정지 해제와 무관하므로 복구하지 않는다
+		[...hiddenBoardPosts.docs, ...hiddenCommunityPosts.docs]
+			.filter((doc) => doc.data().hiddenByAdmin !== true)
+			.forEach((doc) => {
+				batch.update(doc.ref, { status: 'active' });
+			});
 
 		await batch.commit();
 		console.log(`사용자 ${userId}의 게시글 복구 완료`);
@@ -182,6 +181,18 @@ export async function restoreUserPostsAfterSuspension(
 		console.error(`사용자 ${userId}의 게시글 복구 실패: `, error);
 		throw error;
 	}
+}
+
+/**
+ * 사용자 정지 해제: suspendUntil을 비우고 정지 때 숨겨진 게시글을 복구한다
+ * 0시 스케줄러(만료된 정지)와 관리자 정지 해제 callable이 함께 쓴다
+ * @param userId - 정지 해제할 사용자 ID
+ */
+export async function liftUserSuspension(userId: string): Promise<void> {
+	await db.collection('Users').doc(userId).update({
+		'report.suspendUntil': null,
+	});
+	await restoreUserPostsAfterSuspension(userId);
 }
 
 /**

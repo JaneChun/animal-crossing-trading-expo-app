@@ -1,4 +1,4 @@
-import { Timestamp } from 'firebase/firestore';
+import { DocumentData, Timestamp } from 'firebase/firestore';
 
 import { REPORT_CATEGORIES } from '@/constants/post';
 
@@ -17,13 +17,8 @@ export interface Report {
 	detail: string;
 	createdAt: Timestamp;
 	resolved: boolean; // 운영 처리 상태
-	snapshot?: ReportSnapshot; // 신고 시점의 게시글·댓글 내용
+	snapshot?: DocumentData; // 신고 시점의 게시글·댓글·답글 문서 전체 (onReportWritten 함수가 기록)
 }
-
-export type ReportSnapshot = {
-	title?: string; // 게시글 신고인 경우
-	body: string;
-};
 
 export type ReportCategoryItem = (typeof REPORT_CATEGORIES)[number];
 export type ReportCategory = (typeof REPORT_CATEGORIES)[number]['EN'];

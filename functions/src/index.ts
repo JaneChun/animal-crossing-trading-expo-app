@@ -1,19 +1,29 @@
 import * as functions from 'firebase-functions';
-import { onDocumentCreated, onDocumentDeleted } from 'firebase-functions/v2/firestore';
+import {
+	onDocumentCreated,
+	onDocumentDeleted,
+	onDocumentWritten,
+} from 'firebase-functions/v2/firestore';
 
 // Auth functions
 import { createFirebaseCustomToken } from './auth/customToken';
+
+// Admin functions
+import { assertAdmin, getDailyStatsHandler, getUserStatsHandler } from './admin/stats';
+import { liftSuspensionHandler } from './admin/suspension';
 
 // Notification handlers
 import { handleChatMessageCreated } from './notifications/chat';
 import { handleCommentNotification } from './notifications/comments';
 import { handleReplyNotification } from './notifications/reply';
+import { handleReportWritten, isNewReportWrite, ReportWriteData } from './notifications/report';
 
 // Trigger handlers
 import { handleUserBlocked, handleUserUnblocked } from './triggers/blocking';
 import { handleCommentCreated, handleCommentDeleted } from './triggers/comments';
 import { handleReplyCreated, handleReplyDeleted } from './triggers/replies';
 import { handleUserReport } from './triggers/reports';
+import { saveReportSnapshot } from './triggers/reportSnapshot';
 import { handleUserReview } from './triggers/reviews';
 import { deleteUserAndArchive as deleteUserAndArchiveHandler } from './triggers/userManagement';
 
@@ -40,6 +50,33 @@ export const getFirebaseCustomToken = functions.https.onCall(async (request) => 
 export const deleteUserAndArchive = functions.https.onCall(async (request) => {
 	const { uid } = request.data;
 	return await deleteUserAndArchiveHandler(uid);
+});
+
+/**
+ * 관리자 일별 통계
+ * KST 날짜 하루 동안의 게시글·댓글·답글·채팅 메시지·신규 가입·리뷰 수
+ */
+export const getDailyStats = functions.https.onCall(async (request) => {
+	await assertAdmin(request.auth?.uid);
+	return await getDailyStatsHandler(request.data?.date);
+});
+
+/**
+ * 관리자 유저별 통계
+ * 유저 한 명의 전체 기간 활동·신고·차단 수
+ */
+export const getUserStats = functions.https.onCall(async (request) => {
+	await assertAdmin(request.auth?.uid);
+	return await getUserStatsHandler(request.data?.uid);
+});
+
+/**
+ * 관리자 정지 해제
+ * 정지를 즉시 풀고 정지 때 숨겨진 게시글을 복구한다(관리자가 숨긴 글 제외)
+ */
+export const liftSuspension = functions.https.onCall(async (request) => {
+	await assertAdmin(request.auth?.uid);
+	await liftSuspensionHandler(request.data?.uid);
 });
 
 // ===============================
@@ -142,6 +179,20 @@ export const updateUserReport = onDocumentCreated('Reports/{reportId}', async (e
 
 	const report = snapshot.data() as any;
 	await handleUserReport(report);
+});
+
+/**
+ * 신고 생성·재신고(덮어쓰기) 시 트리거
+ * 신고 시점 스냅샷 기록, 관리자 푸시 전송, 채팅 신고면 채팅방에 reportedAt 기록. 관리자의 처리 상태 변경에는 반응하지 않는다
+ */
+export const onReportWritten = onDocumentWritten('Reports/{reportId}', async (event) => {
+	const before = event.data?.before.data() as ReportWriteData | undefined;
+	const after = event.data?.after.data() as ReportWriteData | undefined;
+
+	if (!after || !isNewReportWrite(before, after) || !event.data) return;
+
+	await saveReportSnapshot(event.data.after.ref, after);
+	await handleReportWritten(event.params.reportId, after);
 });
 
 /**

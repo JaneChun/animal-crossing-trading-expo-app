@@ -144,9 +144,11 @@ service cloud.firestore {
     match /Reports/{reportId} {
       allow read: if request.auth.uid == resource.data.reporterId || isAdmin(); // 신고자, 관리자
       allow create: if request.auth != null && 
-        request.auth.uid == request.resource.data.reporterId; // 로그인한 유저만, 본인이 신고자
+        request.auth.uid == request.resource.data.reporterId && // 로그인한 유저만, 본인이 신고자
+        !('snapshot' in request.resource.data); // 스냅샷은 함수(onReportWritten)만 기록
       allow update: if (request.auth != null && 
-          request.auth.uid == request.resource.data.reporterId) || // 로그인한 유저만, 본인이 신고자
+          request.auth.uid == request.resource.data.reporterId && // 로그인한 유저만, 본인이 신고자
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['snapshot'])) || // 스냅샷은 함수만 기록
         (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['resolved'])); // 관리자는 처리 상태만
       allow delete: if false; // 불가능
     }
