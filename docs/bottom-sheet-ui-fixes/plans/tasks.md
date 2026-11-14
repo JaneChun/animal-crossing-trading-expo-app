@@ -27,13 +27,15 @@
 
 ## Phase 2: 키보드를 내린 뒤 시트 높이 복구 (#56)
 
-- [ ] `BottomSheet`에 `keyboardBlurBehavior="restore"`를 추가한다 (`src/components/ui/CustomBottomSheet.tsx`)
+- [x] `BottomSheet`에 `keyboardBlurBehavior="restore"`를 추가한다 (`src/components/ui/CustomBottomSheet.tsx`)
   - 패턴: 키보드 관련 처리는 이미 이 파일의 `useGenericKeyboardHandler`(툴바 높이 확보)가 담당한다. `useReanimatedKeyboardAnimation`은 Gorhom 키보드 처리와 충돌하므로 쓰지 않는다(`agent_docs/architecture.md:20`).
   - 재사용: Gorhom 내장 `KEYBOARD_BLUR_BEHAVIOR.restore` — 키보드가 숨겨지면 `detents[currentIndex]`로 시트를 되돌린다(`BottomSheet.tsx:806-816`). 직접 snapToIndex를 호출하는 코드는 만들지 않는다.
   - 결정: prop으로 열지 않고 공통 시트에 고정 적용해 사용처 7곳 모두에 반영한다 (사용자 지시)
-- [ ] 가격 수정 시트에서 키보드를 열고 닫은 뒤 높이가 `40%`로 돌아오는지 iOS·Android에서 확인한다
+- [x] 공통 시트에 `keyboardBehavior` 선택 prop을 추가하고, 가격 수정 시트에는 `fillParent`를 준다 (`src/components/ui/CustomBottomSheet.tsx`, `src/components/NewPost/EditItemModal.tsx`)
+  - 결정: 키보드가 떠 있는 동안만 시트를 펼친다 (사용자 지시). `extend` + `['40%', '95%']`는 펼친 뒤 현재 인덱스가 95%로 바뀌어 `restore`가 40%로 돌아오지 않으므로(`BottomSheet.tsx` `animateToPosition`), 임시 위치로 처리되는 `fillParent`를 쓴다
+- [x] 가격 수정 시트에서 키보드가 올라온 동안 총계가 보이고, 키보드를 닫은 뒤 높이가 `40%`로 돌아오는지 iOS·Android에서 확인한다
 - [ ] 사용처 7곳(`ReportModal`, `EditCommentModal`, `EditProfileModal`, `AddItemModal`, `EditItemModal`, `BulkAddItemModal`, `AddVillagerModal`)에서 키보드를 열고 닫았을 때 레이아웃이 깨지지 않는지 확인한다
-- [ ] Gorhom `keyboardBlurBehavior` 기본값 함정을 기록한다 (`agent_docs/architecture.md` 20행의 바텀시트 키보드 설명 뒤에 한 줄)
+- [x] Gorhom `keyboardBlurBehavior` 기본값 함정을 기록한다 (`agent_docs/architecture.md` 20행의 바텀시트 키보드 설명 뒤에 한 줄)
 
 ## Phase 3: 일괄 추가 검토 화면 확인 버튼 (#57)
 
@@ -62,3 +64,8 @@
 - 검증: `npm run typecheck` 통과, `npx eslint src/components/PostDetail/EditCommentModal.tsx` 통과
 - 계획과 달라진 부분: `onClose` 연결 후에도 기기에서 취소가 동작하지 않았다(번들 반영 확인). 헤더 렌더 순서 수정을 Phase 1에 추가했다
 - 검증: `npm run typecheck` 통과, `npx eslint src/components/ui/CustomBottomSheet.tsx` 통과, `npx jest src/__tests__` 58개 통과
+- Phase 2 완료 (기기 확인은 사용자 확인 대기)
+- 검증: `npm run typecheck` 통과, `npx eslint src/components/ui/CustomBottomSheet.tsx` 통과, `npx jest src/__tests__` 58개 통과
+- 계획과 달라진 부분: 가격 수정 시트에서 키보드가 올라오면 총계가 툴바에 가려지는 문제(사용자 제보)를 Phase 2에 추가했다
+- 검증: `npm run typecheck` 통과, 변경 파일 eslint 오류 없음(`EditItemModal.tsx`의 기존 exhaustive-deps 경고 1건)
+- 검증: iPhone 17 Pro 시뮬레이터에서 키보드가 올라오면 시트가 화면을 채우고, 내리면 40%로 돌아오는 것을 사용자가 확인

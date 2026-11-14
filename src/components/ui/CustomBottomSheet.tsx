@@ -1,4 +1,8 @@
-import BottomSheet, { BottomSheetBackdrop, BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
+import BottomSheet, {
+	BottomSheetBackdrop,
+	BottomSheetBackdropProps,
+	BottomSheetProps,
+} from '@gorhom/bottom-sheet';
 import { ReactNode, useCallback, useEffect, useRef } from 'react';
 import { BackHandler, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { useGenericKeyboardHandler } from 'react-native-keyboard-controller';
@@ -24,6 +28,7 @@ const CustomBottomSheet = ({
 	leftButton,
 	rightButton,
 	bodyStyle = {},
+	keyboardBehavior,
 	onClose,
 }: {
 	children: ReactNode;
@@ -33,6 +38,7 @@ const CustomBottomSheet = ({
 	leftButton?: ReactNode;
 	rightButton?: ReactNode;
 	bodyStyle?: StyleProp<ViewStyle>;
+	keyboardBehavior?: BottomSheetProps['keyboardBehavior'];
 	onClose: () => void;
 }) => {
 	const styles = useThemedStyles(makeStyles);
@@ -113,6 +119,7 @@ const CustomBottomSheet = ({
 			onChange={handleSheetChanges}
 			// 기본값 'none'은 키보드가 내려가도 시트를 키보드 위치에 둔다. 'restore'로 원래 스냅 포인트로 되돌린다
 			keyboardBlurBehavior="restore"
+			keyboardBehavior={keyboardBehavior}
 			backdropComponent={renderBackdrop}
 			enablePanDownToClose={true}
 			backgroundStyle={{

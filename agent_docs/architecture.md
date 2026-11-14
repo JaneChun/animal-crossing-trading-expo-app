@@ -18,6 +18,7 @@ Provider 중첩 구조와 초기화 훅 목록은 `App.tsx`를 직접 읽고 파
 - **스플래시 표시/해제는 `RootStackNavigator`의 `isAppInitializing` 분기가 단일 소유** (`src/navigation/RootStackNavigator.tsx:45`) — 개별 훅에서 스플래시를 제어하지 말 것. 단, 이는 **JS 레벨 `SplashScreen` 컴포넌트** 얘기다. `App.tsx`의 `ExpoSplashScreen.hide()`(dev 전용)는 **네이티브 스플래시**로 별개 — 둘을 혼동해 한쪽을 "고치지" 말 것.
 - React Query 기본 설정(staleTime 등)은 `App.tsx`의 QueryClient 생성부 참조.
 - 전역 `KeyboardToolbar`는 화면 레이아웃을 확보하지 않는 오버레이다. 툴바 높이는 `KEYBOARD_TOOLBAR_HEIGHT`로 관리하고, `KeyboardAvoidingView`의 `keyboardVerticalOffset` 또는 `GiftedChat`의 `bottomOffset`에 더해 입력 영역이 가려지지 않게 한다. `CustomBottomSheet`는 `useGenericKeyboardHandler`로 툴바 높이만큼 하단 공간을 확보한다. `useReanimatedKeyboardAnimation`은 Android 입력 모드를 `adjustResize`로 변경해 Gorhom의 키보드 처리와 충돌할 수 있으므로 바텀시트에서 사용하지 않는다.
+- Gorhom `BottomSheet`의 `keyboardBlurBehavior` 기본값은 `none`이라서, 키보드가 내려가도 시트가 키보드 위로 올라간 위치에 그대로 남는다(#56). `CustomBottomSheet`는 `restore`로 고정해 원래 스냅 포인트로 되돌린다. Gorhom을 직접 쓰는 시트를 새로 만들 때도 같은 값을 준다.
 - iOS 앱 시작 시 키보드가 순간적으로 노출되는 것을 막기 위해 `KeyboardProvider`의 `preload={false}`를 유지한다.
 - **Android는 edge-to-edge + `KeyboardProvider` 환경이라 키보드가 열려도 창이 줄어들지 않는다** — RN 기본 `KeyboardAvoidingView`의 `behavior='height'`나 `undefined`에 기대면 입력창·버튼이 키보드에 가려진다. `react-native-keyboard-controller`의 `KeyboardAvoidingView`를 `behavior="padding"`으로 쓴다.
 - **`TextInput` 스타일의 `verticalAlign`은 `textAlignVertical`을 덮어쓴다** — RN이 `verticalAlign: 'middle'`을 `textAlignVertical: 'center'`로 바꿔 적용하므로, 여러 줄 입력에서 `textAlignVertical: 'top'`을 줘도 placeholder가 가운데에 표시된다. 둘을 함께 쓰지 않는다.
