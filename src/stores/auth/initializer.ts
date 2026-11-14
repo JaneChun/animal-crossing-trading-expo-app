@@ -1,8 +1,13 @@
 import { onAuthStateChanged } from 'firebase/auth';
+import { Timestamp } from 'firebase/firestore';
 import { useEffect } from 'react';
 
 import { auth } from '@/config/firebase';
-import { getUserInfo, savePushTokenToFirestore } from '@/firebase/services/userService';
+import {
+	getUserInfo,
+	savePushTokenToFirestore,
+	saveUserInfo,
+} from '@/firebase/services/userService';
 import { usePushNotificationStore } from '@/stores/push';
 
 import { useAuthStore } from './store';
@@ -36,6 +41,9 @@ export const useAuthInitializer = () => {
 				await clearUserStorage();
 				return;
 			}
+
+			// 최근 접속 시간. 앱 실행(자동 로그인 포함)마다 1회 갱신한다
+			saveUserInfo({ uid: user.uid, lastActiveAt: Timestamp.now() });
 
 			// 로그인 상태 & 정상적인 유저 정보 → 상태와 저장소에 동기화
 			setUserInfo(fetchedUserInfo);

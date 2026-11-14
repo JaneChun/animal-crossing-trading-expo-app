@@ -154,6 +154,7 @@ const PostDetail = () => {
 						label: '신고',
 						onPress: () => {
 							openReportModal({
+								collectionName: collectionName as Collection,
 								postId: id,
 								reporteeId: post!.creatorId,
 							});
@@ -286,10 +287,12 @@ const PostDetail = () => {
 										isBoardPost(post, collectionName) ? post.chatRoomIds : []
 									}
 									collectionName={collectionName as Collection}
-									onReportClick={({ commentId, reporteeId }) =>
+									onReportClick={({ commentId, replyId, reporteeId }) =>
 										openReportModal({
+											collectionName: collectionName as Collection,
 											postId: post.id,
 											commentId,
+											replyId,
 											reporteeId,
 										})
 									}

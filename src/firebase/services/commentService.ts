@@ -27,12 +27,14 @@ export const fetchAndPopulateUsers = async <T extends Comment, U>(q: Query<Docum
 
 		if (querySnapshot.empty) return { data: [], lastDoc: null };
 
-		const data: T[] = querySnapshot.docs.map((doc) => {
+		const allComments: T[] = querySnapshot.docs.map((doc) => {
 			const docData = doc.data();
 			const id = doc.id;
 
 			return { id, ...docData } as unknown as T;
 		});
+		// 관리자가 숨긴 댓글은 목록에서 뺀다. 쿼리 조건(!=)은 필드가 없는 기존 댓글까지 빼므로 쓰지 않는다
+		const data = allComments.filter((comment) => !comment.hiddenByAdmin);
 
 		const uniqueCreatorIds: string[] = [
 			...new Set(data.map((item) => item.creatorId)),

@@ -44,9 +44,13 @@ export const useReportUser = () => {
 				const payload: CreateReportRequest = {
 					reporterId: userInfo.uid,
 					reporteeId: reportTarget.reporteeId,
-					// postId, commentId, chatId 중 정의된 것만 전송
+					// collectionName, postId, commentId, replyId, chatId 중 정의된 것만 전송
+					...(reportTarget.collectionName && {
+						collectionName: reportTarget.collectionName,
+					}),
 					...(reportTarget.postId && { postId: reportTarget.postId }),
 					...(reportTarget.commentId && { commentId: reportTarget.commentId }),
+					...(reportTarget.replyId && { replyId: reportTarget.replyId }),
 					...(reportTarget.chatId && { chatId: reportTarget.chatId }),
 					category,
 					detail,

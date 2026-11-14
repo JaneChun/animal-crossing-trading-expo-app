@@ -99,7 +99,7 @@ const ReplyUnit = ({
 					},
 					{
 						label: '신고',
-						onPress: () => onReportClick({ commentId: id, reporteeId: creatorId }),
+						onPress: () => onReportClick({ commentId, replyId: id, reporteeId: creatorId }),
 					},
 				]),
 		{ label: '취소', onPress: () => {} },
