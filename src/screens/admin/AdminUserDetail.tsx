@@ -26,7 +26,7 @@ import { AdminUserDetailRouteProp } from '@/types/navigation';
 import { OauthType } from '@/types/user';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { formatKstDate, formatKstMonthDay } from '@/utilities/kstDate';
-import { navigateToUserProfile } from '@/utilities/navigationHelpers';
+import { navigateToAdminUserRecords, navigateToUserProfile } from '@/utilities/navigationHelpers';
 
 const OAUTH_LABELS: Record<OauthType, string> = {
 	kakao: '카카오',
@@ -127,6 +127,23 @@ const UserDetailContent = ({ uid }: { uid: string }) => {
 				/>
 			</View>
 
+			{isSuspended(suspendUntil) && (
+				<View style={styles.actionPanel}>
+					<DangerActionPanel
+						actions={[
+							{
+								title: '계정 정지',
+								description: `${formatKstMonthDay(suspendUntil.toDate())} 0시까지 정지 중`,
+								actionLabel: '정지 해제',
+								variant: 'dangerOutline',
+								isLoading: isLifting,
+								onPress: onPressLiftSuspension,
+							},
+						]}
+					/>
+				</View>
+			)}
+
 			<View style={styles.section}>
 				<Text variant="body1" weight="semibold" style={styles.sectionTitle}>
 					활동
@@ -193,12 +210,16 @@ const UserDetailContent = ({ uid }: { uid: string }) => {
 						},
 					]}
 				/>
+				<ViewAllLink
+					label="리뷰 내역 보기"
+					onPress={() => navigateToAdminUserRecords({ uid, kind: 'reviews' })}
+				/>
 			</View>
 
 			<View style={styles.section}>
 				<View style={[styles.titleRow, styles.sectionTitle]}>
 					<Text variant="body1" weight="semibold">
-						신고 · 차단
+						신고
 					</Text>
 					{user.report?.needsAdminReview && <Badge text="검토 필요" tone="orange" />}
 				</View>
@@ -209,31 +230,33 @@ const UserDetailContent = ({ uid }: { uid: string }) => {
 							value: formatCount(user.report?.total ?? 0),
 							valueTone: 'danger',
 						},
-						{ label: '접수한 신고', value: formatCount(stats?.reportsFiled) },
+						{ label: '보낸 신고', value: formatCount(stats?.reportsFiled) },
+					]}
+				/>
+				<ViewAllLink
+					label="신고 내역 보기"
+					onPress={() => navigateToAdminUserRecords({ uid, kind: 'reports' })}
+				/>
+			</View>
+
+			<View style={styles.section}>
+				<Text variant="body1" weight="semibold" style={styles.sectionTitle}>
+					차단
+				</Text>
+				<StatStrip
+					items={[
+						{ label: '차단함', value: formatCount(stats?.blocking) },
 						{
 							label: '차단당함',
 							value: formatCount(stats?.blockedBy),
 							valueTone: 'danger',
 						},
-						{ label: '차단함', value: formatCount(stats?.blocking) },
 					]}
 				/>
-				{isSuspended(suspendUntil) && (
-					<View style={styles.actionPanel}>
-						<DangerActionPanel
-							actions={[
-								{
-									title: '계정 정지',
-									description: `${formatKstMonthDay(suspendUntil.toDate())} 0시까지 정지 중`,
-									actionLabel: '정지 해제',
-									variant: 'dangerOutline',
-									isLoading: isLifting,
-									onPress: onPressLiftSuspension,
-								},
-							]}
-						/>
-					</View>
-				)}
+				<ViewAllLink
+					label="차단 내역 보기"
+					onPress={() => navigateToAdminUserRecords({ uid, kind: 'blocks' })}
+				/>
 			</View>
 		</ScrollView>
 	);
