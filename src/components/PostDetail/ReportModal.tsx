@@ -42,7 +42,7 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 			isVisible={isVisible}
 			onClose={onClose}
 			title="신고하기"
-			snapPoints={['60%']}
+			snapPoints={['85%']}
 			rightButton={
 				step === 1 ? (
 					<Button

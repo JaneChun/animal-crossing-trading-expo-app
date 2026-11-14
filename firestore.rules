@@ -87,9 +87,10 @@ service cloud.firestore {
       allow read: if true; // 누구나
       allow create: if request.auth != null && 
         request.auth.uid == userId && // 로그인한 유저만, 본인 계정만
-        !('role' in request.resource.data); // role은 콘솔에서만 지정
+        !('role' in request.resource.data) && // role은 콘솔에서만 지정
+        !('report' in request.resource.data); // 신고·정지 정보는 함수만 기록
       allow update: if request.auth.uid == userId && // 본인
-        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']); // role은 콘솔에서만 지정
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'report']); // role은 콘솔에서만 지정, report는 함수만 기록
       allow delete: if false; // 불가능
     }
     
@@ -154,6 +155,12 @@ service cloud.firestore {
           !request.resource.data.diff(resource.data).affectedKeys().hasAny(['snapshot'])) || // 스냅샷은 함수만 기록
         (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['resolved'])); // 관리자는 처리 상태만
       allow delete: if false; // 불가능
+    }
+    
+    // Sanctions
+    match /Sanctions/{sanctionId} {
+      allow read: if request.auth.uid == resource.data.userId || isAdmin(); // 조치 대상 본인, 관리자
+      allow write: if false; // 함수만 기록
     }
     
     // Errors

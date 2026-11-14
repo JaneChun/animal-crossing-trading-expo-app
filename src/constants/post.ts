@@ -1,3 +1,4 @@
+import { VIOLATION_TYPES } from '@/constants/sanction';
 import { ArtworkCatalogItem, CatalogItem } from '@/types/catalog';
 import { CategoryItem } from '@/types/post';
 
@@ -70,10 +71,7 @@ export const ITEM_CATEGORIES = [
 ] as const;
 
 export const REPORT_CATEGORIES = [
-	{ KR: '사기', EN: 'fraud' },
-	{ KR: '욕설/비방', EN: 'abuse' },
-	{ KR: '광고/도배', EN: 'spam' },
-	{ KR: '음란/부적절 콘텐츠', EN: 'inappropriate' },
+	...VIOLATION_TYPES.map(({ KR, EN }) => ({ KR, EN })),
 	{ KR: '기타', EN: 'other' },
 ];
 

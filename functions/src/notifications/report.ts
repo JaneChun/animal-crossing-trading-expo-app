@@ -15,9 +15,11 @@ export interface ReportWriteData {
 	createdAt?: FirebaseFirestore.Timestamp;
 }
 
-// 앱 src/constants/post.ts의 REPORT_CATEGORIES와 같은 값
+// 앱 src/constants/sanction.ts의 VIOLATION_TYPES + 기타와 같은 값
 const REPORT_CATEGORY_KR: Record<string, string> = {
 	fraud: '사기',
+	externalTrade: '현금·외부 거래',
+	personalInfo: '개인정보·외부 연락 유도',
 	abuse: '욕설/비방',
 	spam: '광고/도배',
 	inappropriate: '음란/부적절 콘텐츠',
@@ -43,7 +45,7 @@ export function getReportTargetLabel(report: ReportWriteData): string {
  * @returns 푸시 본문
  */
 export function buildReportPushBody(report: ReportWriteData): string {
-	const categoryLabel = REPORT_CATEGORY_KR[report.category] ?? report.category;
+	const categoryLabel = REPORT_CATEGORY_KR[report.category] ?? '기타';
 	const targetLabel = getReportTargetLabel(report);
 	const detail = report.detail?.trim() ?? '';
 

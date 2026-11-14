@@ -7,6 +7,8 @@ import { ContentType } from './ContentTypeChip';
 // 사기만 기존 Badge red tone, 나머지는 디자인 시안의 tone
 const CATEGORY_TONES: Record<ReportCategory, BadgeTone> = {
 	fraud: 'red',
+	externalTrade: 'blue',
+	personalInfo: 'lavender',
 	abuse: 'orange',
 	spam: 'yellow',
 	inappropriate: 'purple',
@@ -14,7 +16,7 @@ const CATEGORY_TONES: Record<ReportCategory, BadgeTone> = {
 };
 
 export const getReportCategoryBadge = (category: ReportCategory) => ({
-	text: REPORT_CATEGORIES.find(({ EN }) => EN === category)?.KR ?? category,
+	text: REPORT_CATEGORIES.find(({ EN }) => EN === category)?.KR ?? '기타',
 	tone: CATEGORY_TONES[category] ?? 'neutral',
 });
 
