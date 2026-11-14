@@ -15,6 +15,7 @@
 - 본인 계정으로 시드 데이터 보기: 에뮬레이터 모드에서 한 번 로그인해 Emulator UI(http://localhost:4000) Auth 탭에서 uid를 확인하고, `.env.local`에 `SEED_MY_UID=<uid>`를 넣고 시드하면 1번 시드 유저 자리에 들어간다. 시드 유저 uid로는 앱에서 로그인할 수 없다(소셜 로그인 → 커스텀 토큰 흐름이라).
 - 이미지 URL에는 `EXPO_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST` 호스트가 그대로 저장된다. 실기기 테스트로 Mac IP를 쓰다가 IP가 바뀌면 이미지가 깨지므로, 호스트를 고친 뒤 시드를 다시 실행한다.
 - Admin SDK로 에뮬레이터에 직접 쓸 때도 Functions 에뮬레이터가 떠 있으면 Firestore 트리거가 실행된다. 댓글·대댓글 생성은 `commentCount`를, 리뷰 생성은 유저 `review` 집계를 올리므로, 이 값을 직접 계산해 넣는 시드는 두 배가 된다. 시드 중에는 Emulator Hub `PUT http://127.0.0.1:4400/functions/disableBackgroundTriggers`로 트리거를 끄고 끝나면 `enableBackgroundTriggers`로 켠다.
+- Functions 에뮬레이터는 `functions/src`가 아니라 빌드 결과물 `functions/lib`를 로드하고, `emulators:start`는 빌드하지 않는다. `dev:emulator:all`은 시작할 때 한 번 빌드하지만, 실행 중에 `functions/src`를 바꿨거나 `emulator:start`로 직접 띄웠다면 `npm --prefix functions run build`(또는 `build:watch`)를 실행한다. 빌드하지 않으면 운영에서는 되는 기능이 에뮬레이터에서만 실패한다(예: Google 로그인이 `지원하지 않는 oauthType입니다.`로 실패).
 
 ## 단위 테스트 작성 규칙
 

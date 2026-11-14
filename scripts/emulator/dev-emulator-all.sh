@@ -8,6 +8,10 @@ cd "$(dirname "$0")/../.."
 EMULATOR_LOG="${TMPDIR:-/tmp}/firebase-emulator.log"
 READY_TIMEOUT_SECONDS=120
 
+# Functions 에뮬레이터는 functions/lib를 로드하므로, 최신 src로 먼저 빌드한다.
+echo "🔨 Functions 빌드 중..."
+npm --prefix functions run build
+
 import_args=()
 if [ -d ./emulator-data ]; then
 	import_args=(--import ./emulator-data)
