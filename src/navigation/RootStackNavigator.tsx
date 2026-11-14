@@ -17,9 +17,12 @@ import AdminUserRecords from '@/screens/admin/AdminUserRecords';
 import AdminUsers from '@/screens/admin/AdminUsers';
 import DesignSystem from '@/screens/admin/DesignSystem';
 import AgreeToTermsAndConditions from '@/screens/AgreeToTermsAndConditions';
+import AppealForm from '@/screens/AppealForm';
 import Block from '@/screens/Block';
 import ChatRoom from '@/screens/ChatRoom';
 import DeleteAccount from '@/screens/DeleteAccount';
+import Inquiries from '@/screens/Inquiries';
+import InquiryDetail from '@/screens/InquiryDetail';
 import NewPost from '@/screens/NewPost';
 import Onboarding from '@/screens/Onboarding';
 import OperationPolicy from '@/screens/OperationPolicy';
@@ -221,6 +224,21 @@ const RootStackNavigator = () => {
 					component={Suspended}
 					// 정지 중에는 이 화면만 남기므로 뒤로 가기 제스처를 막는다
 					options={{ headerShown: false, gestureEnabled: false }}
+				/>
+				<RootStack.Screen
+					name="AppealForm"
+					component={AppealForm}
+					options={{ ...commonOptions, title: '이의 신청' }}
+				/>
+				<RootStack.Screen
+					name="Inquiries"
+					component={Inquiries}
+					options={{ ...commonOptions, title: '문의 내역' }}
+				/>
+				<RootStack.Screen
+					name="InquiryDetail"
+					component={InquiryDetail}
+					options={{ ...commonOptions, title: '문의 내역' }}
 				/>
 				<RootStack.Screen
 					name="Search"

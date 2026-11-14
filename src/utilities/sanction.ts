@@ -47,7 +47,14 @@ export const findUnacknowledgedWarning = (sanctions: Sanction[]) =>
 			sanction.status === 'active' && sanction.kind === 'warning' && !sanction.acknowledgedAt,
 	);
 
+// functions/src/sanction/appeal.ts의 getAppealDeadline과 같은 계산
 export const getAppealDeadline = (sanction: Sanction): Date => {
 	if (sanction.suspendUntil) return sanction.suspendUntil.toDate();
 	return new Date(sanction.createdAt.toMillis() + APPEAL_WINDOW_DAYS * DAY_MS);
 };
+
+// 유효한 조치에 아직 이의를 신청하지 않았고 기한이 남았을 때만 [이의 신청]을 보여 준다(서버도 같은 조건으로 거부)
+export const canAppeal = (sanction: Sanction): boolean =>
+	sanction.status === 'active' &&
+	!sanction.appeal &&
+	getAppealDeadline(sanction).getTime() > Date.now();

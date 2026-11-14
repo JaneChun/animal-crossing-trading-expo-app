@@ -18,8 +18,8 @@ import { BorderRadius, Spacing, Theme, useTheme, useThemedStyles } from '@/theme
 import { SanctionWarningRouteProp } from '@/types/navigation';
 import { Sanction } from '@/types/sanction';
 import { formatKstDateTime } from '@/utilities/kstDate';
-import { navigateToOperationPolicy } from '@/utilities/navigationHelpers';
-import { getSanctionTargetKind, getSanctionTargetText } from '@/utilities/sanction';
+import { navigateToAppealForm, navigateToOperationPolicy } from '@/utilities/navigationHelpers';
+import { canAppeal, getSanctionTargetKind, getSanctionTargetText } from '@/utilities/sanction';
 
 const TITLES = {
 	post: '이 글은 비공개 처리되었습니다',
@@ -86,6 +86,15 @@ const SanctionWarning = () => {
 				<Button size="lg" isLoading={isPending} onPress={onPressAcknowledge}>
 					정책을 확인했습니다
 				</Button>
+				{canAppeal(sanction) && (
+					<Button
+						variant="ghost"
+						size="md"
+						onPress={() => navigateToAppealForm(sanction.id)}
+					>
+						이의 신청
+					</Button>
+				)}
 			</View>
 		</SafeAreaView>
 	);

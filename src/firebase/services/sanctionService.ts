@@ -8,8 +8,9 @@ import {
 	updateDoc,
 	where,
 } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
 
-import { db } from '@/config/firebase';
+import { db, functions } from '@/config/firebase';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import { Sanction } from '@/types/sanction';
 
@@ -44,4 +45,14 @@ export const acknowledgeSanction = async (sanctionId: string): Promise<void> => 
 		},
 		{ throwOnError: true },
 	);
+};
+
+export const submitAppeal = async (request: {
+	sanctionId: string;
+	content: string;
+}): Promise<void> => {
+	await httpsCallable<{ sanctionId: string; content: string }, void>(
+		functions,
+		'submitAppeal',
+	)(request);
 };

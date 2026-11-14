@@ -18,8 +18,9 @@ import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { Spacing, Theme, useThemedStyles } from '@/theme';
 import { Sanction } from '@/types/sanction';
 import { formatKstDate } from '@/utilities/kstDate';
-import { navigateToOperationPolicy } from '@/utilities/navigationHelpers';
+import { navigateToAppealForm, navigateToOperationPolicy } from '@/utilities/navigationHelpers';
 import {
+	canAppeal,
 	findCurrentSuspension,
 	getAppealDeadline,
 	isPermanentSuspension,
@@ -83,8 +84,7 @@ const Suspended = () => {
 			: '';
 
 	const appealDeadline = sanction ? getAppealDeadline(sanction) : null;
-	const canAppeal =
-		!!sanction && !sanction.appeal && !!appealDeadline && appealDeadline.getTime() > Date.now();
+	const isAppealable = !!sanction && canAppeal(sanction);
 	const appeal = sanction?.appeal;
 
 	const onPressLogout = async () => {
@@ -115,7 +115,7 @@ const Suspended = () => {
 				{sanction && <SanctionSummarySection sanction={sanction} />}
 
 				<View style={styles.notice}>
-					{canAppeal && appealDeadline && (
+					{isAppealable && appealDeadline && (
 						<>
 							<Text variant="caption" color="tertiary" style={styles.centerText}>
 								{`조치에 동의하지 않으면 ${formatKstDate(appealDeadline)}까지 이의를 신청할 수 있습니다.`}
@@ -146,6 +146,11 @@ const Suspended = () => {
 			</ScrollView>
 
 			<View style={styles.footer}>
+				{isAppealable && sanction && (
+					<Button size="lg" onPress={() => navigateToAppealForm(sanction.id)}>
+						이의 신청
+					</Button>
+				)}
 				{appeal && (
 					<Button size="lg" disabled onPress={() => {}}>
 						이의 신청 완료

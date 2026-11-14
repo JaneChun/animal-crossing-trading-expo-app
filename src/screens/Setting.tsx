@@ -11,6 +11,7 @@ import {
 	navigateToAccount,
 	navigateToAdminHome,
 	navigateToBlock,
+	navigateToInquiries,
 	navigateToPrivacyPolicy,
 	navigateToTermsOfService,
 } from '@/utilities/navigationHelpers';
@@ -42,8 +43,11 @@ const Setting = () => {
 						<PushNotificationToggle />
 					</View>
 				</SettingListItem>
-				<SettingListItem borderRound="bottom" showChevron onPress={navigateToBlock}>
+				<SettingListItem showChevron onPress={navigateToBlock}>
 					<Text variant="body1">차단 사용자 관리</Text>
+				</SettingListItem>
+				<SettingListItem borderRound="bottom" showChevron onPress={navigateToInquiries}>
+					<Text variant="body1">문의 내역</Text>
 				</SettingListItem>
 			</View>
 

@@ -11,6 +11,7 @@ import { createFirebaseCustomToken } from './auth/customToken';
 // Admin functions
 import { assertAdmin, getDailyStatsHandler, getUserStatsHandler } from './admin/stats';
 import { getSanctionRecommendationHandler, issueSanctionHandler } from './admin/sanction';
+import { submitAppealHandler } from './sanction/appeal';
 import { liftSuspensionHandler } from './admin/suspension';
 
 // Notification handlers
@@ -97,6 +98,14 @@ export const issueSanction = functions.https.onCall(async (request) => {
 export const getSanctionRecommendation = functions.https.onCall(async (request) => {
 	await assertAdmin(request.auth?.uid);
 	return await getSanctionRecommendationHandler(request.data?.uid);
+});
+
+/**
+ * 사용자 이의 신청
+ * 조치 1건당 한 번, 기한 안에 본인만 신청할 수 있고, 접수되면 관리자에게 푸시를 보낸다
+ */
+export const submitAppeal = functions.https.onCall(async (request) => {
+	await submitAppealHandler(request.auth?.uid, request.data);
 });
 
 // ===============================

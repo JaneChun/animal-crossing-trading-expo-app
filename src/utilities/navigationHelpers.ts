@@ -142,6 +142,18 @@ export const navigateToOperationPolicy = () => {
 	navigate('OperationPolicy');
 };
 
+export const navigateToInquiries = () => {
+	navigate('Inquiries');
+};
+
+export const navigateToAppealForm = (sanctionId: string) => {
+	navigate('AppealForm', { sanctionId });
+};
+
+export const navigateToInquiryDetail = (sanctionId: string) => {
+	navigate('InquiryDetail', { sanctionId });
+};
+
 // stack to tab
 export const navigateToLogin = () => {
 	navigateToTabAndResetStack('ProfileTab', 'Login');

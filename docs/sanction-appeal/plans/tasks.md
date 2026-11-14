@@ -126,15 +126,19 @@
 
 ## Phase 5: 이의 신청 · 문의 내역 (PR 3)
 
-- [ ] 이의 신청 callable (`functions/src/sanction/appeal.ts` 신규, `functions/src/index.ts`)
+- [x] 이의 신청 callable (`functions/src/sanction/appeal.ts` 신규, `functions/src/index.ts`)
   - 결정: 조치 1건당 1회, 기한(정지는 해제일, 경고·영구는 30일) 검증을 서버에서 한다(설계 6장)
   - 재사용: 신고 접수 관리자 푸시(`functions/src/notifications/report.ts`) 패턴으로 관리자 푸시
-- [ ] 이의 신청 작성 화면 (`src/screens/AppealForm.tsx` 신규) — 시안: '이의 신청 작성'
+  - 결정: 두 번 눌러도 한 건만 접수되도록 조치 문서 읽기·쓰기를 트랜잭션으로 묶는다. 관리자 푸시는 "[관리자] 이의 신청 접수" / 신청 내용 앞 30자, 딥링크 `admin/appeal/{sanctionId}`(라우트는 Phase 6). 취소된 조치에는 신청할 수 없다
+- [x] 이의 신청 작성 화면 (`src/screens/AppealForm.tsx` 신규) — 시안: '이의 신청 작성'
   - 패턴: React Hook Form + Zod(1000자 제한), 기존 폼 훅 위치 `src/hooks/{domain}/form/`
-- [ ] 문의 내역 화면 (`src/screens/Inquiries.tsx` 신규, `src/screens/Setting.tsx`)
+  - 결정: 빈 내용은 오류 문구 대신 [제출하기] 비활성화로 막는다. 입력란 높이는 키보드가 올라와도 버튼이 보이도록 시안(400)보다 낮은 240으로 둔다. 실패 토스트는 확정된 "처리하지 못했습니다. 다시 시도해 주세요."를 쓴다
+- [x] 문의 내역 화면 (`src/screens/Inquiries.tsx` 신규, `src/screens/Setting.tsx`)
   - 재사용: `SettingListItem`으로 설정 진입점, 목록 행은 관리자 제재 이력 '칩 하나' 행을 사용자용으로
   - 결정: 탭 없이 칩으로 구분(사용자 지시). 행을 누르면 정지 화면과 같은 섹션 컴포넌트로 상세 표시
-- [ ] 경고·정지 화면의 [이의 신청] 연결 (Phase 4 화면들)
+  - 결정: 상세는 별도 화면 `InquiryDetail`로 두고, 이의 신청할 수 있는 조치(경고 포함)면 [이의 신청] 버튼을 보여 준다. 설정의 '사용자 설정' 그룹 마지막에 '문의 내역'을 추가했다
+- [x] 경고·정지 화면의 [이의 신청] 연결 (Phase 4 화면들)
+  - 결정: 정지 중 가드가 이의 신청 작성·운영 정책 화면은 허용한다(그 외 화면은 정지 화면으로 되돌림). 버튼 노출 조건은 서버와 같은 `canAppeal`(유효, 미신청, 기한 내)
 - 검증: `npm --prefix functions test`(중복 신청·기한 초과 거부), 앱에서 신청 → 정지 화면 '검토 중' 표시 확인
 
 ## Phase 6: 관리자 이의 신청 처리 (PR 3)
@@ -171,3 +175,6 @@
 - Phase 4 완료
 - 검증: `npm run typecheck`, `npm run lint` 통과(새 파일 경고 없음). `acknowledgedAt` 보안 규칙 확인은 에뮬레이터가 비면 실행한다
 - 결정(Phase 4 코드 리뷰): 정지 가드가 화면 상태 변화마다 정지 화면으로 되돌리도록 바꿨다(푸시·딥링크로 연 화면, 로그인 직후 이동 차단). 경고 알림은 내비게이터 준비 후 다시 시도하고, 경고 화면은 조치를 읽지 못하면 닫는다. 확인 시각은 확인하지 않은 경고에만 한 번 쓸 수 있게 규칙을 좁혔다. 정지가 앱 실행 중 끝나는 경우는 spec대로 다음 진입부터 반영하고, 로그아웃 분기 중복은 기존 패턴이라 그대로 둔다
+- Phase 5 완료
+- 검증: 앱·functions typecheck, lint 통과. 이의 신청 functions 테스트(`__tests__/sanction/appeal.integration.test.ts`)는 에뮬레이터가 비면 실행한다
+- 결정(Phase 5 코드 리뷰): 이의 신청 mutation은 재시도하지 않고(한 번만 접수되는 요청), 실패해도 내 조치 목록을 새로 받는다. 관리자 푸시의 `admin/appeal` 딥링크는 같은 PR의 Phase 6에서 라우트를 붙인다. 정지가 둘 이상일 때 이전 정지에 정지 화면에서 이의를 신청하는 경로, 조회 실패 시 빈 목록 표시는 드문 경우라 그대로 둔다. 이의 신청 화면의 키보드 오프셋은 앱 전역 `KeyboardToolbar`가 이 화면에도 뜨므로 툴바 높이를 유지한다

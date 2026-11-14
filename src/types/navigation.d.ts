@@ -42,6 +42,9 @@ export type RootStackParamList = {
 	OperationPolicy: undefined;
 	SanctionWarning: { sanctionId: string };
 	Suspended: undefined;
+	AppealForm: { sanctionId: string };
+	Inquiries: undefined;
+	InquiryDetail: { sanctionId: string };
 	Search: undefined;
 	AdminHome: undefined;
 	AdminReviewUsers: undefined;
@@ -80,4 +83,6 @@ export type AdminReportDetailRouteProp = RouteProp<RootStackParamList, 'AdminRep
 export type AdminChatViewerRouteProp = RouteProp<RootStackParamList, 'AdminChatViewer'>;
 export type AdminUserDetailRouteProp = RouteProp<RootStackParamList, 'AdminUserDetail'>;
 export type SanctionWarningRouteProp = RouteProp<RootStackParamList, 'SanctionWarning'>;
+export type AppealFormRouteProp = RouteProp<RootStackParamList, 'AppealForm'>;
+export type InquiryDetailRouteProp = RouteProp<RootStackParamList, 'InquiryDetail'>;
 export type AdminUserRecordsRouteProp = RouteProp<RootStackParamList, 'AdminUserRecords'>;
