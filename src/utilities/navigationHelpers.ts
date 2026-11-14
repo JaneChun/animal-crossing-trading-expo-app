@@ -1,4 +1,5 @@
 import { navigate, navigateToTabAndResetStack, popTo, replace } from '@/navigation/RootNavigation';
+import { AdminUserRecordKind } from '@/types/admin';
 import { CreateChatRoomParams, SendChatMessageParams } from '@/types/chat';
 import { Collection } from '@/types/post';
 import { SignUpParams } from '@/types/user';
@@ -190,6 +191,16 @@ export const navigateToAdminUsers = () => {
 
 export const navigateToAdminUserDetail = ({ uid }: { uid: string }) => {
 	navigate('AdminUserDetail', { uid });
+};
+
+export const navigateToAdminUserRecords = ({
+	uid,
+	kind,
+}: {
+	uid: string;
+	kind: AdminUserRecordKind;
+}) => {
+	navigate('AdminUserRecords', { uid, kind });
 };
 
 export const navigateToAdminErrors = () => {

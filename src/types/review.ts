@@ -11,4 +11,7 @@ export interface Review {
 	createdAt: Timestamp;
 }
 
+// 목록 key로 쓰기 위해 문서 id를 붙인 리뷰
+export type ReviewWithId = Review & { id: string };
+
 export type CreateReviewParams = Omit<Review, 'createdAt'>;

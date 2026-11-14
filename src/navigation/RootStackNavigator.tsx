@@ -12,6 +12,7 @@ import AdminReports from '@/screens/admin/AdminReports';
 import AdminReviewUsers from '@/screens/admin/AdminReviewUsers';
 import AdminStats from '@/screens/admin/AdminStats';
 import AdminUserDetail from '@/screens/admin/AdminUserDetail';
+import AdminUserRecords from '@/screens/admin/AdminUserRecords';
 import AdminUsers from '@/screens/admin/AdminUsers';
 import DesignSystem from '@/screens/admin/DesignSystem';
 import AgreeToTermsAndConditions from '@/screens/AgreeToTermsAndConditions';
@@ -235,6 +236,11 @@ const RootStackNavigator = () => {
 					name="AdminUserDetail"
 					component={AdminUserDetail}
 					options={{ ...commonOptions, title: '유저 상세' }}
+				/>
+				<RootStack.Screen
+					name="AdminUserRecords"
+					component={AdminUserRecords}
+					options={commonOptions}
 				/>
 				<RootStack.Screen
 					name="AdminErrors"

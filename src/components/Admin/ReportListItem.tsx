@@ -12,7 +12,13 @@ import { navigateToAdminReportDetail } from '@/utilities/navigationHelpers';
 import ContentTypeChip from './ContentTypeChip';
 import { getReportCategoryBadge, getReportContentType } from './reportMeta';
 
-const ReportListItem = ({ report }: { report: Report }) => {
+type ReportListItemProps = {
+	report: Report;
+	/** 처리 완료 신고에 "처리완료" 배지를 붙인다. 처리 상태가 섞인 유저별 신고 내역에서 켠다 */
+	showResolvedBadge?: boolean;
+};
+
+const ReportListItem = ({ report, showResolvedBadge = false }: ReportListItemProps) => {
 	const styles = useThemedStyles(makeStyles);
 	const { data: reporter } = useCachedPublicUserInfo(report.reporterId);
 	const { data: reportee } = useCachedPublicUserInfo(report.reporteeId);
@@ -27,6 +33,9 @@ const ReportListItem = ({ report }: { report: Report }) => {
 				<View style={styles.badges}>
 					<Badge text={categoryBadge.text} tone={categoryBadge.tone} />
 					<ContentTypeChip type={getReportContentType(report)} />
+					{showResolvedBadge && report.resolved && (
+						<Badge text="처리완료" tone="neutral" />
+					)}
 				</View>
 				<Text variant="caption" color="tertiary">
 					{elapsedTime(report.createdAt)}

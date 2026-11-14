@@ -19,11 +19,21 @@ import { httpsCallable } from 'firebase/functions';
 import { db, functions } from '@/config/firebase';
 import firestoreRequest from '@/firebase/core/firebaseInterceptor';
 import { getDocFromFirestore } from '@/firebase/core/firestoreService';
-import { DailyStats, ErrorLog, Paginated, UserStats } from '@/types/admin';
+import {
+	AdminBlockRecord,
+	DailyStats,
+	ErrorLog,
+	Paginated,
+	UserBlockDirection,
+	UserReportDirection,
+	UserReviewDirection,
+	UserStats,
+} from '@/types/admin';
 import { Message } from '@/types/chat';
 import { Comment } from '@/types/comment';
 import { Collection, Doc, Post, PostDoc } from '@/types/post';
 import { Report } from '@/types/report';
+import { ReviewWithId } from '@/types/review';
 import { UserInfo } from '@/types/user';
 import { toPost } from '@/utilities/toPost';
 
@@ -66,6 +76,81 @@ export const fetchReports = async ({
 					where('resolved', '==', resolved),
 					orderBy('createdAt', 'desc'),
 				),
+				lastDoc,
+			),
+		{ throwOnError: true },
+	);
+};
+
+export const fetchUserReports = async ({
+	uid,
+	direction,
+	lastDoc,
+}: {
+	uid: string;
+	direction: UserReportDirection;
+	lastDoc: Doc;
+}): Promise<Paginated<Report>> => {
+	const userField = direction === 'received' ? 'reporteeId' : 'reporterId';
+
+	return firestoreRequest(
+		'유저별 신고 조회',
+		() =>
+			fetchPage<Report>(
+				query(
+					collection(db, 'Reports'),
+					where(userField, '==', uid),
+					orderBy('createdAt', 'desc'),
+				),
+				lastDoc,
+			),
+		{ throwOnError: true },
+	);
+};
+
+export const fetchUserReviews = async ({
+	uid,
+	direction,
+	lastDoc,
+}: {
+	uid: string;
+	direction: UserReviewDirection;
+	lastDoc: Doc;
+}): Promise<Paginated<ReviewWithId>> => {
+	const userField = direction === 'received' ? 'receiverId' : 'senderId';
+
+	return firestoreRequest(
+		'유저별 리뷰 조회',
+		() =>
+			fetchPage<ReviewWithId>(
+				query(
+					collection(db, 'Reviews'),
+					where(userField, '==', uid),
+					orderBy('createdAt', 'desc'),
+				),
+				lastDoc,
+			),
+		{ throwOnError: true },
+	);
+};
+
+// 상대 유저 uid는 문서 id다. BlockedUsers 문서에는 id 필드가 없어 fetchPage가 붙이는 문서 id를 쓴다
+export const fetchUserBlocks = async ({
+	uid,
+	direction,
+	lastDoc,
+}: {
+	uid: string;
+	direction: UserBlockDirection;
+	lastDoc: Doc;
+}): Promise<Paginated<AdminBlockRecord>> => {
+	const subcollection = direction === 'blocking' ? 'BlockedUsers' : 'BlockedBy';
+
+	return firestoreRequest(
+		'유저별 차단 조회',
+		() =>
+			fetchPage<AdminBlockRecord>(
+				query(collection(db, 'Users', uid, subcollection), orderBy('blockedAt', 'desc')),
 				lastDoc,
 			),
 		{ throwOnError: true },
