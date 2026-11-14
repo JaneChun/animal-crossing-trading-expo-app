@@ -122,10 +122,19 @@ async function handleUserPostsOnSuspension(userId: string): Promise<void> {
 	try {
 		const batch = db.batch();
 
-		// 사용자의 다른 게시글들 숨김 처리
+		// 사용자의 공개 게시글만 숨김 처리
+		// 삭제된 글까지 hidden으로 바꾸면 정지 해제 때 active로 복구되어 되살아난다
 		const [boardPosts, communityPosts] = await Promise.all([
-			db.collection('Boards').where('creatorId', '==', userId).get(),
-			db.collection('Communities').where('creatorId', '==', userId).get(),
+			db
+				.collection('Boards')
+				.where('creatorId', '==', userId)
+				.where('status', '==', 'active')
+				.get(),
+			db
+				.collection('Communities')
+				.where('creatorId', '==', userId)
+				.where('status', '==', 'active')
+				.get(),
 		]);
 
 		boardPosts.docs.forEach((doc) => {
