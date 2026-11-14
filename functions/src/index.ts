@@ -10,6 +10,7 @@ import { createFirebaseCustomToken } from './auth/customToken';
 
 // Admin functions
 import { assertAdmin, getDailyStatsHandler, getUserStatsHandler } from './admin/stats';
+import { getSanctionRecommendationHandler, issueSanctionHandler } from './admin/sanction';
 import { liftSuspensionHandler } from './admin/suspension';
 
 // Notification handlers
@@ -77,6 +78,25 @@ export const getUserStats = functions.https.onCall(async (request) => {
 export const liftSuspension = functions.https.onCall(async (request) => {
 	await assertAdmin(request.auth?.uid);
 	await liftSuspensionHandler(request.data?.uid);
+});
+
+/**
+ * 관리자 경고·정지
+ * 조치 기록을 남기고 위반 대상을 숨긴다. 정지면 정지 기간을 갱신하고 전체 글을 숨긴다
+ */
+export const issueSanction = functions.https.onCall(async (request) => {
+	const adminId = request.auth?.uid;
+	await assertAdmin(adminId);
+	return await issueSanctionHandler(adminId as string, request.data); // assertAdmin이 uid 존재를 보장한다
+});
+
+/**
+ * 관리자 정지 바텀시트의 권장 조치
+ * 최근 90일 유효 조치 수와 그에 따른 권장 조치 종류
+ */
+export const getSanctionRecommendation = functions.https.onCall(async (request) => {
+	await assertAdmin(request.auth?.uid);
+	return await getSanctionRecommendationHandler(request.data?.uid);
 });
 
 // ===============================
@@ -165,13 +185,13 @@ export const onReplyDeleted = onDocumentDeleted(
 	'{collection}/{postId}/Comments/{commentId}/Replies/{replyId}',
 	async (event) => {
 		const { collection, postId } = event.params;
-		await handleReplyDeleted(collection, postId);
+		await handleReplyDeleted(collection, postId, event.data?.data()?.hiddenByAdmin === true);
 	},
 );
 
 /**
  * 신고 생성 시 트리거
- * 사용자 신고 정보 업데이트 및 정지 처리
+ * 사용자 신고 집계 업데이트 (정지는 관리자 조치로만 건다)
  */
 export const updateUserReport = onDocumentCreated('Reports/{reportId}', async (event) => {
 	const snapshot = event.data;

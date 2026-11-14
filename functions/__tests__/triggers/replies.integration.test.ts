@@ -144,6 +144,18 @@ describe('답글 생성/삭제 처리 통합 테스트', () => {
 				expect(postData?.commentCount).toBe(4);
 			});
 
+			it('관리자가 숨긴 답글을 삭제하면 숨길 때 이미 뺐으므로 commentCount를 다시 빼지 않는다', async () => {
+				await db.collection('Boards').doc(boardsPostId).set({
+					title: '테스트 게시글',
+					commentCount: 5,
+				});
+
+				await handleReplyDeleted('Boards', boardsPostId, true);
+
+				const postDoc = await db.collection('Boards').doc(boardsPostId).get();
+				expect(postDoc.data()?.commentCount).toBe(5);
+			});
+
 			it('commentCount가 0인 게시글에서 답글 삭제 시 음수가 되어야 한다', async () => {
 				/**
 				 * Firestore FieldValue.increment(-1)은 0에서도 -1이 됨

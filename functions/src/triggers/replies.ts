@@ -22,8 +22,15 @@ export async function handleReplyCreated(collection: string, postId: string): Pr
  * 답글 삭제 시 게시글의 댓글 수 감소
  * @param collection - 컬렉션 이름
  * @param postId - 게시글 ID
+ * @param wasHiddenByAdmin - 관리자가 숨긴 답글이면 숨길 때 이미 차감했으므로 다시 빼지 않는다
  */
-export async function handleReplyDeleted(collection: string, postId: string): Promise<void> {
+export async function handleReplyDeleted(
+	collection: string,
+	postId: string,
+	wasHiddenByAdmin = false,
+): Promise<void> {
+	if (wasHiddenByAdmin) return;
+
 	const postRef = db.doc(`${collection}/${postId}`);
 
 	try {

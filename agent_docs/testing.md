@@ -52,3 +52,4 @@ npm --prefix functions run test:coverage                 # 커버리지
 ```
 
 - 에뮬레이터 구동에 Java 필요 (CI는 Java 21).
+- **개발용 에뮬레이터에 붙이지 말 것**: 통합 테스트 헬퍼(`__tests__/helpers/emulator.ts`)는 `127.0.0.1:8080`과 운영 프로젝트 ID를 고정으로 쓰고, 일부 테스트는 정리 단계에서 `Reports` 컬렉션 전체를 지운다. `--import`/`--export-on-exit`로 데이터를 유지하는 개발용 에뮬레이터가 8080에 떠 있을 때 `npm --prefix functions test`를 실행하면 그 데이터가 지워지고 내보내기에도 반영된다. 이때는 개발용 에뮬레이터를 끄고 `emulators:exec`로 실행한다.

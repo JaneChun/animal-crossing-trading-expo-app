@@ -28,12 +28,14 @@ export const fetchAndPopulateUsers = async <T extends Reply, U>(q: Query<Documen
 
 		if (querySnapshot.empty) return { data: [], lastDoc: null };
 
-		const data: T[] = querySnapshot.docs.map((doc) => {
+		const allReplies: T[] = querySnapshot.docs.map((doc) => {
 			const docData = doc.data();
 			const id = doc.id;
 
 			return { id, ...docData } as unknown as T;
 		});
+		// 관리자가 숨긴 답글은 목록에서 뺀다 (commentService와 같은 방식)
+		const data = allReplies.filter((reply) => !reply.hiddenByAdmin);
 
 		const uniqueCreatorIds: string[] = [
 			...new Set(data.map((item) => item.creatorId)),

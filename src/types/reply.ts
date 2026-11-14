@@ -8,6 +8,7 @@ export interface Reply {
 	creatorId: string;
 	parentId: string; // 실제로 누구에게 답글 달았는지 (댓글/대댓글 구분 없음)
 	createdAt: Timestamp;
+	hiddenByAdmin?: boolean;
 }
 
 export interface ReplyDoc extends Reply {

@@ -1,15 +1,9 @@
-import { Timestamp } from 'firebase-admin/firestore';
+import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { db } from '../utils/common';
 
 interface ReportData {
 	reporteeId: string;
 	createdAt: Timestamp;
-}
-
-interface UserReport {
-	total: number;
-	suspendUntil: Timestamp | null;
-	needsAdminReview: boolean;
 }
 
 const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
@@ -20,7 +14,7 @@ const KST_OFFSET_MS = 9 * 60 * 60 * 1000;
  * @param now - 기준 시각
  * @param days - 더할 일수
  */
-function getKstMidnightAfterDays(now: Date, days: number): Date {
+export function getKstMidnightAfterDays(now: Date, days: number): Date {
 	const kstNow = new Date(now.getTime() + KST_OFFSET_MS);
 	const kstMidnightAsUtcMs = Date.UTC(
 		kstNow.getUTCFullYear(),
@@ -31,7 +25,8 @@ function getKstMidnightAfterDays(now: Date, days: number): Date {
 }
 
 /**
- * 신고 생성 시 사용자 신고 정보 업데이트
+ * 신고 생성 시 사용자 신고 집계 업데이트
+ * 신고 수만으로 정지하지 않는다. 정지는 관리자 조치(admin/sanction.ts)로만 건다
  * @param report - 신고 데이터
  */
 export async function handleUserReport(report: ReportData): Promise<void> {
@@ -50,60 +45,14 @@ export async function handleUserReport(report: ReportData): Promise<void> {
 			return;
 		}
 
-		const userInfo = userSnap.data();
-		const userReport: UserReport = userInfo?.report ?? {
-			total: 0,
-			suspendUntil: null,
-			needsAdminReview: false,
-		};
+		const recent30Days = await getRecent30DaysReportCount(reporteeId);
 
-		const total = userReport.total + 1;
-		let suspendUntil = userReport.suspendUntil;
-		let needsAdminReview = false;
-
-		// 최근 신고 횟수 계산
-		const { recent7Days, recent30Days } = await getRecentReportCounts(
-			reporteeId,
-		);
-
-		// 정지 처리 로직
-		const now = new Date();
-		const currentSuspendDate = suspendUntil ? suspendUntil.toDate() : null;
-		let newSuspendDate: Date | null = null;
-
-		if (recent30Days >= 7) {
-			// 최근 30일 신고 7회 이상 → 30일 정지 + 관리자 플
-			const thirtyDaysLater = getKstMidnightAfterDays(now, 30);
-
-			if (!currentSuspendDate || thirtyDaysLater > currentSuspendDate) {
-				newSuspendDate = thirtyDaysLater;
-			}
-			needsAdminReview = true;
-		} else if (recent7Days >= 3) {
-			// 최근 7일 신고 3회 이상 → 7일 정지
-			const sevenDaysLater = getKstMidnightAfterDays(now, 7);
-
-			if (!currentSuspendDate || sevenDaysLater > currentSuspendDate) {
-				newSuspendDate = sevenDaysLater;
-			}
-		}
-
-		// 정지 기간 업데이트
-		if (newSuspendDate !== null) {
-			suspendUntil = Timestamp.fromDate(newSuspendDate);
-
-			// 계정 정지 시 게시글 처리
-			await handleUserPostsOnSuspension(reporteeId);
-		}
-
-		// 유저 도큐먼트 업데이트
+		// total은 increment로 올리고 suspendUntil은 쓰지 않는다. 읽은 값을 다시 쓰면 동시에 들어온 신고나 관리자 정지를 덮어쓴다
 		await userDocRef.set(
 			{
 				report: {
-					total,
+					total: FieldValue.increment(1),
 					recent30Days,
-					suspendUntil,
-					...(needsAdminReview ? { needsAdminReview: true } : {}),
 				},
 			},
 			{ merge: true },
@@ -118,7 +67,7 @@ export async function handleUserReport(report: ReportData): Promise<void> {
  * 계정 정지 시 사용자의 게시글 처리
  * @param userId - 정지된 사용자 ID
  */
-async function handleUserPostsOnSuspension(userId: string): Promise<void> {
+export async function handleUserPostsOnSuspension(userId: string): Promise<void> {
 	try {
 		const batch = db.batch();
 
@@ -205,40 +154,23 @@ export async function liftUserSuspension(userId: string): Promise<void> {
 }
 
 /**
- * 최근 신고 횟수 계산
+ * 최근 30일 신고 횟수 계산
  * @param reporteeId - 신고당한 사용자 ID
- * @returns Promise<{recent7Days: number, recent30Days: number}>
+ * @returns 최근 30일 신고 수
  */
-async function getRecentReportCounts(reporteeId: string): Promise<{
-	recent7Days: number;
-	recent30Days: number;
-}> {
+async function getRecent30DaysReportCount(reporteeId: string): Promise<number> {
 	try {
-		const now = Date.now();
-		const sevenDaysAgo = Timestamp.fromDate(
-			new Date(now - 7 * 24 * 60 * 60 * 1000),
-		);
 		const thirtyDaysAgo = Timestamp.fromDate(
-			new Date(now - 30 * 24 * 60 * 60 * 1000),
+			new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
 		);
 
-		const [recent7DaysSnap, recent30DaysSnap] = await Promise.all([
-			db
-				.collection('Reports')
-				.where('reporteeId', '==', reporteeId)
-				.where('createdAt', '>=', sevenDaysAgo)
-				.get(),
-			db
-				.collection('Reports')
-				.where('reporteeId', '==', reporteeId)
-				.where('createdAt', '>=', thirtyDaysAgo)
-				.get(),
-		]);
+		const recent30DaysSnap = await db
+			.collection('Reports')
+			.where('reporteeId', '==', reporteeId)
+			.where('createdAt', '>=', thirtyDaysAgo)
+			.get();
 
-		return {
-			recent7Days: recent7DaysSnap.size,
-			recent30Days: recent30DaysSnap.size,
-		};
+		return recent30DaysSnap.size;
 	} catch (error) {
 		console.error('Reports 컬렉션 쿼리 실패:', error);
 		throw error; // 에러를 다시 throw하여 상위 함수에서 적절히 처리하도록

@@ -367,8 +367,10 @@ export const setCommentHidden = async ({
 		hidden ? '댓글 숨김' : '댓글 숨김 해제',
 		async () => {
 			const commentRef = doc(db, collectionName, postId, 'Comments', commentId);
+			// 관리자가 따로 숨긴 답글은 이미 댓글 수에서 빠져 있으므로 세지 않는다
 			const repliesSnapshot = await getDocs(collection(commentRef, 'Replies'));
-			const affectedCount = 1 + repliesSnapshot.size;
+			const visibleReplyCount = repliesSnapshot.docs.filter((replyDoc) => !replyDoc.data().hiddenByAdmin).length;
+			const affectedCount = 1 + visibleReplyCount;
 
 			const batch = writeBatch(db);
 			batch.update(commentRef, { hiddenByAdmin: hidden ? true : deleteField() });

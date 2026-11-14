@@ -18,10 +18,10 @@
 ## 확인 필요
 
 - [x] 작업 기준 브랜치 — 결정: 관리자 기능이 master에 병합되어, `origin/master`에서 `feat/sanction-appeal` 브랜치를 만들어 진행한다
-- [ ] 푸시 문구 3종(경고 받음, 정지됨, 이의 신청 결과) 제목·본문 — 막는 항목: Phase 2 사용자 푸시, Phase 6 결과 푸시
-- [ ] 관리자 토스트 문구(경고 처리 완료/정지 완료/조치 유지·취소 완료와 각 실패) — 막는 항목: Phase 2·6 mutation 훅
-- [ ] 문의 내역 빈 상태 문구 — 막는 항목: Phase 5 문의 내역 화면
-- [ ] 이의 신청 인용(조치 취소) 후 사용자 안내: 푸시만 / 앱 진입 시 토스트도 — 막는 항목: Phase 6 결과 푸시
+- [x] 푸시 문구 3종 — 결정(사용자 확정): 경고 "운영 정책 위반 안내" / "운영 정책 위반으로 게시글이 비공개 처리되었습니다. 앱에서 내용을 확인해 주세요."(채팅 대상이면 "운영 정책 위반으로 경고를 받았습니다. 앱에서 내용을 확인해 주세요."), 정지 "계정 이용 제한 안내" / "운영 정책 위반으로 계정 이용이 제한되었습니다. 앱에서 내용을 확인해 주세요.", 이의 신청 결과 "이의 신청 결과 안내" / "이의 신청 검토가 끝났습니다. 앱에서 내용을 확인해 주세요."
+- [x] 관리자 토스트 문구 — 결정(사용자 확정): 성공 "경고 처리했습니다" / "{7일·30일·영구} 정지했습니다" / "조치를 유지했습니다" / "조치를 취소했습니다", 실패 "처리하지 못했습니다. 다시 시도해 주세요."
+- [x] 문의 내역 빈 상태 문구 — 결정(사용자 확정): "문의 내역이 없습니다."
+- [x] 이의 신청 인용(조치 취소) 후 사용자 안내 — 결정(사용자 확정): 결과 푸시만 보내고 앱 진입 시 토스트는 없음
 
 ## Phase 1: 위반 유형 · 조치 데이터 기반 (PR 1)
 
@@ -47,17 +47,30 @@
 
 ## Phase 2: 자동 정지 폐지 · 관리자 조치 Functions (PR 1)
 
-- [ ] 신고 트리거에서 자동 정지 제거 (`functions/src/triggers/reports.ts`의 `handleUserReport`)
+- [x] 신고 트리거에서 자동 정지 제거 (`functions/src/triggers/reports.ts`의 `handleUserReport`)
   - 패턴: `total`·`recent30Days` 집계는 유지하고 `suspendUntil` 계산·`needsAdminReview` 설정·`handleUserPostsOnSuspension` 호출만 뺀다
-- [ ] 관리자 경고·정지 callable (`functions/src/admin/sanction.ts` 신규, `functions/src/index.ts`)
+  - 결정: `report`는 merge로 `total`(`FieldValue.increment`)·`recent30Days`만 쓰고 `suspendUntil`은 쓰지 않는다. 읽은 값을 다시 쓰면 동시에 들어온 신고나 관리자 정지를 덮어쓰기 때문이다(코드 리뷰). 신고 이력이 없던 유저는 `suspendUntil` 필드가 없고, 앱과 스케줄러는 이를 `null`과 같게 처리한다
+- [x] 관리자 경고·정지 callable (`functions/src/admin/sanction.ts` 신규, `functions/src/index.ts`)
   - 재사용: `assertAdmin`(index.ts), `handleUserPostsOnSuspension`·`liftUserSuspension`(`triggers/reports.ts`), `getKstMidnightAfterDays`
   - 패턴: `admin/suspension.ts`처럼 핸들러 파일 + index.ts에서 `functions.https.onCall` 래핑
   - 경고: 조치 기록 + 대상 글/댓글 `hiddenByAdmin` 숨김(채팅이면 숨김 없음). 정지: 조치 기록 + `Users.report.suspendUntil` 갱신(더 늦은 날 유지) + 전체 글 숨김
   - 권장 기간 계산(최근 90일 유효 조치 수 → 7일/30일/영구)도 이 파일에 둔다
-- [ ] 정지 해제·만료를 조치 기록과 맞춤 (`functions/src/triggers/reports.ts`의 `liftUserSuspension`, `functions/src/schedulers/restoreSuspendedUserPostsScheduler.ts`)
+  - 결정: 권장 조치는 Phase 3 바텀시트가 쓰도록 callable `getSanctionRecommendation`으로 노출한다(계산 규칙을 앱에 복제하지 않기 위해)
+  - 결정: 영구 정지는 조치 문서의 `suspendUntil`을 null로 두고, `Users.report.suspendUntil`에는 9999-12-31 KST 0시를 넣는다. 정지 판단과 만료 스케줄러를 기간 정지와 같은 방식으로 쓰기 위함이다
+  - 결정: 정지도 위반 대상 글을 `hiddenByAdmin`으로 숨긴다(spec: 대상 글은 정지가 끝나도 비공개 유지). 채팅은 숨기지 않고 기록만 남긴다
+  - 결정: 대상 문서의 `creatorId`가 조치 대상 유저와 다르면 거부한다. 신고 규칙이 `reporteeId`와 대상 글의 작성자가 같은지 검사하지 않아, 다른 유저의 글이 섞인 신고가 들어올 수 있기 때문이다(코드 리뷰)
+  - 결정: 유저 정지일·대상 숨김을 트랜잭션으로 묶지 않는다. 동시에 처리되려면 관리자 두 명의 동시 조치나 0시 만료 스케줄러와의 충돌이 필요한데, 관리자가 1명이라 가능성이 거의 없다(코드 리뷰). 관리자를 늘리면 다시 검토한다
+- [x] 정지 해제·만료를 조치 기록과 맞춤 (`functions/src/triggers/reports.ts`의 `liftUserSuspension`, `functions/src/schedulers/restoreSuspendedUserPostsScheduler.ts`)
   - 결정: [정지 해제]는 기간만 앞당기고 조치는 유효로 남긴다(설계 6장). 위반 대상 글은 `hiddenByAdmin`이라 지금 복구 로직에서 자연히 제외된다
-- [ ] 경고·정지 시 사용자 푸시 (`functions/src/admin/sanction.ts`)
+  - 결정: 코드 변경 없음. 해제·만료는 `Users.report.suspendUntil`만 다루고 조치 문서는 건드리지 않으며, 영구 정지 날짜는 스케줄러 조건(`<= now`)에 걸리지 않는다
+- [x] 답글 관리자 숨김 추가 (`functions/src/admin/sanction.ts`, `functions/src/triggers/replies.ts`, `src/firebase/services/replyService.ts`, `src/types/reply.ts`, `firestore.rules`)
+  - 결정: 위반 답글을 공개된 채로 두지 않도록 답글도 숨긴다(사용자 지시). 계획에 없던 항목으로 코드 리뷰 중 추가했다
+  - 패턴: 댓글과 같은 `hiddenByAdmin` + 목록에서 클라이언트 필터(`commentService`와 같은 방식), 작성자는 `hiddenByAdmin`을 바꿀 수 없음
+  - 결정: 댓글 수는 숨길 때 한 번만 뺀다. 숨긴 댓글 아래 답글, 숨긴 답글이 있는 댓글, 숨긴 답글 삭제는 다시 빼지 않는다(앱 `setCommentHidden`의 답글 수 계산도 같이 맞춤)
+- [x] 경고·정지 시 사용자 푸시 (`functions/src/admin/sanction.ts`)
   - 재사용: `sendPushNotification`(`functions/src/utils/pushNotification.ts`), `data.url` 딥링크 패턴은 `functions/src/notifications/comments.ts`
+  - 결정: 경고 푸시 본문의 대상은 경고 화면 제목과 같은 기준으로, 글이면 '게시글', 댓글·답글이면 '댓글'로 쓴다(코드 리뷰, 사용자 확정 문구의 대상어만 바꿈)
+  - 결정: 딥링크(`data.url`)는 넣지 않는다. 앱을 열면 Phase 4의 진입 처리가 경고·정지 화면을 띄우므로 별도 경로가 필요 없다. 푸시 실패는 로그만 남기고 조치는 성공으로 반환한다
 - 검증: `npm --prefix functions run build`, `npm --prefix functions test`(에뮬레이터) — 신고 생성 시 정지가 걸리지 않음, 경고·정지 callable이 조치 문서와 `suspendUntil`을 기대대로 남김
 
 ## Phase 3: 관리자 정지 바텀시트 · 제재 이력 (PR 1)
@@ -71,8 +84,11 @@
 - [ ] 유저 상세에 [정지] 버튼과 제재 이력 (`src/screens/admin/AdminUserDetail.tsx`) — 시안: '관리자 — 유저 상세 정지 버튼', '… (정지된 유저)'
   - 재사용: `DangerActionPanel`, `isSuspended`(`SuspensionBadge.tsx`), `ViewAllLink`
   - 결정: 정지 중이 아니면 패널 배경을 `bg.fill`, 정지 중일 때만 `bg.danger`(사용자 지시). 제재 이력 행은 '칩 하나' 형식(조치 칩 / 위반 유형 / 글 제목 / 날짜)
+  - 결정: 영구 정지(`suspendUntil` 9999-12-31)는 날짜 대신 '영구 정지'로 표시한다. `formatKstMonthDay`는 연도를 버려 "12.31 0시까지"로 보이기 때문이다(`AdminUserDetail`·`AdminReportDetail`·`SuspensionBadge`)
+  - 결정: 조치 버튼은 처리 중 비활성화한다. 더블 탭으로 조치 문서가 두 번 생기면 권장 조치 횟수가 올라간다
 - [ ] 신고 상세의 [숨기기]에 위반 유형 선택을 붙여 경고로 처리 (`src/screens/admin/AdminReportDetail.tsx`)
   - 재사용: 위 `SuspendSheet`의 유형 선택 단계, 기존 `useSetPostHidden`/`useSetCommentHidden` 대신 경고 callable 호출
+  - 답글 신고에도 [숨기기]를 보여 준다(지금은 게시글·댓글에만 있음). 서버는 Phase 2에서 답글 숨김을 지원한다
 - 검증: `npm run typecheck`, `npm run lint`, 에뮬레이터 관리자 계정으로 경고·정지·정지 해제 후 제재 이력 표시 확인
 
 ## Phase 4: 사용자 경고 · 정지 화면, 운영 정책 (PR 2)
@@ -86,6 +102,7 @@
   - 결정: 관리자 라우트가 아닌 일반 라우트(사용자 지시)
 - [ ] 경고 화면 (`src/screens/SanctionWarning.tsx` 신규) — 시안: '대안 C … copy', 'copy 2'
   - 결정: 채팅 위반은 제목 "운영 정책 위반으로 경고를 받았습니다", 대상 카드 없음(사용자 지시)
+  - 결정: 글은 "이 글은 비공개 처리되었습니다", 댓글·답글은 "이 댓글은 비공개 처리되었습니다"(사용자 지시)
 - [ ] 정지 화면 (`src/screens/Suspended.tsx` 신규) — 시안: '처분', '이의 신청 작성 완료 & 운영자 검토', '결과 안내'
   - 재사용: 진행 단계 표시는 시안 구조를 컴포넌트로(`src/components/Sanction/ProgressSteps.tsx`)
 - [ ] 진입 처리: `useSuspensionGuard` Alert 대체 + 미확인 경고 표시 (`src/hooks/shared/useSuspensionGuard.ts`, `App.tsx`)
@@ -110,7 +127,7 @@
 ## Phase 6: 관리자 이의 신청 처리 (PR 3)
 
 - [ ] 이의 신청 결정 callable (`functions/src/admin/sanction.ts`)
-  - 조치 유지: 답변 저장. 조치 취소: 조치 상태 취소 + 정지 기간 재계산 + 대상 글 `hiddenByAdmin` 해제
+  - 조치 유지: 답변 저장. 조치 취소: 조치 상태 취소 + 정지 기간 재계산 + 대상 글·댓글·답글 `hiddenByAdmin` 해제(댓글 수는 숨길 때 뺀 만큼 되돌림)
   - 결과 푸시: 사용자에게, 문의 내역 해당 항목 딥링크
 - [ ] 이의 신청 상세 화면 (`src/screens/admin/AdminAppealDetail.tsx` 신규) — 시안: '이의 신청 검토 시안 1', '… copy'
   - 재사용: `AdminReportDetail`의 섹션 구조, 이의 신청·결과 안내 섹션은 Phase 4 사용자 컴포넌트
@@ -118,6 +135,7 @@
 - [ ] 진입점 2곳 연결 (`src/screens/admin/AdminUserDetail.tsx`의 제재 이력 행, `src/screens/admin/AdminReviewUsers.tsx`)
 - [ ] '검토 필요 유저' 기준 교체 (`src/firebase/services/adminService.ts`의 `fetchNeedsReviewUsers`, `src/screens/admin/AdminReviewUsers.tsx`)
   - 결정: 처리 대기 이의 신청이 있는 유저 + 미처리 신고가 있는 유저(설계 3-3). 안내 문구 "30일 자동 정지된 유저" 삭제
+  - 참고: Phase 2부터 `needsAdminReview`를 더 이상 설정하지 않으므로, PR 1 배포 후 이 항목이 배포되기 전까지는 목록에 새 유저가 들어오지 않는다
 - 검증: `npm run typecheck`, `npm run lint`, `npm --prefix functions test`, 에뮬레이터에서 신청 → 관리자 조치 취소 → 사용자 정지 해제·글 복구·문의 내역 결과 표시 확인
 
 ## 진행 기록
@@ -126,3 +144,10 @@
 
 - Phase 1 완료
 - 검증: `npm run typecheck`, `npm --prefix functions run typecheck` 통과. 별도 포트의 Firestore 에뮬레이터에서 REST로 9개 항목 확인(본인 `Users.report` 수정·삭제, `report` 포함 가입, 다른 유저의 조치 읽기, 조치 문서 생성·수정 거부 / 본인 프로필 수정, 본인 조치 읽기 허용) 모두 통과
+- Phase 2 완료(사용자 푸시 제외)
+- 검증: `npm --prefix functions run typecheck`·lint 통과. 8085 포트의 별도 에뮬레이터에서 functions 전체 테스트 223개 통과(신규 `admin/sanction.integration.test.ts` 포함, 자동 정지 테스트는 '정지되지 않음' 테스트로 교체). `npm --prefix functions run build`는 권한 거부로 실행하지 못했다
+- 블로커: 사용자 푸시 문구
+- 결정: 코드 리뷰 후 `issueSanction` 요청 검증 강화(ID에 `/` 금지, `replyId`에는 `commentId` 필수, `target`은 정해진 키만 저장)
+- 검증(답글 숨김 추가 후): `npm run typecheck`, functions typecheck·lint 통과. 별도 에뮬레이터에서 functions 테스트 223개, 보안 규칙 확인 13개(답글 `hiddenByAdmin` 본인 변경 거부 포함) 통과
+- 결정(Phase 2 코드 리뷰): 숨긴 댓글 삭제 시 댓글 수 중복 차감은 반영하지 않는다. 숨긴 댓글·답글은 작성자 목록에서도 빠져 앱에서 삭제할 수 없다. 동시 조치·재시도 중복·`getSanctionRecommendation`의 `uid` 파라미터명도 앞선 결정대로 유지한다
+- 검증(Phase 2 커밋 시점): 리뷰 반영분(푸시 문구, 댓글 삭제 답글 수, 읽기 병렬화)은 typecheck·lint만 통과. 개발용 에뮬레이터가 사용 중이라 functions 테스트는 에뮬레이터가 비면 실행한다

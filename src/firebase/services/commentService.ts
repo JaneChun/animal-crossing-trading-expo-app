@@ -165,7 +165,8 @@ export const deleteComment = async (
 				'Replies',
 			);
 			const repliesSnapshot = await getDocs(repliesRef);
-			const replyCount = repliesSnapshot.size;
+			// 관리자가 숨긴 답글은 숨길 때 이미 댓글 수에서 빠졌으므로 세지 않는다 (서버 답글 삭제 트리거와 같은 기준)
+			const replyCount = repliesSnapshot.docs.filter((replyDoc) => !replyDoc.data().hiddenByAdmin).length;
 
 			// 모든 답글 삭제
 			repliesSnapshot.docs.forEach((replyDoc) => {

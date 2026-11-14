@@ -76,7 +76,6 @@ describe('사용자 신고 처리 통합 테스트', () => {
 				expect(userData?.report).toEqual({
 					total: userTotalReports,
 					recent30Days: 1,
-					suspendUntil: null,
 				});
 			});
 
@@ -149,271 +148,63 @@ describe('사용자 신고 처리 통합 테스트', () => {
 			});
 		});
 
-		describe('7일 정지 로직', () => {
-			it('최근 7일 신고가 3건 이상이면 7일 정지되어야 한다', async () => {
-				/**
-				 * 시나리오:
-				 * 1. 사용자 생성
-				 * 2. 최근 7일 내 신고 3건 생성
-				 * 3. 신고 처리 시 7일 정지 적용 확인
-				 */
-				// 신고당할 사용자 생성
+		describe('자동 정지 없음', () => {
+			it('최근 신고가 많이 쌓여도 정지되지 않고 집계만 갱신된다', async () => {
 				await db.collection('Users').doc(reporteeId).set({
 					displayName: '신고당한 사용자',
 				});
 
-				const now = Timestamp.now();
-				const recentTimestamp = Timestamp.fromDate(
-					new Date(now.toMillis() - 2 * 24 * 60 * 60 * 1000),
-				); // 2일 전
-
-				// 최근 7일 내 신고 2건 생성
-				await Promise.all([
-					db.collection('Reports').add({
-						reporteeId,
-						reporterId: 'reporter_1',
-						createdAt: recentTimestamp,
-					}),
-					db.collection('Reports').add({
-						reporteeId,
-						reporterId: 'reporter_2',
-						createdAt: recentTimestamp,
-					}),
-				]);
-
-				// 3번째 신고 처리 (7일 정지 트리거)
-				const reportData = {
-					reporteeId,
-					createdAt: now,
-				};
-
-				await db.collection('Reports').add({
-					...reportData,
-					reporterId: 'reporter_3',
-				});
-
-				await handleUserReport(reportData);
-
-				// 사용자 정보 확인
-				const userDoc = await db.collection('Users').doc(reporteeId).get();
-				const userData = userDoc.data();
-
-				// 7일 정지 확인
-				const suspendUntil = userData?.report.suspendUntil;
-				expect(suspendUntil).not.toBeNull();
-
-				const suspendDuration = suspendUntil.toMillis() - now.toMillis();
-				const sevenDaysInMillis = 7 * 24 * 60 * 60 * 1000;
-				const oneDayInMillis = 24 * 60 * 60 * 1000;
-
-				// 7일 정지인지 확인 (한국 시간 자정 기준으로 설정되므로 최대 24시간 차이 가능)
-				expect(suspendDuration).toBeGreaterThan(sevenDaysInMillis - oneDayInMillis);
-				expect(suspendDuration).toBeLessThanOrEqual(sevenDaysInMillis);
-
-				// 실행 환경 타임존과 무관하게 정확히 한국 시간 00:00:00이어야 함
-				const kstOffsetInMillis = 9 * 60 * 60 * 1000;
-				expect((suspendUntil.toMillis() + kstOffsetInMillis) % oneDayInMillis).toBe(0);
-
-				expect(userData?.report.recent30Days).toBe(3);
-				expect(userData?.report.needsAdminReview).toBeUndefined();
-			});
-
-			it('기존 정지 기간이 더 길면 연장되지 않아야 한다', async () => {
-				const now = Timestamp.now();
-				const existingSuspendUntil = Timestamp.fromDate(
-					new Date(now.toMillis() + 10 * 24 * 60 * 60 * 1000),
-				); // 10일 후
-
-				// 기존에 정지된 사용자 생성
-				await db
-					.collection('Users')
-					.doc(reporteeId)
-					.set({
-						displayName: '정지된 사용자',
-						report: {
-							total: 5,
-							suspendUntil: existingSuspendUntil,
-						},
-					});
-
-				// 최근 7일 내 신고 2건 생성
-				const recentTimestamp = Timestamp.fromDate(
-					new Date(now.toMillis() - 1 * 24 * 60 * 60 * 1000),
-				);
-				await Promise.all([
-					db.collection('Reports').add({
-						reporteeId,
-						reporterId: 'reporter_1',
-						createdAt: recentTimestamp,
-					}),
-					db.collection('Reports').add({
-						reporteeId,
-						reporterId: 'reporter_2',
-						createdAt: recentTimestamp,
-					}),
-				]);
-
-				// 3번째 신고 처리
-				const reportData = {
-					reporteeId,
-					createdAt: now,
-				};
-
-				await db.collection('Reports').add({
-					...reportData,
-					reporterId: 'reporter_3',
-				});
-
-				await handleUserReport(reportData);
-
-				// 사용자 정보 확인
-				const userDoc = await db.collection('Users').doc(reporteeId).get();
-				const userData = userDoc.data();
-
-				// 기존 정지 기간이 유지되어야 함
-				expect(userData?.report.suspendUntil.toMillis()).toBe(
-					existingSuspendUntil.toMillis(),
-				);
-			});
-		});
-
-		describe('30일 정지 및 관리자 검토 로직', () => {
-			it('최근 30일 신고가 7건 이상이면 30일 정지 + 관리자 검토 플래그가 설정되어야 한다', async () => {
-				/**
-				 * 시나리오:
-				 * 1. 사용자 생성
-				 * 2. 최근 30일 내 신고 7건 생성
-				 * 3. 신고 처리 시 30일 정지 + needsAdminReview 플래그 확인
-				 */
-				// 신고당할 사용자 생성
-				await db.collection('Users').doc(reporteeId).set({
-					displayName: '신고당한 사용자',
-				});
-
-				const now = Timestamp.now();
-				const recentTimestamp = Timestamp.fromDate(
-					new Date(now.toMillis() - 15 * 24 * 60 * 60 * 1000),
-				); // 15일 전
-
-				// 최근 30일 내 신고 6건 생성
-				const reportPromises = Array.from({ length: 6 }, (_, i) =>
-					db.collection('Reports').add({
-						reporteeId,
-						reporterId: `reporter_${i}`,
-						createdAt: recentTimestamp,
-					}),
-				);
-
-				await Promise.all(reportPromises);
-
-				// 7번째 신고 처리 (30일 정지 트리거)
-				const reportData = {
-					reporteeId,
-					createdAt: now,
-				};
-
-				await db.collection('Reports').add({
-					...reportData,
-					reporterId: 'reporter_final',
-				});
-
-				await handleUserReport(reportData);
-
-				// 사용자 정보 확인
-				const userDoc = await db.collection('Users').doc(reporteeId).get();
-				const userData = userDoc.data();
-
-				// 30일 정지 확인
-				const suspendUntil = userData?.report.suspendUntil;
-				expect(suspendUntil).not.toBeNull();
-
-				const suspendDuration = suspendUntil.toMillis() - now.toMillis();
-				const thirtyDaysInMillis = 30 * 24 * 60 * 60 * 1000;
-				const oneDayInMillis = 24 * 60 * 60 * 1000;
-
-				// 30일 정지인지 확인 (한국 시간 자정 기준으로 설정되므로 최대 24시간 차이 가능)
-				expect(suspendDuration).toBeGreaterThan(thirtyDaysInMillis - oneDayInMillis);
-				expect(suspendDuration).toBeLessThanOrEqual(thirtyDaysInMillis);
-
-				// 실행 환경 타임존과 무관하게 정확히 한국 시간 00:00:00이어야 함
-				const kstOffsetInMillis = 9 * 60 * 60 * 1000;
-				expect((suspendUntil.toMillis() + kstOffsetInMillis) % oneDayInMillis).toBe(0);
-
-				// 관리자 검토 플래그 확인
-				expect(userData?.report.needsAdminReview).toBe(true);
-				expect(userData?.report.recent30Days).toBe(7);
-			});
-
-			it('7일 정지와 30일 정지 조건을 동시에 만족하면 30일 정지가 적용되어야 한다', async () => {
-				// 신고당할 사용자 생성
-				await db.collection('Users').doc(reporteeId).set({
-					displayName: '신고당한 사용자',
-				});
-
-				const now = Timestamp.now();
-				const recent7DaysTimestamp = Timestamp.fromDate(
-					new Date(now.toMillis() - 3 * 24 * 60 * 60 * 1000),
-				); // 3일 전
-				const recent30DaysTimestamp = Timestamp.fromDate(
-					new Date(now.toMillis() - 20 * 24 * 60 * 60 * 1000),
-				); // 20일 전
-
-				// 최근 7일 내 3건, 최근 30일 내 추가 4건 (총 7건) 생성
-				await Promise.all([
-					// 최근 7일 내 2건
-					db.collection('Reports').add({
-						reporteeId,
-						reporterId: 'recent_1',
-						createdAt: recent7DaysTimestamp,
-					}),
-					db.collection('Reports').add({
-						reporteeId,
-						reporterId: 'recent_2',
-						createdAt: recent7DaysTimestamp,
-					}),
-					// 최근 30일 내 추가 4건
-					...Array.from({ length: 4 }, (_, i) =>
+				// 예전 자동 정지 기준(7일 3건, 30일 7건)을 넘는 최근 신고 8건
+				const recentTimestamp = Timestamp.fromDate(new Date(Date.now() - 2 * 24 * 60 * 60 * 1000));
+				await Promise.all(
+					Array.from({ length: 7 }, (_, i) =>
 						db.collection('Reports').add({
 							reporteeId,
-							reporterId: `old_${i}`,
-							createdAt: recent30DaysTimestamp,
+							reporterId: `reporter_${i}`,
+							createdAt: recentTimestamp,
 						}),
 					),
-				]);
-
-				// 마지막 신고 (7일 조건 3번째, 30일 조건 7번째)
-				const reportData = {
-					reporteeId,
-					createdAt: now,
-				};
-
-				await db.collection('Reports').add({
-					...reportData,
-					reporterId: 'final_reporter',
-				});
+				);
+				const reportData = { reporteeId, createdAt: Timestamp.now() };
+				await db.collection('Reports').add({ ...reportData, reporterId: 'reporter_last' });
 
 				await handleUserReport(reportData);
 
-				// 사용자 정보 확인
-				const userDoc = await db.collection('Users').doc(reporteeId).get();
-				const userData = userDoc.data();
+				const userData = (await db.collection('Users').doc(reporteeId).get()).data();
+				expect(userData?.report).toEqual({
+					total: 1,
+					recent30Days: 8,
+				});
+			});
 
-				// 30일 정지가 적용되어야 함
-				const suspendUntil = userData?.report.suspendUntil;
-				const suspendDuration = suspendUntil.toMillis() - now.toMillis();
-				const thirtyDaysInMillis = 30 * 24 * 60 * 60 * 1000;
-				const oneDayInMillis = 24 * 60 * 60 * 1000;
+			it('동시에 들어온 신고도 total에 모두 반영된다', async () => {
+				await db.collection('Users').doc(reporteeId).set({
+					displayName: '신고당한 사용자',
+					report: { total: 2, recent30Days: 2, suspendUntil: null },
+				});
 
-				// 30일 정지인지 확인 (한국 시간 자정 기준으로 설정되므로 최대 24시간 차이 가능)
-				expect(suspendDuration).toBeGreaterThan(thirtyDaysInMillis - oneDayInMillis);
-				expect(suspendDuration).toBeLessThanOrEqual(thirtyDaysInMillis);
+				const reportData = { reporteeId, createdAt: Timestamp.now() };
+				await Promise.all([handleUserReport(reportData), handleUserReport(reportData)]);
 
-				// 실행 환경 타임존과 무관하게 정확히 한국 시간 00:00:00이어야 함
-				const kstOffsetInMillis = 9 * 60 * 60 * 1000;
-				expect((suspendUntil.toMillis() + kstOffsetInMillis) % oneDayInMillis).toBe(0);
+				const userData = (await db.collection('Users').doc(reporteeId).get()).data();
+				expect(userData?.report.total).toBe(4);
+			});
 
-				// 관리자 검토 플래그도 설정되어야 함
-				expect(userData?.report.needsAdminReview).toBe(true);
+			it('관리자가 건 정지 기간은 새 신고가 들어와도 그대로 유지된다', async () => {
+				const suspendUntil = Timestamp.fromMillis(Date.now() + 7 * 24 * 60 * 60 * 1000);
+				await db.collection('Users').doc(reporteeId).set({
+					displayName: '신고당한 사용자',
+					report: { total: 2, recent30Days: 2, suspendUntil },
+				});
+
+				const reportData = { reporteeId, createdAt: Timestamp.now() };
+				await db.collection('Reports').add({ ...reportData, reporterId });
+
+				await handleUserReport(reportData);
+
+				const userData = (await db.collection('Users').doc(reporteeId).get()).data();
+				expect(userData?.report.total).toBe(3);
+				expect(userData?.report.suspendUntil.toMillis()).toBe(suspendUntil.toMillis());
 			});
 		});
 

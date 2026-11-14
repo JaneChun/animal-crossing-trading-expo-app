@@ -45,3 +45,11 @@ export interface SanctionDoc {
 	suspendUntil: FirebaseFirestore.Timestamp | null;
 	appeal?: Appeal;
 }
+
+export interface IssueSanctionRequest {
+	userId: string;
+	kind: SanctionKind;
+	violationType: ViolationType;
+	reportIds?: string[];
+	target?: Omit<SanctionTarget, 'snapshot'>;
+}
