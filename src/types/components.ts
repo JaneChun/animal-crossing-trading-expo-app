@@ -58,7 +58,16 @@ export type TypeBadgeProps<T extends MarketType | CommunityType> = {
 };
 
 export type BadgeTone =
-	'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'lavender' | 'purple' | 'brand' | 'neutral';
+	| 'red'
+	| 'orange'
+	| 'yellow'
+	| 'green'
+	| 'blue'
+	| 'lavender'
+	| 'purple'
+	| 'brand'
+	| 'neutral'
+	| 'danger';
 
 export type BadgeProps = {
 	text: string;
@@ -263,6 +272,7 @@ export type ReportUserParams = {
 
 export type OpenReportModalParams = {
 	commentId: string;
+	replyId?: string;
 	reporteeId: string;
 };
 
@@ -293,7 +303,7 @@ export interface ReplyUnitProps extends ReplyWithCreatorInfo {
 	postCreatorId: string;
 	commentId: string;
 	mentionTag?: string;
-	onReportClick: (params: { commentId: string; reporteeId: string }) => void;
+	onReportClick: (params: OpenReportModalParams) => void;
 	onEditClick: (params: { replyId: string; replyText: string }) => void;
 	onReplyClick: (params: OnReplyClickParams) => void;
 }

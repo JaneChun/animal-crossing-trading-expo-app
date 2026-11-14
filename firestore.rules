@@ -12,7 +12,8 @@ service cloud.firestore {
       allow read: if true; // 누구나
       allow create: if request.auth != null && 
         request.auth.uid == request.resource.data.creatorId; // 로그인한 유저만, 본인 ID만
-      allow update: if request.auth.uid == resource.data.creatorId; // 본인만
+      allow update: if request.auth.uid == resource.data.creatorId || // 본인
+        (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'hiddenByAdmin', 'commentCount'])); // 관리자는 숨김 관련 필드만
       allow delete: if request.auth.uid == resource.data.creatorId; // 본인만
     }
     
@@ -45,7 +46,8 @@ service cloud.firestore {
       allow read: if true; // 누구나
       allow create: if request.auth != null && 
         request.auth.uid == request.resource.data.creatorId; // 로그인한 유저만, 본인 ID만
-      allow update: if request.auth.uid == resource.data.creatorId; // 본인만
+      allow update: if request.auth.uid == resource.data.creatorId || // 본인
+        (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'hiddenByAdmin', 'commentCount'])); // 관리자는 숨김 관련 필드만
       allow delete: if request.auth.uid == resource.data.creatorId; // 본인만
     }
     
@@ -54,7 +56,8 @@ service cloud.firestore {
       allow read: if true; // 누구나
       allow create: if request.auth != null && 
         request.auth.uid == request.resource.data.creatorId; // 로그인한 유저만, 본인 ID만
-      allow update: if request.auth.uid == resource.data.creatorId; // 본인만
+      allow update: if request.auth.uid == resource.data.creatorId || // 본인
+        (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hiddenByAdmin'])); // 관리자는 숨김 필드만
       allow delete: if request.auth.uid == resource.data.creatorId; // 본인만
     }
 
@@ -82,8 +85,10 @@ service cloud.firestore {
     match /Users/{userId} {
       allow read: if true; // 누구나
       allow create: if request.auth != null && 
-        request.auth.uid == userId; // 로그인한 유저만, 본인 계정만
-      allow update: if request.auth.uid == userId; // 본인만
+        request.auth.uid == userId && // 로그인한 유저만, 본인 계정만
+        !('role' in request.resource.data); // role은 콘솔에서만 지정
+      allow update: if request.auth.uid == userId && // 본인
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']); // role은 콘솔에서만 지정
       allow delete: if false; // 불가능
     }
     
@@ -106,7 +111,8 @@ service cloud.firestore {
     // Chats
     match /Chats/{chatId} {
       allow read: if request.auth != null && 
-        (resource == null || isVisibleChat()); // 문서가 없으면 검사 X, 있으면 visibleTo 검사
+        (resource == null || isVisibleChat() || // 문서가 없으면 검사 X, 있으면 visibleTo 검사
+          isReportedChatResourceForAdmin()); // 관리자는 신고된 채팅만
       allow create: if request.auth != null && isChatParticipant(); // 로그인한 유저만, 본인이 참여자
       allow update: if request.auth != null && 
         isChatParticipant() &&
@@ -116,7 +122,8 @@ service cloud.firestore {
     
     // Messages
     match /Chats/{chatId}/Messages/{messageId} { 
-      allow read: if request.auth != null && isChatParticipantInMessage(chatId); // 채팅방 참여자만
+      allow read: if request.auth != null && 
+        (isChatParticipantInMessage(chatId) || isReportedChatForAdmin(chatId)); // 채팅방 참여자, 또는 관리자는 신고된 채팅만
       allow create: if request.auth != null && 
         (isSystemMessage() || request.auth.uid == request.resource.data.senderId); // 시스템 메세지 또는 본인이 발신자
       allow update: if request.auth != null && 
@@ -135,22 +142,43 @@ service cloud.firestore {
     
     // Reports
     match /Reports/{reportId} {
-      allow read: if request.auth.uid == resource.data.reporterId; // 신고자만
-      allow create, update: if request.auth != null && 
+      allow read: if request.auth.uid == resource.data.reporterId || isAdmin(); // 신고자, 관리자
+      allow create: if request.auth != null && 
         request.auth.uid == request.resource.data.reporterId; // 로그인한 유저만, 본인이 신고자
+      allow update: if (request.auth != null && 
+          request.auth.uid == request.resource.data.reporterId) || // 로그인한 유저만, 본인이 신고자
+        (isAdmin() && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['resolved'])); // 관리자는 처리 상태만
       allow delete: if false; // 불가능
     }
     
     // Errors
     match /Errors/{errorId} {
       allow create: if true; // 누구나
-      allow read, update, delete: if false; // 불가능
+      allow read: if isAdmin(); // 관리자만
+      allow update, delete: if false; // 불가능
     }
     
     // Functions
+    // role은 콘솔에서 직접 지정한다 (agent_docs/features/admin.md)
+    function isAdmin() {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/Users/$(request.auth.uid)).data.get('role', null) == 'admin';
+    }
+
+    // 함수가 채팅 신고 시 기록한 reportedAt이 있어야 관리자가 열람할 수 있다
+    function isReportedChatForAdmin(chatId) {
+      return isAdmin() &&
+        get(/databases/$(database)/documents/Chats/$(chatId)).data.get('reportedAt', null) != null;
+    }
+
     // READ 작업용 함수들 (resource.data 사용)
     function isVisibleChat() {
       return request.auth.uid in resource.data.visibleTo;
+    }
+
+    // 채팅방 문서를 읽을 때는 이미 읽은 resource로 판단해 get()을 한 번 더 하지 않는다
+    function isReportedChatResourceForAdmin() {
+      return isAdmin() && resource.data.get('reportedAt', null) != null;
     }
     
     // 문서가 없으면 검사 X, 있으면 participants 검사

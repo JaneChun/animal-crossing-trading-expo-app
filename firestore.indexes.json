@@ -1,4 +1,435 @@
+/**
+ * Firestore 인덱스. Firebase CLI가 cjson으로 읽으므로 주석을 쓸 수 있다.
+ * 관리 규칙: Firestore 인덱스는 firestore.indexes.json으로 관리
+ * - agent_docs/firebase-patterns.md
+ */
 {
-  "indexes": [],
-  "fieldOverrides": []
+	"indexes": [
+		/**
+		 * 게시판 목록: status not-in [hidden, deleted] + createdAt 내림차순
+		 * - src/hooks/post/query/useInfinitePosts.ts
+		 */
+		{
+			"collectionGroup": "Boards",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				},
+				{
+					"fieldPath": "status",
+					"order": "DESCENDING"
+				},
+				{
+					"fieldPath": "__name__",
+					"order": "DESCENDING"
+				}
+			],
+			"density": "SPARSE_ALL"
+		},
+		/**
+		 * 유저별 거래글 목록: creatorId + status not-in + createdAt 내림차순
+		 * - src/hooks/post/query/useInfinitePosts.ts (creatorId 필터)
+		 */
+		{
+			"collectionGroup": "Boards",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "creatorId",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				},
+				{
+					"fieldPath": "status",
+					"order": "DESCENDING"
+				},
+				{
+					"fieldPath": "__name__",
+					"order": "DESCENDING"
+				}
+			],
+			"density": "SPARSE_ALL"
+		},
+		/**
+		 * 삭제 30일 지난 게시글 영구 삭제: status == deleted + deletedAt <=
+		 * - functions/src/schedulers/hardDeleteExpiredPostsScheduler.ts
+		 */
+		{
+			"collectionGroup": "Boards",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "status",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "deletedAt",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "__name__",
+					"order": "ASCENDING"
+				}
+			],
+			"density": "SPARSE_ALL"
+		},
+		/**
+		 * 내 채팅방 목록: visibleTo array-contains + updatedAt 내림차순
+		 * - src/stores/chat/initializer.ts
+		 */
+		{
+			"collectionGroup": "Chats",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "visibleTo",
+					"arrayConfig": "CONTAINS"
+				},
+				{
+					"fieldPath": "updatedAt",
+					"order": "DESCENDING"
+				},
+				{
+					"fieldPath": "__name__",
+					"order": "DESCENDING"
+				}
+			],
+			"density": "SPARSE_ALL"
+		},
+		/**
+		 * 커뮤니티 목록: status not-in + createdAt 내림차순
+		 * - src/hooks/post/query/useInfinitePosts.ts
+		 */
+		{
+			"collectionGroup": "Communities",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				},
+				{
+					"fieldPath": "status",
+					"order": "DESCENDING"
+				},
+				{
+					"fieldPath": "__name__",
+					"order": "DESCENDING"
+				}
+			],
+			"density": "SPARSE_ALL"
+		},
+		/**
+		 * 유저별 커뮤니티 글 목록: creatorId + status not-in + createdAt 내림차순
+		 * - src/hooks/post/query/useInfinitePosts.ts (creatorId 필터)
+		 */
+		{
+			"collectionGroup": "Communities",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "creatorId",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				},
+				{
+					"fieldPath": "status",
+					"order": "DESCENDING"
+				},
+				{
+					"fieldPath": "__name__",
+					"order": "DESCENDING"
+				}
+			],
+			"density": "SPARSE_ALL"
+		},
+		/**
+		 * 커뮤니티 카테고리 필터: type + status not-in + createdAt 내림차순
+		 * - src/hooks/post/query/useInfinitePosts.ts (category 필터)
+		 */
+		{
+			"collectionGroup": "Communities",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "type",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				},
+				{
+					"fieldPath": "status",
+					"order": "DESCENDING"
+				},
+				{
+					"fieldPath": "__name__",
+					"order": "DESCENDING"
+				}
+			],
+			"density": "SPARSE_ALL"
+		},
+		/**
+		 * 내 알림 목록: receiverId + createdAt 내림차순
+		 * - src/stores/notification/initializer.ts
+		 */
+		{
+			"collectionGroup": "Notifications",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "receiverId",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				},
+				{
+					"fieldPath": "__name__",
+					"order": "DESCENDING"
+				}
+			],
+			"density": "SPARSE_ALL"
+		},
+		/**
+		 * 현재 코드에서 쓰는 쿼리 없음(알림 종류 필터용으로 추정)
+		 * - 운영에 있던 인덱스라 그대로 둔다
+		 */
+		{
+			"collectionGroup": "Notifications",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "receiverId",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "type",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				},
+				{
+					"fieldPath": "__name__",
+					"order": "DESCENDING"
+				}
+			],
+			"density": "SPARSE_ALL"
+		},
+		/**
+		 * 최근 7일·30일 신고 수 집계: reporteeId + createdAt >=
+		 * - functions/src/triggers/reports.ts (getRecentReportCounts)
+		 */
+		{
+			"collectionGroup": "Reports",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "reporteeId",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "__name__",
+					"order": "ASCENDING"
+				}
+			],
+			"density": "SPARSE_ALL"
+		},
+		/**
+		 * 관리자 신고 목록(접수·처리완료 탭): resolved + createdAt 내림차순
+		 * - src/firebase/services/adminService.ts
+		 */
+		{
+			"collectionGroup": "Reports",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "resolved",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				}
+			]
+		}
+	],
+	/**
+	 * 컬렉션 그룹 단일 필드 인덱스
+	 * - COLLECTION 범위 3개는 기본 단일 필드 인덱스를 유지하려고 함께 적는다(빼면 기본 인덱스가 삭제된다)
+	 */
+	"fieldOverrides": [
+		/**
+		 * 관리자 일별 통계: 컬렉션 그룹 createdAt 범위 집계
+		 * - functions/src/admin/stats.ts (getDailyStatsHandler)
+		 */
+		{
+			"collectionGroup": "Comments",
+			"fieldPath": "createdAt",
+			"indexes": [
+				{
+					"order": "ASCENDING",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"order": "DESCENDING",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"arrayConfig": "CONTAINS",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"order": "ASCENDING",
+					"queryScope": "COLLECTION_GROUP"
+				}
+			]
+		},
+		/**
+		 * 관리자 유저별 통계: 컬렉션 그룹 creatorId 집계
+		 * - functions/src/admin/stats.ts (getUserStatsHandler)
+		 */
+		{
+			"collectionGroup": "Comments",
+			"fieldPath": "creatorId",
+			"indexes": [
+				{
+					"order": "ASCENDING",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"order": "DESCENDING",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"arrayConfig": "CONTAINS",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"order": "ASCENDING",
+					"queryScope": "COLLECTION_GROUP"
+				}
+			]
+		},
+		/**
+		 * 관리자 일별 통계: 컬렉션 그룹 createdAt 범위 집계
+		 * - functions/src/admin/stats.ts (getDailyStatsHandler)
+		 */
+		{
+			"collectionGroup": "Replies",
+			"fieldPath": "createdAt",
+			"indexes": [
+				{
+					"order": "ASCENDING",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"order": "DESCENDING",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"arrayConfig": "CONTAINS",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"order": "ASCENDING",
+					"queryScope": "COLLECTION_GROUP"
+				}
+			]
+		},
+		/**
+		 * 관리자 유저별 통계: 컬렉션 그룹 creatorId 집계
+		 * - functions/src/admin/stats.ts (getUserStatsHandler)
+		 */
+		{
+			"collectionGroup": "Replies",
+			"fieldPath": "creatorId",
+			"indexes": [
+				{
+					"order": "ASCENDING",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"order": "DESCENDING",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"arrayConfig": "CONTAINS",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"order": "ASCENDING",
+					"queryScope": "COLLECTION_GROUP"
+				}
+			]
+		},
+		/**
+		 * 관리자 일별 통계: 컬렉션 그룹 createdAt 범위 집계
+		 * - functions/src/admin/stats.ts (getDailyStatsHandler)
+		 */
+		{
+			"collectionGroup": "Messages",
+			"fieldPath": "createdAt",
+			"indexes": [
+				{
+					"order": "ASCENDING",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"order": "DESCENDING",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"arrayConfig": "CONTAINS",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"order": "ASCENDING",
+					"queryScope": "COLLECTION_GROUP"
+				}
+			]
+		},
+		/**
+		 * 관리자 유저별 통계: 컬렉션 그룹 senderId 집계
+		 * - functions/src/admin/stats.ts (getUserStatsHandler)
+		 */
+		{
+			"collectionGroup": "Messages",
+			"fieldPath": "senderId",
+			"indexes": [
+				{
+					"order": "ASCENDING",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"order": "DESCENDING",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"arrayConfig": "CONTAINS",
+					"queryScope": "COLLECTION"
+				},
+				{
+					"order": "ASCENDING",
+					"queryScope": "COLLECTION_GROUP"
+				}
+			]
+		}
+	]
 }

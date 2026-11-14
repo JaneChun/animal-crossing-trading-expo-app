@@ -7,6 +7,7 @@ export interface Comment {
 	body: string;
 	creatorId: string;
 	createdAt: Timestamp;
+	hiddenByAdmin?: boolean;
 }
 
 export interface CommentDoc extends Comment {
