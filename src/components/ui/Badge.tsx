@@ -6,7 +6,7 @@ import { BadgeProps, BadgeTone } from '@/types/components';
 import Text from './Text';
 
 /** tone별로 짝지어진 `text.{key}` 글자색과 `bg.{key}` 배경색의 키 */
-const TONE_COLOR_KEYS: Record<BadgeTone, ToneColorKey> = {
+export const TONE_COLOR_KEYS: Record<BadgeTone, ToneColorKey> = {
 	red: 'red',
 	orange: 'orange',
 	yellow: 'yellow',
@@ -16,6 +16,7 @@ const TONE_COLOR_KEYS: Record<BadgeTone, ToneColorKey> = {
 	purple: 'purple',
 	brand: 'primaryBrand',
 	neutral: 'tertiary',
+	danger: 'danger',
 };
 
 const Badge = ({ text, tone, containerStyle }: BadgeProps) => {

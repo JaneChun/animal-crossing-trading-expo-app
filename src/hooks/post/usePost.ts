@@ -4,6 +4,7 @@ import { showToast } from '@/components/ui/Toast';
 import { sendReviewSystemMessage } from '@/firebase/services/reviewService';
 import { useMarkAsRead } from '@/hooks/notification/query/mutation/useMarkAsRead';
 import { goBack } from '@/navigation/RootNavigation';
+import { useUserInfo } from '@/stores/auth';
 import { Collection } from '@/types/post';
 import { logPostMarkDone, logPostView } from '@/utilities/analytics';
 import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
@@ -13,9 +14,12 @@ import { useUpdatePost } from './mutation/useUpdatePost';
 import { usePostDetail } from './query/usePostDetail';
 
 export const usePost = (collectionName: Collection, id: string, notificationId: string) => {
+	// 관리자는 신고 처리를 위해 숨김·삭제된 게시글도 상세로 본다
+	const isAdmin = useUserInfo()?.role === 'admin';
 	const { data: post, isLoading: isPostFetching } = usePostDetail(
 		collectionName as Collection,
 		id,
+		{ includeHidden: isAdmin },
 	);
 	const { mutate: markAsRead } = useMarkAsRead();
 	const { mutate: updatePost } = useUpdatePost('Boards', id);

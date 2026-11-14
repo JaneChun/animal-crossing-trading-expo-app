@@ -1,6 +1,7 @@
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { StyleSheet, View } from 'react-native';
 
+import Banner from '@/components/ui/Banner';
 import Button from '@/components/ui/Button';
 import ErrorMessage from '@/components/ui/ErrorMessage';
 import { MAX_CART_ITEMS } from '@/constants/post';
@@ -19,7 +20,6 @@ import { getBulkAddCartId } from '@/utilities/catalogItemToItem';
 import FailedRow from './FailedRow';
 import FoundRow from './FoundRow';
 import ReviewGroup from './ReviewGroup';
-import SectionBanner from './SectionBanner';
 
 type ReviewProps = {
 	cart: CartItem[];
@@ -55,10 +55,11 @@ const Review = ({
 			>
 				{foundResults.length > 0 && (
 					<>
-						<SectionBanner
-							variant="found"
+						<Banner
+							tone="brand"
+							icon="search"
 							text={`아이템 ${foundResults.length}개를 찾았어요`}
-							spaced={false}
+							containerStyle={styles.banner}
 						/>
 						{foundResults.map(({ line, item }) => (
 							<FoundRow
@@ -72,10 +73,14 @@ const Review = ({
 
 				{needsReviewResults.length > 0 && (
 					<>
-						<SectionBanner
-							variant="review"
+						<Banner
+							tone="yellow"
+							icon="alert-circle"
 							text="맞는 아이템을 골라주세요"
-							spaced={foundResults.length > 0}
+							containerStyle={[
+								styles.banner,
+								foundResults.length > 0 && styles.bannerSpaced,
+							]}
 						/>
 						{needsReviewResults.map((reviewItem) => (
 							<ReviewGroup
@@ -91,10 +96,15 @@ const Review = ({
 
 				{failedResults.length > 0 && (
 					<>
-						<SectionBanner
-							variant="failed"
+						<Banner
+							tone="red"
+							icon="help-circle"
 							text="찾지 못한 텍스트예요"
-							spaced={foundResults.length > 0 || needsReviewResults.length > 0}
+							containerStyle={[
+								styles.banner,
+								(foundResults.length > 0 || needsReviewResults.length > 0) &&
+									styles.bannerSpaced,
+							]}
 						/>
 						{failedResults.map((result, index) => (
 							<FailedRow
@@ -144,6 +154,13 @@ const makeStyles = ({ colors }: Theme) =>
 			paddingTop: Spacing.xl,
 			paddingHorizontal: Spacing.xl,
 			paddingBottom: Spacing.xl,
+		},
+		banner: {
+			marginBottom: Spacing.m,
+		},
+		// 앞 섹션이 있을 때 위쪽 간격 추가
+		bannerSpaced: {
+			marginTop: Spacing.l,
 		},
 		footer: {
 			gap: Spacing.m,

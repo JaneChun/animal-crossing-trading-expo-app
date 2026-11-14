@@ -42,6 +42,7 @@ export const Palette = {
 		950: '#152B28',
 	},
 	red: {
+		25: '#FFEBEA',
 		50: '#F6DBE0',
 		200: '#F08A9C',
 		300: '#fb657e',
@@ -50,6 +51,7 @@ export const Palette = {
 		600: '#ff3a30',
 		700: '#E73B2A',
 		800: '#CD5067',
+		900: '#3D1A18',
 		950: '#3B1E25',
 	},
 	orange: {
