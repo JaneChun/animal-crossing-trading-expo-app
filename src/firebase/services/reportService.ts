@@ -58,11 +58,11 @@ export const createReport = async (requestData: CreateReportRequest) => {
 				resolved: false,
 			};
 
-			updateDocToFirestore({
+			await updateDocToFirestore({
 				collection: 'Reports',
 				id: existingReports[0].id,
 				requestData: updatedReportData,
 			});
 		}
-	});
+	}, { throwOnError: true });
 };
