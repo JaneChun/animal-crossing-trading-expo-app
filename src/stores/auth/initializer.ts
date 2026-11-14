@@ -55,10 +55,14 @@ export const useAuthInitializer = () => {
 
 	// 🔹 앱 실행 시 로컬 저장소에서 유저 정보 복원
 	useEffect(() => {
+		// 복원이 실패해도 스플래시에 갇히지 않도록 로딩은 항상 끝낸다. 유저 정보는 onAuthStateChanged가 다시 채운다
 		const loadUser = async () => {
-			const storedUser = await getUserFromStorage();
-			setUserInfo(storedUser);
-			setIsUserLoading(false);
+			try {
+				const storedUser = await getUserFromStorage();
+				setUserInfo(storedUser);
+			} finally {
+				setIsUserLoading(false);
+			}
 		};
 
 		loadUser();
