@@ -128,12 +128,13 @@ const CustomBottomSheet = ({
 			<View testID="customBottomSheetContent" style={styles.content}>
 				{title && (
 					<View style={styles.header}>
-						{leftButton && (
-							<View style={[styles.headerButton, { left: 0 }]}>{leftButton}</View>
-						)}
+						{/* 제목이 헤더 전체 너비를 덮으므로, 버튼은 제목보다 나중에 그려야 위에 올라와 탭을 받는다 */}
 						<Text variant="heading" weight="bold" style={styles.title}>
 							{title}
 						</Text>
+						{leftButton && (
+							<View style={[styles.headerButton, { left: 0 }]}>{leftButton}</View>
+						)}
 						{rightButton && (
 							<View style={[styles.headerButton, { right: 0 }]}>{rightButton}</View>
 						)}

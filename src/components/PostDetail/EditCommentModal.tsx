@@ -9,7 +9,6 @@ import { PADDING } from '@/components/ui/layout/Layout';
 import { showToast } from '@/components/ui/Toast';
 import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { MAX_COMMENT_LENGTH } from '@/constants/post';
-import { goBack } from '@/navigation/RootNavigation';
 import { FontSizes , Theme, useThemedStyles } from '@/theme';
 
 type EditCommentModalProps = {
@@ -62,7 +61,7 @@ const EditCommentModal = ({
 	);
 
 	const cancelButton = (
-		<Button variant="secondary" size="md" onPress={goBack}>
+		<Button variant="secondary" size="md" onPress={onClose}>
 			취소
 		</Button>
 	);
