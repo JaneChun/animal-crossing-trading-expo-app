@@ -17,11 +17,18 @@ export type DangerAction = {
 };
 
 // 계정 정지·콘텐츠 숨기기 같은 관리자 조치를 bg.danger 면에 행으로 쌓는다
-const DangerActionPanel = ({ actions }: { actions: DangerAction[] }) => {
+// 아직 적용되지 않은 조치만 있는 패널(정지 전 유저의 [정지])은 tone="neutral"로 bg.fill 면에 그린다
+const DangerActionPanel = ({
+	actions,
+	tone = 'danger',
+}: {
+	actions: DangerAction[];
+	tone?: 'danger' | 'neutral';
+}) => {
 	const styles = useThemedStyles(makeStyles);
 
 	return (
-		<View style={styles.panel}>
+		<View style={[styles.panel, tone === 'neutral' && styles.neutralPanel]}>
 			{actions.map((action, index) => (
 				<Fragment key={action.title}>
 					{index > 0 && <View style={styles.divider} />}
@@ -58,6 +65,9 @@ const makeStyles = ({ colors }: Theme) =>
 			borderRadius: 10,
 			overflow: 'hidden',
 			backgroundColor: colors.bg.danger,
+		},
+		neutralPanel: {
+			backgroundColor: colors.bg.fill,
 		},
 		row: {
 			flexDirection: 'row',

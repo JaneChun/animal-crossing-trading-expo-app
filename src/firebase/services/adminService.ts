@@ -32,8 +32,10 @@ import {
 import { Message } from '@/types/chat';
 import { Comment } from '@/types/comment';
 import { Collection, Doc, Post, PostDoc } from '@/types/post';
+import { Reply } from '@/types/reply';
 import { Report } from '@/types/report';
 import { ReviewWithId } from '@/types/review';
+import { IssueSanctionRequest, Sanction, SanctionKind } from '@/types/sanction';
 import { UserInfo } from '@/types/user';
 import { toPost } from '@/utilities/toPost';
 
@@ -213,6 +215,7 @@ export interface ReportTargetContent {
 	collectionName: Collection | null;
 	post: Post<Collection> | null;
 	comment: Comment | null; // 댓글 신고일 때만
+	reply: Reply | null; // 답글 신고일 때만
 }
 
 // collectionName이 없는 기존 신고(이번 작업 이전 데이터)는 게시글이 있는 컬렉션을 Boards → Communities 순으로 찾는다
@@ -232,7 +235,7 @@ export const fetchReportTargetContent = async (report: Report): Promise<ReportTa
 		'신고 원문 조회',
 		async () => {
 			const { postId, commentId, replyId } = report;
-			const emptyTarget = { collectionName: null, post: null, comment: null };
+			const emptyTarget = { collectionName: null, post: null, comment: null, reply: null };
 
 			// 채팅·프로필 신고
 			if (!postId) return emptyTarget;
@@ -243,8 +246,22 @@ export const fetchReportTargetContent = async (report: Report): Promise<ReportTa
 			const postDoc = await getDocFromFirestore({ collection: collectionName, id: postId });
 			const post = postDoc ? toPost(collectionName, postDoc as PostDoc<Collection>) : null;
 
-			// 게시글 신고, 또는 답글 신고(답글은 숨기기를 지원하지 않아 댓글을 읽지 않는다)
-			if (!commentId || replyId) return { collectionName, post, comment: null };
+			// 게시글 신고
+			if (!commentId) return { collectionName, post, comment: null, reply: null };
+
+			// 답글 신고
+			if (replyId) {
+				const replyDoc = await getDocFromFirestore({
+					collection: `${collectionName}/${postId}/Comments/${commentId}/Replies`,
+					id: replyId,
+				});
+				return {
+					collectionName,
+					post,
+					comment: null,
+					reply: replyDoc ? (replyDoc as Reply) : null,
+				};
+			}
 
 			// 댓글 신고
 			const commentDoc = await getDocFromFirestore({
@@ -253,7 +270,7 @@ export const fetchReportTargetContent = async (report: Report): Promise<ReportTa
 			});
 			const comment = commentDoc ? (commentDoc as Comment) : null;
 
-			return { collectionName, post, comment };
+			return { collectionName, post, comment, reply: null };
 		},
 		{ throwOnError: true },
 	);
@@ -310,6 +327,46 @@ export const setReportResolved = async ({
 // 정지를 풀고 정지 때 숨겨진 게시글 복구까지 함수(liftUserSuspension)에서 처리한다
 export const liftSuspension = async (uid: string): Promise<void> => {
 	await httpsCallable<{ uid: string }, void>(functions, 'liftSuspension')({ uid });
+};
+
+export const issueSanction = async (request: IssueSanctionRequest): Promise<void> => {
+	await httpsCallable<IssueSanctionRequest, { sanctionId: string }>(
+		functions,
+		'issueSanction',
+	)(request);
+};
+
+export type SanctionRecommendation = {
+	recentActiveCount: number; // 이번 조치를 뺀 최근 90일 유효 조치 수
+	recommendedKind: SanctionKind;
+};
+
+export const fetchSanctionRecommendation = async (uid: string): Promise<SanctionRecommendation> => {
+	const result = await httpsCallable<{ uid: string }, SanctionRecommendation>(
+		functions,
+		'getSanctionRecommendation',
+	)({ uid });
+	return result.data;
+};
+
+// 유저 한 명의 조치 수는 많지 않아 페이지 없이 모두 읽는다
+export const fetchUserSanctions = async (uid: string): Promise<Sanction[]> => {
+	return firestoreRequest(
+		'유저 제재 이력 조회',
+		async () => {
+			const snapshot = await getDocs(
+				query(
+					collection(db, 'Sanctions'),
+					where('userId', '==', uid),
+					orderBy('createdAt', 'desc'),
+				),
+			);
+			return snapshot.docs.map(
+				(sanctionDoc) => ({ id: sanctionDoc.id, ...sanctionDoc.data() }) as Sanction,
+			);
+		},
+		{ throwOnError: true },
+	);
 };
 
 export const setPostHidden = async ({
@@ -369,7 +426,9 @@ export const setCommentHidden = async ({
 			const commentRef = doc(db, collectionName, postId, 'Comments', commentId);
 			// 관리자가 따로 숨긴 답글은 이미 댓글 수에서 빠져 있으므로 세지 않는다
 			const repliesSnapshot = await getDocs(collection(commentRef, 'Replies'));
-			const visibleReplyCount = repliesSnapshot.docs.filter((replyDoc) => !replyDoc.data().hiddenByAdmin).length;
+			const visibleReplyCount = repliesSnapshot.docs.filter(
+				(replyDoc) => !replyDoc.data().hiddenByAdmin,
+			).length;
 			const affectedCount = 1 + visibleReplyCount;
 
 			const batch = writeBatch(db);

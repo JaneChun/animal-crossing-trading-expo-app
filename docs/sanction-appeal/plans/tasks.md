@@ -75,20 +75,26 @@
 
 ## Phase 3: 관리자 정지 바텀시트 · 제재 이력 (PR 1)
 
-- [ ] 관리자 서비스·훅 (`src/firebase/services/adminService.ts`, `src/hooks/admin/mutation/useIssueSanction.ts`, `src/hooks/admin/query/useUserSanctions.ts`)
+- [x] 관리자 서비스·훅 (`src/firebase/services/adminService.ts`, `src/hooks/admin/mutation/useIssueSanction.ts`, `src/hooks/admin/query/useUserSanctions.ts`)
   - 재사용: `liftSuspension`과 같은 `httpsCallable` 패턴, `useLiftSuspension`의 invalidate 목록
   - 패턴: 목록 조회는 `fetchUserReports` + `useInfiniteQuery` 커서 방식
-- [ ] 정지 바텀시트 + 위반 유형 선택 (`src/components/Admin/SuspendSheet.tsx` 신규) — 시안: '관리자 — 정지 바텀시트', '… › 위반 유형 선택'
+  - 결정: 제재 이력은 유저당 건수가 적어 페이지 없이 `useQuery`로 전체를 읽는다. `Sanctions`(userId + createdAt desc) 인덱스를 `firestore.indexes.json`에 추가했다(배포 필요). 권장 조치는 `useSanctionRecommendation`으로 시트를 열 때만 조회한다
+  - 결정: 토스트는 기존 관리자 토스트처럼 마침표를 붙인다("경고 처리했습니다.", "7일 정지했습니다.")
+- [x] 정지 바텀시트 + 위반 유형 선택 (`src/components/Admin/SuspendSheet.tsx` 신규) — 시안: '관리자 — 정지 바텀시트', '… › 위반 유형 선택'
   - 재사용: `CustomBottomSheet`(`src/components/ui/CustomBottomSheet.tsx`)의 `title`·`leftButton`·`rightButton`, 유형 목록 스타일은 `ReportModal`의 `categoryButton`/`selectedCategory`
   - 결정: 메인 시트에서 '위반 유형' 행을 누르면 유형 선택 단계로 넘어가고, 헤더 [이전]/[완료]로 돌아온다(사용자 지시)
-- [ ] 유저 상세에 [정지] 버튼과 제재 이력 (`src/screens/admin/AdminUserDetail.tsx`) — 시안: '관리자 — 유저 상세 정지 버튼', '… (정지된 유저)'
+  - 결정: 유저 상세에서 여는 정지에는 대상 글이 정해지지 않으므로 시안의 '대상 글' 행을 표시하지 않는다(대상 없는 정지로 기록). 단계 전환 시 시트를 다시 그리지 않도록 시트 하나에서 제목·버튼·내용만 바꾼다
+  - 결정: 권장 조치가 경고(최근 90일 1회째)면 기간 선택지에 없으므로 7일을 기본 선택하고, 안내는 "…정책상 경고를 권장합니다."로 보여 준다
+- [x] 유저 상세에 [정지] 버튼과 제재 이력 (`src/screens/admin/AdminUserDetail.tsx`) — 시안: '관리자 — 유저 상세 정지 버튼', '… (정지된 유저)'
   - 재사용: `DangerActionPanel`, `isSuspended`(`SuspensionBadge.tsx`), `ViewAllLink`
   - 결정: 정지 중이 아니면 패널 배경을 `bg.fill`, 정지 중일 때만 `bg.danger`(사용자 지시). 제재 이력 행은 '칩 하나' 형식(조치 칩 / 위반 유형 / 글 제목 / 날짜)
   - 결정: 영구 정지(`suspendUntil` 9999-12-31)는 날짜 대신 '영구 정지'로 표시한다. `formatKstMonthDay`는 연도를 버려 "12.31 0시까지"로 보이기 때문이다(`AdminUserDetail`·`AdminReportDetail`·`SuspensionBadge`)
   - 결정: 조치 버튼은 처리 중 비활성화한다. 더블 탭으로 조치 문서가 두 번 생기면 권장 조치 횟수가 올라간다
-- [ ] 신고 상세의 [숨기기]에 위반 유형 선택을 붙여 경고로 처리 (`src/screens/admin/AdminReportDetail.tsx`)
+  - 결정: 제재 이력이 없으면 섹션을 그리지 않는다(빈 상태 문구 없음). 취소된 조치는 회색 '취소' 칩. 행을 눌렀을 때의 이동과 '이의 신청 검토 중' 링크는 Phase 6에서 붙인다
+- [x] 신고 상세의 [숨기기]에 위반 유형 선택을 붙여 경고로 처리 (`src/screens/admin/AdminReportDetail.tsx`)
   - 재사용: 위 `SuspendSheet`의 유형 선택 단계, 기존 `useSetPostHidden`/`useSetCommentHidden` 대신 경고 callable 호출
   - 답글 신고에도 [숨기기]를 보여 준다(지금은 게시글·댓글에만 있음). 서버는 Phase 2에서 답글 숨김을 지원한다
+  - 결정: [숨기기] → 위반 유형 시트(`ViolationTypeSheet`) [완료] → 기존 확인 Alert → 경고 조치. 숨김 해제는 기존 클라이언트 함수 그대로. 답글은 관리자가 앱에서 쓸 수 없어 숨김 해제 행이 없다(조치 취소로만 해제)
 - 검증: `npm run typecheck`, `npm run lint`, 에뮬레이터 관리자 계정으로 경고·정지·정지 해제 후 제재 이력 표시 확인
 
 ## Phase 4: 사용자 경고 · 정지 화면, 운영 정책 (PR 2)
@@ -127,6 +133,7 @@
 ## Phase 6: 관리자 이의 신청 처리 (PR 3)
 
 - [ ] 이의 신청 결정 callable (`functions/src/admin/sanction.ts`)
+  - 참고(Phase 3 코드 리뷰): 신고 상세의 [숨김 해제]는 지금 콘텐츠만 다시 공개하고 경고 조치는 유효로 남긴다. 실수로 숨긴 경우 횟수에 남으므로, 이 callable을 만들 때 [숨김 해제]가 해당 경고를 취소하도록 함께 바꾼다
   - 조치 유지: 답변 저장. 조치 취소: 조치 상태 취소 + 정지 기간 재계산 + 대상 글·댓글·답글 `hiddenByAdmin` 해제(댓글 수는 숨길 때 뺀 만큼 되돌림)
   - 결과 푸시: 사용자에게, 문의 내역 해당 항목 딥링크
 - [ ] 이의 신청 상세 화면 (`src/screens/admin/AdminAppealDetail.tsx` 신규) — 시안: '이의 신청 검토 시안 1', '… copy'
@@ -151,3 +158,6 @@
 - 검증(답글 숨김 추가 후): `npm run typecheck`, functions typecheck·lint 통과. 별도 에뮬레이터에서 functions 테스트 223개, 보안 규칙 확인 13개(답글 `hiddenByAdmin` 본인 변경 거부 포함) 통과
 - 결정(Phase 2 코드 리뷰): 숨긴 댓글 삭제 시 댓글 수 중복 차감은 반영하지 않는다. 숨긴 댓글·답글은 작성자 목록에서도 빠져 앱에서 삭제할 수 없다. 동시 조치·재시도 중복·`getSanctionRecommendation`의 `uid` 파라미터명도 앞선 결정대로 유지한다
 - 검증(Phase 2 커밋 시점): 리뷰 반영분(푸시 문구, 댓글 삭제 답글 수, 읽기 병렬화)은 typecheck·lint만 통과. 개발용 에뮬레이터가 사용 중이라 functions 테스트는 에뮬레이터가 비면 실행한다
+- Phase 3 완료
+- 검증: `npm run typecheck`, `npm run lint` 통과(경고 54개는 기존 파일). 에뮬레이터 앱 화면 확인은 소셜 로그인이 필요해 하지 못했다(기기 확인 목록에 남김)
+- 결정(Phase 3 코드 리뷰): 권장 조치를 받는 동안 [정지하기] 비활성화, 영구 정지는 90일이 지나도 '만료'로 표시하지 않음, 조치 후 권장 조치 캐시 무효화, 숨긴 답글은 비활성 [숨김 해제] 행으로 상태 표시를 반영했다. 경고 범위 캐시 무효화 축소·클라이언트 숨김(`hidden=true`) 경로 정리·Alert 취소 시 선택 유지는 관리자 전용 화면의 소규모 개선이라 반영하지 않았다
