@@ -4,7 +4,7 @@ import { fetchUserBlocks } from '@/firebase/services/adminService';
 import { AdminBlockRecord, Paginated, UserBlockDirection } from '@/types/admin';
 import { Doc } from '@/types/post';
 
-export const useUserBlocksQueryKey = (uid: string, direction: UserBlockDirection) =>
+export const adminUserBlocksQueryKey = (uid: string, direction: UserBlockDirection) =>
 	['adminUserBlocks', uid, direction] as const;
 
 export const useUserBlocks = (uid: string, direction: UserBlockDirection) => {
@@ -15,7 +15,7 @@ export const useUserBlocks = (uid: string, direction: UserBlockDirection) => {
 		readonly unknown[],
 		Doc
 	>({
-		queryKey: useUserBlocksQueryKey(uid, direction),
+		queryKey: adminUserBlocksQueryKey(uid, direction),
 		queryFn: ({ pageParam }) => fetchUserBlocks({ uid, direction, lastDoc: pageParam }),
 		initialPageParam: null,
 		getNextPageParam: (lastPage) => lastPage.lastDoc,

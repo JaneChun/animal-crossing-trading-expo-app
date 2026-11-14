@@ -5,7 +5,7 @@ import { Paginated, UserReviewDirection } from '@/types/admin';
 import { Doc } from '@/types/post';
 import { ReviewWithId } from '@/types/review';
 
-export const useUserReviewsQueryKey = (uid: string, direction: UserReviewDirection) =>
+export const adminUserReviewsQueryKey = (uid: string, direction: UserReviewDirection) =>
 	['adminUserReviews', uid, direction] as const;
 
 export const useUserReviews = (uid: string, direction: UserReviewDirection) => {
@@ -16,7 +16,7 @@ export const useUserReviews = (uid: string, direction: UserReviewDirection) => {
 		readonly unknown[],
 		Doc
 	>({
-		queryKey: useUserReviewsQueryKey(uid, direction),
+		queryKey: adminUserReviewsQueryKey(uid, direction),
 		queryFn: ({ pageParam }) => fetchUserReviews({ uid, direction, lastDoc: pageParam }),
 		initialPageParam: null,
 		getNextPageParam: (lastPage) => lastPage.lastDoc,
