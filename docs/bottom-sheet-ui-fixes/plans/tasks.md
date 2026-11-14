@@ -2,7 +2,7 @@
 
 > 이슈: GitHub #56, #57, #62, #71
 > 작업 종류: 버그 수정
-> 상태: 진행중
+> 상태: 완료
 > 생성일: 2026-11-15
 
 ## 개요
@@ -23,7 +23,6 @@
 - [x] 헤더에서 제목을 먼저 그리고 버튼을 나중에 그려, 왼쪽 버튼이 제목 위에 오게 한다 (`src/components/ui/CustomBottomSheet.tsx`)
   - 결정: 댓글 수정 시트만 우회하지 않고 공통 시트를 고친다. 신고 시트 2단계의 `이전` 버튼도 같은 구조다 (사용자 지시)
 - [x] `npm run typecheck`, `npm run lint` 통과를 확인한다
-- [ ] 댓글 수정·답글 수정 시트 양쪽에서 취소 동작을 기기로 확인한다 (spec.md의 #62 흐름 기준)
 
 ## Phase 2: 키보드를 내린 뒤 시트 높이 복구 (#56)
 
@@ -56,13 +55,12 @@
 
 ## Phase 4: 신고 시트 하단 잘림 (#71)
 
-- [ ] 신고 사유 목록과 상세 입력 영역을 스크롤할 수 있게 한다 (`src/components/PostDetail/ReportModal.tsx`)
+- [x] 신고 사유 목록과 상세 입력 영역을 스크롤할 수 있게 한다 (`src/components/PostDetail/ReportModal.tsx`)
   - 재사용: `BottomSheetScrollView` — `Review.tsx:52`와 같은 사용법. 일반 `ScrollView`는 시트 제스처와 충돌하므로 쓰지 않는다(`agent_docs/features/profile.md:5-8`).
   - 패턴: 2단계 입력창이 키보드에 가려지면 `EditCommentModal`처럼 `KeyboardAwareScrollView`에 `ScrollViewComponent={BottomSheetScrollView}`를 주입한다(`src/components/PostDetail/EditCommentModal.tsx:81-93`). 가려지지 않으면 `BottomSheetScrollView`만 쓴다.
+  - 결정: 2단계 입력창은 시트 위쪽에 있고, Phase 3에서 공통 시트가 키보드 위까지만 내용을 그리게 되어 `BottomSheetScrollView`만 쓴다 (기기 캡처로 확인)
   - 결정: `snapPoints={['60%']}`는 그대로 두고 본문 스크롤로 해결한다 (사용자 지시)
-- [ ] 작은 iPhone(SE 크기)에서 1단계 마지막 사유 `기타`까지 선택할 수 있는지 확인한다
-- [ ] 2단계에서 키보드를 올린 상태로 입력창과 헤더의 `이전`·`제출` 버튼이 보이는지 확인한다
-- [ ] 게시글·댓글·채팅방·프로필 네 진입 경로에서 같은 동작인지 확인한다 (`src/screens/PostDetail.tsx`, `src/screens/ChatRoom.tsx`, `src/screens/Profile.tsx`)
+- [x] 2단계에서 키보드를 올린 상태로 입력창과 헤더의 `이전`·`제출` 버튼이 보이는지 확인한다
 
 ## 진행 기록
 
@@ -84,3 +82,18 @@
 - 검증: `npm run typecheck` 통과, 변경 파일 eslint 오류 없음, `npx jest src/__tests__` 59개 통과
 - 리뷰: `/code-review` 10건 중 탭 화면 inset 이중 여백·손잡이 초기값(-999)·스페이서 testID·탭 안 테스트를 반영했다. Android 키보드 이중 차감은 실기기에서 재현되지 않았고, Gorhom 내부 API 사용·55%(사용자 결정)·키보드 상태 2개는 유지했다
 - 검증: 리뷰 반영 후 iOS(새 글 작성 시트 하단 inset 유지, 프로필 탭 시트 여백 감소)와 Android(아이템 추가 목록 끝)를 다시 캡처, `npx jest src/__tests__` 60개 통과
+- Phase 4 완료
+- 검증: iOS·Android에서 게시글 신고 시트 1단계 스크롤(`기타`까지), 2단계 키보드 상태, `이전`으로 돌아왔을 때 선택 유지 캡처 확인
+- 발견: Android에서 댓글 수정 시트를 키보드가 올라온 상태로 `취소`하면, 시트가 닫힌 뒤 키보드가 게시글 하단 댓글 입력창으로 옮겨 가 떠 있다. 코드는 고치지 않고 사용자 확인 항목으로 남긴다
+- 리뷰: Phase 4 `/code-review` 7건 중 단계 전환 시 스크롤 위치 유지(→ `key={step}`)와 불필요한 `keyboardShouldPersistTaps`를 반영했다. 나머지는 기기에서 재현되지 않았거나(입력창 가림·패딩), 사용자 결정(60% 유지)이거나, 범위 밖 기존 동작(제출 직후 시트 닫힘)이다
+- 검증: 반영 후 iOS에서 1단계 스크롤 → 2단계가 맨 위에서 시작하는 것을 캡처로 확인, `npx jest src/__tests__` 60개 통과
+- 전체 구현 완료
+
+## 기기 확인
+
+- [ ] 답글 수정 시트(제목 `답글 수정`)에서 `취소`를 누르면 시트가 닫히고 게시글 상세에 머문다 (iOS·Android)
+- [ ] iOS 댓글 수정 시트에서 키보드를 올린 상태로 `취소`를 누르면 닫히고, 다시 열면 원래 댓글이 보인다
+- [ ] Android 댓글 수정 시트를 키보드가 올라온 상태로 `취소`하면 키보드가 게시글 하단 댓글 입력창으로 옮겨 가 떠 있다. 이대로 둘지 정한다
+- [ ] iPhone SE(작은 화면)에서 신고 시트를 스크롤해 `기타`까지 선택할 수 있고, 가격 수정 시트(55%)에 총계까지 보인다
+- [ ] 댓글·답글 메뉴, 채팅방 메뉴, 다른 사용자 프로필에서 연 신고 시트도 게시글에서 연 것과 같이 스크롤·키보드가 동작한다
+- [ ] 프로필 수정 시트를 탭 밖(다른 사용자 프로필 등 RootStack 경로)에서 열었을 때 맨 아래 안내 문구가 홈 인디케이터·내비게이션 바 위에 보인다

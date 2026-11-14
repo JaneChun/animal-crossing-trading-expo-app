@@ -1,6 +1,6 @@
-import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 
 import Button from '@/components/ui/Button';
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
@@ -67,7 +67,9 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 				)
 			}
 		>
-			<View style={styles.screen}>
+			{/* 작은 화면에서는 사유 목록이 60% 높이를 넘으므로 스크롤로 마지막 항목까지 닿게 한다(#71) */}
+			{/* 단계마다 새로 그려 1단계에서 스크롤한 위치가 2단계로 넘어가지 않게 한다 */}
+			<BottomSheetScrollView key={step} style={styles.screen}>
 				{step === 1 && (
 					<>
 						<Text variant="body1" weight="semibold" style={styles.label}>
@@ -115,7 +117,7 @@ const ReportModal = ({ isVisible, onClose, onSubmit }: ReportModalProps) => {
 						</Text>
 					</>
 				)}
-			</View>
+			</BottomSheetScrollView>
 		</CustomBottomSheet>
 	);
 };
