@@ -252,7 +252,7 @@ const DesignSystemContent = () => {
 									/>
 								),
 							},
-							{ label: 'valueTone', value: '6', valueTone: 'red' },
+							{ label: 'valueTone', value: '6', valueTone: 'danger' },
 						]}
 					/>
 				</View>

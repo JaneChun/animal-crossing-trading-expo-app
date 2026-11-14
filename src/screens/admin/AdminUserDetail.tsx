@@ -207,13 +207,13 @@ const UserDetailContent = ({ uid }: { uid: string }) => {
 						{
 							label: '받은 신고',
 							value: formatCount(user.report?.total ?? 0),
-							valueTone: 'red',
+							valueTone: 'danger',
 						},
 						{ label: '접수한 신고', value: formatCount(stats?.reportsFiled) },
 						{
 							label: '차단당함',
 							value: formatCount(stats?.blockedBy),
-							valueTone: 'red',
+							valueTone: 'danger',
 						},
 						{ label: '차단함', value: formatCount(stats?.blocking) },
 					]}
