@@ -138,6 +138,10 @@ export const navigateToPrivacyPolicy = () => {
 	navigate('PrivacyPolicy');
 };
 
+export const navigateToOperationPolicy = () => {
+	navigate('OperationPolicy');
+};
+
 // stack to tab
 export const navigateToLogin = () => {
 	navigateToTabAndResetStack('ProfileTab', 'Login');

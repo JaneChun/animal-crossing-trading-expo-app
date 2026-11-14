@@ -88,13 +88,15 @@ const TermsOfService = () => {
 					- 허위·과장 광고, 스팸성 게시물
 				</Text>
 				<Text variant="body2" color="secondary" style={styles.listItem}>
-					• 이용자 신고가 3회 이상 누적된 경우, 해당 이용자는 7일간 서비스 이용이 일시정지
-					되며, 신고가 7회 이상 누적될 경우 30일간 서비스 이용이 일시정지된 후 관리자
-					검토를 거쳐 영구정지 처분이 이루어질 수 있습니다.
+					• 회사는 운영 정책 위반 여부를 확인한 뒤 제재하며, 위반이 반복되면 경고, 기간
+					정지, 영구 정지 순으로 단계적으로 이용을 제한합니다.
 				</Text>
 				<Text variant="body2" color="secondary" style={styles.listItem}>
-					• 제재에 이의가 있는 이용자는 고객센터(janechun22@gmail.com)로 문의할 수
-					있습니다.
+					• 제재를 받은 이용자에게는 위반 유형과 제재 내용을 앱에서 안내합니다.
+				</Text>
+				<Text variant="body2" color="secondary" style={styles.listItem}>
+					• 제재에 이의가 있는 이용자는 앱 안에서 이의를 신청할 수 있으며, 회사는 검토 결과를
+					앱으로 안내합니다.
 				</Text>
 
 				{/* 제6조 지적재산권 및 라이선스 */}

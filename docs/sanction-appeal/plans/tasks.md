@@ -99,22 +99,29 @@
 
 ## Phase 4: 사용자 경고 · 정지 화면, 운영 정책 (PR 2)
 
-- [ ] 사용자 조치 조회 서비스·훅 (`src/firebase/services/sanctionService.ts` 신규, `src/hooks/sanction/query/`)
+- [x] 사용자 조치 조회 서비스·훅 (`src/firebase/services/sanctionService.ts` 신규, `src/hooks/sanction/query/`)
   - 패턴: `firestoreRequest` 래핑(`src/firebase/core/firebaseInterceptor.ts:7`), 도메인별 `hooks/{domain}/query|mutation`
-- [ ] 공용 정책 카드 컴포넌트 (`src/components/Sanction/PolicyCard.tsx` 신규)
+  - 결정: 경고 확인은 조치 문서의 `acknowledgedAt`에 기록한다. 보안 규칙은 본인이 이 필드 하나만, 서버 시각(`request.time`)으로만 쓸 수 있게 열었다(callable을 따로 만들지 않기 위해)
+- [x] 공용 정책 카드 컴포넌트 (`src/components/Sanction/PolicyCard.tsx` 신규)
   - 결정: 경고 화면과 운영 정책 페이지가 같은 컴포넌트를 쓴다(사용자 지시). ✕/✓ 아이콘과 보조 문구 지원
-- [ ] 운영 정책 화면 (`src/screens/OperationPolicy.tsx` 신규, `src/navigation/RootStackNavigator.tsx`, `src/types/navigation.d.ts`) — 시안: '운영 정책 (사용자 · 관리자 공용)'
+- [x] 운영 정책 화면 (`src/screens/OperationPolicy.tsx` 신규, `src/navigation/RootStackNavigator.tsx`, `src/types/navigation.d.ts`) — 시안: '운영 정책 (사용자 · 관리자 공용)'
   - 패턴: `TermsOfService`·`PrivacyPolicy`처럼 RootStack `commonOptions` 화면 + `navigateToXxx` 헬퍼
   - 결정: 관리자 라우트가 아닌 일반 라우트(사용자 지시)
-- [ ] 경고 화면 (`src/screens/SanctionWarning.tsx` 신규) — 시안: '대안 C … copy', 'copy 2'
+- [x] 경고 화면 (`src/screens/SanctionWarning.tsx` 신규) — 시안: '대안 C … copy', 'copy 2'
   - 결정: 채팅 위반은 제목 "운영 정책 위반으로 경고를 받았습니다", 대상 카드 없음(사용자 지시)
   - 결정: 글은 "이 글은 비공개 처리되었습니다", 댓글·답글은 "이 댓글은 비공개 처리되었습니다"(사용자 지시)
-- [ ] 정지 화면 (`src/screens/Suspended.tsx` 신규) — 시안: '처분', '이의 신청 작성 완료 & 운영자 검토', '결과 안내'
+  - 결정: [이의 신청] 버튼은 Phase 5에서 붙인다. 확인 기록이 실패해도 화면은 닫고 다음 실행 때 다시 보여 준다. 확인하지 않은 경고가 여러 개면 최근 것부터 하나씩 띄운다
+- [x] 정지 화면 (`src/screens/Suspended.tsx` 신규) — 시안: '처분', '이의 신청 작성 완료 & 운영자 검토', '결과 안내'
   - 재사용: 진행 단계 표시는 시안 구조를 컴포넌트로(`src/components/Sanction/ProgressSteps.tsx`)
-- [ ] 진입 처리: `useSuspensionGuard` Alert 대체 + 미확인 경고 표시 (`src/hooks/shared/useSuspensionGuard.ts`, `App.tsx`)
+  - 결정: 조치 내용·이의 신청·결과 안내 섹션은 Phase 5 문의 내역 상세에서도 쓰도록 `src/components/Sanction/SanctionSections.tsx`로 분리했다
+  - 결정: 검토 중이면 진행 단계를 '이의 신청' 완료 + '운영자 검토' 현재로 표시한다(시안은 '이의 신청'을 현재로 둠). 이의 신청 기한 안내는 아직 신청하지 않았고 기한이 남았을 때만 보여 준다
+  - 결정(검토 필요): 영구 정지는 시안이 없어 본문을 "운영 정책 위반으로 서비스를 이용할 수 없습니다."(자동 해제 문장 없음), 제한 기간을 "영구"로 표시한다. 기간 정지 시안 문구에서 기간 부분만 뺀 것이다
+- [x] 진입 처리: `useSuspensionGuard` Alert 대체 + 미확인 경고 표시 (`src/hooks/shared/useSuspensionGuard.ts`, `App.tsx`)
   - 패턴: `AdminGuard`의 `navigation.reset` 방식으로 정지 화면만 남긴다
-- [ ] 이용약관 제5조 수정 (`src/screens/TermsOfService.tsx`)
+  - 결정: 앱 시작 시에는 내비게이터가 준비되지 않아 reset이 동작하지 않으므로, `RootStackNavigator`의 `initialRouteName`을 정지 중이면 `Suspended`로 둔다. 실행 중 정지(로그인 등)는 `useSuspensionGuard`가 `resetTo('Suspended')`로 처리한다. 경고 화면은 `RootStackNavigator`의 `useSanctionWarningNotice`가 띄운다(React Query가 필요해 `App`이 아닌 내비게이터 안에 둔다)
+- [x] 이용약관 제5조 수정 (`src/screens/TermsOfService.tsx`)
   - 결정: 내부 횟수 기준 미노출, "단계적 제한", "앱 안에서 이의 신청" 수준(설계 5장)
+  - 결정(검토 필요): 자동 정지 항목과 이메일 이의 제기 항목을 "위반 확인 후 경고·기간 정지·영구 정지 순으로 단계적 제한", "위반 유형과 제재 내용을 앱에서 안내", "앱 안에서 이의 신청, 결과를 앱으로 안내" 세 항목으로 바꿨다. 약관 문구라 배포 전에 확인이 필요하다
 - 검증: `npm run typecheck`, `npm run lint`, 에뮬레이터에서 경고·정지 계정으로 앱 진입 시 각 화면 표시 확인. 라이트·다크 모드 확인
 
 ## Phase 5: 이의 신청 · 문의 내역 (PR 3)
@@ -161,3 +168,6 @@
 - Phase 3 완료
 - 검증: `npm run typecheck`, `npm run lint` 통과(경고 54개는 기존 파일). 에뮬레이터 앱 화면 확인은 소셜 로그인이 필요해 하지 못했다(기기 확인 목록에 남김)
 - 결정(Phase 3 코드 리뷰): 권장 조치를 받는 동안 [정지하기] 비활성화, 영구 정지는 90일이 지나도 '만료'로 표시하지 않음, 조치 후 권장 조치 캐시 무효화, 숨긴 답글은 비활성 [숨김 해제] 행으로 상태 표시를 반영했다. 경고 범위 캐시 무효화 축소·클라이언트 숨김(`hidden=true`) 경로 정리·Alert 취소 시 선택 유지는 관리자 전용 화면의 소규모 개선이라 반영하지 않았다
+- Phase 4 완료
+- 검증: `npm run typecheck`, `npm run lint` 통과(새 파일 경고 없음). `acknowledgedAt` 보안 규칙 확인은 에뮬레이터가 비면 실행한다
+- 결정(Phase 4 코드 리뷰): 정지 가드가 화면 상태 변화마다 정지 화면으로 되돌리도록 바꿨다(푸시·딥링크로 연 화면, 로그인 직후 이동 차단). 경고 알림은 내비게이터 준비 후 다시 시도하고, 경고 화면은 조치를 읽지 못하면 닫는다. 확인 시각은 확인하지 않은 경고에만 한 번 쓸 수 있게 규칙을 좁혔다. 정지가 앱 실행 중 끝나는 경우는 spec대로 다음 진입부터 반영하고, 로그아웃 분기 중복은 기존 패턴이라 그대로 둔다

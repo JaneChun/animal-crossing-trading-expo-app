@@ -40,6 +40,7 @@ export interface Sanction {
 	createdAt: Timestamp;
 	suspendUntil: Timestamp | null; // 기간 정지의 해제 예정일. 경고·영구 정지는 null
 	appeal?: Appeal; // 조치 1건당 1개
+	acknowledgedAt?: Timestamp; // 사용자가 경고 화면에서 [정책을 확인했습니다]를 누른 시각
 }
 
 export type IssueSanctionRequest = Pick<Sanction, 'userId' | 'kind' | 'violationType' | 'reportIds'> & {

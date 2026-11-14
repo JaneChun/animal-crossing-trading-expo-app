@@ -39,6 +39,9 @@ export type RootStackParamList = {
 	Block: undefined;
 	TermsOfService: undefined;
 	PrivacyPolicy: undefined;
+	OperationPolicy: undefined;
+	SanctionWarning: { sanctionId: string };
+	Suspended: undefined;
 	Search: undefined;
 	AdminHome: undefined;
 	AdminReviewUsers: undefined;
@@ -76,4 +79,5 @@ export type SignUpIslandNameRouteProp = RouteProp<RootStackParamList, 'SignUpIsl
 export type AdminReportDetailRouteProp = RouteProp<RootStackParamList, 'AdminReportDetail'>;
 export type AdminChatViewerRouteProp = RouteProp<RootStackParamList, 'AdminChatViewer'>;
 export type AdminUserDetailRouteProp = RouteProp<RootStackParamList, 'AdminUserDetail'>;
+export type SanctionWarningRouteProp = RouteProp<RootStackParamList, 'SanctionWarning'>;
 export type AdminUserRecordsRouteProp = RouteProp<RootStackParamList, 'AdminUserRecords'>;

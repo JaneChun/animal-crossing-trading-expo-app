@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Platform } from 'react-native';
 
 import { UpdateModal } from '@/components/ui/UpdateModal';
+import { useSanctionWarningNotice } from '@/hooks/sanction/useSanctionWarningNotice';
 import { useVersionCheck } from '@/hooks/shared/useVersionCheck';
 import Account from '@/screens/Account';
 import AdminChatViewer from '@/screens/admin/AdminChatViewer';
@@ -21,19 +22,23 @@ import ChatRoom from '@/screens/ChatRoom';
 import DeleteAccount from '@/screens/DeleteAccount';
 import NewPost from '@/screens/NewPost';
 import Onboarding from '@/screens/Onboarding';
+import OperationPolicy from '@/screens/OperationPolicy';
 import PostDetail from '@/screens/PostDetail';
 import PrivacyPolicy from '@/screens/PrivacyPolicy';
 import Profile from '@/screens/Profile';
+import SanctionWarning from '@/screens/SanctionWarning';
 import Search from '@/screens/Search';
 import Setting from '@/screens/Setting';
 import SignUpDisplayName from '@/screens/SignUpDisplayName';
 import SignUpIslandName from '@/screens/SignUpIslandName';
 import SocialAccountCheck from '@/screens/SocialAccountCheck';
 import SplashScreen from '@/screens/SplashScreen';
+import Suspended from '@/screens/Suspended';
 import TermsOfService from '@/screens/TermsOfService';
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore, useUserInfo } from '@/stores/auth';
 import { useOnboardingStore } from '@/stores/onboarding/store';
 import { useTheme } from '@/theme';
+import { isSuspended } from '@/utilities/sanction';
 
 import MainTabNavigator from './MainTabNavigator';
 
@@ -59,6 +64,11 @@ const RootStackNavigator = () => {
 
 	const isAppInitializing = isUserLoading || isOnboardingLoading || isVersionCheckLoading;
 
+	// 정지 중이면 정지 화면에서 시작한다(실행 중 정지는 useSuspensionGuard가 처리)
+	const userInfo = useUserInfo();
+	const isUserSuspended = isSuspended(userInfo?.report?.suspendUntil);
+	useSanctionWarningNotice(!isAppInitializing && hasCompletedOnboarding && !isUserSuspended);
+
 	const commonOptions = {
 		// 로그인/로그아웃/탈퇴 시 로딩화면 표시할 때 상단 헤더 숨김 처리 (iOS만)
 		// Android는 숨긴 헤더를 다시 표시하는 순간 pop으로 화면이 닫히면 react-native-screens가 크래시해서 숨기지 않는다
@@ -75,7 +85,13 @@ const RootStackNavigator = () => {
 	return (
 		<>
 			<RootStack.Navigator
-				initialRouteName={hasCompletedOnboarding ? 'MainTab' : 'Onboarding'}
+				initialRouteName={
+					isUserSuspended
+						? 'Suspended'
+						: hasCompletedOnboarding
+							? 'MainTab'
+							: 'Onboarding'
+				}
 				screenOptions={{ headerShown: false }}
 			>
 				{/* 탭바 O */}
@@ -189,6 +205,22 @@ const RootStackNavigator = () => {
 						// </AuthGuard>
 					)}
 					options={{ ...commonOptions, title: '개인정보 처리방침' }}
+				/>
+				<RootStack.Screen
+					name="OperationPolicy"
+					component={OperationPolicy}
+					options={{ ...commonOptions, title: '운영 정책' }}
+				/>
+				<RootStack.Screen
+					name="SanctionWarning"
+					component={SanctionWarning}
+					options={{ headerShown: false }}
+				/>
+				<RootStack.Screen
+					name="Suspended"
+					component={Suspended}
+					// 정지 중에는 이 화면만 남기므로 뒤로 가기 제스처를 막는다
+					options={{ headerShown: false, gestureEnabled: false }}
 				/>
 				<RootStack.Screen
 					name="Search"

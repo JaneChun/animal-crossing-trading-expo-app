@@ -1,38 +1,27 @@
-import { Timestamp } from 'firebase/firestore';
 import { useEffect } from 'react';
-import { Alert } from 'react-native';
 
-import { useAuthStore, useUserInfo } from '@/stores/auth';
+import { navigationRef, resetTo } from '@/navigation/RootNavigation';
+import { useUserInfo } from '@/stores/auth';
+import { isSuspended } from '@/utilities/sanction';
 
+// 정지 중이면 정지 화면만 남긴다.
+// 앱 시작 때는 RootStackNavigator의 initialRouteName이 정지 화면에서 시작하게 하고,
+// 이 훅은 그 뒤의 모든 화면 이동(로그인 후 이동, 푸시·딥링크로 연 화면)을 감시해 정지 화면으로 되돌린다
 export const useSuspensionGuard = () => {
 	const userInfo = useUserInfo();
-	const kakaoLogout = useAuthStore((state) => state.kakaoLogout);
-	const naverLogout = useAuthStore((state) => state.naverLogout);
-	const appleLogout = useAuthStore((state) => state.appleLogout);
+	const isUserSuspended = isSuspended(userInfo?.report?.suspendUntil);
 
 	useEffect(() => {
-		const suspendUntil = userInfo?.report?.suspendUntil;
+		if (!isUserSuspended) return;
 
-		if (suspendUntil && Timestamp.now() < suspendUntil) {
-			const formattedDate = suspendUntil.toDate().toLocaleDateString('ko-KR').slice(0, -1);
+		const keepSuspendedScreen = () => {
+			if (!navigationRef.isReady()) return;
+			if (navigationRef.getCurrentRoute()?.name === 'Suspended') return;
+			resetTo('Suspended');
+		};
 
-			Alert.alert(
-				'계정 일시 정지',
-				`회원님의 계정은 최근 누적된 신고로 인해 커뮤니티 운영 정책에 따라 일정 기간 동안 활동이 제한되었습니다.\n정지 해제일: ${formattedDate}`,
-
-				[
-					{
-						text: '로그아웃',
-						onPress: async () => {
-							if (!userInfo) return;
-
-							if (userInfo.oauthType === 'kakao') await kakaoLogout();
-							else if (userInfo.oauthType === 'naver') await naverLogout();
-							else if (userInfo.oauthType === 'apple') await appleLogout();
-						},
-					},
-				],
-			);
-		}
-	}, [userInfo]);
+		keepSuspendedScreen();
+		const unsubscribe = navigationRef.addListener('state', keepSuspendedScreen);
+		return unsubscribe;
+	}, [isUserSuspended]);
 };

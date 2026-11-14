@@ -161,7 +161,12 @@ service cloud.firestore {
     // Sanctions
     match /Sanctions/{sanctionId} {
       allow read: if request.auth.uid == resource.data.userId || isAdmin(); // 조치 대상 본인, 관리자
-      allow write: if false; // 함수만 기록
+      allow update: if request.auth.uid == resource.data.userId && // 본인은 확인하지 않은 경고에 확인 시각만 한 번 기록
+        resource.data.kind == 'warning' &&
+        !('acknowledgedAt' in resource.data) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['acknowledgedAt']) &&
+        request.resource.data.acknowledgedAt == request.time;
+      allow create, delete: if false; // 함수만 기록
     }
     
     // Errors

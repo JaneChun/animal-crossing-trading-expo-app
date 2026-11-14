@@ -44,6 +44,7 @@ export interface SanctionDoc {
 	createdAt: FirebaseFirestore.Timestamp;
 	suspendUntil: FirebaseFirestore.Timestamp | null;
 	appeal?: Appeal;
+	acknowledgedAt?: FirebaseFirestore.Timestamp;
 }
 
 export interface IssueSanctionRequest {
