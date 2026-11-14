@@ -2,6 +2,7 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
+import { AdminUserRecordKind } from './admin';
 import { CreateChatRoomParams, SendChatMessageParams } from './chat';
 import { Collection } from './post';
 import { SignUpParams } from './user';
@@ -47,6 +48,7 @@ export type RootStackParamList = {
 	AdminStats: undefined;
 	AdminUsers: undefined;
 	AdminUserDetail: { uid: string };
+	AdminUserRecords: { uid: string; kind: AdminUserRecordKind };
 	AdminErrors: undefined;
 	DesignSystem: undefined;
 };
@@ -74,3 +76,4 @@ export type SignUpIslandNameRouteProp = RouteProp<RootStackParamList, 'SignUpIsl
 export type AdminReportDetailRouteProp = RouteProp<RootStackParamList, 'AdminReportDetail'>;
 export type AdminChatViewerRouteProp = RouteProp<RootStackParamList, 'AdminChatViewer'>;
 export type AdminUserDetailRouteProp = RouteProp<RootStackParamList, 'AdminUserDetail'>;
+export type AdminUserRecordsRouteProp = RouteProp<RootStackParamList, 'AdminUserRecords'>;

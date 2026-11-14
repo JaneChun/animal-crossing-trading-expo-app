@@ -13,13 +13,22 @@ type UserRowProps = {
 	onPress?: () => void;
 	/** 이름 옆 배지 */
 	nameAccessory?: ReactNode;
+	/** 섬 이름 아래 줄 */
+	subtitle?: ReactNode;
 	/** 오른쪽 슬롯: chevron, 배지, 시간 */
 	right?: ReactNode;
 	/** 목록 행이면 true. 좌우 여백과 아래 구분선을 그린다 */
 	isListItem?: boolean;
 };
 
-const UserRow = ({ user, onPress, nameAccessory, right, isListItem = false }: UserRowProps) => {
+const UserRow = ({
+	user,
+	onPress,
+	nameAccessory,
+	subtitle,
+	right,
+	isListItem = false,
+}: UserRowProps) => {
 	const styles = useThemedStyles(makeStyles);
 
 	return (
@@ -48,6 +57,7 @@ const UserRow = ({ user, onPress, nameAccessory, right, isListItem = false }: Us
 						</Text>
 					</View>
 				)}
+				{subtitle}
 			</View>
 			{right}
 		</Pressable>
