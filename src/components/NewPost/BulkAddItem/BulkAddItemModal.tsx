@@ -5,6 +5,7 @@ import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 import Text from '@/components/ui/Text';
 import { showToast } from '@/components/ui/Toast';
 import { useBulkAddSelection } from '@/hooks/item/useBulkAddSelection';
+import { Spacing } from '@/theme';
 import { type BulkAddItemModalProps } from '@/types/components';
 import { logBulkAddConfirm } from '@/utilities/analytics';
 
@@ -94,7 +95,8 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		padding: 0,
-		paddingBottom: 30,
+		// 하단 inset은 CustomBottomSheet가 비워 주므로, 버튼이 그 경계에 붙지 않을 만큼만 띄운다
+		paddingBottom: Spacing.s,
 	},
 	loadingContainer: {
 		flex: 1,

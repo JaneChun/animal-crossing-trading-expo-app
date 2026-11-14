@@ -71,6 +71,8 @@ const EditCommentModal = ({
 			isVisible={isVisible}
 			onClose={onClose}
 			snapPoints={['95%', '100%']}
+			// 키보드 여백은 KeyboardAwareScrollView가 넣으므로 시트가 내용 높이를 줄이지 않게 한다
+			contentHandlesKeyboard
 			title={title}
 			rightButton={submitButton}
 			leftButton={cancelButton}

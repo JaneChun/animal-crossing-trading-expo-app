@@ -34,17 +34,25 @@
 - [x] 공통 시트에 `keyboardBehavior` 선택 prop을 추가하고, 가격 수정 시트에는 `fillParent`를 준다 (`src/components/ui/CustomBottomSheet.tsx`, `src/components/NewPost/EditItemModal.tsx`)
   - 결정: 키보드가 떠 있는 동안만 시트를 펼친다 (사용자 지시). `extend` + `['40%', '95%']`는 펼친 뒤 현재 인덱스가 95%로 바뀌어 `restore`가 40%로 돌아오지 않으므로(`BottomSheet.tsx` `animateToPosition`), 임시 위치로 처리되는 `fillParent`를 쓴다
 - [x] 가격 수정 시트에서 키보드가 올라온 동안 총계가 보이고, 키보드를 닫은 뒤 높이가 `40%`로 돌아오는지 iOS·Android에서 확인한다
-- [ ] 사용처 7곳(`ReportModal`, `EditCommentModal`, `EditProfileModal`, `AddItemModal`, `EditItemModal`, `BulkAddItemModal`, `AddVillagerModal`)에서 키보드를 열고 닫았을 때 레이아웃이 깨지지 않는지 확인한다
+- [x] 사용처 7곳(`ReportModal`, `EditCommentModal`, `EditProfileModal`, `AddItemModal`, `EditItemModal`, `BulkAddItemModal`, `AddVillagerModal`)에서 키보드를 열고 닫았을 때 레이아웃이 깨지지 않는지 확인한다
 - [x] Gorhom `keyboardBlurBehavior` 기본값 함정을 기록한다 (`agent_docs/architecture.md` 20행의 바텀시트 키보드 설명 뒤에 한 줄)
 
 ## Phase 3: 일괄 추가 검토 화면 확인 버튼 (#57)
 
-- [ ] Phase 2를 적용한 상태에서 iOS로 재현 경로(본문에 여러 줄 붙여넣기 → 아이템 찾기 → 검토 화면)를 실행해, 확인 버튼이 보이는지 확인한다
-  - 결과가 정상이면 #57은 #56과 같은 원인으로 판단하고, `## 진행 기록`에 근거와 함께 남긴 뒤 이 Phase의 코드 수정 항목은 건너뛴다.
-- [ ] 여전히 버튼이 가려지면 원인을 확인하고 고친다 (`src/components/NewPost/BulkAddItem/BulkAddItemModal.tsx`, `src/components/NewPost/BulkAddItem/Review.tsx`)
-  - 패턴: `Review`는 `BottomSheetScrollView`(`flex: 1`) + 고정 `footer` 구조다. 스크롤 영역이 남은 높이를 차지하고 footer는 항상 시트 하단에 있어야 한다.
-  - 점검 순서: 시트가 열린 직후 시트 위치(키보드 오프셋 잔존 여부) → `customBottomSheetContent` 높이와 시트 높이 비교 → `BulkAddItemModal`의 `bodyStyle`(`paddingBottom: 30`)과 하단 safe area 관계
-- [ ] 검토 항목이 적을 때와 많을 때 모두 확인 버튼이 보이고 동작하는지 iOS·Android에서 확인한다
+- [x] Phase 2를 적용한 상태에서 iOS로 재현 경로를 실행해 확인 버튼이 보이는지 확인한다 — 보이지 않음(#56과 다른 원인)
+- [x] 공통 시트 내용 루트의 높이를 "지금 보이는 시트 영역"으로 직접 계산해 지정한다 (`src/components/ui/CustomBottomSheet.tsx`, `src/__tests__/components/CustomBottomSheet.test.tsx`)
+  - 원인: Gorhom 내용 영역은 가장 높은 스냅 포인트 기준 높이에 `paddingBottom`(약 70pt + 키보드)을 더한 크기다. `absoluteFill`이든 `flex: 1`이든 이 영역을 채우면 하단이 화면 밖으로 나가고, Android에서는 내용 크기에 따라 영역이 더 늘어난다(실측)
+  - 재사용: Gorhom `useBottomSheetInternal()`의 `animatedLayoutState`·`animatedPosition`·`animatedDetentsState`, keyboard-controller `useGenericKeyboardHandler`의 키보드 높이
+  - 결정: 일괄 추가 시트만 보정하지 않고 공통 시트에서 고친다 (사용자 지시). 처음 시도한 `flex: 1`은 iOS에서만 맞고 Android에서 넘쳐서 높이 계산 방식으로 바꿨다
+- [x] 시트 맨 아래 스페이서가 키보드가 없을 때 `insets.bottom`, 있을 때 툴바 높이만큼 비우게 한다 (`src/components/ui/CustomBottomSheet.tsx`)
+  - 결정: Android 3버튼 내비게이션 바에 신고·가격 수정·주민 추가 시트 하단이 가려지는 문제(사용자 제보)를 공통 시트에서 해결한다 (사용자 지시)
+- [x] inset과 겹치던 시트별 하단 여백을 정리한다 (`BulkAddItemModal.tsx`·`AddItemModal.tsx`는 `Spacing.s`, `EditProfileModal.tsx`는 탭바 높이 여백 제거, `EditProfileModal.test.tsx` 수정)
+- [x] 가격 수정 시트 높이를 40%에서 55%로 올린다 (`src/components/NewPost/EditItemModal.tsx`)
+  - 결정: 내용 높이를 측정하지 않고 비율을 올린다. 큰 화면에서 총계 아래 빈 공간이 생기는 것은 감수한다 (사용자 지시)
+- [x] 키보드 여백을 스스로 넣는 시트(`KeyboardAwareScrollView`)를 위해 `contentHandlesKeyboard` prop을 추가하고 프로필 수정·댓글 수정 시트에 준다
+  - 결정: 이 prop 없이 키보드만큼 내용을 줄이면 끝까지 스크롤했을 때 키보드 높이만큼 빈 공간이 생긴다(iOS 실측)
+- [x] `agent_docs/features/profile.md`, `agent_docs/architecture.md`를 바뀐 시트 구조에 맞게 고친다
+- [x] 검토 항목이 적을 때와 많을 때 모두 확인 버튼이 보이고 동작하는지 iOS·Android에서 확인한다
 
 ## Phase 4: 신고 시트 하단 잘림 (#71)
 
@@ -69,3 +77,10 @@
 - 계획과 달라진 부분: 가격 수정 시트에서 키보드가 올라오면 총계가 툴바에 가려지는 문제(사용자 제보)를 Phase 2에 추가했다
 - 검증: `npm run typecheck` 통과, 변경 파일 eslint 오류 없음(`EditItemModal.tsx`의 기존 exhaustive-deps 경고 1건)
 - 검증: iPhone 17 Pro 시뮬레이터에서 키보드가 올라오면 시트가 화면을 채우고, 내리면 40%로 돌아오는 것을 사용자가 확인
+- Phase 3: iPhone 17 Pro 시뮬레이터에서 루트를 `flex: 1`로 바꾸자 `2개 추가하기` 버튼이 화면 안에 보이는 것을 캡처로 확인
+- 검증: `npm run typecheck` 통과, 변경 파일 eslint 통과, `npx jest src/__tests__` 58개 통과(공통 시트 테스트의 `absoluteFill` 단언을 `flex: 1`로 수정)
+- 계획과 달라진 부분: Phase 3에서 `flex: 1`이 Android에서 맞지 않아(아이템 추가 시트 내용 1025dp, 화면 880dp 실측) 내용 높이를 직접 계산하도록 바꿨고, 하단 inset·가격 수정 시트 높이·`contentHandlesKeyboard`를 함께 처리했다
+- 검증: iPhone 17 Pro 시뮬레이터와 Galaxy Z Flip3(3버튼)에서 Maestro·adb로 캡처 확인 — 아이템 추가(목록 끝, 키보드 열림), 가격 수정(키보드 전·중·후), 일괄 추가(12개), 주민 추가(목록 끝, Android), 프로필 수정(하단·키보드). 신고 시트는 Phase 4, 댓글 수정 시트는 기기 확인 목록으로 넘김
+- 검증: `npm run typecheck` 통과, 변경 파일 eslint 오류 없음, `npx jest src/__tests__` 59개 통과
+- 리뷰: `/code-review` 10건 중 탭 화면 inset 이중 여백·손잡이 초기값(-999)·스페이서 testID·탭 안 테스트를 반영했다. Android 키보드 이중 차감은 실기기에서 재현되지 않았고, Gorhom 내부 API 사용·55%(사용자 결정)·키보드 상태 2개는 유지했다
+- 검증: 리뷰 반영 후 iOS(새 글 작성 시트 하단 inset 유지, 프로필 탭 시트 여백 감소)와 Android(아이템 추가 목록 끝)를 다시 캡처, `npx jest src/__tests__` 60개 통과
