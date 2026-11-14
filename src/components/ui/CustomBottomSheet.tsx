@@ -111,6 +111,8 @@ const CustomBottomSheet = ({
 			// 따라서 false여야 한다. true면 "콘텐츠 높이 0" → 시트가 높이 0으로 닫힌다.
 			snapPoints={snapPoints}
 			onChange={handleSheetChanges}
+			// 기본값 'none'은 키보드가 내려가도 시트를 키보드 위치에 둔다. 'restore'로 원래 스냅 포인트로 되돌린다
+			keyboardBlurBehavior="restore"
 			backdropComponent={renderBackdrop}
 			enablePanDownToClose={true}
 			backgroundStyle={{
