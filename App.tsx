@@ -55,6 +55,12 @@ const linking: LinkingOptions<RootStackParamList> = {
 			AdminReportDetail: {
 				path: 'admin/report/:reportId',
 			},
+			AdminAppealDetail: {
+				path: 'admin/appeal/:sanctionId',
+			},
+			InquiryDetail: {
+				path: 'inquiry/:sanctionId',
+			},
 		},
 	},
 };

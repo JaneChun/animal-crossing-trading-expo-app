@@ -56,6 +56,7 @@ export type RootStackParamList = {
 	AdminUserDetail: { uid: string };
 	AdminUserRecords: { uid: string; kind: AdminUserRecordKind };
 	AdminErrors: undefined;
+	AdminAppealDetail: { sanctionId: string };
 	DesignSystem: undefined;
 };
 
@@ -82,6 +83,7 @@ export type SignUpIslandNameRouteProp = RouteProp<RootStackParamList, 'SignUpIsl
 export type AdminReportDetailRouteProp = RouteProp<RootStackParamList, 'AdminReportDetail'>;
 export type AdminChatViewerRouteProp = RouteProp<RootStackParamList, 'AdminChatViewer'>;
 export type AdminUserDetailRouteProp = RouteProp<RootStackParamList, 'AdminUserDetail'>;
+export type AdminAppealDetailRouteProp = RouteProp<RootStackParamList, 'AdminAppealDetail'>;
 export type SanctionWarningRouteProp = RouteProp<RootStackParamList, 'SanctionWarning'>;
 export type AppealFormRouteProp = RouteProp<RootStackParamList, 'AppealForm'>;
 export type InquiryDetailRouteProp = RouteProp<RootStackParamList, 'InquiryDetail'>;

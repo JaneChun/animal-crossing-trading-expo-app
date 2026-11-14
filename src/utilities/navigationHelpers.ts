@@ -209,6 +209,10 @@ export const navigateToAdminUserDetail = ({ uid }: { uid: string }) => {
 	navigate('AdminUserDetail', { uid });
 };
 
+export const navigateToAdminAppealDetail = ({ sanctionId }: { sanctionId: string }) => {
+	navigate('AdminAppealDetail', { sanctionId });
+};
+
 export const navigateToAdminUserRecords = ({
 	uid,
 	kind,

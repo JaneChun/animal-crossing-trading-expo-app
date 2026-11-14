@@ -253,7 +253,6 @@ const UserDetailContent = ({ uid }: { uid: string }) => {
 						<Text variant="body1" weight="semibold">
 							신고
 						</Text>
-						{user.report?.needsAdminReview && <Badge text="검토 필요" tone="orange" />}
 					</View>
 					<StatStrip
 						items={[

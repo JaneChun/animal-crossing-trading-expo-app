@@ -86,8 +86,14 @@ export const SanctionSummarySection = ({ sanction }: { sanction: Sanction }) => 
 	);
 };
 
-// 이의 신청: 상태 칩 + 접수일 + 내용(3줄)
-export const AppealSection = ({ appeal }: { appeal: Appeal }) => {
+// 이의 신청: 상태 칩 + 접수일 + 내용(사용자 화면은 3줄, 관리자 화면은 전체)
+export const AppealSection = ({
+	appeal,
+	showFullContent = false,
+}: {
+	appeal: Appeal;
+	showFullContent?: boolean;
+}) => {
 	const styles = useThemedStyles(makeStyles);
 	const isPending = appeal.status === 'pending';
 
@@ -106,7 +112,11 @@ export const AppealSection = ({ appeal }: { appeal: Appeal }) => {
 				<Text variant="caption" color="tertiary">
 					{`${formatKstDate(appeal.createdAt.toDate())} 접수`}
 				</Text>
-				<Text variant="body2" color="secondary" numberOfLines={3}>
+				<Text
+					variant="body2"
+					color="secondary"
+					numberOfLines={showFullContent ? undefined : 3}
+				>
 					{appeal.content}
 				</Text>
 			</View>
@@ -115,7 +125,14 @@ export const AppealSection = ({ appeal }: { appeal: Appeal }) => {
 };
 
 // 결과 안내: 운영자 답변일 + 답변. 검토 완료된 이의 신청에만 그린다
-export const AppealResultSection = ({ appeal }: { appeal: Appeal }) => {
+// 재신청 불가 안내는 사용자 화면에만 보여 준다
+export const AppealResultSection = ({
+	appeal,
+	showResubmitNotice = true,
+}: {
+	appeal: Appeal;
+	showResubmitNotice?: boolean;
+}) => {
 	const styles = useThemedStyles(makeStyles);
 	if (appeal.status !== 'reviewed') return null;
 
@@ -134,9 +151,11 @@ export const AppealResultSection = ({ appeal }: { appeal: Appeal }) => {
 					{appeal.reply}
 				</Text>
 			</View>
-			<Text variant="caption" color="tertiary" style={styles.resultNotice}>
-				같은 조치에는 이의를 다시 신청할 수 없습니다.
-			</Text>
+			{showResubmitNotice && (
+				<Text variant="caption" color="tertiary" style={styles.resultNotice}>
+					같은 조치에는 이의를 다시 신청할 수 없습니다.
+				</Text>
+			)}
 		</View>
 	);
 };

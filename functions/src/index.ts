@@ -10,7 +10,12 @@ import { createFirebaseCustomToken } from './auth/customToken';
 
 // Admin functions
 import { assertAdmin, getDailyStatsHandler, getUserStatsHandler } from './admin/stats';
-import { getSanctionRecommendationHandler, issueSanctionHandler } from './admin/sanction';
+import {
+	cancelSanctionHandler,
+	decideAppealHandler,
+	getSanctionRecommendationHandler,
+	issueSanctionHandler,
+} from './admin/sanction';
 import { submitAppealHandler } from './sanction/appeal';
 import { liftSuspensionHandler } from './admin/suspension';
 
@@ -98,6 +103,24 @@ export const issueSanction = functions.https.onCall(async (request) => {
 export const getSanctionRecommendation = functions.https.onCall(async (request) => {
 	await assertAdmin(request.auth?.uid);
 	return await getSanctionRecommendationHandler(request.data?.uid);
+});
+
+/**
+ * 관리자 이의 신청 결정
+ * 답변을 저장하고, 조치 취소면 조치를 취소(정지 재계산, 대상 다시 공개)한 뒤 사용자에게 결과 푸시를 보낸다
+ */
+export const decideAppeal = functions.https.onCall(async (request) => {
+	await assertAdmin(request.auth?.uid);
+	await decideAppealHandler(request.data);
+});
+
+/**
+ * 관리자 조치 취소(이의 신청 없이)
+ * 신고 상세의 [숨김 해제]로 실수로 건 경고를 되돌린다
+ */
+export const cancelSanction = functions.https.onCall(async (request) => {
+	await assertAdmin(request.auth?.uid);
+	await cancelSanctionHandler(request.data);
 });
 
 /**

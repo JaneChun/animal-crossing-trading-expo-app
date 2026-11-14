@@ -1,12 +1,14 @@
-import { StyleSheet, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import Badge from '@/components/ui/Badge';
 import Text from '@/components/ui/Text';
 import { SANCTION_KINDS, VIOLATION_TYPES } from '@/constants/sanction';
-import { Spacing, Theme, useThemedStyles } from '@/theme';
+import { Spacing, Theme, useTheme, useThemedStyles } from '@/theme';
 import { BadgeTone } from '@/types/components';
 import { Sanction } from '@/types/sanction';
 import { formatKstDate, formatKstMonthDay } from '@/utilities/kstDate';
+import { navigateToAdminAppealDetail } from '@/utilities/navigationHelpers';
 
 const SANCTION_COUNT_WINDOW_MS = 90 * 24 * 60 * 60 * 1000;
 
@@ -36,8 +38,10 @@ const getTargetTitle = (sanction: Sanction): string | undefined => {
 };
 
 // 관리자 유저 상세의 제재 이력. 행은 조치 칩 / 위반 유형 / 대상 글 / 날짜
+// 이의 신청이 있는 행은 눌러서 이의 신청 상세로 간다
 const SanctionHistoryList = ({ sanctions }: { sanctions: Sanction[] }) => {
 	const styles = useThemedStyles(makeStyles);
+	const { colors } = useTheme();
 
 	return (
 		<View style={styles.list}>
@@ -54,8 +58,16 @@ const SanctionHistoryList = ({ sanctions }: { sanctions: Sanction[] }) => {
 					? formatKstDate(createdAt)
 					: formatKstMonthDay(createdAt);
 
+				const hasAppeal = !!sanction.appeal;
+				const isAppealPending = sanction.appeal?.status === 'pending';
+
 				return (
-					<View key={sanction.id} style={[styles.row, index > 0 && styles.rowDivider]}>
+					<Pressable
+						key={sanction.id}
+						style={[styles.row, index > 0 && styles.rowDivider]}
+						disabled={!hasAppeal}
+						onPress={() => navigateToAdminAppealDetail({ sanctionId: sanction.id })}
+					>
 						<Badge text={chip.text} tone={chip.tone} />
 						<View style={styles.texts}>
 							<Text variant="body2" color={isInactive ? 'tertiary' : 'primary'}>
@@ -69,8 +81,25 @@ const SanctionHistoryList = ({ sanctions }: { sanctions: Sanction[] }) => {
 							<Text variant="caption" color="tertiary">
 								{dateText}
 							</Text>
+							{isAppealPending && (
+								<Text
+									variant="caption"
+									weight="semibold"
+									color="primaryBrand"
+									style={styles.appealLink}
+								>
+									이의 신청 검토 중 ›
+								</Text>
+							)}
 						</View>
-					</View>
+						{hasAppeal && (
+							<Ionicons
+								name="chevron-forward"
+								size={16}
+								color={colors.text.tertiary}
+							/>
+						)}
+					</Pressable>
 				);
 			})}
 		</View>
@@ -99,5 +128,8 @@ const makeStyles = ({ colors }: Theme) =>
 		texts: {
 			flex: 1,
 			minWidth: 0,
+		},
+		appealLink: {
+			marginTop: Spacing.xs,
 		},
 	});

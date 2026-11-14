@@ -35,7 +35,7 @@ import { Collection, Doc, Post, PostDoc } from '@/types/post';
 import { Reply } from '@/types/reply';
 import { Report } from '@/types/report';
 import { ReviewWithId } from '@/types/review';
-import { IssueSanctionRequest, Sanction, SanctionKind } from '@/types/sanction';
+import { AppealResult, IssueSanctionRequest, Sanction, SanctionKind } from '@/types/sanction';
 import { UserInfo } from '@/types/user';
 import { toPost } from '@/utilities/toPost';
 
@@ -170,15 +170,58 @@ export const fetchReport = async (reportId: string): Promise<Report | null> => {
 	);
 };
 
-export const fetchNeedsReviewUsers = async (lastDoc: Doc): Promise<Paginated<UserInfo>> => {
+export type NeedsReviewUser = {
+	user: UserInfo;
+	pendingAppealSanctionId: string | null; // 처리 대기 중인 이의 신청이 있으면 그 조치 ID
+	unresolvedReportCount: number;
+};
+
+// 검토 필요 유저: 처리 대기 중인 이의 신청이 있는 유저 + 처리되지 않은 신고를 받은 유저.
+// 대상이 많지 않아 페이지 없이 모두 읽고, 이의 신청 대기 → 미처리 신고 많은 순으로 정렬한다
+export const fetchNeedsReviewUsers = async (): Promise<NeedsReviewUser[]> => {
 	return firestoreRequest(
 		'검토 필요 유저 조회',
 		async () => {
-			const page = await fetchPage<UserInfo & { id: string }>(
-				query(collection(db, 'Users'), where('report.needsAdminReview', '==', true)),
-				lastDoc,
+			const [pendingAppealsSnap, unresolvedReportsSnap] = await Promise.all([
+				getDocs(
+					query(collection(db, 'Sanctions'), where('appeal.status', '==', 'pending')),
+				),
+				getDocs(query(collection(db, 'Reports'), where('resolved', '==', false))),
+			]);
+
+			const pendingAppealByUser = new Map<string, string>();
+			pendingAppealsSnap.docs.forEach((sanctionDoc) => {
+				pendingAppealByUser.set(sanctionDoc.data().userId, sanctionDoc.id);
+			});
+			const unresolvedCountByUser = new Map<string, number>();
+			unresolvedReportsSnap.docs.forEach((reportDoc) => {
+				const reporteeId: string = reportDoc.data().reporteeId;
+				unresolvedCountByUser.set(
+					reporteeId,
+					(unresolvedCountByUser.get(reporteeId) ?? 0) + 1,
+				);
+			});
+
+			const userIds = [
+				...new Set([...pendingAppealByUser.keys(), ...unresolvedCountByUser.keys()]),
+			];
+			const users = await Promise.all(
+				userIds.map((uid) => getDocFromFirestore({ collection: 'Users', id: uid })),
 			);
-			return { ...page, data: page.data.map(toUserInfo) };
+
+			const reviewUsers = users
+				.filter((user): user is UserInfo & { id: string } => !!user)
+				.map((user) => ({
+					user: toUserInfo(user),
+					pendingAppealSanctionId: pendingAppealByUser.get(user.id) ?? null,
+					unresolvedReportCount: unresolvedCountByUser.get(user.id) ?? 0,
+				}));
+
+			return reviewUsers.sort(
+				(a, b) =>
+					Number(!!b.pendingAppealSanctionId) - Number(!!a.pendingAppealSanctionId) ||
+					b.unresolvedReportCount - a.unresolvedReportCount,
+			);
 		},
 		{ throwOnError: true },
 	);
@@ -440,4 +483,60 @@ export const setCommentHidden = async ({
 		},
 		{ throwOnError: true },
 	);
+};
+
+export const fetchSanction = async (sanctionId: string): Promise<Sanction | null> => {
+	return firestoreRequest(
+		'조치 조회',
+		async () => {
+			const docData = await getDocFromFirestore({ collection: 'Sanctions', id: sanctionId });
+			return docData ? (docData as Sanction) : null;
+		},
+		{ throwOnError: true },
+	);
+};
+
+// 조치의 근거 신고. 삭제된 신고는 빠진다
+export const fetchReportsByIds = async (reportIds: string[]): Promise<Report[]> => {
+	return firestoreRequest(
+		'근거 신고 조회',
+		async () => {
+			const reports = await Promise.all(
+				reportIds.map((id) => getDocFromFirestore({ collection: 'Reports', id })),
+			);
+			return reports.filter((report): report is Report => !!report);
+		},
+		{ throwOnError: true },
+	);
+};
+
+// 신고 상세의 [숨김 해제]가 되돌릴 경고: 이 신고를 근거로 한 유효한 경고 조치
+export const fetchActiveWarningForReport = async (reportId: string): Promise<Sanction | null> => {
+	return firestoreRequest(
+		'신고 경고 조치 조회',
+		async () => {
+			const snapshot = await getDocs(
+				query(collection(db, 'Sanctions'), where('reportIds', 'array-contains', reportId)),
+			);
+			const sanction = snapshot.docs
+				.map((sanctionDoc) => ({ id: sanctionDoc.id, ...sanctionDoc.data() }) as Sanction)
+				.find(({ kind, status }) => kind === 'warning' && status === 'active');
+			return sanction ?? null;
+		},
+		{ throwOnError: true },
+	);
+};
+
+export type DecideAppealRequest = {
+	sanctionId: string;
+	result: AppealResult;
+	reply: string;
+};
+
+export const decideAppeal = async (request: DecideAppealRequest): Promise<void> => {
+	await httpsCallable<DecideAppealRequest, void>(functions, 'decideAppeal')(request);
+};
+
+export const cancelSanction = async (sanctionId: string): Promise<void> => {
+	await httpsCallable<{ sanctionId: string }, void>(functions, 'cancelSanction')({ sanctionId });
 };

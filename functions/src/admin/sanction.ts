@@ -1,7 +1,7 @@
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { HttpsError } from 'firebase-functions/v2/https';
-import { getKstMidnightAfterDays, handleUserPostsOnSuspension } from '../triggers/reports';
-import { IssueSanctionRequest, SanctionDoc, SanctionKind, ViolationType } from '../types/sanction';
+import { getKstMidnightAfterDays, handleUserPostsOnSuspension, liftUserSuspension } from '../triggers/reports';
+import { AppealResult, IssueSanctionRequest, SanctionDoc, SanctionKind, ViolationType } from '../types/sanction';
 import { db } from '../utils/common';
 import { sendPushNotification } from '../utils/pushNotification';
 
@@ -300,4 +300,205 @@ export async function issueSanctionHandler(
 	}
 
 	return { sanctionId: sanctionRef.id };
+}
+
+const APPEAL_REPLY_MAX_LENGTH = 1000;
+const APPEAL_RESULTS: AppealResult[] = ['upheld', 'canceled'];
+
+/**
+ * 조치를 뺀 뒤 남은 유효 정지로 정지 해제일을 다시 계산한다
+ * 관리자 [정지 해제]로 이미 풀린 유저를 다시 정지하지 않도록, 해제일은 앞당기기만 한다
+ * @returns 계산 후에도 정지 중이면 true
+ */
+async function recalculateSuspension(userId: string, excludedSanctionId: string): Promise<boolean> {
+	const now = new Date();
+	const [userSnap, sanctionsSnap] = await Promise.all([
+		db.doc(`Users/${userId}`).get(),
+		db.collection('Sanctions').where('userId', '==', userId).get(),
+	]);
+
+	const currentSuspendUntil: Timestamp | null | undefined = userSnap.data()?.report?.suspendUntil;
+	if (!currentSuspendUntil || currentSuspendUntil.toDate() <= now) return false;
+
+	const remainingSuspendUntil = sanctionsSnap.docs
+		.filter((doc) => doc.id !== excludedSanctionId)
+		.map((doc) => doc.data() as SanctionDoc)
+		.filter((sanction) => sanction.status === 'active' && sanction.kind !== 'warning')
+		.map((sanction) =>
+			sanction.kind === 'permanent' ? PERMANENT_SUSPEND_UNTIL : sanction.suspendUntil?.toDate(),
+		)
+		.filter((date): date is Date => !!date && date > now)
+		.sort((a, b) => b.getTime() - a.getTime())[0];
+
+	if (!remainingSuspendUntil) {
+		await liftUserSuspension(userId);
+		return false;
+	}
+	if (remainingSuspendUntil < currentSuspendUntil.toDate()) {
+		await db.doc(`Users/${userId}`).update({
+			'report.suspendUntil': Timestamp.fromDate(remainingSuspendUntil),
+		});
+	}
+	return true;
+}
+
+/**
+ * 조치 취소 시 위반 대상 다시 공개 (hideTarget의 반대)
+ * - 게시글: hiddenByAdmin 해제. 작성자가 아직 정지 중이면 숨김 상태는 두고, 정지가 풀릴 때 복구된다
+ * - 댓글: hiddenByAdmin 해제 + 댓글 수에 댓글 1 + 숨기지 않은 답글 수를 되돌림
+ * - 답글: hiddenByAdmin 해제 + 부모 댓글이 숨겨져 있지 않으면 댓글 수 1을 되돌림
+ */
+async function unhideTarget(target: SanctionDoc['target'], isUserSuspended: boolean): Promise<void> {
+	if (!target?.postId || !target.collectionName) return;
+
+	const postRef = db.doc(`${target.collectionName}/${target.postId}`);
+	const batch = db.batch();
+
+	if (target.commentId && target.replyId) {
+		const commentRef = postRef.collection('Comments').doc(target.commentId);
+		const [replySnap, commentSnap] = await Promise.all([
+			commentRef.collection('Replies').doc(target.replyId).get(),
+			commentRef.get(),
+		]);
+		if (!replySnap.exists || replySnap.data()?.hiddenByAdmin !== true) return;
+
+		batch.update(replySnap.ref, { hiddenByAdmin: FieldValue.delete() });
+		if (commentSnap.data()?.hiddenByAdmin !== true) {
+			batch.update(postRef, { commentCount: FieldValue.increment(1) });
+		}
+	} else if (target.commentId) {
+		const commentRef = postRef.collection('Comments').doc(target.commentId);
+		const [commentSnap, repliesSnap] = await Promise.all([
+			commentRef.get(),
+			commentRef.collection('Replies').get(),
+		]);
+		if (!commentSnap.exists || commentSnap.data()?.hiddenByAdmin !== true) return;
+
+		const visibleReplyCount = repliesSnap.docs.filter((doc) => doc.data().hiddenByAdmin !== true).length;
+		batch.update(commentRef, { hiddenByAdmin: FieldValue.delete() });
+		batch.update(postRef, { commentCount: FieldValue.increment(1 + visibleReplyCount) });
+	} else {
+		const postSnap = await postRef.get();
+		const post = postSnap.data();
+		if (!post || post.hiddenByAdmin !== true) return;
+
+		const shouldShowPost = post.status === 'hidden' && !isUserSuspended;
+		batch.update(postRef, {
+			hiddenByAdmin: FieldValue.delete(),
+			...(shouldShowPost ? { status: 'active' } : {}),
+		});
+	}
+
+	await batch.commit();
+}
+
+/**
+ * 조치 취소: 정지면 해제일을 다시 계산하고, 위반 대상을 다시 공개한 뒤, 상태를 취소로 바꿔 위반 횟수에서 뺀다
+ * 상태를 마지막에 바꿔, 중간 단계가 실패해도 관리자가 다시 시도할 수 있게 한다(앞 단계는 다시 실행해도 결과가 같다)
+ * @param extraUpdate - 함께 저장할 필드(이의 신청 결과 등)
+ */
+async function cancelSanction(
+	sanctionRef: FirebaseFirestore.DocumentReference,
+	sanction: SanctionDoc,
+	extraUpdate: Record<string, unknown> = {},
+): Promise<void> {
+	const isUserSuspended =
+		sanction.kind === 'warning'
+			? await isUserCurrentlySuspended(sanction.userId)
+			: await recalculateSuspension(sanction.userId, sanctionRef.id);
+	await unhideTarget(sanction.target, isUserSuspended);
+
+	await sanctionRef.update({ status: 'canceled', ...extraUpdate });
+}
+
+async function isUserCurrentlySuspended(userId: string): Promise<boolean> {
+	const suspendUntil: Timestamp | null | undefined = (await db.doc(`Users/${userId}`).get()).data()
+		?.report?.suspendUntil;
+	return !!suspendUntil && suspendUntil.toDate() > new Date();
+}
+
+async function getSanctionOrThrow(
+	sanctionId: unknown,
+): Promise<{ sanctionRef: FirebaseFirestore.DocumentReference; sanction: SanctionDoc }> {
+	if (typeof sanctionId !== 'string' || !sanctionId || sanctionId.includes('/')) {
+		throw new HttpsError('invalid-argument', 'sanctionId가 올바르지 않습니다.');
+	}
+	const sanctionRef = db.doc(`Sanctions/${sanctionId}`);
+	const sanction = (await sanctionRef.get()).data() as SanctionDoc | undefined;
+	if (!sanction) {
+		throw new HttpsError('not-found', '조치를 찾을 수 없습니다.');
+	}
+	return { sanctionRef, sanction };
+}
+
+/**
+ * 관리자 이의 신청 결정. 답변을 저장하고, 조치 취소면 조치를 취소한다. 결과는 사용자에게 푸시로 알린다
+ * @param data - { sanctionId, result: 'upheld' | 'canceled', reply }
+ */
+export async function decideAppealHandler(
+	data: { sanctionId?: unknown; result?: unknown; reply?: unknown } | undefined,
+): Promise<void> {
+	const { sanctionRef, sanction } = await getSanctionOrThrow(data?.sanctionId);
+
+	const result = data?.result as AppealResult;
+	if (!APPEAL_RESULTS.includes(result)) {
+		throw new HttpsError('invalid-argument', '결정이 올바르지 않습니다.');
+	}
+	const reply = typeof data?.reply === 'string' ? data.reply.trim() : '';
+	if (!reply || reply.length > APPEAL_REPLY_MAX_LENGTH) {
+		throw new HttpsError('invalid-argument', `답변은 1~${APPEAL_REPLY_MAX_LENGTH}자여야 합니다.`);
+	}
+	if (sanction.appeal?.status !== 'pending' || sanction.status !== 'active') {
+		throw new HttpsError('failed-precondition', '검토 중인 이의 신청이 없습니다.');
+	}
+
+	const appealUpdate = {
+		'appeal.status': 'reviewed',
+		'appeal.result': result,
+		'appeal.reply': reply,
+		'appeal.repliedAt': Timestamp.now(),
+	};
+
+	if (result === 'canceled') {
+		await cancelSanction(sanctionRef, sanction, appealUpdate);
+	} else {
+		await sanctionRef.update(appealUpdate);
+	}
+
+	await notifyAppealResult(sanctionRef.id, sanction.userId);
+}
+
+/**
+ * 관리자 조치 취소(이의 신청 없이). 신고 상세의 [숨김 해제]가 실수로 건 경고를 되돌릴 때 쓴다
+ * @param data - { sanctionId }
+ */
+export async function cancelSanctionHandler(data: { sanctionId?: unknown } | undefined): Promise<void> {
+	const { sanctionRef, sanction } = await getSanctionOrThrow(data?.sanctionId);
+	if (sanction.status !== 'active') {
+		throw new HttpsError('failed-precondition', '이미 취소된 조치입니다.');
+	}
+	// 이의 신청 검토 중인 조치는 답변과 함께 이의 신청 상세에서 결정한다(검토 중으로 남는 것을 막기 위해)
+	if (sanction.appeal?.status === 'pending') {
+		throw new HttpsError('failed-precondition', '이의 신청 검토 중인 조치입니다.');
+	}
+	await cancelSanction(sanctionRef, sanction);
+}
+
+/**
+ * 이의 신청 결과 푸시. 누르면 문의 내역의 해당 항목으로 간다. 실패해도 결정에는 영향을 주지 않는다
+ */
+async function notifyAppealResult(sanctionId: string, userId: string): Promise<void> {
+	try {
+		const pushToken: string | undefined = (await db.doc(`Users/${userId}`).get()).data()?.pushToken;
+		if (!pushToken) return;
+
+		await sendPushNotification({
+			to: pushToken,
+			title: '이의 신청 결과 안내',
+			body: '이의 신청 검토가 끝났습니다. 앱에서 내용을 확인해 주세요.',
+			data: { url: `animal-crossing-trading-app://inquiry/${sanctionId}` },
+		});
+	} catch (error) {
+		console.error('이의 신청 결과 알림 전송 실패:', error);
+	}
 }

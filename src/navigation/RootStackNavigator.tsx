@@ -5,6 +5,7 @@ import { UpdateModal } from '@/components/ui/UpdateModal';
 import { useSanctionWarningNotice } from '@/hooks/sanction/useSanctionWarningNotice';
 import { useVersionCheck } from '@/hooks/shared/useVersionCheck';
 import Account from '@/screens/Account';
+import AdminAppealDetail from '@/screens/admin/AdminAppealDetail';
 import AdminChatViewer from '@/screens/admin/AdminChatViewer';
 import AdminErrors from '@/screens/admin/AdminErrors';
 import AdminHome from '@/screens/admin/AdminHome';
@@ -291,6 +292,11 @@ const RootStackNavigator = () => {
 					name="AdminUserRecords"
 					component={AdminUserRecords}
 					options={commonOptions}
+				/>
+				<RootStack.Screen
+					name="AdminAppealDetail"
+					component={AdminAppealDetail}
+					options={{ ...commonOptions, title: '이의 신청 상세' }}
 				/>
 				<RootStack.Screen
 					name="AdminErrors"

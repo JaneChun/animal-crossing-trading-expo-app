@@ -23,6 +23,7 @@ import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import Text from '@/components/ui/Text';
 import { ReportTargetContent } from '@/firebase/services/adminService';
+import { useCancelSanction } from '@/hooks/admin/mutation/useCancelSanction';
 import { useIssueSanction } from '@/hooks/admin/mutation/useIssueSanction';
 import { useLiftSuspension } from '@/hooks/admin/mutation/useLiftSuspension';
 import { useSetCommentHidden } from '@/hooks/admin/mutation/useSetCommentHidden';
@@ -30,6 +31,7 @@ import { useSetPostHidden } from '@/hooks/admin/mutation/useSetPostHidden';
 import { useSetReportResolved } from '@/hooks/admin/mutation/useSetReportResolved';
 import { useAdminReport, useReportTargetContent } from '@/hooks/admin/query/useAdminReport';
 import { useAdminUserInfo } from '@/hooks/admin/query/useAdminUserInfo';
+import { useReportWarning } from '@/hooks/admin/query/useReportWarning';
 import { Spacing, Theme, useTheme, useThemedStyles } from '@/theme';
 import { ColorScheme } from '@/theme/Color';
 import { AdminReportDetailRouteProp } from '@/types/navigation';
@@ -376,6 +378,14 @@ const ReportActionsSection = ({
 		postId,
 		commentId,
 	});
+	// 이 신고로 건 경고가 있으면 [숨김 해제]는 경고 자체를 취소한다(위반 횟수에서 빠지고 대상이 다시 공개됨)
+	const { data: reportWarning, isLoading: isReportWarningLoading } = useReportWarning(report.id);
+	const { mutate: cancelSanction, isPending: isCanceling } = useCancelSanction({
+		reportId: report.id,
+		userId: report.reporteeId,
+	});
+	const unhide = (fallback: () => void) =>
+		reportWarning ? cancelSanction(reportWarning.id) : fallback();
 
 	const actions: DangerAction[] = [];
 
@@ -404,10 +414,13 @@ const ReportActionsSection = ({
 				: '목록과 상세에서 보이지 않습니다',
 			actionLabel: isHiddenByAdmin ? '숨김 해제' : '숨기기',
 			variant: isHiddenByAdmin ? 'dangerOutline' : 'danger',
-			isLoading: isHiddenByAdmin ? isPostPending : isIssuingWarning,
+			// 경고 조회 전에 누르면 경고를 취소하지 못하고 숨김만 풀리므로, 조회가 끝날 때까지 로딩으로 둔다
+			isLoading: isHiddenByAdmin
+				? isPostPending || isCanceling || isReportWarningLoading
+				: isIssuingWarning,
 			onPress: () =>
 				isHiddenByAdmin
-					? setPostHidden(false)
+					? unhide(() => setPostHidden(false))
 					: onStartWarning({
 							confirmTitle: '게시글 숨기기',
 							confirmMessage: '이 게시글을 숨길까요?',
@@ -426,10 +439,12 @@ const ReportActionsSection = ({
 				: '답글도 함께 보이지 않습니다',
 			actionLabel: isHiddenByAdmin ? '숨김 해제' : '숨기기',
 			variant: isHiddenByAdmin ? 'dangerOutline' : 'danger',
-			isLoading: isHiddenByAdmin ? isCommentPending : isIssuingWarning,
+			isLoading: isHiddenByAdmin
+				? isCommentPending || isCanceling || isReportWarningLoading
+				: isIssuingWarning,
 			onPress: () =>
 				isHiddenByAdmin
-					? setCommentHidden(false)
+					? unhide(() => setCommentHidden(false))
 					: onStartWarning({
 							confirmTitle: '댓글 숨기기',
 							confirmMessage: '이 댓글과 답글을 숨길까요?',
@@ -438,7 +453,7 @@ const ReportActionsSection = ({
 		});
 	}
 
-	// 답글 숨김 해제는 이의 신청의 조치 취소로만 한다(답글은 관리자가 앱에서 직접 쓸 수 없다)
+	// 답글은 관리자가 앱에서 직접 쓸 수 없어, 숨김 해제는 이 신고로 건 경고를 취소할 때만 할 수 있다
 	const reply = target?.reply;
 	if (contentType === 'reply' && reply?.hiddenByAdmin) {
 		actions.push({
@@ -446,8 +461,9 @@ const ReportActionsSection = ({
 			description: '관리자가 숨긴 답글입니다',
 			actionLabel: '숨김 해제',
 			variant: 'dangerOutline',
-			disabled: true,
-			onPress: () => {},
+			disabled: !reportWarning,
+			isLoading: isCanceling,
+			onPress: () => reportWarning && cancelSanction(reportWarning.id),
 		});
 	}
 	if (contentType === 'reply' && reply && !reply.hiddenByAdmin) {

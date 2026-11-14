@@ -19,6 +19,8 @@ import { sendPushNotification } from '../../src/utils/pushNotification';
 
 import {
 	buildSanctionPush,
+	cancelSanctionHandler,
+	decideAppealHandler,
 	getRecommendedSanctionKind,
 	getSanctionRecommendationHandler,
 	issueSanctionHandler,
@@ -414,6 +416,164 @@ describe('권장 조치', () => {
 		await expect(getSanctionRecommendationHandler(USER_ID)).resolves.toEqual({
 			recentActiveCount: 1,
 			recommendedKind: 'days7',
+		});
+	});
+});
+
+describe('이의 신청 결정·조치 취소', () => {
+	const pendingAppeal = { content: '규칙을 몰랐습니다.', status: 'pending', createdAt: Timestamp.now() };
+
+	beforeEach(async () => {
+		await cleanupTestData();
+		await db.doc(`Users/${USER_ID}`).set({
+			displayName: '조치 대상',
+			pushToken: 'ExponentPushToken[user]',
+			report: { total: 1, recent30Days: 1, suspendUntil: null },
+		});
+		await db.doc(POST_PATH).set({ creatorId: USER_ID, title: '위반 글', status: 'active', commentCount: 2 });
+		await db.doc(OTHER_POST_PATH).set({ creatorId: USER_ID, title: '다른 글', status: 'active' });
+	});
+
+	afterAll(async () => {
+		await cleanupTestData();
+	});
+
+	it('조치 유지는 답변만 저장하고 조치는 유효로 남기며 결과 푸시를 보낸다', async () => {
+		const { sanctionId } = await issueSanctionHandler(ADMIN_ID, {
+			userId: USER_ID,
+			kind: 'warning',
+			violationType: 'spam',
+			target: { collectionName: 'Boards', postId: 'sanction_test_post' },
+		});
+		await db.doc(`Sanctions/${sanctionId}`).update({ appeal: pendingAppeal });
+		jest.mocked(sendPushNotification).mockClear();
+
+		await decideAppealHandler({ sanctionId, result: 'upheld', reply: ' 조치를 유지합니다. ' });
+
+		const sanction = await getSanction(sanctionId);
+		expect(sanction?.status).toBe('active');
+		expect(sanction?.appeal).toMatchObject({ status: 'reviewed', result: 'upheld', reply: '조치를 유지합니다.' });
+		expect(sanction?.appeal.repliedAt).toBeDefined();
+		expect((await db.doc(POST_PATH).get()).data()?.hiddenByAdmin).toBe(true);
+		expect(sendPushNotification).toHaveBeenCalledWith({
+			to: 'ExponentPushToken[user]',
+			title: '이의 신청 결과 안내',
+			body: '이의 신청 검토가 끝났습니다. 앱에서 내용을 확인해 주세요.',
+			data: { url: `animal-crossing-trading-app://inquiry/${sanctionId}` },
+		});
+	});
+
+	it('경고 조치 취소는 조치를 취소하고 숨긴 글을 다시 공개한다', async () => {
+		const { sanctionId } = await issueSanctionHandler(ADMIN_ID, {
+			userId: USER_ID,
+			kind: 'warning',
+			violationType: 'spam',
+			target: { collectionName: 'Boards', postId: 'sanction_test_post' },
+		});
+		await db.doc(`Sanctions/${sanctionId}`).update({ appeal: pendingAppeal });
+
+		await decideAppealHandler({ sanctionId, result: 'canceled', reply: '조치를 취소합니다.' });
+
+		expect((await getSanction(sanctionId))?.status).toBe('canceled');
+		const post = (await db.doc(POST_PATH).get()).data();
+		expect(post?.status).toBe('active');
+		expect(post?.hiddenByAdmin).toBeUndefined();
+	});
+
+	it('유일한 정지를 취소하면 정지를 바로 풀고 정지 때 숨긴 글과 대상 글을 공개한다', async () => {
+		const { sanctionId } = await issueSanctionHandler(ADMIN_ID, {
+			userId: USER_ID,
+			kind: 'days7',
+			violationType: 'spam',
+			target: { collectionName: 'Boards', postId: 'sanction_test_post' },
+		});
+		await db.doc(`Sanctions/${sanctionId}`).update({ appeal: pendingAppeal });
+
+		await decideAppealHandler({ sanctionId, result: 'canceled', reply: '조치를 취소합니다.' });
+
+		const [user, post, otherPost] = await Promise.all([
+			db.doc(`Users/${USER_ID}`).get(),
+			db.doc(POST_PATH).get(),
+			db.doc(OTHER_POST_PATH).get(),
+		]);
+		expect(user.data()?.report.suspendUntil).toBeNull();
+		expect(post.data()?.status).toBe('active');
+		expect(otherPost.data()?.status).toBe('active');
+	});
+
+	it('두 정지 중 더 긴 것을 취소하면 남은 정지의 해제일로 줄이고, 대상 글은 정지가 끝날 때까지 숨김을 유지한다', async () => {
+		const { sanctionId: shortId } = await issueSanctionHandler(ADMIN_ID, {
+			userId: USER_ID,
+			kind: 'days7',
+			violationType: 'spam',
+		});
+		const { sanctionId: longId } = await issueSanctionHandler(ADMIN_ID, {
+			userId: USER_ID,
+			kind: 'days30',
+			violationType: 'spam',
+			target: { collectionName: 'Boards', postId: 'sanction_test_post' },
+		});
+		await db.doc(`Sanctions/${longId}`).update({ appeal: pendingAppeal });
+
+		await decideAppealHandler({ sanctionId: longId, result: 'canceled', reply: '조치를 취소합니다.' });
+
+		const shortUntil = (await getSanction(shortId))?.suspendUntil.toMillis();
+		const user = (await db.doc(`Users/${USER_ID}`).get()).data();
+		expect(user?.report.suspendUntil.toMillis()).toBe(shortUntil);
+		const post = (await db.doc(POST_PATH).get()).data();
+		expect(post?.hiddenByAdmin).toBeUndefined();
+		expect(post?.status).toBe('hidden');
+	});
+
+	it('관리자가 이미 정지를 해제했다면 조치를 취소해도 다시 정지하지 않는다', async () => {
+		await issueSanctionHandler(ADMIN_ID, { userId: USER_ID, kind: 'days30', violationType: 'spam' });
+		const { sanctionId } = await issueSanctionHandler(ADMIN_ID, { userId: USER_ID, kind: 'days7', violationType: 'spam' });
+		await db.doc(`Users/${USER_ID}`).update({ 'report.suspendUntil': null });
+		await db.doc(`Sanctions/${sanctionId}`).update({ appeal: pendingAppeal });
+
+		await decideAppealHandler({ sanctionId, result: 'canceled', reply: '조치를 취소합니다.' });
+
+		expect((await db.doc(`Users/${USER_ID}`).get()).data()?.report.suspendUntil).toBeNull();
+	});
+
+	it('댓글 경고를 취소하면 댓글을 공개하고 댓글 수를 되돌린다', async () => {
+		await db.doc(COMMENT_PATH).set({ creatorId: USER_ID, body: '위반 댓글' });
+		await db.doc(REPLY_PATH).set({ creatorId: 'someone', body: '답글' });
+		const { sanctionId } = await issueSanctionHandler(ADMIN_ID, {
+			userId: USER_ID,
+			kind: 'warning',
+			violationType: 'abuse',
+			target: { collectionName: 'Boards', postId: 'sanction_test_post', commentId: 'sanction_test_comment' },
+		});
+		expect((await db.doc(POST_PATH).get()).data()?.commentCount).toBe(0);
+
+		await cancelSanctionHandler({ sanctionId });
+
+		expect((await db.doc(COMMENT_PATH).get()).data()?.hiddenByAdmin).toBeUndefined();
+		expect((await db.doc(POST_PATH).get()).data()?.commentCount).toBe(2);
+		expect((await getSanction(sanctionId))?.status).toBe('canceled');
+	});
+
+	it('이의 신청 검토 중인 조치는 신고 상세의 조치 취소로 취소할 수 없다', async () => {
+		const { sanctionId } = await issueSanctionHandler(ADMIN_ID, { userId: USER_ID, kind: 'warning', violationType: 'spam' });
+		await db.doc(`Sanctions/${sanctionId}`).update({ appeal: pendingAppeal });
+
+		await expect(cancelSanctionHandler({ sanctionId })).rejects.toMatchObject({ code: 'failed-precondition' });
+		expect((await getSanction(sanctionId))?.status).toBe('active');
+	});
+
+	it('검토 중인 이의 신청이 없거나 답변이 비면 거부한다', async () => {
+		const { sanctionId } = await issueSanctionHandler(ADMIN_ID, { userId: USER_ID, kind: 'warning', violationType: 'spam' });
+
+		await expect(decideAppealHandler({ sanctionId, result: 'upheld', reply: '답변' })).rejects.toMatchObject({
+			code: 'failed-precondition',
+		});
+		await db.doc(`Sanctions/${sanctionId}`).update({ appeal: pendingAppeal });
+		await expect(decideAppealHandler({ sanctionId, result: 'upheld', reply: '  ' })).rejects.toMatchObject({
+			code: 'invalid-argument',
+		});
+		await expect(decideAppealHandler({ sanctionId, result: 'other', reply: '답변' })).rejects.toMatchObject({
+			code: 'invalid-argument',
 		});
 	});
 });

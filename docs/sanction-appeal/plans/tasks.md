@@ -143,17 +143,22 @@
 
 ## Phase 6: 관리자 이의 신청 처리 (PR 3)
 
-- [ ] 이의 신청 결정 callable (`functions/src/admin/sanction.ts`)
+- [x] 이의 신청 결정 callable (`functions/src/admin/sanction.ts`)
   - 참고(Phase 3 코드 리뷰): 신고 상세의 [숨김 해제]는 지금 콘텐츠만 다시 공개하고 경고 조치는 유효로 남긴다. 실수로 숨긴 경우 횟수에 남으므로, 이 callable을 만들 때 [숨김 해제]가 해당 경고를 취소하도록 함께 바꾼다
   - 조치 유지: 답변 저장. 조치 취소: 조치 상태 취소 + 정지 기간 재계산 + 대상 글·댓글·답글 `hiddenByAdmin` 해제(댓글 수는 숨길 때 뺀 만큼 되돌림)
   - 결과 푸시: 사용자에게, 문의 내역 해당 항목 딥링크
-- [ ] 이의 신청 상세 화면 (`src/screens/admin/AdminAppealDetail.tsx` 신규) — 시안: '이의 신청 검토 시안 1', '… copy'
+  - 결정: 정지 재계산은 남은 유효 정지의 가장 늦은 해제일로 하되 해제일을 앞당기기만 한다(관리자가 이미 [정지 해제]한 유저를 다시 정지하지 않음). 남은 정지가 없으면 즉시 해제하고 정지 때 숨긴 글을 복구한다. 작성자가 아직 정지 중이면 대상 글은 관리자 숨김 표시만 지우고, 정지가 풀릴 때 복구된다
+  - 결정: 신고 상세 [숨김 해제]용으로 이의 신청 없이 조치를 취소하는 `cancelSanction` callable을 함께 만들었다(Phase 3 리뷰 참고 항목). 결과 푸시 딥링크는 `inquiry/{sanctionId}`, 관리자 푸시는 `admin/appeal/{sanctionId}`로 `App.tsx` linking에 등록했다
+- [x] 이의 신청 상세 화면 (`src/screens/admin/AdminAppealDetail.tsx` 신규) — 시안: '이의 신청 검토 시안 1', '… copy'
   - 재사용: `AdminReportDetail`의 섹션 구조, 이의 신청·결과 안내 섹션은 Phase 4 사용자 컴포넌트
   - 결정: 버튼은 [조치 유지] / [조치 취소](사용자 지시). 답변은 결과 안내 카드 안 입력란
-- [ ] 진입점 2곳 연결 (`src/screens/admin/AdminUserDetail.tsx`의 제재 이력 행, `src/screens/admin/AdminReviewUsers.tsx`)
-- [ ] '검토 필요 유저' 기준 교체 (`src/firebase/services/adminService.ts`의 `fetchNeedsReviewUsers`, `src/screens/admin/AdminReviewUsers.tsx`)
+  - 결정: 답변을 입력해야 결정 버튼이 활성화된다. 조치 내용·이의 신청·결과 안내는 사용자 화면의 `SanctionSections`를 쓰고, 관리자 화면은 신청 내용 전체를 보여 주며 재신청 불가 안내는 숨긴다. 시안의 '대상' 행 원문 링크는 넣지 않았다(근거 신고 행에서 신고 상세의 원문 링크로 이동 가능)
+- [x] 진입점 2곳 연결 (`src/screens/admin/AdminUserDetail.tsx`의 제재 이력 행, `src/screens/admin/AdminReviewUsers.tsx`)
+  - 결정: 이의 신청이 있는 제재 이력 행만 눌러지고, 검토 중이면 '이의 신청 검토 중 ›'을 보여 준다. 검토 필요 유저 목록은 이의 신청 대기 유저를 누르면 이의 신청 상세로, 미처리 신고만 있는 유저는 유저 상세로 간다
+- [x] '검토 필요 유저' 기준 교체 (`src/firebase/services/adminService.ts`의 `fetchNeedsReviewUsers`, `src/screens/admin/AdminReviewUsers.tsx`)
   - 결정: 처리 대기 이의 신청이 있는 유저 + 미처리 신고가 있는 유저(설계 3-3). 안내 문구 "30일 자동 정지된 유저" 삭제
   - 참고: Phase 2부터 `needsAdminReview`를 더 이상 설정하지 않으므로, PR 1 배포 후 이 항목이 배포되기 전까지는 목록에 새 유저가 들어오지 않는다
+  - 결정: 페이지 없이 모두 읽어 이의 신청 대기 → 미처리 신고 많은 순으로 정렬하고, 오른쪽 칩으로 '이의 신청' / '미처리 신고 N'을 구분한다. 안내 문구는 "처리를 기다리는 이의 신청이나 처리되지 않은 신고가 있는 유저입니다."로 바꿨다. 유저 상세의 '검토 필요'(`needsAdminReview`) 배지는 기준이 사라져 지웠다
 - 검증: `npm run typecheck`, `npm run lint`, `npm --prefix functions test`, 에뮬레이터에서 신청 → 관리자 조치 취소 → 사용자 정지 해제·글 복구·문의 내역 결과 표시 확인
 
 ## 진행 기록
@@ -178,3 +183,6 @@
 - Phase 5 완료
 - 검증: 앱·functions typecheck, lint 통과. 이의 신청 functions 테스트(`__tests__/sanction/appeal.integration.test.ts`)는 에뮬레이터가 비면 실행한다
 - 결정(Phase 5 코드 리뷰): 이의 신청 mutation은 재시도하지 않고(한 번만 접수되는 요청), 실패해도 내 조치 목록을 새로 받는다. 관리자 푸시의 `admin/appeal` 딥링크는 같은 PR의 Phase 6에서 라우트를 붙인다. 정지가 둘 이상일 때 이전 정지에 정지 화면에서 이의를 신청하는 경로, 조회 실패 시 빈 목록 표시는 드문 경우라 그대로 둔다. 이의 신청 화면의 키보드 오프셋은 앱 전역 `KeyboardToolbar`가 이 화면에도 뜨므로 툴바 높이를 유지한다
+- Phase 6 완료
+- 검증: 앱·functions typecheck, `npm run lint` 통과(경고 53개는 기존 파일). 이의 신청 결정·조치 취소 functions 테스트는 에뮬레이터가 비면 실행한다
+- 결정(Phase 6 코드 리뷰): 조치 취소는 정지 재계산·대상 공개를 먼저 하고 상태를 마지막에 바꿔, 중간에 실패해도 다시 시도할 수 있게 했다. 이의 신청 검토 중인 조치는 신고 상세의 [숨김 해제]로 취소할 수 없고, 경고 조회가 끝나기 전에는 [숨김 해제]를 누를 수 없다. 조치 취소 후 검토 목록·유저 캐시도 갱신하고, 쓰이지 않게 된 `SuspensionBadge` 컴포넌트를 지웠다. 같은 대상을 숨긴 조치가 둘일 때의 공개, 조치 문서 없는 예전 정지, 한 유저의 여러 이의 신청 표시, 검토 목록 페이지 처리는 현재 규모에서 드문 경우라 그대로 둔다
