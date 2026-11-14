@@ -15,7 +15,7 @@ import { initializeAllSDKs } from './utils/initialization';
 import { clearUserStorage, getUserFromStorage, saveUserToStorage } from './utils/storage';
 
 export const useAuthInitializer = () => {
-	const { userInfo, setUserInfo } = useAuthStore.getState();
+	const { userInfo, setUserInfo, setIsUserLoading } = useAuthStore.getState();
 	const expoPushToken = usePushNotificationStore.getState().expoPushToken;
 
 	// 🔹 SDK 초기화
@@ -58,10 +58,11 @@ export const useAuthInitializer = () => {
 		const loadUser = async () => {
 			const storedUser = await getUserFromStorage();
 			setUserInfo(storedUser);
+			setIsUserLoading(false);
 		};
 
 		loadUser();
-	}, [setUserInfo]);
+	}, [setUserInfo, setIsUserLoading]);
 
 	// 🔹 푸시 토큰 저장
 	useEffect(() => {

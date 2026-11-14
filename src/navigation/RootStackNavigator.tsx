@@ -40,6 +40,7 @@ const RootStack = createNativeStackNavigator();
 
 const RootStackNavigator = () => {
 	const isAuthLoading = useAuthStore((state) => state.isAuthLoading);
+	const isUserLoading = useAuthStore((state) => state.isUserLoading);
 	const isOnboardingLoading = useOnboardingStore((state) => state.isLoading);
 
 	// 온보딩 완료 여부 체크
@@ -55,7 +56,7 @@ const RootStackNavigator = () => {
 
 	const { colors } = useTheme();
 
-	const isAppInitializing = isOnboardingLoading || isVersionCheckLoading;
+	const isAppInitializing = isUserLoading || isOnboardingLoading || isVersionCheckLoading;
 
 	const commonOptions = {
 		// 로그인/로그아웃/탈퇴 시 로딩화면 표시할 때 상단 헤더 숨김 처리 (iOS만)

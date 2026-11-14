@@ -24,6 +24,8 @@ export const useAuthStore = create<AuthState>((set, get) => {
 	return {
 		userInfo: null,
 		setUserInfo: stateManager.setUserInfo,
+		isUserLoading: true,
+		setIsUserLoading: (loading) => set({ isUserLoading: loading }),
 		isAuthLoading: false,
 		setIsAuthLoading: stateManager.setIsAuthLoading,
 
