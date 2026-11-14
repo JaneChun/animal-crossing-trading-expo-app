@@ -28,6 +28,7 @@ import { usePostDetail } from '@/hooks/post/query/usePostDetail';
 import { usePostSubmit } from '@/hooks/post/usePostSubmit';
 import useLoading from '@/hooks/shared/useLoading';
 import { useUserInfo } from '@/stores/auth';
+import { Spacing } from '@/theme';
 import { ImageType } from '@/types/image';
 import { RootStackNavigation, type NewPostRouteProp } from '@/types/navigation';
 import { CommunityType, MarketType } from '@/types/post';
@@ -45,7 +46,9 @@ const NewPost = () => {
 	const insets = useSafeAreaInsets();
 	const headerHeight = useHeaderHeight();
 	// Android는 버튼이 홈 제스처 영역에 붙지 않도록 여백을 조금 더 둔다
-	const buttonBottomPadding = insets.bottom + (Platform.OS === 'android' ? 8 : 0);
+	const insetBasedPadding = insets.bottom + (Platform.OS === 'android' ? 8 : 0);
+	// 하단 inset이 0인 기기(iPhone SE 등)에서 버튼이 화면 끝에 붙지 않도록 최소 여백을 둔다
+	const buttonBottomPadding = Math.max(Spacing.s, insetBasedPadding);
 
 	// ─────────────────────────────────────────────────────────────
 	// Auth
