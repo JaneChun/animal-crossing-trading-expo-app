@@ -35,12 +35,52 @@ jobs:
 
             - run: npm ci
 
-            - uses: anthropics/claude-code-action@v1
-              # 리뷰 스레드 resolve는 GraphQL(resolveReviewThread)로만 가능해 gh에 워크플로 토큰을 넘긴다(pull-requests: write 필요)
+            # 리뷰 스레드 resolve는 Claude에게 토큰을 주지 않고 앞뒤 스텝에서 처리한다
+            # - Claude는 PR 브랜치 코드(npm run lint 등)를 실행하므로, 같은 프로세스에 쓰기 토큰을 두면 유출될 수 있다
+            # - 스크립트는 PR이 바꿀 수 없도록 저장소 파일이 아니라 이 워크플로(기본 브랜치)에 둔다
+            # - 포크 PR의 리뷰 코멘트 이벤트에서는 토큰이 읽기 전용이라 resolve가 실패한다. PR 일반 댓글로 요청하면 된다
+            - name: List unresolved review threads
+              if: github.event.issue.pull_request || github.event.pull_request
               env:
                   GH_TOKEN: ${{ github.token }}
+                  PR_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+              run: |
+                  gh api graphql --paginate \
+                    -F owner="${GITHUB_REPOSITORY%/*}" -F repo="${GITHUB_REPOSITORY#*/}" -F pr="$PR_NUMBER" \
+                    -f query='query($owner:String!,$repo:String!,$pr:Int!,$endCursor:String){repository(owner:$owner,name:$repo){pullRequest(number:$pr){reviewThreads(first:100,after:$endCursor){pageInfo{hasNextPage endCursor} nodes{id isResolved path line comments(first:20){nodes{author{login} body}}}}}}}' \
+                    --jq '.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved | not)' \
+                    | jq -s . > "$RUNNER_TEMP/review-threads.json"
+
+            - uses: anthropics/claude-code-action@v1
               with:
                   claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
                   claude_args: |
-                      --allowedTools "Bash(npm run lint),Bash(npm run typecheck),Bash(gh api graphql:*)"
-                      --append-system-prompt "리뷰 스레드 resolve를 요청받으면 gh api graphql로 reviewThreads(id, isResolved)를 조회한 뒤 resolveReviewThread 뮤테이션으로 처리한다."
+                      --allowedTools "Bash(npm run lint),Bash(npm run typecheck),Read(/${{ runner.temp }}/review-threads.json),Write(/${{ runner.temp }}/resolve-thread-ids.txt)"
+                      --append-system-prompt "리뷰 스레드 resolve를 요청받으면 ${{ runner.temp }}/review-threads.json의 미해결 스레드 목록을 읽고, 해결됐다고 판단한 스레드의 id를 한 줄에 하나씩 ${{ runner.temp }}/resolve-thread-ids.txt에 쓴다. 실제 resolve는 작업이 끝난 뒤 워크플로가 처리하므로, 결과 코멘트에는 resolve 대상으로 표시한 스레드를 적는다."
+
+            - name: Resolve review threads
+              if: always() && (github.event.issue.pull_request || github.event.pull_request)
+              env:
+                  GH_TOKEN: ${{ github.token }}
+                  PR_NUMBER: ${{ github.event.issue.number || github.event.pull_request.number }}
+              run: |
+                  ids_file="$RUNNER_TEMP/resolve-thread-ids.txt"
+                  [ -s "$ids_file" ] || { echo "resolve 대상 없음"; exit 0; }
+
+                  # Claude가 쓴 id는 이 PR의 미해결 스레드와 다시 대조한 뒤에만 resolve한다
+                  open_ids=$(gh api graphql --paginate \
+                    -F owner="${GITHUB_REPOSITORY%/*}" -F repo="${GITHUB_REPOSITORY#*/}" -F pr="$PR_NUMBER" \
+                    -f query='query($owner:String!,$repo:String!,$pr:Int!,$endCursor:String){repository(owner:$owner,name:$repo){pullRequest(number:$pr){reviewThreads(first:100,after:$endCursor){pageInfo{hasNextPage endCursor} nodes{id isResolved}}}}}' \
+                    --jq '.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved | not) | .id')
+
+                  while IFS= read -r id || [ -n "$id" ]; do
+                    id=$(printf '%s' "$id" | tr -d '[:space:]')
+                    [ -n "$id" ] || continue
+                    if grep -qxF "$id" <<<"$open_ids"; then
+                      gh api graphql -F id="$id" \
+                        -f query='mutation($id:ID!){resolveReviewThread(input:{threadId:$id}){thread{isResolved}}}' >/dev/null
+                      echo "resolved: $id"
+                    else
+                      echo "skipped (이 PR의 미해결 스레드 아님): $id"
+                    fi
+                  done < "$ids_file"
