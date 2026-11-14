@@ -42,15 +42,18 @@ Android 출시 대응 이후 실기기(SM-F711N, 3버튼 내비게이션)에서 
 
 ## Phase 3: Android 키보드 회피 (#59, #61)
 
-- [ ] 닉네임 입력 화면의 `KeyboardAvoidingView`를 keyboard-controller 버전으로 교체 (`src/screens/SignUpDisplayName.tsx`)
+- [x] 닉네임 입력 화면의 `KeyboardAvoidingView`를 keyboard-controller 버전으로 교체 (`src/screens/SignUpDisplayName.tsx`)
   - 재사용: `KeyboardAvoidingView` from `react-native-keyboard-controller` (1.20.7, 이미 설치됨. `EditCommentModal`·`EditProfileModal`은 같은 패키지의 `KeyboardAwareScrollView`를 사용 중)
   - 패턴: keyboard-controller의 KAV는 RN KAV와 같은 계산식(`frame.y + frame.height - (화면 높이 - 키보드 높이 - offset)`)을 쓰므로, iOS의 `behavior`와 `keyboardVerticalOffset`은 그대로 둔다. Android `behavior`는 `'padding'`으로 시작하고, 버튼 위치가 맞지 않으면 Android offset만 실측해서 조정한다.
-- [ ] 섬 이름 입력 화면에 같은 변경 적용 (`src/screens/SignUpIslandName.tsx`)
-- [ ] 게시글 상세의 댓글 인풋 `KeyboardAvoidingView`를 keyboard-controller 버전으로 교체 (`src/screens/PostDetail.tsx:307`)
+  - 결정: Android offset은 `insets.top + KEYBOARD_TOOLBAR_HEIGHT - 24`(컨테이너 아래 패딩)로 계산한다(사용자 지시, A안). 하단 inset을 쓰던 기존 식은 3버튼 모드에서 iPhone보다 약 20dp 더 올라가고 제스처 모드에서는 덜 올라간다
+- [x] 섬 이름 입력 화면에 같은 변경 적용 (`src/screens/SignUpIslandName.tsx`)
+- [x] 게시글 상세의 댓글 인풋 `KeyboardAvoidingView`를 keyboard-controller 버전으로 교체 (`src/screens/PostDetail.tsx:307`)
   - 패턴: 위와 같다. 현재 Android는 `behavior='height'`인데, 감싼 View에 높이가 없으므로 `'height'`는 인풋을 줄이기만 한다. Android도 `'padding'`으로 바꾸고 offset을 실측한다.
-- [ ] 채팅방 인풋 확인 (`src/screens/ChatRoom.tsx`) — 코드 변경은 문제가 보일 때만
+  - 결정: Android offset은 `insets.top + LAYOUT_HEADER_HEIGHT(44, LayoutWithHeader에서 export) + KEYBOARD_TOOLBAR_HEIGHT - 8`(입력창 아래 여백)로 계산해 입력창과 툴바 사이를 8dp로 맞춘다(사용자 지시, A안). iOS 식의 `insets.bottom + 10`은 화면 안 헤더 높이(약 44dp)를 대신하는 값이라 iPhone(34 + 10)에서만 맞는다
+- [x] 채팅방 인풋 확인 (`src/screens/ChatRoom.tsx`) — 코드 변경은 문제가 보일 때만
   - 패턴: `react-native-gifted-chat` 2.8은 내부에서 keyboard-controller를 쓰므로 이미 정상일 가능성이 높다
-- [ ] 검증: 닉네임·섬 이름 화면, 게시글 상세(댓글·답글), 채팅방을 양쪽 기기에서 키보드 올림/내림 상태로 촬영
+  - 결정: Android만 `bottomOffset`에서 8(입력창 아래 여백)을 빼 입력창과 툴바 사이를 16dp → 8dp로 맞춘다(사용자 지시). `bottomOffset` 식은 원래 내비게이션 모드와 상관없이 같은 간격이 나온다
+- [ ] 검증: 닉네임·섬 이름 화면, 게시글 상세(댓글·답글), 채팅방을 양쪽 기기에서 키보드 올림/내림 상태로 촬영 — iOS 게시글 상세만 남음(시뮬레이터 로그인 필요)
 
 ## Phase 4: 전체 확인과 문서화
 
@@ -79,4 +82,10 @@ Android 출시 대응 이후 실기기(SM-F711N, 3버튼 내비게이션)에서 
 - 검증: Android 하단 여백 +8 적용 후 제스처 모드 재촬영. 버튼 아래 끝이 2594px → 2570px로 8dp 올라가 내비게이션 바와 약 8dp 띄워짐. `tsc` 통과, `eslint` 에러 0건
 - 검증: 3버튼 모드로 되돌린 뒤 재촬영. 버튼 아래 끝 2471px, 내비게이션 바 2496px부터로 약 8dp 띄워짐
 - Phase 2 완료
-
+- 검증: `tsc` 통과, 변경한 세 파일 `eslint` 에러 0건(경고 1건은 변경 전부터 있던 것)
+- 검증: Android 실기기(3버튼 모드)에서 닉네임·섬 이름 화면, 게시글 상세의 댓글·답글, 채팅방을 키보드가 열린 상태로 촬영. 모든 화면에서 버튼·인풋이 키보드 툴바 위에 보임. 회원가입 화면은 시작 화면을 임시로 바꿔 들어갔고 촬영 후 되돌림
+- 검증: iOS 시뮬레이터에서 닉네임 화면을 촬영. 버튼이 툴바 바로 위에 보임. 게시글 상세는 시뮬레이터가 로그아웃 상태라 댓글 인풋이 비활성화되어 있어 확인하지 못함
+- Phase 3 코드 변경 완료, iOS 게시글 상세 확인 남음
+- 결정: Android에서 iPhone보다 키보드 위로 더 올라간다는 사용자 확인에 따라 offset 계산식을 Android만 바꿈(A안). 원인은 화면에 실제 값을 띄워 확인함: 하단 inset이 iPhone 34dp, Android 3버튼 48dp
+- 검증: Android 3버튼 모드에서 재촬영. 닉네임·섬 이름 버튼 아래 끝과 툴바 사이 28dp → 8dp, 댓글 인풋 영역과 툴바 사이 23dp → 약 9dp, 답글 모드도 툴바 위에 보임. `tsc` 통과, `eslint` 에러 0건
+- 검증: 댓글·채팅 인풋 -8 적용 후 Android 제스처 모드에서 촬영. 입력창(회원가입은 버튼)과 툴바 사이 간격: 닉네임 8dp, 섬 이름 8dp, 댓글 7.7dp, 채팅 8dp. `tsc` 통과, `eslint` 에러 0건
