@@ -268,6 +268,78 @@
 					"order": "DESCENDING"
 				}
 			]
+		},
+		/**
+		 * 관리자 유저별 받은 신고 목록: reporteeId + createdAt 내림차순
+		 * - src/firebase/services/adminService.ts
+		 */
+		{
+			"collectionGroup": "Reports",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "reporteeId",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				}
+			]
+		},
+		/**
+		 * 관리자 유저별 보낸 신고 목록: reporterId + createdAt 내림차순
+		 * - src/firebase/services/adminService.ts
+		 */
+		{
+			"collectionGroup": "Reports",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "reporterId",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				}
+			]
+		},
+		/**
+		 * 관리자 유저별 받은 리뷰 목록: receiverId + createdAt 내림차순
+		 * - src/firebase/services/adminService.ts
+		 */
+		{
+			"collectionGroup": "Reviews",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "receiverId",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				}
+			]
+		},
+		/**
+		 * 관리자 유저별 보낸 리뷰 목록: senderId + createdAt 내림차순
+		 * - src/firebase/services/adminService.ts
+		 */
+		{
+			"collectionGroup": "Reviews",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "senderId",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				}
+			]
 		}
 	],
 	/**

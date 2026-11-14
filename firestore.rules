@@ -95,12 +95,14 @@ service cloud.firestore {
     
     // BlockedUsers
     match /Users/{userId}/BlockedUsers/{blockedUserId} {
-      allow read, create, update, delete: if request.auth.uid == userId; // 본인만
+      allow read: if request.auth.uid == userId || isAdmin(); // 본인, 관리자
+      allow create, update, delete: if request.auth.uid == userId; // 본인만
     }
     
     // BlockedBy
     match /Users/{userId}/BlockedBy/{blockedById} {
-      allow read, create, update, delete: if request.auth.uid == userId; // 본인만
+      allow read: if request.auth.uid == userId || isAdmin(); // 본인, 관리자
+      allow create, update, delete: if request.auth.uid == userId; // 본인만
     }
     
     // DeletedUsers
