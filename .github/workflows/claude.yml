@@ -36,7 +36,11 @@ jobs:
             - run: npm ci
 
             - uses: anthropics/claude-code-action@v1
+              # 리뷰 스레드 resolve는 GraphQL(resolveReviewThread)로만 가능해 gh에 워크플로 토큰을 넘긴다(pull-requests: write 필요)
+              env:
+                  GH_TOKEN: ${{ github.token }}
               with:
                   claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
                   claude_args: |
-                      --allowedTools "Bash(npm run lint),Bash(npm run typecheck)"
+                      --allowedTools "Bash(npm run lint),Bash(npm run typecheck),Bash(gh api graphql:*)"
+                      --append-system-prompt "리뷰 스레드 resolve를 요청받으면 gh api graphql로 reviewThreads(id, isResolved)를 조회한 뒤 resolveReviewThread 뮤테이션으로 처리한다."
