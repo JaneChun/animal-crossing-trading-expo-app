@@ -2,7 +2,7 @@
 
 > 이슈: 없음 (PR #65 리뷰 1·5·6번)
 > 작업 종류: 버그 수정
-> 상태: 대기
+> 상태: 진행 중
 > 생성일: 2026-11-14
 
 ## 개요
@@ -71,3 +71,8 @@ PR #65(`fix/issue-58-61-android-layout`)에 달린 자동 리뷰를 검증하면
 - 검증: `npm run typecheck` 통과, `npx eslint src/screens/NewPost.tsx` 에러 0건(경고 1건은 변경 전부터 있던 `useEffect` 의존성 경고)
 - 검증: iPhone SE에서 버튼 아래 여백 8, iPhone 17 Pro에서 수정 전과 같은 여백을 사용자가 확인. Android는 촬영하지 않음(계산값 약 24·56이 최솟값 8보다 커서 결과가 바뀌지 않음)
 - Phase 1 완료
+- Phase 2 실측(Metro 디버거 프록시에 CDP로 붙어 `console.log` 수집). KAV 계산식 `요소 아래 끝 = KAV 부모의 화면상 Y + 화면 높이 - 키보드 높이 - offset`이 17 Pro 실측(버튼 481)과 일치함
+  - PostDetail: KAV 부모 Y가 SE 64(20 + 44), 17 Pro 106(62 + 44)으로 `LAYOUT_HEADER_HEIGHT` 44가 정확함. 현재 iOS 식은 SE에서 입력창이 툴바에 34 가려지고 17 Pro는 툴바에 딱 붙음
+  - SignUp: iOS offset 식은 원인이 아님. SE(667pt)에서 제목·입력창·안내 문구·버튼 높이가 키보드 위 공간보다 길어 버튼이 423까지 밀려남(툴바 357). 레이아웃 변경이 필요하므로 이번 PR 범위에서 제외(Phase 3 보류)
+  - Android(3버튼): SignUp 버튼이 툴바 위 끝(458)에 정확히 붙음. RN `Keyboard` 이벤트 높이(324)는 내비게이션 바(48)를 포함하지 않음
+- Phase 4: PostDetail offset을 `headerHeight + insets.top + LAYOUT_HEADER_HEIGHT - (Android ? 8 : 0)`으로 공통화. 17 Pro·Android 값은 그대로이고 SE만 80에서 114로 바뀜. 시뮬레이터가 로그아웃 상태라 키보드를 올린 실측 검증은 하지 못함

@@ -45,12 +45,9 @@ const PostDetail = () => {
 	const headerHeight = useHeaderHeight();
 	const insets = useSafeAreaInsets();
 	// 댓글 인풋은 LayoutWithHeader 헤더 아래에 있으므로 offset에 헤더 높이가 들어가야 한다.
-	// iOS는 하단 inset + 10(34 + 10)이 헤더 높이를 대신하고, Android는 하단 inset이 내비게이션 모드마다 달라 헤더 높이를 직접 더한다.
 	// Android는 입력창 아래 여백(8)만큼 빼서 입력창이 툴바와 8dp 떨어지게 한다
 	const screenKeyboardOffset =
-		Platform.OS === 'android'
-			? headerHeight + insets.top + LAYOUT_HEADER_HEIGHT - 8
-			: headerHeight + insets.top + insets.bottom + 10;
+		headerHeight + insets.top + LAYOUT_HEADER_HEIGHT - (Platform.OS === 'android' ? 8 : 0);
 	const keyboardVerticalOffset = screenKeyboardOffset + KEYBOARD_TOOLBAR_HEIGHT;
 
 	const userInfo = useUserInfo();
