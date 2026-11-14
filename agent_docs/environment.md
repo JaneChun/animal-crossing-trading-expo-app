@@ -20,7 +20,7 @@
 - `EXPO_PUBLIC_USE_FIREBASE_EMULATOR`는 env 파일에 두지 않는다. `npm run dev:emulator`·`dev:emulator:all`이 셸에서만 `true`로 주입한다(아래 함정 참조).
 - `functions/.env` (Functions 배포용): `GOOGLE_WEB_CLIENT_ID`(Google 로그인 토큰 검증 audience, 앱의 `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`와 같은 값). Functions는 루트 `.env`를 읽지 않는다. git 미추적이라 워크트리·새 클론마다 직접 복사해야 하며, 없으면 `firebase deploy`가 값을 대화형으로 묻는다(`--non-interactive`에서는 실패)
 - `GoogleService-Info.plist`, `google-services.json`도 git 미추적
-- **워크트리를 만들면 메인 저장소에서 복사할 파일**: `.env`, `.env.local`, `functions/.env`, `google-services.json`, `GoogleService-Info.plist`(없으면 Metro가 `Could not parse Expo config: ...googleServicesFile` 경고), 기존 에뮬레이터 데이터를 쓰려면 `emulator-data/`. 복사 후 `npm install`. `ios/`·`android/`는 그 워크트리에서 네이티브 빌드할 때만 prebuild로 만든다
+- **워크트리를 만들면 메인 저장소에서 복사할 파일**: `.env`, `.env.local`, `functions/.env`, `google-services.json`, `GoogleService-Info.plist`(없으면 Metro가 `Could not parse Expo config: ...googleServicesFile` 경고), 기존 에뮬레이터 데이터를 쓰려면 `emulator-data/`, `emulator:seed`로 카탈로그·이미지까지 시드하려면 `functions/scripts/output/catalog.json`과 `scripts/emulator/seed-images/`(없으면 시드가 경고만 내고 건너뛴다). 복사 후 `npm install`. `ios/`·`android/`는 그 워크트리에서 네이티브 빌드할 때만 prebuild로 만든다
 
 ## Expo SDK 54 빌드 제약 (2026-07, 52→54 업그레이드에서 확인)
 
