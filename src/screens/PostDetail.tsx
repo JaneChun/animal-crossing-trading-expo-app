@@ -1,8 +1,9 @@
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useRoute } from '@react-navigation/native';
 import { useRef, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
+import { Alert, Platform, StyleSheet, View } from 'react-native';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import CommunityTypeBadge from '@/components/Community/CommunityTypeBadge';
@@ -23,7 +24,7 @@ import VillagerSummaryList from '@/components/PostDetail/VillagerSummaryList';
 import ActionSheetButton from '@/components/ui/ActionSheetButton';
 import Banner from '@/components/ui/Banner';
 import EmptyIndicator from '@/components/ui/EmptyIndicator';
-import LayoutWithHeader from '@/components/ui/layout/LayoutWithHeader';
+import LayoutWithHeader, { LAYOUT_HEADER_HEIGHT } from '@/components/ui/layout/LayoutWithHeader';
 import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { usePost } from '@/hooks/post/usePost';
 import { usePostComment } from '@/hooks/post/usePostComment';
@@ -61,7 +62,10 @@ const PostDetail = () => {
 	const styles = useThemedStyles(makeStyles);
 	const headerHeight = useHeaderHeight();
 	const insets = useSafeAreaInsets();
-	const screenKeyboardOffset = headerHeight + insets.top + insets.bottom + 10;
+	// 댓글 인풋은 LayoutWithHeader 헤더 아래에 있으므로 offset에 헤더 높이가 들어가야 한다.
+	// Android는 입력창 아래 여백(8)만큼 빼서 입력창이 툴바와 8dp 떨어지게 한다
+	const screenKeyboardOffset =
+		headerHeight + insets.top + LAYOUT_HEADER_HEIGHT - (Platform.OS === 'android' ? 8 : 0);
 	const keyboardVerticalOffset = screenKeyboardOffset + KEYBOARD_TOOLBAR_HEIGHT;
 
 	const userInfo = useUserInfo();
@@ -332,7 +336,7 @@ const PostDetail = () => {
 						}
 					/>
 					<KeyboardAvoidingView
-						behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+						behavior="padding"
 						keyboardVerticalOffset={keyboardVerticalOffset}
 					>
 						<CommentInput

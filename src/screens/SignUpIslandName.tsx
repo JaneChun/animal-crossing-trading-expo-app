@@ -5,12 +5,12 @@ import { Timestamp } from 'firebase/firestore';
 import { Controller, FormProvider } from 'react-hook-form';
 import {
 	Keyboard,
-	KeyboardAvoidingView,
 	Platform,
 	StyleSheet,
 	TouchableWithoutFeedback,
 	View,
 } from 'react-native';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import NameInput from '@/components/Profile/NameInput';
@@ -84,8 +84,14 @@ const SignUpIslandName = () => {
 		<SafeAreaView style={styles.screen} edges={['bottom']}>
 			<KeyboardAvoidingView
 				style={styles.screen}
-				behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-				keyboardVerticalOffset={insets.bottom + KEYBOARD_TOOLBAR_HEIGHT + 12}
+				behavior="padding"
+				// Android는 하단 inset이 내비게이션 모드마다 달라, 화면 위쪽 기준(상태바 높이)으로 계산한다.
+				// 컨테이너 아래 패딩(24)만큼 빼서 버튼이 iOS처럼 툴바 바로 위에 오게 한다
+				keyboardVerticalOffset={
+					Platform.OS === 'android'
+						? insets.top + KEYBOARD_TOOLBAR_HEIGHT - 24
+						: insets.bottom + KEYBOARD_TOOLBAR_HEIGHT + 12
+				}
 			>
 				<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 					<FormProvider {...methods}>

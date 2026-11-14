@@ -52,7 +52,8 @@ const makeStyles = ({ colors }: Theme) =>
 		input: {
 			fontSize: FontSizes.md,
 			color: colors.text.primary,
-			padding: 12,
+			paddingHorizontal: 12,
+			paddingVertical: 0,
 			borderWidth: 1,
 			borderColor: colors.bg.fill,
 			borderRadius: 8,

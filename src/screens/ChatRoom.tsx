@@ -2,7 +2,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { RefObject, useEffect, useRef, useState } from 'react';
-import { KeyboardAvoidingView, StyleSheet, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
 import { GiftedChat, IMessage, InputToolbar } from 'react-native-gifted-chat';
 import { AnimatedList } from 'react-native-gifted-chat/lib/MessageContainer';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -258,7 +258,12 @@ const ChatRoom = () => {
 									backgroundColor: colors.bg.secondary,
 									paddingTop: keyboardHeight, // 키보드 올라왔을 때 키보드 높이만큼 잘리는 컨텐츠 방지
 								}}
-								bottomOffset={KEYBOARD_TOOLBAR_HEIGHT - insets.bottom}
+								// Android는 입력창 아래 여백(8)만큼 빼서 입력창이 툴바와 8dp 떨어지게 한다
+								bottomOffset={
+									KEYBOARD_TOOLBAR_HEIGHT -
+									insets.bottom -
+									(Platform.OS === 'android' ? 8 : 0)
+								}
 								infiniteScroll
 								loadEarlier={canLoadMore}
 								onLoadEarlier={onLoadMore}
