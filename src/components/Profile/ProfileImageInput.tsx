@@ -1,9 +1,9 @@
-import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo } from '@expo/vector-icons';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import ImageWithFallback from '@/components/ui/ImageWithFallback';
 import { useImagePicker } from '@/hooks/shared/useImagePicker';
+import useSafeActionSheet from '@/hooks/shared/useSafeActionSheet';
 import { Theme, useTheme, useThemedStyles } from '@/theme';
 import { ProfileImageInputProps } from '@/types/components';
 import { compressImage } from '@/utilities/compressImage';
@@ -14,7 +14,7 @@ const ProfileImageInput = ({ image, setImage }: ProfileImageInputProps) => {
 	const { colors } = useTheme();
 	const styles = useThemedStyles(makeStyles);
 	const { pickImage } = useImagePicker({ multiple: false });
-	const { showActionSheetWithOptions } = useActionSheet();
+	const { showActionSheetWithOptions } = useSafeActionSheet();
 
 	const showImageEditOptions = () => {
 		const options = ['앨범에서 사진 선택', '기본 이미지 적용', '취소'];

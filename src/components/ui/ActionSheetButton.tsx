@@ -1,7 +1,7 @@
-import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo } from '@expo/vector-icons';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 
+import useSafeActionSheet from '@/hooks/shared/useSafeActionSheet';
 import { Spacing, useTheme } from '@/theme';
 import { ActionSheetButtonProps } from '@/types/components';
 
@@ -12,7 +12,7 @@ const ActionSheetButton = ({
 	destructiveButtonIndex,
 	cancelIndex,
 }: ActionSheetButtonProps) => {
-	const { showActionSheetWithOptions } = useActionSheet();
+	const { showActionSheetWithOptions } = useSafeActionSheet();
 	const { colors } = useTheme();
 
 	const handlePress = () => {

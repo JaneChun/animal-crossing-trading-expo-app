@@ -1,4 +1,3 @@
-import { useActionSheet } from '@expo/react-native-action-sheet';
 import { Entypo } from '@expo/vector-icons';
 import { useState } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
@@ -6,6 +5,7 @@ import { Pressable, StyleSheet } from 'react-native';
 import PostList from '@/components/Home/PostList';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import Text from '@/components/ui/Text';
+import useSafeActionSheet from '@/hooks/shared/useSafeActionSheet';
 import { useTheme } from '@/theme';
 import { MyPostsProps } from '@/types/components';
 import { Collection } from '@/types/post';
@@ -17,7 +17,7 @@ const OPTIONS = [
 
 const MyPosts = ({ isMyProfile, profileInfo }: MyPostsProps) => {
 	const { colors } = useTheme();
-	const { showActionSheetWithOptions } = useActionSheet();
+	const { showActionSheetWithOptions } = useSafeActionSheet();
 	const [selectedCollection, setSelectedCollection] = useState<Collection>('Boards');
 
 	const selectedOption = OPTIONS.find((option) => option.value === selectedCollection);
