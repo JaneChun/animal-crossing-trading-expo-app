@@ -1,6 +1,6 @@
 import { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { ComponentType, useEffect, useState } from 'react';
-import { ScrollViewProps, StyleSheet } from 'react-native';
+import { Keyboard, ScrollViewProps, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import Button from '@/components/ui/Button';
@@ -47,9 +47,17 @@ const EditCommentModal = ({
 		setNewCommentInput(text);
 	};
 
+	// 시트는 닫히면 언마운트된다. Android는 포커스된 입력이 사라지면 화면의 다른 입력(게시글 댓글 입력창)으로
+	// 포커스를 넘겨 키보드가 그대로 남으므로, 닫기 전에 키보드를 내린다
+	const handleClose = () => {
+		Keyboard.dismiss();
+		onClose();
+	};
+
 	const handleSubmit = () => {
 		if (!newCommentInput.trim()) return;
 
+		Keyboard.dismiss();
 		onSubmit(newCommentInput.trim());
 		setNewCommentInput('');
 	};
@@ -61,7 +69,7 @@ const EditCommentModal = ({
 	);
 
 	const cancelButton = (
-		<Button variant="secondary" size="md" onPress={onClose}>
+		<Button variant="secondary" size="md" onPress={handleClose}>
 			취소
 		</Button>
 	);
@@ -69,7 +77,7 @@ const EditCommentModal = ({
 	return (
 		<CustomBottomSheet
 			isVisible={isVisible}
-			onClose={onClose}
+			onClose={handleClose}
 			snapPoints={['95%', '100%']}
 			// 키보드 여백은 KeyboardAwareScrollView가 넣으므로 시트가 내용 높이를 줄이지 않게 한다
 			contentHandlesKeyboard
