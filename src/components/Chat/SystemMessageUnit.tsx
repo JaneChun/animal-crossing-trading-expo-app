@@ -5,7 +5,7 @@ import { SystemIMessage } from '@/types/chat';
 
 import PostNotExist from './PostNotExist';
 import PostSummary from './PostSummary';
-import PostSummaryLoading from './PostSummaryLoading';
+import PostSummarySkeleton from './PostSummarySkeleton';
 
 const SystemMessageUnit = ({ message }: { message: SystemIMessage }) => {
 	const { postId, collectionName } = message.systemPayload;
@@ -15,7 +15,7 @@ const SystemMessageUnit = ({ message }: { message: SystemIMessage }) => {
 	return (
 		<View style={styles.container}>
 			{isPostLoading ? (
-				<PostSummaryLoading />
+				<PostSummarySkeleton collectionName={collectionName} />
 			) : post ? (
 				<PostSummary post={post} collectionName={collectionName} />
 			) : (
