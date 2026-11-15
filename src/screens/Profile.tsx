@@ -1,7 +1,9 @@
+import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
 import { useFocusEffect, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { Image, Keyboard, StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import ReportModal from '@/components/PostDetail/ReportModal';
 import EditProfileModal from '@/components/Profile/EditProfileModal';
@@ -37,6 +39,9 @@ const Profile = () => {
 	const currentTab = useCurrentTab();
 	const isFocused = useIsFocused();
 	const userInfo = useUserInfo();
+	const insets = useSafeAreaInsets();
+	// 탭 밖에서는 탭바 높이 컨텍스트가 없어 undefined다
+	const isInTab = useContext(BottomTabBarHeightContext) !== undefined;
 
 	const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 	const [isViewerOpen, setIsViewerOpen] = useState(false);
@@ -138,6 +143,8 @@ const Profile = () => {
 				<FlatList
 					data={[]}
 					renderItem={null}
+					// 탭 밖(RootStack)에서 연 프로필은 탭바가 없어 목록 끝이 내비게이션 바에 가려지므로 하단 inset만큼 띄운다
+					contentContainerStyle={{ paddingBottom: isInTab ? 0 : insets.bottom }}
 					ListHeaderComponent={
 						<View style={styles.profileBoxContainer}>
 							<ProfileBox

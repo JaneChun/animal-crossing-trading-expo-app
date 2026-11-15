@@ -1,10 +1,12 @@
-import { useEffect } from 'react';
+import { ComponentType, useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { StyleSheet } from 'react-native';
+import { ScrollViewProps, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import DropdownInput from '@/components/ui/inputs/DropdownInput';
 import { PADDING } from '@/components/ui/layout/Layout';
+import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { COMMUNITY_TYPES } from '@/constants/post';
 import { FontSizes, FontWeights , Theme, useThemedStyles } from '@/theme';
 import { PostFormProps } from '@/types/components';
@@ -47,7 +49,15 @@ const PostForm = ({
 	}));
 
 	return (
-		<ScrollView ref={scrollViewRef} style={{ padding: PADDING }}>
+		<KeyboardAwareScrollView
+			ref={scrollViewRef}
+			// 스크롤 구현체로 RNGH ScrollView 주입(제스처 동작 유지).
+			// 캐스트: prop 타입과 RNGH props 타입 불일치 회피(런타임 동작 동일)
+			ScrollViewComponent={ScrollView as unknown as ComponentType<ScrollViewProps>}
+			// 포커스된 입력·커서를 키보드 툴바 높이 + 여백만큼 띄워 올림
+			bottomOffset={KEYBOARD_TOOLBAR_HEIGHT + PADDING}
+			style={{ padding: PADDING }}
+		>
 			{isMarket && (
 				<Controller
 					control={control}
@@ -163,7 +173,7 @@ const PostForm = ({
 					)}
 				/>
 			)}
-		</ScrollView>
+		</KeyboardAwareScrollView>
 	);
 };
 
@@ -182,6 +192,7 @@ const makeStyles = ({ colors }: Theme) =>
 		input: {
 			fontSize: FontSizes.md,
 			fontWeight: FontWeights.regular,
+			color: colors.text.primary,
 		},
 		titleInput: {
 			fontSize: FontSizes.lg,

@@ -1,5 +1,5 @@
 import { FontAwesome } from '@expo/vector-icons';
-import { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
+import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { ComponentType, useEffect } from 'react';
@@ -10,6 +10,7 @@ import {
 	TouchableOpacity,
 	Image,
 	ScrollViewProps,
+	TextInput,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
@@ -261,7 +262,6 @@ const EditProfileModal = ({
 										onChangeText={onChange}
 										label="닉네임"
 										placeholder="닉네임을 입력해주세요."
-										InputComponent={BottomSheetTextInput}
 									/>
 								)}
 							/>
@@ -276,7 +276,6 @@ const EditProfileModal = ({
 										onChangeText={onChange}
 										label="섬 이름"
 										placeholder="섬 이름을 입력해주세요."
-										InputComponent={BottomSheetTextInput}
 									/>
 								)}
 							/>
@@ -314,7 +313,7 @@ const EditProfileModal = ({
 										control={control}
 										name="titleFirst"
 										render={({ field: { value, onChange } }) => (
-											<BottomSheetTextInput
+											<TextInput
 												value={value}
 												onChangeText={onChange}
 												placeholder="초면의"
@@ -327,7 +326,7 @@ const EditProfileModal = ({
 										control={control}
 										name="titleLast"
 										render={({ field: { value, onChange } }) => (
-											<BottomSheetTextInput
+											<TextInput
 												value={value}
 												onChangeText={onChange}
 												placeholder="이주민"
@@ -355,7 +354,7 @@ const EditProfileModal = ({
 									name="bio"
 									render={({ field: { value, onChange } }) => (
 										<View style={styles.bioWrapper}>
-											<BottomSheetTextInput
+											<TextInput
 												testID="bioInput"
 												value={value}
 												onChangeText={onChange}

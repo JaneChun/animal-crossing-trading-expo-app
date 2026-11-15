@@ -1,4 +1,3 @@
-import { useActionSheet } from '@expo/react-native-action-sheet';
 import { useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { RefObject, useEffect, useRef, useState } from 'react';
@@ -26,6 +25,7 @@ import { useChatPresence } from '@/hooks/shared/useChatPresence';
 import { useImagePicker } from '@/hooks/shared/useImagePicker';
 import { useKeyboardHeight } from '@/hooks/shared/useKeyboardHeight';
 import { useReportUser } from '@/hooks/shared/useReportUser';
+import useSafeActionSheet from '@/hooks/shared/useSafeActionSheet';
 import { goBack } from '@/navigation/RootNavigation';
 import { useBlockStore } from '@/stores/block';
 import { Theme, useTheme, useThemedStyles } from '@/theme';
@@ -86,7 +86,7 @@ const ChatRoom = () => {
 	const { pickImage, takePhoto } = useImagePicker({ multiple: false });
 	const { mutate: sendImageMessage } = useSendImageMessage();
 
-	const { showActionSheetWithOptions } = useActionSheet();
+	const { showActionSheetWithOptions } = useSafeActionSheet();
 
 	useChatPresence(chatId);
 
