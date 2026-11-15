@@ -12,14 +12,9 @@
   controller가 `findNodeHandle`로 스크롤 타깃을 매칭하고 worklet `scrollTo`를 실행할 수 있다. 
   포커스 감지는 네이티브 레벨(`useReanimatedFocusedInput`) 이라 입력마다 `onFocus`를 배선할 필요가 없다. 
   Gorhom `BottomSheetScrollView`를 직접 쓰면 이 자동 스크롤이 사라지므로 주의한다.
-- Gorhom v5의 시트 콘텐츠 높이는 애니메이션 스타일로 계산된다.
-  그 아래 일반 `flex: 1` 루트는 높이 제약을 받지 못하고 헤더와 본문 높이만큼 시트 밖으로 넘칠 수 있다.
-  `CustomBottomSheet`의 내부 루트를 `StyleSheet.absoluteFillObject`로 부모 경계에 고정해 본문과 스크롤 뷰포트가 실제 시트 높이를 따르게 한다.
-- 탭 화면의 긴 폼은 탭바 높이를 body의 `paddingBottom`에 반영한다.
-  스크롤 콘텐츠 여백만 늘리면 탭바 뒤까지 포함한 잘못된 뷰포트 높이는 바뀌지 않는다.
-  단, `Profile`은 `MainTabNavigator`(탭 안)와 `RootStackNavigator`(탭 밖) 두 곳에 등록돼 있어
-  `useBottomTabBarHeight()`를 쓰면 탭 밖 진입 시 throw한다. `BottomTabBarHeightContext`를 직접 읽어 없으면 0으로 폴백한다.
-- 키보드 하단 여백은 `KeyboardAwareScrollView`가 전담한다.
+- 시트 내용의 높이와 하단 여백은 `CustomBottomSheet`가 맡는다(`agent_docs/architecture.md`의 바텀시트 항목 참고).
+  화면 하단 inset(탭 밖에서 열 때의 홈 인디케이터·내비게이션 바)도 시트가 비워 주므로, body에 탭바 높이를 더하지 않는다(#57에서 제거).
+- 키보드 하단 여백은 `KeyboardAwareScrollView`가 전담한다. 그래서 `CustomBottomSheet`에 `contentHandlesKeyboard`를 넘겨 시트가 키보드만큼 내용 높이를 줄이지 않게 한다(줄이면 끝까지 스크롤했을 때 빈 공간이 키보드 높이만큼 더 생긴다).
   키보드가 열리면 controller가 내부 스페이서로 키보드 프레임 높이만큼 여백을 주입하므로, 스크롤 콘텐츠에는 정적 `PADDING`만 두고 `useKeyboardState()` 기반 동적 패딩을 더하지 않는다(더하면 이중 여백).
   `bottomOffset`에는 키보드 툴바 높이와 여백(`KEYBOARD_TOOLBAR_HEIGHT + PADDING`)을 주어 포커스 입력이 툴바에 가리지 않게 한다.
 - 스크롤 폼의 세로 래퍼는 `flexShrink: 0`으로 둔다.

@@ -25,14 +25,6 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 	setItem: jest.fn(),
 }));
 
-jest.mock('@react-navigation/bottom-tabs', () => {
-	const { createContext } = require('react');
-	// 컨텍스트 기본값을 80으로 두면 Provider 없이도 "탭 안(높이 80)" 상황이 재현된다.
-	return {
-		BottomTabBarHeightContext: createContext(80),
-	};
-});
-
 jest.mock('react-native-keyboard-controller', () => {
 	const { createElement } = require('react');
 
@@ -193,7 +185,8 @@ describe('EditProfileModal', () => {
 				: [bottomSheet.props.bodyStyle]),
 		);
 
-		expect(bodyStyle.paddingBottom).toBe(80);
+		// 하단 여백은 CustomBottomSheet가 내용 영역 높이와 inset으로 처리하므로 탭바 높이를 더하지 않는다
+		expect(bodyStyle.paddingBottom).toBeUndefined();
 		expect(bottomSheet.props.bottomInset).toBeUndefined();
 		expect(bottomSheet.props.enableContentPanningGesture).toBeUndefined();
 	});

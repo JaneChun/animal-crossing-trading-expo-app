@@ -1,9 +1,8 @@
 import { FontAwesome } from '@expo/vector-icons';
 import { BottomSheetScrollView, BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
 import { ImagePickerAsset } from 'expo-image-picker';
-import { ComponentType, useContext, useEffect } from 'react';
+import { ComponentType, useEffect } from 'react';
 import { Controller, FieldErrors, FormProvider } from 'react-hook-form';
 import {
 	StyleSheet,
@@ -49,9 +48,6 @@ const EditProfileModal = ({
 	const styles = useThemedStyles(makeStyles);
 	const userInfo = useUserInfo();
 	const setUserInfo = useAuthStore((state) => state.setUserInfo);
-	// Profile은 MainTabNavigator(탭 안)와 RootStackNavigator(탭 밖) 두 곳에 등록되어 있다.
-	// useBottomTabBarHeight()는 탭 밖에서 호출되면 throw하므로, 컨텍스트를 직접 읽어 없으면 0으로 폴백한다.
-	const bottomTabBarHeight = useContext(BottomTabBarHeightContext) ?? 0;
 
 	// form hook 가져오기
 	const methods = useProfileForm();
@@ -222,12 +218,11 @@ const EditProfileModal = ({
 				isVisible={isVisible}
 				onClose={handleClose}
 				snapPoints={['95%', '100%']}
+				// 키보드 여백은 KeyboardAwareScrollView가 넣으므로 시트가 내용 높이를 줄이지 않게 한다
+				contentHandlesKeyboard
 				title="프로필 수정"
 				rightButton={submitButton}
-				bodyStyle={[
-					styles.bottomSheetBodyStyle,
-					{ paddingBottom: bottomTabBarHeight },
-				]}
+				bodyStyle={styles.bottomSheetBodyStyle}
 			>
 				{/* 스크롤 몸통은 Gorhom, 포커스 자동 스크롤은 keyboard-controller가 담당 */}
 				<KeyboardAwareScrollView

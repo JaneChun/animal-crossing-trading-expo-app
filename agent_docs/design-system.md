@@ -70,6 +70,10 @@
 
 `variant="thin"`(높이 1, 리스트 구분)과 `variant="section"`(높이 8, 섹션 구분).
 
+### CustomBottomSheet 헤더 (`@/components/ui/CustomBottomSheet`)
+
+`leftButton`·`rightButton`은 `position: 'absolute'`로 헤더 양 끝에 놓이고, 제목은 `flex: 1`로 헤더 전체 너비를 차지한다. RN은 겹친 형제 뷰 중 나중에 그린 뷰가 터치를 받으므로, 버튼은 반드시 제목보다 나중에 렌더링해야 한다. 순서가 바뀌면 버튼은 보이지만 탭이 제목에 막혀 눌리지 않는다(#62).
+
 ### 새 컴포넌트를 `ui/`로 올리는 기준
 
 - 서로 다른 도메인 두 곳 이상에서 같은 모양으로 쓰일 때 올린다. 한 도메인 안에서만 반복되면 그 도메인 폴더에 둔다.

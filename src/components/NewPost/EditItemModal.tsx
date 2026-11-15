@@ -46,7 +46,14 @@ const EditItemModal = ({ item, isVisible, updateItemFromCart, onClose }: EditIte
 	}, [quantityInput, milesTicketInput, selectedUnit]);
 
 	return (
-		<CustomBottomSheet isVisible={isVisible} onClose={onClose} snapPoints={['40%']}>
+		<CustomBottomSheet
+			isVisible={isVisible}
+			onClose={onClose}
+			// 내용(이름·색상·가격·개수·총계)과 하단 inset이 iPhone SE에서도 들어가는 높이
+			snapPoints={['55%']}
+			// 위 높이로는 키보드 툴바에 총계가 가려지므로, 키보드가 떠 있는 동안만 시트를 화면 높이까지 펼친다
+			keyboardBehavior="fillParent"
+		>
 			<View style={styles.content}>
 				{/* 타이틀 */}
 				<Text variant="heading" weight="bold">
