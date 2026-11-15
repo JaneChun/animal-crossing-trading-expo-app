@@ -46,11 +46,12 @@
 
 ## Phase 4: 스택에서 연 프로필의 목록 끝 여백 (#75)
 
-- [ ] 탭 밖(RootStack)에서 연 `Profile`에서만 목록 하단에 `insets.bottom` 여백을 준다 (`src/screens/Profile.tsx`)
+- [x] 탭 밖(RootStack)에서 연 `Profile`에서만 목록 하단에 `insets.bottom` 여백을 준다 (`src/screens/Profile.tsx`)
   - 패턴: `Profile`은 `ProfileStackNavigator`(탭 안)와 `RootStackNavigator` 101행(탭 밖)에 함께 등록되어 있다. `@react-navigation/bottom-tabs`의 `BottomTabBarHeightContext`를 `useContext`로 읽으면 탭 밖에서는 `undefined`이므로, 이 값으로 탭 안팎을 구분한다.
+  - 결정: 바깥 `FlatList`의 `contentContainerStyle.paddingBottom`만으로 Galaxy에서 목록 끝이 내비게이션 바 위에 보여 `PostList`는 고치지 않았다(실기기 확인).
   - 패턴: 바깥 `FlatList`(138행)는 `data={[]}`이고, 실제 글 목록은 `ListEmptyComponent` 안 `MyPosts` → `PostList`의 `FlatList`이며 `마지막 글입니다.`도 여기의 `ListFooterComponent`다. 바깥 `FlatList`의 `contentContainerStyle.paddingBottom`으로 먼저 시도하고, 기기에서 안쪽 목록이 따로 스크롤되어 효과가 없으면 `PostList`에 여백을 전달하는 방식으로 바꾼다.
   - 결정: 공통 `Layout`(사용처 28곳)은 고치지 않는다. 문제가 스택에서 연 `Profile`에만 있어 영향 범위를 좁힌다.
-- [ ] 검증: `npm run typecheck`, Android 3버튼 모드에서 댓글·채팅으로 연 프로필과 하단 탭 프로필의 목록 끝 비교, iOS 동일 확인
+- [x] 검증: `npm run typecheck`, Android 3버튼 모드에서 댓글·채팅으로 연 프로필과 하단 탭 프로필의 목록 끝 비교, iOS 동일 확인
 
 ## Phase 5: 프로필 수정 바텀시트 입력창 위 드래그 스크롤 (#76)
 
@@ -73,3 +74,5 @@
 - 결정: iOS 새 글 작성 본문 커서 어긋남(행간 26)은 보류(사용자 지시). 행간 유지와 커서 정렬을 함께 맞추려면 React Native iOS 네이티브 패치가 필요하다.
 - Phase 3 완료
 - 검증: `npm run typecheck` 통과, Galaxy 3버튼·제스처 모드에서 액션 시트 확인(사용자)
+- Phase 4 완료
+- 검증: `npm run typecheck` 통과, Galaxy 3버튼 모드에서 스택 프로필·탭 프로필 목록 끝 확인(사용자). iOS는 확인하지 않음
