@@ -262,7 +262,6 @@ const EditProfileModal = ({
 										onChangeText={onChange}
 										label="닉네임"
 										placeholder="닉네임을 입력해주세요."
-										InputComponent={TextInput}
 									/>
 								)}
 							/>
@@ -277,7 +276,6 @@ const EditProfileModal = ({
 										onChangeText={onChange}
 										label="섬 이름"
 										placeholder="섬 이름을 입력해주세요."
-										InputComponent={TextInput}
 									/>
 								)}
 							/>

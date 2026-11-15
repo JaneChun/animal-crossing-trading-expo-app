@@ -217,9 +217,11 @@ describe('EditProfileModal', () => {
 		expect(contentContainerStyle.paddingBottom).toBe(24);
 	});
 
-	it('모든 프로필 입력을 바텀시트 키보드 처리에 등록한다', () => {
+	it('Android에서 입력창 위 드래그가 시트 스크롤로 이어지도록 모든 프로필 입력에 RN TextInput을 쓴다', () => {
 		const renderer = renderModal();
 
-		expect(renderer.root.findAll((node) => node.props.isBottomSheetTextInput)).toHaveLength(5);
+		// BottomSheetTextInput(RNGH TextInput)은 Android에서 입력창 위 드래그를 가져간다(#76)
+		expect(renderer.root.findAll((node) => node.props.isBottomSheetTextInput)).toHaveLength(0);
+		expect(renderer.root.findAll((node) => String(node.type) === 'TextInput')).toHaveLength(5);
 	});
 });
