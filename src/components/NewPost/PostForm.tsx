@@ -182,6 +182,7 @@ const makeStyles = ({ colors }: Theme) =>
 		input: {
 			fontSize: FontSizes.md,
 			fontWeight: FontWeights.regular,
+			color: colors.text.primary,
 		},
 		titleInput: {
 			fontSize: FontSizes.lg,
