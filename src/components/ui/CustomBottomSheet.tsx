@@ -188,11 +188,14 @@ const SheetContent = ({
 	const contentStyle = useAnimatedStyle(() => {
 		const { containerHeight, handleHeight, containerOffset } = animatedLayoutState.get();
 		const { detents } = animatedDetentsState.get();
-		// 닫히는 동안에는 시트 위치가 계속 내려가므로, 가장 낮은 스냅 포인트에서 멈춰 내용이 줄어들지 않게 한다
 		const lowestOpenDetentPosition = detents?.length ? Math.max(...detents) : containerHeight;
+
+		// containerHeight - sheetTop: 지금 보이는 시트의 높이
+		// 시트가 닫히며 내려가는 동안 animatedPosition은 계속 커지므로, 컨텐츠가 줄어들지 않게 가장 낮은 스냅 포인트에서 높이를 고정
 		const sheetTop = Math.min(animatedPosition.value, lowestOpenDetentPosition);
-		// 키보드가 시트 아래쪽을 덮는 만큼 뺀다. 컨테이너가 화면 끝보다 위에서 끝나면(탭바 위 등) 그만큼은 덮지 않는다.
-		// Gorhom의 animatedKeyboardState.heightWithinContainer는 Android에서 실제보다 크게 나와 쓰지 않는다
+
+		// 키보드가 시트 아래쪽을 덮은 만큼 뺀다. 
+		// 컨테이너가 화면 끝보다 위에서 끝나면(탭바 위 등) 그만큼은 덮지 않는다.
 		const keyboardOverlap = contentHandlesKeyboard
 			? 0
 			: Math.max(0, keyboardHeight.value - containerOffset.bottom);
@@ -214,12 +217,13 @@ const SheetContent = ({
 	// 키보드가 있으면 키보드 위 툴바(KEYBOARD_TOOLBAR_HEIGHT)만큼 비운다.
 	const bottomSpacerStyle = useAnimatedStyle(() => {
 		const { containerOffset } = animatedLayoutState.get();
-		const uncoveredBottomInset = Math.max(0, bottomInset - containerOffset.bottom);
+		// 내비게이션 바·홈 인디케이터가 시트 아래쪽을 덮는 높이
+		const bottomInsetOverlap = Math.max(0, bottomInset - containerOffset.bottom);
 
 		return {
 			height:
 				keyboardProgress.value * KEYBOARD_TOOLBAR_HEIGHT +
-				(1 - keyboardProgress.value) * uncoveredBottomInset,
+				(1 - keyboardProgress.value) * bottomInsetOverlap,
 		};
 	});
 
