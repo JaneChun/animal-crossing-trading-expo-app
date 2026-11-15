@@ -13,8 +13,8 @@ import {
 	ViewStyle,
 } from 'react-native';
 import { ImageStyle } from 'react-native-fast-image';
-import { ScrollView } from 'react-native-gesture-handler';
 import { DayProps } from 'react-native-gifted-chat';
+import { KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 
 import { ICON_MAP } from '@/components/ui/EmptyIndicator';
 import { OnboardingStep } from '@/constants/onboardingData';
@@ -104,7 +104,7 @@ export type ListItem = PostItem | AdItem;
 // NewPost/
 export interface PostFormProps {
 	collectionName: Collection;
-	scrollViewRef: RefObject<ScrollView | null>;
+	scrollViewRef: RefObject<KeyboardAwareScrollViewRef | null>;
 	handleEditItemPress: (item: CartItem) => void;
 	deleteItemFromCart: (deleteCartItemId: string) => void;
 	deleteVillager: (villagerId: string) => void;

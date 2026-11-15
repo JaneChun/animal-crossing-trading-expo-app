@@ -1,10 +1,9 @@
-import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FieldErrors, FormProvider } from 'react-hook-form';
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, View } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { Alert, Platform, StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollViewRef } from 'react-native-keyboard-controller';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import AddItemModal from '@/components/NewPost/AddItemModal';
@@ -16,7 +15,6 @@ import Button from '@/components/ui/Button';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import { showToast } from '@/components/ui/Toast';
-import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { MAX_CART_ITEMS, MAX_ITEM_TEXT_LINES } from '@/constants/post';
 import { NewPostFormValues } from '@/hooks/post/form/newPostFormSchema';
 import { useCartState } from '@/hooks/post/form/useCartState';
@@ -44,7 +42,6 @@ const NewPost = () => {
 	const route = useRoute<NewPostRouteProp>();
 	const collectionName = route.params?.collectionName ?? 'Boards';
 	const insets = useSafeAreaInsets();
-	const headerHeight = useHeaderHeight();
 	// Android는 버튼이 홈 제스처 영역에 붙지 않도록 여백을 조금 더 둔다
 	const insetBasedPadding = insets.bottom + (Platform.OS === 'android' ? 8 : 0);
 	// 하단 inset이 0인 기기(iPhone SE 등)에서 버튼이 화면 끝에 붙지 않도록 최소 여백을 둔다
@@ -59,7 +56,7 @@ const NewPost = () => {
 	// Local State
 	// ─────────────────────────────────────────────────────────────
 	const [editingId, setEditingId] = useState<string>(route.params?.id || '');
-	const scrollViewRef = useRef<ScrollView | null>(null);
+	const scrollViewRef = useRef<KeyboardAwareScrollViewRef | null>(null);
 
 	// ─────────────────────────────────────────────────────────────
 	// Data Query
@@ -242,22 +239,16 @@ const NewPost = () => {
 	return (
 		<FormProvider {...methods}>
 			<Layout>
-				<KeyboardAvoidingView
-					behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-					style={{ flex: 1 }}
-					keyboardVerticalOffset={headerHeight + insets.top + KEYBOARD_TOOLBAR_HEIGHT}
-				>
-					<PostForm
-						collectionName={collectionName}
-						scrollViewRef={scrollViewRef}
-						handleEditItemPress={cartState.openEditModal}
-						deleteItemFromCart={cartState.deleteItem}
-						deleteVillager={villagerState.deleteVillager}
-						openAddVillagerModal={villagerState.openModal}
-						selectedVillagers={villagerState.selectedVillagers}
-						onPasteItemText={handlePasteItemText}
-					/>
-				</KeyboardAvoidingView>
+				<PostForm
+					collectionName={collectionName}
+					scrollViewRef={scrollViewRef}
+					handleEditItemPress={cartState.openEditModal}
+					deleteItemFromCart={cartState.deleteItem}
+					deleteVillager={villagerState.deleteVillager}
+					openAddVillagerModal={villagerState.openModal}
+					selectedVillagers={villagerState.selectedVillagers}
+					onPasteItemText={handlePasteItemText}
+				/>
 
 				<View style={[styles.buttonContainer, { paddingBottom: buttonBottomPadding }]}>
 					{collectionName === 'Boards' && (
