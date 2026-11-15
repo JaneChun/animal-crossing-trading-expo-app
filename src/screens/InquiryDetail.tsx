@@ -2,6 +2,7 @@ import { useRoute } from '@react-navigation/native';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import PolicyCard from '@/components/Sanction/PolicyCard';
 import {
 	AppealResultSection,
 	AppealSection,
@@ -18,7 +19,8 @@ import { InquiryDetailRouteProp } from '@/types/navigation';
 import { navigateToAppealForm } from '@/utilities/navigationHelpers';
 import { canAppeal } from '@/utilities/sanction';
 
-// 문의 내역 상세: 정지 화면과 같은 섹션으로 조치 내용·이의 신청·결과 안내를 보여 준다
+// 문의 내역 상세: 정지 화면과 같은 섹션으로 조치 내용·이의 신청·결과 안내를 보여 주고,
+// 이의 신청 전에 규칙을 다시 볼 수 있게 위반 유형의 정책 카드를 함께 보여 준다
 const InquiryDetail = () => {
 	const styles = useThemedStyles(makeStyles);
 	const { params } = useRoute<InquiryDetailRouteProp>();
@@ -36,6 +38,7 @@ const InquiryDetail = () => {
 		<SafeAreaView style={styles.screen} edges={['bottom']}>
 			<ScrollView contentContainerStyle={styles.content}>
 				<SanctionSummarySection sanction={sanction} />
+				<PolicyCard violationType={sanction.violationType} />
 				{appeal && <AppealSection appeal={appeal} />}
 				{appeal && <AppealResultSection appeal={appeal} />}
 			</ScrollView>

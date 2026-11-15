@@ -6,7 +6,7 @@ import { VIOLATION_POLICIES, VIOLATION_TYPES } from '@/constants/sanction';
 import { Spacing, useTheme } from '@/theme';
 import { ViolationType } from '@/types/sanction';
 
-// 위반 유형 하나의 운영 정책(제목, 설명, ✕/✓ 예시). 운영 정책 화면과 경고 화면이 함께 쓴다
+// 위반 유형 하나의 운영 정책(제목, 설명, ✕/✓ 예시). 운영 정책 화면, 경고 화면, 문의 내역 상세가 함께 쓴다
 const PolicyCard = ({ violationType }: { violationType: ViolationType }) => {
 	const { colors } = useTheme();
 	const title = VIOLATION_TYPES.find(({ EN }) => EN === violationType)?.KR;
