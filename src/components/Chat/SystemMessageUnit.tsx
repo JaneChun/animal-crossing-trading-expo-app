@@ -15,7 +15,7 @@ const SystemMessageUnit = ({ message }: { message: SystemIMessage }) => {
 	return (
 		<View style={styles.container}>
 			{isPostLoading ? (
-				<PostSummarySkeleton />
+				<PostSummarySkeleton collectionName={collectionName} />
 			) : post ? (
 				<PostSummary post={post} collectionName={collectionName} />
 			) : (

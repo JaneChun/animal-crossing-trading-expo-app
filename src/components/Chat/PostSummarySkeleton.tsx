@@ -2,13 +2,19 @@ import { StyleSheet, View } from 'react-native';
 
 import { SkeletonBox, SkeletonCircle } from '@/components/ui/skeleton';
 import { Theme, useThemedStyles } from '@/theme';
+import { Collection } from '@/types/post';
 
-const PostSummarySkeleton = () => {
+const PostSummarySkeleton = ({ collectionName }: { collectionName: Collection }) => {
 	const styles = useThemedStyles(makeStyles);
 
 	return (
 		<View style={styles.container}>
-			<SkeletonBox width={50} height={50} borderRadius={6} />
+			{/* 실제 썸네일과 모양을 맞춘다: 거래 글은 ItemThumbnail(42 원형), 커뮤니티 글은 Thumbnail(50 사각형) */}
+			{collectionName === 'Boards' ? (
+				<SkeletonCircle size={42} />
+			) : (
+				<SkeletonBox width={50} height={50} borderRadius={6} />
+			)}
 			<View style={styles.titleContainer}>
 				<SkeletonBox width={40} height={20} />
 				<SkeletonBox width="60%" height={18} />
