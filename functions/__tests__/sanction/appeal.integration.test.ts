@@ -31,6 +31,7 @@ const baseSanction = {
 	reportIds: [],
 	adminId: ADMIN_ID,
 	status: 'active',
+	reviewStage: 'awaitingUser',
 	suspendUntil: null,
 };
 
@@ -56,6 +57,7 @@ describe('이의 신청', () => {
 		const appeal = (await db.doc(`Sanctions/${SANCTION_ID}`).get()).data()?.appeal;
 		expect(appeal).toMatchObject({ content: '규칙을 몰랐습니다.', status: 'pending' });
 		expect(appeal.createdAt).toBeDefined();
+		expect((await db.doc(`Sanctions/${SANCTION_ID}`).get()).data()?.reviewStage).toBe('awaitingReply');
 		expect(sendPushNotification).toHaveBeenCalledWith(
 			expect.objectContaining({
 				to: 'ExponentPushToken[admin]',
@@ -63,6 +65,19 @@ describe('이의 신청', () => {
 				data: { url: `animal-crossing-trading-app://admin/appeal/${SANCTION_ID}` },
 			}),
 		);
+	});
+
+	it('처리 완료 단계의 조치도 이의 신청이 오면 답변 필요로 돌아간다', async () => {
+		await db.doc(`Sanctions/${SANCTION_ID}`).set({
+			...baseSanction,
+			kind: 'permanent',
+			reviewStage: 'done',
+			createdAt: Timestamp.now(),
+		});
+
+		await submitAppealHandler(USER_ID, { sanctionId: SANCTION_ID, content: '다시 검토해 주세요.' });
+
+		expect((await db.doc(`Sanctions/${SANCTION_ID}`).get()).data()?.reviewStage).toBe('awaitingReply');
 	});
 
 	it('같은 조치에 두 번째 신청은 거부한다', async () => {

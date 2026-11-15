@@ -12,6 +12,8 @@ export type SanctionKind = 'warning' | 'days7' | 'days30' | 'permanent';
 
 export type SanctionStatus = 'active' | 'canceled';
 
+export type SanctionReviewStage = 'awaitingUser' | 'awaitingReply' | 'done';
+
 export type AppealStatus = 'pending' | 'reviewed';
 export type AppealResult = 'upheld' | 'canceled';
 
@@ -41,6 +43,7 @@ export interface SanctionDoc {
 	reportIds: string[];
 	adminId: string;
 	status: SanctionStatus;
+	reviewStage: SanctionReviewStage;
 	createdAt: FirebaseFirestore.Timestamp;
 	suspendUntil: FirebaseFirestore.Timestamp | null;
 	appeal?: Appeal;
@@ -51,6 +54,7 @@ export interface IssueSanctionRequest {
 	userId: string;
 	kind: SanctionKind;
 	violationType: ViolationType;
-	reportIds?: string[];
 	target?: Omit<SanctionTarget, 'snapshot'>;
+	/** 근거로 고른 신고. 이 신고와 대상이 같은 미처리 신고를 함께 연결한다. 대상 없음이면 비운다 */
+	reportId?: string;
 }

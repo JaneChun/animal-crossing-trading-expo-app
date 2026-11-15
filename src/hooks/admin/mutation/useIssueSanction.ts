@@ -26,7 +26,12 @@ export const useIssueSanction = (userId: string) => {
 			queryClient.invalidateQueries({ queryKey: ['adminSanctionRecommendation', userId] });
 			queryClient.invalidateQueries({ queryKey: adminUserInfoQueryKey(userId) });
 			queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
-			queryClient.invalidateQueries({ queryKey: ['adminNeedsReviewUsers'] });
+			queryClient.invalidateQueries({ queryKey: ['adminStageSanctions'] });
+			// 같은 대상의 미처리 신고가 근거 신고로 연결되어 처리 완료된다
+			queryClient.invalidateQueries({ queryKey: ['adminReports'] });
+			queryClient.invalidateQueries({ queryKey: ['adminReport'] });
+			queryClient.invalidateQueries({ queryKey: ['adminTargetReports'] });
+			queryClient.invalidateQueries({ queryKey: ['adminUserReports'] });
 			queryClient.invalidateQueries({ queryKey: publicUserInfoQueryKey(userId) });
 			// 위반 대상 숨김과 정지 시 전체 글 숨김이 반영되도록 그 유저 글이 보이는 캐시를 모두 새로 불러온다
 			queryClient.invalidateQueries({ queryKey: ['adminReportTarget'] });

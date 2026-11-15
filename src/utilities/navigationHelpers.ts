@@ -177,10 +177,6 @@ export const navigateToAdminReports = () => {
 	navigate('AdminReports');
 };
 
-export const navigateToAdminReviewUsers = () => {
-	navigate('AdminReviewUsers');
-};
-
 export const navigateToAdminReportDetail = ({ reportId }: { reportId: string }) => {
 	navigate('AdminReportDetail', { reportId });
 };
@@ -209,8 +205,20 @@ export const navigateToAdminUserDetail = ({ uid }: { uid: string }) => {
 	navigate('AdminUserDetail', { uid });
 };
 
-export const navigateToAdminAppealDetail = ({ sanctionId }: { sanctionId: string }) => {
-	navigate('AdminAppealDetail', { sanctionId });
+export const navigateToAdminSanctionDetail = ({ sanctionId }: { sanctionId: string }) => {
+	navigate('AdminSanctionDetail', { sanctionId });
+};
+
+export const navigateToAdminSuspend = ({
+	uid,
+	reportId,
+	isWarning,
+}: {
+	uid: string;
+	reportId?: string;
+	isWarning?: boolean;
+}) => {
+	navigate('AdminSuspend', { uid, reportId, isWarning });
 };
 
 export const navigateToAdminUserRecords = ({

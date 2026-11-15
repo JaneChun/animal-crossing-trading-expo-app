@@ -55,7 +55,8 @@ const linking: LinkingOptions<RootStackParamList> = {
 			AdminReportDetail: {
 				path: 'admin/report/:reportId',
 			},
-			AdminAppealDetail: {
+			// 이미 보낸 이의 신청 접수 푸시가 이 경로를 쓰므로 화면 이름이 바뀌어도 경로는 유지한다
+			AdminSanctionDetail: {
 				path: 'admin/appeal/:sanctionId',
 			},
 			InquiryDetail: {

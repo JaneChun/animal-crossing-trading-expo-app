@@ -15,6 +15,13 @@ export const SANCTION_KINDS = [
 	{ KR: '영구 정지', EN: 'permanent' },
 ] as const;
 
+// 관리자 신고·조치 관리의 조치 단계 (탭 라벨). 단계 이동은 Functions가 한다
+export const SANCTION_REVIEW_STAGES = [
+	{ KR: '확인 대기', EN: 'awaitingUser' },
+	{ KR: '답변 필요', EN: 'awaitingReply' },
+	{ KR: '처리 완료', EN: 'done' },
+] as const;
+
 type ViolationTypeValue = (typeof VIOLATION_TYPES)[number]['EN'];
 
 type PolicyExample = {

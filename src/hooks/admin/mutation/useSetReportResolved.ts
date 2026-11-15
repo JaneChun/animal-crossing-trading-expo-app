@@ -14,6 +14,7 @@ export const useSetReportResolved = (reportId: string) => {
 			queryClient.invalidateQueries({ queryKey: adminReportQueryKey(reportId) });
 			queryClient.invalidateQueries({ queryKey: ['adminReports'] });
 			queryClient.invalidateQueries({ queryKey: ['adminUserReports'] });
+			queryClient.invalidateQueries({ queryKey: ['adminTargetReports'] });
 		},
 		onError: () => showToast('error', '처리 상태를 바꾸지 못했습니다.'),
 	});

@@ -65,6 +65,7 @@ export async function submitAppealHandler(
 
 		transaction.update(sanctionRef, {
 			appeal: { content, status: 'pending', createdAt: Timestamp.now() },
+			reviewStage: 'awaitingReply', // '처리 완료'였던 조치도 답변 필요로 돌아간다
 		});
 	});
 

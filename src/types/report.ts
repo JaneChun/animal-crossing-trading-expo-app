@@ -18,6 +18,7 @@ export interface Report {
 	createdAt: Timestamp;
 	resolved: boolean; // 운영 처리 상태
 	snapshot?: DocumentData; // 신고 시점의 게시글·댓글·답글 문서 전체 (onReportWritten 함수가 기록)
+	sanctionId?: string; // 이 신고를 근거로 발급된 조치 (issueSanction 함수가 기록)
 }
 
 export type ReportCategoryItem = (typeof REPORT_CATEGORIES)[number];
@@ -32,4 +33,7 @@ export interface ReportTarget {
 	chatId?: string;
 }
 
-export type CreateReportRequest = Omit<Report, 'id' | 'createdAt' | 'resolved' | 'snapshot'>;
+export type CreateReportRequest = Omit<
+	Report,
+	'id' | 'createdAt' | 'resolved' | 'snapshot' | 'sanctionId'
+>;

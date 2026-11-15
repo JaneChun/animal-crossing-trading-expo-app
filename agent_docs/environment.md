@@ -16,7 +16,7 @@
   - 소셜 로그인: `EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY`, `EXPO_PUBLIC_NAVER_CLIENT_ID`, `EXPO_PUBLIC_NAVER_SECRET` 등
   - AdMob/EAS: `EXPO_PUBLIC_ADMOB_IOS_APP_ID`, `EXPO_PUBLIC_ADMOB_ANDROID_APP_ID`, `EXPO_PUBLIC_EAS_PROJECT_ID`, `GOOGLE_SERVICE_INFO_PLIST`, `GOOGLE_SERVICES_JSON`(상대 경로 `./google-services.json`)
   - iOS 서명: `APPLE_TEAM_ID` — 로컬 실기기 빌드용. 없으면 prebuild가 `DEVELOPMENT_TEAM`을 비워 Xcode에서 "requires a development team" 오류. EAS Build는 자체 자격 증명으로 서명하므로 불필요
-- `.env.local` (에뮬레이터용): `EXPO_PUBLIC_FIREBASE_*_EMULATOR_HOST`, `SEED_MY_UID`(시드 1번 유저를 본인 uid로 바꿀 때)
+- `.env.local` (에뮬레이터용): `EXPO_PUBLIC_FIREBASE_*_EMULATOR_HOST`, `SEED_MY_UID`(시드 1번 유저를 본인 uid로 바꿀 때), `SEED_MY_SUSPENSION`(시드 1번 유저를 정지 상태로 넣을 때, [testing.md](testing.md) 참조)
 - `EXPO_PUBLIC_USE_FIREBASE_EMULATOR`는 env 파일에 두지 않는다. `npm run dev:emulator`·`dev:emulator:all`이 셸에서만 `true`로 주입한다(아래 함정 참조).
 - `functions/.env` (Functions 배포용): `GOOGLE_WEB_CLIENT_ID`(Google 로그인 토큰 검증 audience, 앱의 `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`와 같은 값). Functions는 루트 `.env`를 읽지 않는다. git 미추적이라 워크트리·새 클론마다 직접 복사해야 하며, 없으면 `firebase deploy`가 값을 대화형으로 묻는다(`--non-interactive`에서는 실패)
 - `GoogleService-Info.plist`, `google-services.json`도 git 미추적

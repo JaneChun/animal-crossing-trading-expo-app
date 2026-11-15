@@ -7,7 +7,7 @@ import {
 	queryDocs,
 	updateDocToFirestore,
 } from '@/firebase/core/firestoreService';
-import { CreateReportRequest } from '@/types/report';
+import { CreateReportRequest, Report } from '@/types/report';
 
 const REPORT_TARGET_FIELDS = [
 	'collectionName',
@@ -30,9 +30,11 @@ export const createReport = async (requestData: CreateReportRequest) => {
 			);
 
 			// 신고 시점 스냅샷(snapshot)은 onReportWritten 함수가 기록한다. 신고자가 조작할 수 없게 앱에서는 쓰지 않는다
-			const existingReports = await queryDocs(q);
+			const existingReports = await queryDocs<Report>(q);
+			// 조치에 연결된 신고를 덮어쓰면 미처리로 돌아가 끝난 조치의 신고가 '검토 필요'에 다시 나타난다
+			const overwritableReport = existingReports.find((report) => !report.sanctionId);
 
-			if (existingReports.length === 0) {
+			if (!overwritableReport) {
 				// 새 신고 생성
 				const createdId = await addDocToFirestore({
 					directory: 'Reports',
@@ -62,7 +64,7 @@ export const createReport = async (requestData: CreateReportRequest) => {
 
 				await updateDocToFirestore({
 					collection: 'Reports',
-					id: existingReports[0].id,
+					id: overwritableReport.id,
 					requestData: updatedReportData,
 				});
 			}

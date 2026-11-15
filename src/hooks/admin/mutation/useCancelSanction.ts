@@ -2,23 +2,24 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { showToast } from '@/components/ui/Toast';
 import { cancelSanction } from '@/firebase/services/adminService';
+import { publicUserInfoQueryKey } from '@/firebase/services/cachedUserService';
 
 import { adminUserInfoQueryKey } from '../query/useAdminUserInfo';
-import { reportWarningQueryKey } from '../query/useReportWarning';
 import { userSanctionsQueryKey } from '../query/useUserSanctions';
 
-// 신고 상세 [숨김 해제]: 이 신고로 건 경고를 취소하고 숨긴 대상을 다시 공개한다
-export const useCancelSanction = ({ reportId, userId }: { reportId: string; userId: string }) => {
+// 조치 상세 [조치 취소]: 이의 신청 없는 유효한 조치를 취소한다(정지 해제, 숨긴 대상 재공개, 위반 횟수 제외)
+export const useCancelSanction = (userId: string) => {
 	const queryClient = useQueryClient();
 
 	return useMutation({
 		mutationFn: cancelSanction,
 		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: reportWarningQueryKey(reportId) });
 			queryClient.invalidateQueries({ queryKey: userSanctionsQueryKey(userId) });
 			queryClient.invalidateQueries({ queryKey: adminUserInfoQueryKey(userId) });
+			queryClient.invalidateQueries({ queryKey: publicUserInfoQueryKey(userId) });
+			queryClient.invalidateQueries({ queryKey: ['adminUsers'] });
 			queryClient.invalidateQueries({ queryKey: ['adminSanction'] });
-			queryClient.invalidateQueries({ queryKey: ['adminNeedsReviewUsers'] });
+			queryClient.invalidateQueries({ queryKey: ['adminStageSanctions'] });
 			queryClient.invalidateQueries({ queryKey: ['adminSanctionRecommendation', userId] });
 			queryClient.invalidateQueries({ queryKey: ['adminReportTarget'] });
 			queryClient.invalidateQueries({ queryKey: ['posts'] });

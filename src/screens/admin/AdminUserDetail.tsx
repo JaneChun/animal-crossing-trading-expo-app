@@ -1,14 +1,11 @@
 import { FontAwesome6 } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
-import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 
 import AdminGuard from '@/components/Admin/AdminGuard';
 import DangerActionPanel from '@/components/Admin/DangerActionPanel';
 import InfoRow from '@/components/Admin/InfoRow';
-import SanctionHistoryList from '@/components/Admin/SanctionHistoryList';
 import StatStrip from '@/components/Admin/StatStrip';
-import SuspendSheet from '@/components/Admin/SuspendSheet';
 import { getSuspensionDescription, isSuspended } from '@/components/Admin/SuspensionBadge';
 import ViewAllLink from '@/components/Admin/ViewAllLink';
 import ProfileBox from '@/components/Profile/Profile';
@@ -30,7 +27,11 @@ import { AdminUserDetailRouteProp } from '@/types/navigation';
 import { OauthType } from '@/types/user';
 import { elapsedTime } from '@/utilities/elapsedTime';
 import { formatKstDate } from '@/utilities/kstDate';
-import { navigateToAdminUserRecords, navigateToUserProfile } from '@/utilities/navigationHelpers';
+import {
+	navigateToAdminSuspend,
+	navigateToAdminUserRecords,
+	navigateToUserProfile,
+} from '@/utilities/navigationHelpers';
 
 const OAUTH_LABELS: Record<OauthType, string> = {
 	kakao: '카카오',
@@ -61,12 +62,15 @@ const UserDetailContent = ({ uid }: { uid: string }) => {
 	const { data: stats } = useUserStats(uid);
 	const { mutate: liftSuspension, isPending: isLifting } = useLiftSuspension(uid);
 	const { data: sanctions } = useUserSanctions(uid);
-	const [isSuspendSheetVisible, setIsSuspendSheetVisible] = useState(false);
 
 	if (isLoading) return <LoadingIndicator />;
 	if (!user) return <EmptyIndicator message="탈퇴했거나 존재하지 않는 유저입니다." />;
 
 	const suspendUntil = user.report?.suspendUntil;
+	// 취소된 조치는 위반 횟수에서 빠지므로 요약에서도 세지 않는다
+	const activeSanctions = sanctions?.filter(({ status }) => status === 'active');
+	const warningCount = activeSanctions?.filter(({ kind }) => kind === 'warning').length;
+	const suspensionCount = activeSanctions?.filter(({ kind }) => kind !== 'warning').length;
 
 	const renderOauthIcon = () => {
 		if (user.oauthType === 'naver') return <Naver style={styles.oauthIcon} />;
@@ -83,219 +87,219 @@ const UserDetailContent = ({ uid }: { uid: string }) => {
 	};
 
 	return (
-		<>
-			<ScrollView style={styles.screen} contentContainerStyle={styles.content}>
-				<ProfileBox
-					profileInfo={user}
-					isMyProfile={false}
-					openEditProfileModal={noop}
-					openImageViewerModal={noop}
-				/>
-
-				<View style={styles.section}>
-					<Text variant="body1" weight="semibold" style={styles.sectionTitle}>
-						계정
-					</Text>
-					<InfoRow
-						borderRound="top"
-						label="로그인 방식"
-						value={
-							<View style={styles.oauthValue}>
-								{renderOauthIcon()}
-								<Text variant="body1" color="secondary">
-									{OAUTH_LABELS[user.oauthType] ?? user.oauthType}
-								</Text>
-							</View>
-						}
-					/>
-					<InfoRow label="이메일" value={user.email || '-'} />
-					<InfoRow
-						label="가입일"
-						value={user.createdAt ? formatKstDate(user.createdAt.toDate()) : '-'}
-					/>
-					<InfoRow
-						label="마지막 로그인"
-						value={user.lastLogin ? formatKstDate(user.lastLogin.toDate()) : '-'}
-					/>
-					<InfoRow
-						label="마지막 접속"
-						value={user.lastActiveAt ? elapsedTime(user.lastActiveAt) : '-'}
-					/>
-					<InfoRow
-						borderRound="bottom"
-						label="푸시 알림"
-						value={
-							user.pushToken ? (
-								<Badge text="수신 가능" tone="green" />
-							) : (
-								<Badge text="수신 불가" tone="neutral" />
-							)
-						}
-					/>
-				</View>
-
-				<View style={styles.actionPanel}>
-					{isSuspended(suspendUntil) ? (
-						<DangerActionPanel
-							actions={[
-								{
-									title: '계정 정지',
-									description: getSuspensionDescription(suspendUntil),
-									actionLabel: '정지 해제',
-									variant: 'dangerOutline',
-									isLoading: isLifting,
-									onPress: onPressLiftSuspension,
-								},
-							]}
-						/>
-					) : (
-						<DangerActionPanel
-							tone="neutral"
-							actions={[
-								{
-									title: '계정 정지',
-									actionLabel: '정지',
-									variant: 'danger',
-									onPress: () => setIsSuspendSheetVisible(true),
-								},
-							]}
-						/>
-					)}
-				</View>
-
-				{!!sanctions?.length && (
-					<View style={styles.section}>
-						<Text variant="body1" weight="semibold" style={styles.sectionTitle}>
-							제재 이력
-						</Text>
-						<SanctionHistoryList sanctions={sanctions} />
-					</View>
-				)}
-
-				<View style={styles.section}>
-					<Text variant="body1" weight="semibold" style={styles.sectionTitle}>
-						활동
-					</Text>
-					<StatStrip
-						items={[
-							{
-								label: '게시글',
-								value: formatCount(stats?.posts),
-								icon: { name: 'article', tone: 'blue' },
-							},
-							{
-								label: '댓글',
-								value: formatCount(stats?.comments),
-								icon: { name: 'mode-comment', tone: 'green' },
-							},
-							{
-								label: '답글',
-								value: formatCount(stats?.replies),
-								icon: { name: 'reply', tone: 'lavender' },
-							},
-							{
-								label: '채팅방',
-								value: formatCount(stats?.chatRooms),
-								icon: { name: 'forum', tone: 'primaryBrand' },
-							},
-							{
-								label: '메시지',
-								value: formatCount(stats?.messages),
-								icon: { name: 'textsms', tone: 'primaryBrand' },
-							},
-						]}
-					/>
-					<ViewAllLink
-						label="프로필 보기"
-						onPress={() => navigateToUserProfile({ userId: uid })}
-					/>
-				</View>
-
-				<View style={styles.section}>
-					<Text variant="body1" weight="semibold" style={styles.sectionTitle}>
-						거래 리뷰
-					</Text>
-					<StatStrip
-						items={[
-							{ label: '받은 리뷰', value: formatCount(user.review?.total ?? 0) },
-							{
-								label: '만족',
-								value: formatCount(user.review?.positive ?? 0),
-								inlineIcon: (
-									<FontAwesome6
-										name="smile-beam"
-										size={18}
-										color={colors.icon.green}
-									/>
-								),
-							},
-							{
-								label: '불만족',
-								value: formatCount(user.review?.negative ?? 0),
-								inlineIcon: (
-									<FontAwesome6
-										name="frown-open"
-										size={18}
-										color={colors.icon.red}
-									/>
-								),
-							},
-						]}
-					/>
-					<ViewAllLink
-						label="리뷰 내역 보기"
-						onPress={() => navigateToAdminUserRecords({ uid, kind: 'reviews' })}
-					/>
-				</View>
-
-				<View style={styles.section}>
-					<View style={[styles.titleRow, styles.sectionTitle]}>
-						<Text variant="body1" weight="semibold">
-							신고
-						</Text>
-					</View>
-					<StatStrip
-						items={[
-							{
-								label: '받은 신고',
-								value: formatCount(user.report?.total ?? 0),
-								valueTone: 'danger',
-							},
-							{ label: '보낸 신고', value: formatCount(stats?.reportsFiled) },
-						]}
-					/>
-					<ViewAllLink
-						label="신고 내역 보기"
-						onPress={() => navigateToAdminUserRecords({ uid, kind: 'reports' })}
-					/>
-				</View>
-
-				<View style={styles.section}>
-					<Text variant="body1" weight="semibold" style={styles.sectionTitle}>
-						차단
-					</Text>
-					<StatStrip
-						items={[
-							{ label: '차단함', value: formatCount(stats?.blocking) },
-							{
-								label: '차단당함',
-								value: formatCount(stats?.blockedBy),
-								valueTone: 'danger',
-							},
-						]}
-					/>
-					<ViewAllLink
-						label="차단 내역 보기"
-						onPress={() => navigateToAdminUserRecords({ uid, kind: 'blocks' })}
-					/>
-				</View>
-			</ScrollView>
-			<SuspendSheet
-				isVisible={isSuspendSheetVisible}
-				onClose={() => setIsSuspendSheetVisible(false)}
-				userId={uid}
+		<ScrollView style={styles.screen} contentContainerStyle={styles.content}>
+			<ProfileBox
+				profileInfo={user}
+				isMyProfile={false}
+				openEditProfileModal={noop}
+				openImageViewerModal={noop}
 			/>
-		</>
+
+			<View style={styles.section}>
+				<Text variant="body1" weight="semibold" style={styles.sectionTitle}>
+					계정
+				</Text>
+				<InfoRow
+					borderRound="top"
+					label="로그인 방식"
+					value={
+						<View style={styles.oauthValue}>
+							{renderOauthIcon()}
+							<Text variant="body1" color="secondary">
+								{OAUTH_LABELS[user.oauthType] ?? user.oauthType}
+							</Text>
+						</View>
+					}
+				/>
+				<InfoRow label="이메일" value={user.email || '-'} />
+				<InfoRow
+					label="가입일"
+					value={user.createdAt ? formatKstDate(user.createdAt.toDate()) : '-'}
+				/>
+				<InfoRow
+					label="마지막 로그인"
+					value={user.lastLogin ? formatKstDate(user.lastLogin.toDate()) : '-'}
+				/>
+				<InfoRow
+					label="마지막 접속"
+					value={user.lastActiveAt ? elapsedTime(user.lastActiveAt) : '-'}
+				/>
+				<InfoRow
+					borderRound="bottom"
+					label="푸시 알림"
+					value={
+						user.pushToken ? (
+							<Badge text="수신 가능" tone="green" />
+						) : (
+							<Badge text="수신 불가" tone="neutral" />
+						)
+					}
+				/>
+			</View>
+
+			<View style={styles.section}>
+				<Text variant="body1" weight="semibold" style={styles.sectionTitle}>
+					활동
+				</Text>
+				<StatStrip
+					items={[
+						{
+							label: '게시글',
+							value: formatCount(stats?.posts),
+							icon: { name: 'article', tone: 'blue' },
+						},
+						{
+							label: '댓글',
+							value: formatCount(stats?.comments),
+							icon: { name: 'mode-comment', tone: 'green' },
+						},
+						{
+							label: '답글',
+							value: formatCount(stats?.replies),
+							icon: { name: 'reply', tone: 'lavender' },
+						},
+						{
+							label: '채팅방',
+							value: formatCount(stats?.chatRooms),
+							icon: { name: 'forum', tone: 'primaryBrand' },
+						},
+						{
+							label: '메시지',
+							value: formatCount(stats?.messages),
+							icon: { name: 'textsms', tone: 'primaryBrand' },
+						},
+					]}
+				/>
+				<ViewAllLink
+					label="프로필 보기"
+					onPress={() => navigateToUserProfile({ userId: uid })}
+				/>
+			</View>
+
+			<View style={styles.section}>
+				<Text variant="body1" weight="semibold" style={styles.sectionTitle}>
+					거래 리뷰
+				</Text>
+				<StatStrip
+					items={[
+						{ label: '받은 리뷰', value: formatCount(user.review?.total ?? 0) },
+						{
+							label: '만족',
+							value: formatCount(user.review?.positive ?? 0),
+							inlineIcon: (
+								<FontAwesome6
+									name="smile-beam"
+									size={18}
+									color={colors.icon.green}
+								/>
+							),
+						},
+						{
+							label: '불만족',
+							value: formatCount(user.review?.negative ?? 0),
+							inlineIcon: (
+								<FontAwesome6 name="frown-open" size={18} color={colors.icon.red} />
+							),
+						},
+					]}
+				/>
+				<ViewAllLink
+					label="리뷰 내역 보기"
+					onPress={() => navigateToAdminUserRecords({ uid, kind: 'reviews' })}
+				/>
+			</View>
+
+			<View style={styles.section}>
+				<View style={[styles.titleRow, styles.sectionTitle]}>
+					<Text variant="body1" weight="semibold">
+						신고
+					</Text>
+				</View>
+				<StatStrip
+					items={[
+						{
+							label: '받은 신고',
+							value: formatCount(user.report?.total ?? 0),
+							valueTone: 'danger',
+						},
+						{ label: '보낸 신고', value: formatCount(stats?.reportsFiled) },
+					]}
+				/>
+				<ViewAllLink
+					label="신고 내역 보기"
+					onPress={() => navigateToAdminUserRecords({ uid, kind: 'reports' })}
+				/>
+			</View>
+
+			<View style={styles.section}>
+				<Text variant="body1" weight="semibold" style={styles.sectionTitle}>
+					차단
+				</Text>
+				<StatStrip
+					items={[
+						{ label: '차단함', value: formatCount(stats?.blocking) },
+						{
+							label: '차단당함',
+							value: formatCount(stats?.blockedBy),
+							valueTone: 'danger',
+						},
+					]}
+				/>
+				<ViewAllLink
+					label="차단 내역 보기"
+					onPress={() => navigateToAdminUserRecords({ uid, kind: 'blocks' })}
+				/>
+			</View>
+
+			<View style={styles.section}>
+				<Text variant="body1" weight="semibold" style={styles.sectionTitle}>
+					조치 이력
+				</Text>
+				<StatStrip
+					items={[
+						{ label: '경고', value: formatCount(warningCount) },
+						{
+							label: '정지',
+							value: formatCount(suspensionCount),
+							valueTone: 'danger',
+						},
+					]}
+				/>
+				<ViewAllLink
+					label="조치 이력 보기"
+					onPress={() => navigateToAdminUserRecords({ uid, kind: 'sanctions' })}
+				/>
+			</View>
+
+			<View style={styles.section}>
+				{isSuspended(suspendUntil) ? (
+					<DangerActionPanel
+						actions={[
+							{
+								title: '계정 정지',
+								description: getSuspensionDescription(suspendUntil),
+								actionLabel: '정지 해제',
+								variant: 'dangerOutline',
+								isLoading: isLifting,
+								onPress: onPressLiftSuspension,
+							},
+						]}
+					/>
+				) : (
+					<DangerActionPanel
+						tone="neutral"
+						actions={[
+							{
+								title: '계정 정지',
+								actionLabel: '정지',
+								variant: 'danger',
+								onPress: () => navigateToAdminSuspend({ uid }),
+							},
+						]}
+					/>
+				)}
+			</View>
+		</ScrollView>
 	);
 };
 
@@ -334,8 +338,5 @@ const makeStyles = ({ colors }: Theme) =>
 		appleIcon: {
 			width: 14,
 			height: 14,
-		},
-		actionPanel: {
-			marginTop: Spacing.m,
 		},
 	});

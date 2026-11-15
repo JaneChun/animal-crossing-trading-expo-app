@@ -5,14 +5,14 @@ import { UpdateModal } from '@/components/ui/UpdateModal';
 import { useSanctionWarningNotice } from '@/hooks/sanction/useSanctionWarningNotice';
 import { useVersionCheck } from '@/hooks/shared/useVersionCheck';
 import Account from '@/screens/Account';
-import AdminAppealDetail from '@/screens/admin/AdminAppealDetail';
 import AdminChatViewer from '@/screens/admin/AdminChatViewer';
 import AdminErrors from '@/screens/admin/AdminErrors';
 import AdminHome from '@/screens/admin/AdminHome';
 import AdminReportDetail from '@/screens/admin/AdminReportDetail';
 import AdminReports from '@/screens/admin/AdminReports';
-import AdminReviewUsers from '@/screens/admin/AdminReviewUsers';
+import AdminSanctionDetail from '@/screens/admin/AdminSanctionDetail';
 import AdminStats from '@/screens/admin/AdminStats';
+import AdminSuspend from '@/screens/admin/AdminSuspend';
 import AdminUserDetail from '@/screens/admin/AdminUserDetail';
 import AdminUserRecords from '@/screens/admin/AdminUserRecords';
 import AdminUsers from '@/screens/admin/AdminUsers';
@@ -256,12 +256,7 @@ const RootStackNavigator = () => {
 				<RootStack.Screen
 					name="AdminReports"
 					component={AdminReports}
-					options={{ ...commonOptions, title: '신고 관리' }}
-				/>
-				<RootStack.Screen
-					name="AdminReviewUsers"
-					component={AdminReviewUsers}
-					options={{ ...commonOptions, title: '검토 필요 유저' }}
+					options={{ ...commonOptions, title: '신고·조치 관리' }}
 				/>
 				<RootStack.Screen
 					name="AdminReportDetail"
@@ -294,9 +289,14 @@ const RootStackNavigator = () => {
 					options={commonOptions}
 				/>
 				<RootStack.Screen
-					name="AdminAppealDetail"
-					component={AdminAppealDetail}
-					options={{ ...commonOptions, title: '이의 신청 상세' }}
+					name="AdminSanctionDetail"
+					component={AdminSanctionDetail}
+					options={{ ...commonOptions, title: '조치 상세' }}
+				/>
+				<RootStack.Screen
+					name="AdminSuspend"
+					component={AdminSuspend}
+					options={{ ...commonOptions, title: '계정 정지' }}
 				/>
 				<RootStack.Screen
 					name="AdminErrors"

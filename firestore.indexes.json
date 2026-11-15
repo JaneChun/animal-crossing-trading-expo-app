@@ -358,6 +358,24 @@
 					"order": "DESCENDING"
 				}
 			]
+		},
+		/**
+		 * 관리자 신고·조치 관리 단계별 조치 목록: reviewStage + createdAt 내림차순
+		 * - src/firebase/services/adminService.ts (fetchStageSanctions)
+		 */
+		{
+			"collectionGroup": "Sanctions",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "reviewStage",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				}
+			]
 		}
 	],
 	/**

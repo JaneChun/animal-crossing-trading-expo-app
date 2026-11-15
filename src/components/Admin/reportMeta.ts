@@ -20,10 +20,13 @@ export const getReportCategoryBadge = (category: ReportCategory) => ({
 	tone: CATEGORY_TONES[category] ?? 'neutral',
 });
 
-export const getReportContentType = (report: Report): ContentType => {
-	if (report.chatId) return 'chat';
-	if (report.replyId) return 'reply';
-	if (report.commentId) return 'comment';
-	if (report.postId) return 'post';
+// 조치 대상(SanctionTarget)도 같은 키를 가져 함께 쓴다
+export const getReportContentType = (
+	target: Pick<Report, 'chatId' | 'replyId' | 'commentId' | 'postId'>,
+): ContentType => {
+	if (target.chatId) return 'chat';
+	if (target.replyId) return 'reply';
+	if (target.commentId) return 'comment';
+	if (target.postId) return 'post';
 	return 'profile';
 };

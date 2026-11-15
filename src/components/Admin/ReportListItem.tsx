@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 import Badge from '@/components/ui/Badge';
 import Text from '@/components/ui/Text';
@@ -16,9 +16,18 @@ type ReportListItemProps = {
 	report: Report;
 	/** 처리 완료 신고에 "처리완료" 배지를 붙인다. 처리 상태가 섞인 유저별 신고 내역에서 켠다 */
 	showResolvedBadge?: boolean;
+	/** 기본은 신고 상세로 이동. 계정 정지 화면처럼 행을 고르는 목록에서 바꾼다 */
+	onPress?: () => void;
+	/** 카드 안에 넣을 때 행 구분선·세로 여백을 덮어쓴다 */
+	style?: StyleProp<ViewStyle>;
 };
 
-const ReportListItem = ({ report, showResolvedBadge = false }: ReportListItemProps) => {
+const ReportListItem = ({
+	report,
+	showResolvedBadge = false,
+	onPress,
+	style,
+}: ReportListItemProps) => {
 	const styles = useThemedStyles(makeStyles);
 	const { data: reporter } = useCachedPublicUserInfo(report.reporterId);
 	const { data: reportee } = useCachedPublicUserInfo(report.reporteeId);
@@ -26,8 +35,8 @@ const ReportListItem = ({ report, showResolvedBadge = false }: ReportListItemPro
 
 	return (
 		<Pressable
-			style={styles.item}
-			onPress={() => navigateToAdminReportDetail({ reportId: report.id })}
+			style={[styles.item, style]}
+			onPress={onPress ?? (() => navigateToAdminReportDetail({ reportId: report.id }))}
 		>
 			<View style={styles.topRow}>
 				<View style={styles.badges}>

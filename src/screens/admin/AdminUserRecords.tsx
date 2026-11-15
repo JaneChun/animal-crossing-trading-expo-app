@@ -1,18 +1,20 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import AdminGuard from '@/components/Admin/AdminGuard';
 import InfiniteList from '@/components/Admin/InfiniteList';
 import ReportListItem from '@/components/Admin/ReportListItem';
 import ReviewListItem from '@/components/Admin/ReviewListItem';
+import SanctionListItem from '@/components/Admin/SanctionListItem';
 import UserIdRow from '@/components/Admin/UserIdRow';
 import { PADDING } from '@/components/ui/layout/Layout';
 import Text from '@/components/ui/Text';
 import { useUserBlocks } from '@/hooks/admin/query/useUserBlocks';
 import { useUserReports } from '@/hooks/admin/query/useUserReports';
 import { useUserReviews } from '@/hooks/admin/query/useUserReviews';
+import { useUserSanctions } from '@/hooks/admin/query/useUserSanctions';
 import { FontSizes, FontWeights, Spacing, useTheme } from '@/theme';
 import {
 	AdminUserRecordKind,
@@ -29,6 +31,27 @@ const TITLES: Record<AdminUserRecordKind, string> = {
 	reports: '신고 내역',
 	reviews: '리뷰 내역',
 	blocks: '차단 내역',
+	sanctions: '조치 이력',
+};
+
+// 유저 한 명의 조치 수는 많지 않아 페이지 없이 모두 읽는다(fetchUserSanctions)
+const SanctionList = ({ uid }: { uid: string }) => {
+	const { data, isLoading, isError } = useUserSanctions(uid);
+
+	return (
+		<InfiniteList
+			data={data}
+			keyExtractor={(sanction) => sanction.id}
+			renderItem={({ item }) => <SanctionListItem sanction={item} meta="stage" />}
+			isLoading={isLoading}
+			isError={isError}
+			hasNextPage={false}
+			isFetchingNextPage={false}
+			fetchNextPage={() => {}}
+			emptyMessage="조치 이력이 없습니다."
+			contentContainerStyle={styles.reportList}
+		/>
+	);
 };
 
 const ReportList = ({ uid, direction }: { uid: string; direction: UserReportDirection }) => {
@@ -159,6 +182,16 @@ const AdminUserRecords = () => {
 		);
 	};
 
+	if (kind === 'sanctions') {
+		return (
+			<AdminGuard>
+				<View style={[styles.screen, { backgroundColor: colors.bg.primary }]}>
+					<SanctionList uid={uid} />
+				</View>
+			</AdminGuard>
+		);
+	}
+
 	return (
 		<AdminGuard>
 			<Tab.Navigator
@@ -186,7 +219,10 @@ const AdminUserRecords = () => {
 export default AdminUserRecords;
 
 const styles = StyleSheet.create({
-	// 신고 행은 좌우 여백이 없어 목록에서 준다. 유저 행(UserRow isListItem)은 행이 여백을 갖는다
+	screen: {
+		flex: 1,
+	},
+	// 신고·조치 행은 좌우 여백이 없어 목록에서 준다. 유저 행(UserRow isListItem)은 행이 여백을 갖는다
 	reportList: {
 		paddingHorizontal: PADDING,
 	},

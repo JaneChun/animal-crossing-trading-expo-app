@@ -1,12 +1,13 @@
 import { DocumentData, Timestamp } from 'firebase/firestore';
 
-import { SANCTION_KINDS, VIOLATION_TYPES } from '@/constants/sanction';
+import { SANCTION_KINDS, SANCTION_REVIEW_STAGES, VIOLATION_TYPES } from '@/constants/sanction';
 
 import { ReportTarget } from './report';
 
 export type ViolationType = (typeof VIOLATION_TYPES)[number]['EN'];
 export type ViolationSeverity = (typeof VIOLATION_TYPES)[number]['severity'];
 export type SanctionKind = (typeof SANCTION_KINDS)[number]['EN'];
+export type SanctionReviewStage = (typeof SANCTION_REVIEW_STAGES)[number]['EN'];
 
 // 만료(조치일 + 90일)는 저장하지 않고 createdAt으로 계산한다
 export type SanctionStatus = 'active' | 'canceled';
@@ -37,12 +38,16 @@ export interface Sanction {
 	reportIds: string[]; // 근거 신고
 	adminId: string; // 처리 관리자 UID
 	status: SanctionStatus;
+	reviewStage: SanctionReviewStage; // 관리자 처리 단계 (Functions만 기록)
 	createdAt: Timestamp;
 	suspendUntil: Timestamp | null; // 기간 정지의 해제 예정일. 경고·영구 정지는 null
 	appeal?: Appeal; // 조치 1건당 1개
 	acknowledgedAt?: Timestamp; // 사용자가 경고 화면에서 [정책을 확인했습니다]를 누른 시각
 }
 
-export type IssueSanctionRequest = Pick<Sanction, 'userId' | 'kind' | 'violationType' | 'reportIds'> & {
+// 근거 신고는 issueSanction 함수가 대상으로 찾아 연결하므로 요청에 넣지 않는다
+export type IssueSanctionRequest = Pick<Sanction, 'userId' | 'kind' | 'violationType'> & {
 	target?: Omit<SanctionTarget, 'snapshot'>;
+	/** 근거로 고른 신고. 서버가 이 신고와 대상이 같은 미처리 신고를 함께 연결한다. 대상 없음이면 비운다 */
+	reportId?: string;
 };

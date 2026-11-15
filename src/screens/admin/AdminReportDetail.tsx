@@ -1,20 +1,18 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
-import { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import AdminGuard from '@/components/Admin/AdminGuard';
 import AvatarPair from '@/components/Admin/AvatarPair';
-import ContentTypeChip from '@/components/Admin/ContentTypeChip';
+import BasisReportsSection from '@/components/Admin/BasisReportsSection';
+import ContentTypeChip, { ContentType } from '@/components/Admin/ContentTypeChip';
 import DangerActionPanel, { DangerAction } from '@/components/Admin/DangerActionPanel';
 import { getReportCategoryBadge, getReportContentType } from '@/components/Admin/reportMeta';
+import SanctionListItem from '@/components/Admin/SanctionListItem';
 import StatTile from '@/components/Admin/StatTile';
 import SummaryLinkCard from '@/components/Admin/SummaryLinkCard';
-import { getSuspensionDescription, isSuspended } from '@/components/Admin/SuspensionBadge';
 import UserRow from '@/components/Admin/UserRow';
-import ViolationTypeSheet from '@/components/Admin/ViolationTypeSheet';
-import CommunityTypeBadge from '@/components/Community/CommunityTypeBadge';
-import MarketTypeBadge from '@/components/Home/MarketTypeBadge';
+import PostSummary from '@/components/Chat/PostSummary';
 import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Divider from '@/components/ui/Divider';
@@ -23,31 +21,26 @@ import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import Text from '@/components/ui/Text';
 import { ReportTargetContent } from '@/firebase/services/adminService';
-import { useCancelSanction } from '@/hooks/admin/mutation/useCancelSanction';
-import { useIssueSanction } from '@/hooks/admin/mutation/useIssueSanction';
-import { useLiftSuspension } from '@/hooks/admin/mutation/useLiftSuspension';
 import { useSetCommentHidden } from '@/hooks/admin/mutation/useSetCommentHidden';
 import { useSetPostHidden } from '@/hooks/admin/mutation/useSetPostHidden';
 import { useSetReportResolved } from '@/hooks/admin/mutation/useSetReportResolved';
 import { useAdminReport, useReportTargetContent } from '@/hooks/admin/query/useAdminReport';
+import { useAdminSanction } from '@/hooks/admin/query/useAdminSanction';
 import { useAdminUserInfo } from '@/hooks/admin/query/useAdminUserInfo';
-import { useReportWarning } from '@/hooks/admin/query/useReportWarning';
+import { useTargetReports } from '@/hooks/admin/query/useTargetReports';
 import { Spacing, Theme, useTheme, useThemedStyles } from '@/theme';
 import { ColorScheme } from '@/theme/Color';
 import { AdminReportDetailRouteProp } from '@/types/navigation';
-import { Collection } from '@/types/post';
 import { Report } from '@/types/report';
-import { IssueSanctionRequest, ViolationType } from '@/types/sanction';
 import { UserInfo } from '@/types/user';
 import { getDefaultUserInfo } from '@/utilities/getDefaultUserInfo';
 import { formatKstDateTime } from '@/utilities/kstDate';
 import {
 	navigateToAdminChatViewer,
+	navigateToAdminSuspend,
 	navigateToAdminUserDetail,
-	navigateToPost,
 	navigateToUserProfile,
 } from '@/utilities/navigationHelpers';
-import { isBoardPost, isCommunityPost } from '@/utilities/typeGuards/postTypeGuards';
 
 const TARGET_SECTION_TITLES = {
 	post: '신고된 게시글',
@@ -70,18 +63,22 @@ const getRecentReportColor = (recent30Days: number): keyof ColorScheme['text'] =
 	return 'primary';
 };
 
-const confirm = (title: string, message: string, onConfirm: () => void) => {
-	Alert.alert(title, message, [
-		{ text: '취소', style: 'cancel' },
-		{ text: '확인', style: 'destructive', onPress: onConfirm },
-	]);
+// [경고] 행 설명. 게시글·댓글·답글은 숨기면서 경고하고, 채팅·프로필은 숨길 대상이 없어 경고만 기록한다
+const WARNING_DESCRIPTIONS: Record<ContentType, string> = {
+	post: '게시글을 숨기고 경고합니다',
+	comment: '댓글을 숨기고 경고합니다',
+	reply: '답글을 숨기고 경고합니다',
+	chat: '경고합니다',
+	profile: '경고합니다',
 };
 
-// [숨기기]는 위반 유형을 고른 뒤 확인을 받아 경고 조치로 처리한다
-type PendingWarning = {
-	confirmTitle: string;
-	confirmMessage: string;
-	target: IssueSanctionRequest['target'];
+// 같은 대상의 미처리 신고 안내에 쓰는 대상 이름
+const TARGET_NAMES: Record<ContentType, string> = {
+	post: '게시글',
+	comment: '댓글',
+	reply: '답글',
+	chat: '채팅',
+	profile: '프로필',
 };
 
 const AdminReportDetail = () => {
@@ -98,13 +95,11 @@ const ReportDetailContent = ({ reportId }: { reportId: string }) => {
 	const styles = useThemedStyles(makeStyles);
 	const { data: report, isLoading } = useAdminReport(reportId);
 	const { data: reporter } = useAdminUserInfo(report?.reporterId);
-	const { data: reportee, isLoading: isReporteeLoading } = useAdminUserInfo(report?.reporteeId);
+	const { data: reportee } = useAdminUserInfo(report?.reporteeId);
 	const { data: target } = useReportTargetContent(report);
+	const { data: targetReports } = useTargetReports(report);
+	const { data: linkedSanction } = useAdminSanction(report?.sanctionId ?? '');
 	const { mutate: setResolved, isPending: isResolving } = useSetReportResolved(reportId);
-	const { mutate: issueSanction, isPending: isIssuing } = useIssueSanction(
-		report?.reporteeId ?? '',
-	);
-	const [pendingWarning, setPendingWarning] = useState<PendingWarning | null>(null);
 
 	if (isLoading) return <LoadingIndicator />;
 	if (!report) return <EmptyIndicator message="신고를 찾을 수 없습니다." />;
@@ -114,14 +109,35 @@ const ReportDetailContent = ({ reportId }: { reportId: string }) => {
 	const reporterDisplay = reporter ?? getDefaultUserInfo(report.reporterId);
 	const reporteeDisplay = reportee ?? getDefaultUserInfo(report.reporteeId);
 
-	const issueWarning = (violationType: ViolationType) => {
-		if (!pendingWarning) return;
-		const { confirmTitle, confirmMessage, target } = pendingWarning;
-		setPendingWarning(null);
-		confirm(confirmTitle, confirmMessage, () =>
-			issueSanction({ kind: 'warning', violationType, reportIds: [report.id], target }),
+	const contentType = getReportContentType(report);
+
+	const renderFooter = () => {
+		if (!report.resolved) {
+			return (
+				<Button
+					size="lg"
+					variant="secondary"
+					isLoading={isResolving}
+					onPress={() => setResolved(true)}
+				>
+					조치 없이 처리 완료
+				</Button>
+			);
+		}
+		// 조치에 연결된 신고는 되돌리지 않는다. 되돌리려면 조치 상세에서 조치를 취소한다
+		if (report.sanctionId) return null;
+		return (
+			<Button
+				size="lg"
+				variant="secondary"
+				isLoading={isResolving}
+				onPress={() => setResolved(false)}
+			>
+				미처리로 되돌리기
+			</Button>
 		);
 	};
+	const footer = renderFooter();
 
 	return (
 		<View style={styles.screen}>
@@ -129,7 +145,7 @@ const ReportDetailContent = ({ reportId }: { reportId: string }) => {
 				<View style={styles.summarySection}>
 					<View style={styles.row}>
 						<Badge text={categoryBadge.text} tone={categoryBadge.tone} />
-						<ContentTypeChip type={getReportContentType(report)} />
+						<ContentTypeChip type={contentType} />
 					</View>
 					<Text variant="caption" color="tertiary">
 						{formatKstDateTime(report.createdAt.toDate())}
@@ -198,38 +214,35 @@ const ReportDetailContent = ({ reportId }: { reportId: string }) => {
 					reportee={reporteeDisplay}
 				/>
 
-				<ReportActionsSection
-					report={report}
-					target={target}
-					reportee={reportee}
-					isReporteeLoading={isReporteeLoading}
-					isIssuingWarning={isIssuing}
-					onStartWarning={setPendingWarning}
-				/>
+				{!report.resolved && !!targetReports?.length && (
+					<>
+						<Divider variant="section" />
+						<View style={styles.section}>
+							<BasisReportsSection
+								reports={targetReports}
+								description={`같은 ${TARGET_NAMES[contentType]}에 들어온 미처리 신고입니다. 조치하면 함께 처리 완료됩니다.`}
+								currentReportId={report.id}
+							/>
+						</View>
+					</>
+				)}
+
+				<ReportActionsSection report={report} target={target} />
+
+				{report.resolved && linkedSanction && (
+					<>
+						<Divider variant="section" />
+						<View style={styles.section}>
+							<Text variant="body1" weight="semibold">
+								연결된 조치
+							</Text>
+							<SanctionListItem sanction={linkedSanction} meta="stage" />
+						</View>
+					</>
+				)}
 			</ScrollView>
 
-			<View style={styles.footer}>
-				{report.resolved ? (
-					<Button
-						size="lg"
-						variant="secondary"
-						isLoading={isResolving}
-						onPress={() => setResolved(false)}
-					>
-						미처리로 되돌리기
-					</Button>
-				) : (
-					<Button size="lg" isLoading={isResolving} onPress={() => setResolved(true)}>
-						처리 완료
-					</Button>
-				)}
-			</View>
-
-			<ViolationTypeSheet
-				isVisible={!!pendingWarning}
-				onClose={() => setPendingWarning(null)}
-				onComplete={issueWarning}
-			/>
+			{footer && <View style={styles.footer}>{footer}</View>}
 		</View>
 	);
 };
@@ -296,11 +309,7 @@ const ReportTargetSection = ({ report, target, reporter, reportee }: ReportTarge
 		// 관리자는 숨김·삭제된 게시글도 상세로 볼 수 있다
 		return (
 			<>
-				<SummaryLinkCard
-					left={<PostTypeBadge post={post} collectionName={collectionName} />}
-					title={post.title}
-					onPress={() => navigateToPost({ postId: post.id, collectionName })}
-				/>
+				<PostSummary post={post} collectionName={collectionName} />
 				{post.status !== 'active' && (
 					<Text variant="body2" color="tertiary">
 						{POST_STATUS_NOTICES[post.status]}
@@ -330,43 +339,20 @@ const ReportTargetSection = ({ report, target, reporter, reportee }: ReportTarge
 	);
 };
 
-const PostTypeBadge = ({
-	post,
-	collectionName,
-}: {
-	post: NonNullable<ReportTargetContent['post']>;
-	collectionName: Collection;
-}) => {
-	if (isBoardPost(post, collectionName)) return <MarketTypeBadge type={post.type} />;
-	if (isCommunityPost(post, collectionName)) return <CommunityTypeBadge type={post.type} />;
-	return null;
-};
-
 type ReportActionsSectionProps = {
 	report: Report;
 	target: ReportTargetContent | undefined;
-	reportee: UserInfo | null | undefined;
-	isReporteeLoading: boolean;
-	isIssuingWarning: boolean;
-	onStartWarning: (warning: PendingWarning) => void;
 };
 
-// 정지 해제, 게시글·댓글·답글 숨김(경고). 할 수 있는 조치가 없으면 섹션을 그리지 않는다
-const ReportActionsSection = ({
-	report,
-	target,
-	reportee,
-	isReporteeLoading,
-	isIssuingWarning,
-	onStartWarning,
-}: ReportActionsSectionProps) => {
+// 미처리 신고: [경고] / [계정 정지]. 이번 기능 전에 조치 없이 관리자가 숨긴 글·댓글: [숨김 해제]
+// 할 수 있는 조치가 없으면 섹션을 그리지 않는다
+const ReportActionsSection = ({ report, target }: ReportActionsSectionProps) => {
 	const styles = useThemedStyles(makeStyles);
 	const contentType = getReportContentType(report);
 	const collectionName = target?.collectionName ?? 'Boards';
 	const postId = report.postId ?? '';
 	const commentId = report.commentId ?? '';
 
-	const { mutate: liftSuspension, isPending: isLifting } = useLiftSuspension(report.reporteeId);
 	const { mutate: setPostHidden, isPending: isPostPending } = useSetPostHidden({
 		reportId: report.id,
 		collectionName,
@@ -378,107 +364,59 @@ const ReportActionsSection = ({
 		postId,
 		commentId,
 	});
-	// 이 신고로 건 경고가 있으면 [숨김 해제]는 경고 자체를 취소한다(위반 횟수에서 빠지고 대상이 다시 공개됨)
-	const { data: reportWarning, isLoading: isReportWarningLoading } = useReportWarning(report.id);
-	const { mutate: cancelSanction, isPending: isCanceling } = useCancelSanction({
-		reportId: report.id,
-		userId: report.reporteeId,
-	});
-	const unhide = (fallback: () => void) =>
-		reportWarning ? cancelSanction(reportWarning.id) : fallback();
 
 	const actions: DangerAction[] = [];
 
-	const suspendUntil = reportee?.report?.suspendUntil;
-	if (!isReporteeLoading && reportee && isSuspended(suspendUntil)) {
+	if (!report.resolved) {
+		// 경고는 정지와 같은 화면에서 위반 유형과 근거 신고(지금 신고가 미리 선택됨)를 고른다
+		actions.push({
+			title: '경고',
+			description: WARNING_DESCRIPTIONS[contentType],
+			actionLabel: '경고',
+			variant: 'danger',
+			onPress: () =>
+				navigateToAdminSuspend({
+					uid: report.reporteeId,
+					reportId: report.id,
+					isWarning: true,
+				}),
+		});
 		actions.push({
 			title: '계정 정지',
-			description: getSuspensionDescription(suspendUntil),
-			actionLabel: '정지 해제',
-			variant: 'dangerOutline',
-			isLoading: isLifting,
-			onPress: () =>
-				confirm('정지 해제', `${reportee.displayName}님의 정지를 해제할까요?`, () =>
-					liftSuspension(),
-				),
+			description: '기간을 정해 계정을 정지합니다',
+			actionLabel: '정지',
+			variant: 'danger',
+			onPress: () => navigateToAdminSuspend({ uid: report.reporteeId, reportId: report.id }),
 		});
 	}
 
+	// 조치로 숨긴 대상은 조치 상세의 [조치 취소]로 되돌린다. 조치가 없는 이전 숨김만 여기서 푼다
 	const post = target?.post;
-	if (contentType === 'post' && post && post.status !== 'deleted') {
-		const isHiddenByAdmin = !!post.hiddenByAdmin;
+	if (
+		!report.sanctionId &&
+		contentType === 'post' &&
+		post?.hiddenByAdmin &&
+		post.status !== 'deleted'
+	) {
 		actions.push({
-			title: isHiddenByAdmin ? '게시글 숨김 중' : '게시글 숨기기',
-			description: isHiddenByAdmin
-				? '관리자가 숨긴 게시글입니다'
-				: '목록과 상세에서 보이지 않습니다',
-			actionLabel: isHiddenByAdmin ? '숨김 해제' : '숨기기',
-			variant: isHiddenByAdmin ? 'dangerOutline' : 'danger',
-			// 경고 조회 전에 누르면 경고를 취소하지 못하고 숨김만 풀리므로, 조회가 끝날 때까지 로딩으로 둔다
-			isLoading: isHiddenByAdmin
-				? isPostPending || isCanceling || isReportWarningLoading
-				: isIssuingWarning,
-			onPress: () =>
-				isHiddenByAdmin
-					? unhide(() => setPostHidden(false))
-					: onStartWarning({
-							confirmTitle: '게시글 숨기기',
-							confirmMessage: '이 게시글을 숨길까요?',
-							target: { collectionName, postId },
-						}),
+			title: '게시글 숨김 중',
+			description: '관리자가 숨긴 게시글입니다',
+			actionLabel: '숨김 해제',
+			variant: 'dangerOutline',
+			isLoading: isPostPending,
+			onPress: () => setPostHidden(false),
 		});
 	}
 
 	const comment = target?.comment;
-	if (contentType === 'comment' && comment) {
-		const isHiddenByAdmin = !!comment.hiddenByAdmin;
+	if (!report.sanctionId && contentType === 'comment' && comment?.hiddenByAdmin) {
 		actions.push({
-			title: isHiddenByAdmin ? '댓글 숨김 중' : '댓글 숨기기',
-			description: isHiddenByAdmin
-				? '관리자가 숨긴 댓글입니다'
-				: '답글도 함께 보이지 않습니다',
-			actionLabel: isHiddenByAdmin ? '숨김 해제' : '숨기기',
-			variant: isHiddenByAdmin ? 'dangerOutline' : 'danger',
-			isLoading: isHiddenByAdmin
-				? isCommentPending || isCanceling || isReportWarningLoading
-				: isIssuingWarning,
-			onPress: () =>
-				isHiddenByAdmin
-					? unhide(() => setCommentHidden(false))
-					: onStartWarning({
-							confirmTitle: '댓글 숨기기',
-							confirmMessage: '이 댓글과 답글을 숨길까요?',
-							target: { collectionName, postId, commentId },
-						}),
-		});
-	}
-
-	// 답글은 관리자가 앱에서 직접 쓸 수 없어, 숨김 해제는 이 신고로 건 경고를 취소할 때만 할 수 있다
-	const reply = target?.reply;
-	if (contentType === 'reply' && reply?.hiddenByAdmin) {
-		actions.push({
-			title: '답글 숨김 중',
-			description: '관리자가 숨긴 답글입니다',
+			title: '댓글 숨김 중',
+			description: '관리자가 숨긴 댓글입니다',
 			actionLabel: '숨김 해제',
 			variant: 'dangerOutline',
-			disabled: !reportWarning,
-			isLoading: isCanceling,
-			onPress: () => reportWarning && cancelSanction(reportWarning.id),
-		});
-	}
-	if (contentType === 'reply' && reply && !reply.hiddenByAdmin) {
-		actions.push({
-			title: '답글 숨기기',
-			description: '목록과 상세에서 보이지 않습니다',
-			actionLabel: '숨기기',
-			variant: 'danger',
-			isLoading: isIssuingWarning,
-			onPress: () =>
-				onStartWarning({
-					confirmTitle: '답글 숨기기',
-					confirmMessage: '이 답글을 숨길까요?',
-					target: { collectionName, postId, commentId, replyId: report.replyId },
-				}),
+			isLoading: isCommentPending,
+			onPress: () => setCommentHidden(false),
 		});
 	}
 

@@ -17,7 +17,7 @@ export const useDecideAppeal = ({ sanctionId, userId }: { sanctionId: string; us
 		onSuccess: (_, { result }) => {
 			queryClient.invalidateQueries({ queryKey: adminSanctionQueryKey(sanctionId) });
 			queryClient.invalidateQueries({ queryKey: userSanctionsQueryKey(userId) });
-			queryClient.invalidateQueries({ queryKey: ['adminNeedsReviewUsers'] });
+			queryClient.invalidateQueries({ queryKey: ['adminStageSanctions'] });
 			queryClient.invalidateQueries({ queryKey: ['adminSanctionRecommendation', userId] });
 			if (result === 'canceled') {
 				// 조치 취소는 정지 해제·글 공개를 함께 하므로 유저와 글 캐시도 새로 불러온다

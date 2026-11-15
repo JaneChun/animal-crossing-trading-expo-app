@@ -37,9 +37,14 @@ const REPLY_PATH = `${COMMENT_PATH}/Replies/sanction_test_reply`;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 async function cleanupTestData() {
-	const sanctions = await db.collection('Sanctions').where('userId', '==', USER_ID).get();
+	const [sanctions, reports] = await Promise.all([
+		db.collection('Sanctions').where('userId', '==', USER_ID).get(),
+		db.collection('Reports').where('reporteeId', '==', USER_ID).get(),
+	]);
 	await Promise.all([
 		...sanctions.docs.map((doc) => doc.ref.delete()),
+		...reports.docs.map((doc) => doc.ref.delete()),
+		db.doc('Reports/other_user_report').delete(),
 		db.doc(REPLY_PATH).delete(),
 		db.doc(COMMENT_PATH).delete(),
 		db.doc(POST_PATH).delete(),
@@ -50,6 +55,22 @@ async function cleanupTestData() {
 
 async function getSanction(sanctionId: string) {
 	return (await db.doc(`Sanctions/${sanctionId}`).get()).data();
+}
+
+async function addReport(reportId: string, fields: Record<string, unknown>) {
+	await db.doc(`Reports/${reportId}`).set({
+		reporterId: 'sanction_test_reporter',
+		reporteeId: USER_ID,
+		category: 'spam',
+		detail: '신고 내용',
+		createdAt: Timestamp.now(),
+		resolved: false,
+		...fields,
+	});
+}
+
+async function getReport(reportId: string) {
+	return (await db.doc(`Reports/${reportId}`).get()).data();
 }
 
 describe('관리자 경고·정지', () => {
@@ -72,7 +93,6 @@ describe('관리자 경고·정지', () => {
 			userId: USER_ID,
 			kind: 'warning',
 			violationType: 'externalTrade',
-			reportIds: ['report_1'],
 			target: { collectionName: 'Boards', postId: 'sanction_test_post' },
 		});
 
@@ -81,9 +101,10 @@ describe('관리자 경고·정지', () => {
 			userId: USER_ID,
 			kind: 'warning',
 			violationType: 'externalTrade',
-			reportIds: ['report_1'],
+			reportIds: [],
 			adminId: ADMIN_ID,
 			status: 'active',
+			reviewStage: 'awaitingUser',
 			suspendUntil: null,
 		});
 		expect(sanction?.target.snapshot.title).toBe('위반 글');
@@ -210,6 +231,7 @@ describe('관리자 경고·정지', () => {
 		});
 
 		const sanction = await getSanction(sanctionId);
+		expect(sanction?.reviewStage).toBe('done');
 		const suspendUntilMs = sanction?.suspendUntil.toMillis();
 		expect(suspendUntilMs - Date.now()).toBeGreaterThan(6 * DAY_MS);
 		expect(suspendUntilMs - Date.now()).toBeLessThanOrEqual(7 * DAY_MS);
@@ -356,14 +378,6 @@ describe('관리자 경고·정지', () => {
 			}),
 		).rejects.toMatchObject({ code: 'invalid-argument' });
 		await expect(
-			issueSanctionHandler(ADMIN_ID, {
-				userId: USER_ID,
-				kind: 'warning',
-				violationType: 'fraud',
-				reportIds: [{ id: 'x' } as never],
-			}),
-		).rejects.toMatchObject({ code: 'invalid-argument' });
-		await expect(
 			issueSanctionHandler(ADMIN_ID, { userId: 'no_such_user', kind: 'warning', violationType: 'fraud' }),
 		).rejects.toMatchObject({ code: 'not-found' });
 	});
@@ -385,6 +399,117 @@ describe('관리자 경고·정지', () => {
 			collectionName: 'Boards',
 			postId: 'deleted_post',
 		});
+	});
+});
+
+describe('근거 신고 연결', () => {
+	beforeEach(async () => {
+		await cleanupTestData();
+		await db.doc(`Users/${USER_ID}`).set({
+			displayName: '조치 대상',
+			report: { total: 1, recent30Days: 1, suspendUntil: null },
+		});
+		await db.doc(POST_PATH).set({ creatorId: USER_ID, title: '위반 글', status: 'active', commentCount: 2 });
+	});
+
+	afterAll(async () => {
+		await cleanupTestData();
+	});
+
+	it('고른 신고와 같은 대상의 미처리 신고만 연결해 처리 완료하고, 다른 대상·처리된 신고는 그대로 둔다', async () => {
+		const postTarget = { collectionName: 'Boards', postId: 'sanction_test_post' };
+		await Promise.all([
+			addReport('link_same_1', postTarget),
+			addReport('link_same_2', { ...postTarget, reporterId: 'another_reporter' }),
+			addReport('link_comment', { ...postTarget, commentId: 'sanction_test_comment' }),
+			addReport('link_resolved', { ...postTarget, resolved: true }),
+			addReport('link_chat', { chatId: 'chat_1' }),
+		]);
+
+		const { sanctionId } = await issueSanctionHandler(ADMIN_ID, {
+			userId: USER_ID,
+			kind: 'warning',
+			violationType: 'spam',
+			target: postTarget,
+			reportId: 'link_same_1',
+		});
+
+		expect((await getSanction(sanctionId))?.reportIds.sort()).toEqual(['link_same_1', 'link_same_2']);
+		await expect(getReport('link_same_1')).resolves.toMatchObject({ resolved: true, sanctionId });
+		await expect(getReport('link_same_2')).resolves.toMatchObject({ resolved: true, sanctionId });
+		expect(await getReport('link_comment')).toMatchObject({ resolved: false });
+		expect((await getReport('link_comment'))?.sanctionId).toBeUndefined();
+		expect((await getReport('link_resolved'))?.sanctionId).toBeUndefined();
+		expect(await getReport('link_chat')).toMatchObject({ resolved: false });
+	});
+
+	it('채팅 경고는 같은 채팅방의 미처리 신고를 연결한다', async () => {
+		await Promise.all([addReport('chat_same', { chatId: 'chat_1' }), addReport('chat_other', { chatId: 'chat_2' })]);
+
+		const { sanctionId } = await issueSanctionHandler(ADMIN_ID, {
+			userId: USER_ID,
+			kind: 'warning',
+			violationType: 'abuse',
+			target: { chatId: 'chat_1' },
+			reportId: 'chat_same',
+		});
+
+		expect((await getSanction(sanctionId))?.reportIds).toEqual(['chat_same']);
+		expect(await getReport('chat_other')).toMatchObject({ resolved: false });
+	});
+
+	it('프로필 신고를 고르면 그 유저의 미처리 프로필 신고를 모두 연결한다', async () => {
+		await Promise.all([
+			addReport('profile_1', {}),
+			addReport('profile_2', { reporterId: 'another_reporter' }),
+			addReport('profile_chat', { chatId: 'chat_1' }),
+		]);
+
+		const { sanctionId } = await issueSanctionHandler(ADMIN_ID, {
+			userId: USER_ID,
+			kind: 'warning',
+			violationType: 'abuse',
+			reportId: 'profile_1',
+		});
+
+		expect((await getSanction(sanctionId))?.reportIds.sort()).toEqual(['profile_1', 'profile_2']);
+		await expect(getReport('profile_2')).resolves.toMatchObject({ resolved: true, sanctionId });
+		expect(await getReport('profile_chat')).toMatchObject({ resolved: false });
+	});
+
+	it('없는 신고, 다른 유저의 신고, 요청 대상과 다른 신고를 근거로 고르면 거부하고 아무것도 쓰지 않는다', async () => {
+		await Promise.all([
+			addReport('other_user_report', { reporteeId: 'another_user' }),
+			addReport('chat_report', { chatId: 'chat_1' }),
+		]);
+		const request = { userId: USER_ID, kind: 'warning' as const, violationType: 'abuse' as const };
+
+		await expect(issueSanctionHandler(ADMIN_ID, { ...request, reportId: 'no_such_report' })).rejects.toMatchObject({
+			code: 'not-found',
+		});
+		await expect(issueSanctionHandler(ADMIN_ID, { ...request, reportId: 'other_user_report' })).rejects.toMatchObject({
+			code: 'invalid-argument',
+		});
+		await expect(
+			issueSanctionHandler(ADMIN_ID, { ...request, target: { chatId: 'chat_2' }, reportId: 'chat_report' }),
+		).rejects.toMatchObject({ code: 'invalid-argument' });
+		expect(await getReport('chat_report')).toMatchObject({ resolved: false });
+		expect((await db.collection('Sanctions').where('userId', '==', USER_ID).get()).empty).toBe(true);
+	});
+
+	it('신고를 고르지 않은 정지(대상 없음)는 신고를 연결하지 않는다', async () => {
+		await addReport('no_target_post', { collectionName: 'Boards', postId: 'sanction_test_post' });
+		await addReport('no_target_profile', {});
+
+		const { sanctionId } = await issueSanctionHandler(ADMIN_ID, {
+			userId: USER_ID,
+			kind: 'days7',
+			violationType: 'fraud',
+		});
+
+		expect((await getSanction(sanctionId))?.reportIds).toEqual([]);
+		expect(await getReport('no_target_post')).toMatchObject({ resolved: false });
+		expect(await getReport('no_target_profile')).toMatchObject({ resolved: false });
 	});
 });
 
@@ -452,6 +577,7 @@ describe('이의 신청 결정·조치 취소', () => {
 
 		const sanction = await getSanction(sanctionId);
 		expect(sanction?.status).toBe('active');
+		expect(sanction?.reviewStage).toBe('done');
 		expect(sanction?.appeal).toMatchObject({ status: 'reviewed', result: 'upheld', reply: '조치를 유지합니다.' });
 		expect(sanction?.appeal.repliedAt).toBeDefined();
 		expect((await db.doc(POST_PATH).get()).data()?.hiddenByAdmin).toBe(true);
@@ -474,7 +600,7 @@ describe('이의 신청 결정·조치 취소', () => {
 
 		await decideAppealHandler({ sanctionId, result: 'canceled', reply: '조치를 취소합니다.' });
 
-		expect((await getSanction(sanctionId))?.status).toBe('canceled');
+		expect(await getSanction(sanctionId)).toMatchObject({ status: 'canceled', reviewStage: 'done' });
 		const post = (await db.doc(POST_PATH).get()).data();
 		expect(post?.status).toBe('active');
 		expect(post?.hiddenByAdmin).toBeUndefined();
@@ -551,10 +677,10 @@ describe('이의 신청 결정·조치 취소', () => {
 
 		expect((await db.doc(COMMENT_PATH).get()).data()?.hiddenByAdmin).toBeUndefined();
 		expect((await db.doc(POST_PATH).get()).data()?.commentCount).toBe(2);
-		expect((await getSanction(sanctionId))?.status).toBe('canceled');
+		expect(await getSanction(sanctionId)).toMatchObject({ status: 'canceled', reviewStage: 'done' });
 	});
 
-	it('이의 신청 검토 중인 조치는 신고 상세의 조치 취소로 취소할 수 없다', async () => {
+	it('이의 신청 검토 중인 조치는 조치 상세의 조치 취소로 취소할 수 없다', async () => {
 		const { sanctionId } = await issueSanctionHandler(ADMIN_ID, { userId: USER_ID, kind: 'warning', violationType: 'spam' });
 		await db.doc(`Sanctions/${sanctionId}`).update({ appeal: pendingAppeal });
 

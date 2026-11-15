@@ -1,7 +1,14 @@
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { getKstMidnightAfterDays, handleUserPostsOnSuspension, liftUserSuspension } from '../triggers/reports';
-import { AppealResult, IssueSanctionRequest, SanctionDoc, SanctionKind, ViolationType } from '../types/sanction';
+import {
+	AppealResult,
+	IssueSanctionRequest,
+	SanctionDoc,
+	SanctionKind,
+	SanctionReviewStage,
+	ViolationType,
+} from '../types/sanction';
 import { db } from '../utils/common';
 import { sendPushNotification } from '../utils/pushNotification';
 
@@ -104,9 +111,7 @@ function parseSanctionTarget(rawTarget: IssueSanctionRequest['target']): IssueSa
 	return Object.keys(target).length > 0 ? target : undefined;
 }
 
-function parseIssueSanctionRequest(
-	data: IssueSanctionRequest | undefined,
-): IssueSanctionRequest & { reportIds: string[] } {
+function parseIssueSanctionRequest(data: IssueSanctionRequest | undefined): IssueSanctionRequest {
 	if (!data || !isDocId(data.userId)) {
 		throw new HttpsError('invalid-argument', 'userId가 필요합니다.');
 	}
@@ -116,19 +121,53 @@ function parseIssueSanctionRequest(
 	if (!VIOLATION_TYPES.includes(data.violationType)) {
 		throw new HttpsError('invalid-argument', '위반 유형이 올바르지 않습니다.');
 	}
-
-	const reportIds = data.reportIds ?? [];
-	if (!Array.isArray(reportIds) || !reportIds.every(isDocId)) {
-		throw new HttpsError('invalid-argument', 'reportIds가 올바르지 않습니다.');
+	if (data.reportId !== undefined && !isDocId(data.reportId)) {
+		throw new HttpsError('invalid-argument', 'reportId가 올바르지 않습니다.');
 	}
 
 	return {
 		userId: data.userId,
 		kind: data.kind,
 		violationType: data.violationType,
-		reportIds,
 		target: parseSanctionTarget(data.target),
+		reportId: data.reportId,
 	};
+}
+
+const TARGET_MATCH_KEYS = ['collectionName', ...TARGET_ID_KEYS] as const;
+
+/**
+ * 조치에 연결할 근거 신고: 같은 피신고자의 미처리 신고 중 고른 신고와 대상이 완전히 같은 것
+ * 대상 필드가 없는 프로필 신고는 그 유저의 미처리 프로필 신고끼리 연결된다
+ * 같은 글의 댓글처럼 대상이 다른 신고는 연결하지 않고 '검토 필요'에 남긴다. 신고를 고르지 않은 조치('대상 없음')는 신고를 연결하지 않는다
+ * 등호 조건 둘로 읽고 대상은 메모리에서 비교한다(복합 인덱스 불필요)
+ */
+async function findLinkedReportRefs(
+	userId: string,
+	reportId: string | undefined,
+	target: IssueSanctionRequest['target'],
+): Promise<FirebaseFirestore.DocumentReference[]> {
+	if (!reportId) return [];
+
+	const basisReport = (await db.doc(`Reports/${reportId}`).get()).data();
+	if (!basisReport) {
+		throw new HttpsError('not-found', '근거 신고를 찾을 수 없습니다.');
+	}
+	// 다른 유저의 신고나 요청 대상과 다른 신고를 근거로 연결하지 않는다
+	const isSameTarget = TARGET_ID_KEYS.every((key) => target?.[key] === basisReport[key]);
+	if (basisReport.reporteeId !== userId || !isSameTarget) {
+		throw new HttpsError('invalid-argument', '근거 신고가 조치 대상과 맞지 않습니다.');
+	}
+
+	const snapshot = await db
+		.collection('Reports')
+		.where('reporteeId', '==', userId)
+		.where('resolved', '==', false)
+		.get();
+
+	return snapshot.docs
+		.filter((doc) => TARGET_MATCH_KEYS.every((key) => doc.data()[key] === basisReport[key]))
+		.map((doc) => doc.ref);
 }
 
 /**
@@ -222,6 +261,8 @@ export function buildSanctionPush(
 /**
  * 관리자 경고·정지
  * 조치 기록을 남기고 위반 대상을 숨긴다. 정지면 Users.report.suspendUntil을 더 늦은 날로 갱신하고 전체 글을 숨긴다
+ * 고른 신고와 대상이 같은 미처리 신고는 근거 신고로 연결해 함께 처리 완료한다
+ * 경고는 유저 확인을 기다리고, 정지는 관리자가 할 일이 없으므로 바로 처리 완료 단계로 둔다
  * @param adminId - 처리 관리자 UID
  * @param data - 조치 요청
  * @returns 생성된 조치 문서 ID
@@ -230,13 +271,14 @@ export async function issueSanctionHandler(
 	adminId: string,
 	data: IssueSanctionRequest | undefined,
 ): Promise<{ sanctionId: string }> {
-	const { userId, kind, violationType, reportIds, target } = parseIssueSanctionRequest(data);
+	const { userId, kind, violationType, target, reportId } = parseIssueSanctionRequest(data);
 
 	const userRef = db.doc(`Users/${userId}`);
 	const targetDocPath = getTargetDocPath(target);
-	const [userSnap, targetSnap] = await Promise.all([
+	const [userSnap, targetSnap, linkedReportRefs] = await Promise.all([
 		userRef.get(),
 		targetDocPath ? db.doc(targetDocPath).get() : Promise.resolve(null),
+		findLinkedReportRefs(userId, reportId, target),
 	]);
 	if (!userSnap.exists) {
 		throw new HttpsError('not-found', '유저를 찾을 수 없습니다.');
@@ -253,15 +295,17 @@ export async function issueSanctionHandler(
 	const sanctionSuspendUntil = suspensionDays
 		? Timestamp.fromDate(getKstMidnightAfterDays(now, suspensionDays))
 		: null;
+	const reviewStage: SanctionReviewStage = kind === 'warning' ? 'awaitingUser' : 'done';
 
 	const sanction: SanctionDoc = {
 		userId,
 		kind,
 		violationType,
 		...(target ? { target: { ...target, ...(targetSnapshot ? { snapshot: targetSnapshot } : {}) } } : {}),
-		reportIds,
+		reportIds: linkedReportRefs.map((ref) => ref.id),
 		adminId,
 		status: 'active',
+		reviewStage,
 		createdAt: Timestamp.fromDate(now),
 		suspendUntil: sanctionSuspendUntil,
 	};
@@ -269,6 +313,9 @@ export async function issueSanctionHandler(
 	const batch = db.batch();
 	const sanctionRef = db.collection('Sanctions').doc();
 	batch.set(sanctionRef, sanction);
+	linkedReportRefs.forEach((reportRef) => {
+		batch.update(reportRef, { resolved: true, sanctionId: sanctionRef.id });
+	});
 	await hideTarget(batch, target, targetSnap);
 
 	const userSuspendUntil = kind === 'permanent' ? PERMANENT_SUSPEND_UNTIL : sanctionSuspendUntil?.toDate();
@@ -408,7 +455,7 @@ async function cancelSanction(
 			: await recalculateSuspension(sanction.userId, sanctionRef.id);
 	await unhideTarget(sanction.target, isUserSuspended);
 
-	await sanctionRef.update({ status: 'canceled', ...extraUpdate });
+	await sanctionRef.update({ status: 'canceled', reviewStage: 'done', ...extraUpdate });
 }
 
 async function isUserCurrentlySuspended(userId: string): Promise<boolean> {
@@ -457,6 +504,7 @@ export async function decideAppealHandler(
 		'appeal.result': result,
 		'appeal.reply': reply,
 		'appeal.repliedAt': Timestamp.now(),
+		reviewStage: 'done',
 	};
 
 	if (result === 'canceled') {
@@ -469,7 +517,7 @@ export async function decideAppealHandler(
 }
 
 /**
- * 관리자 조치 취소(이의 신청 없이). 신고 상세의 [숨김 해제]가 실수로 건 경고를 되돌릴 때 쓴다
+ * 관리자 조치 취소(이의 신청 없이). 조치 상세의 [조치 취소]에서 쓴다
  * @param data - { sanctionId }
  */
 export async function cancelSanctionHandler(data: { sanctionId?: unknown } | undefined): Promise<void> {

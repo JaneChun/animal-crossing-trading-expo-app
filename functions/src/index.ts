@@ -2,6 +2,7 @@ import * as functions from 'firebase-functions';
 import {
 	onDocumentCreated,
 	onDocumentDeleted,
+	onDocumentUpdated,
 	onDocumentWritten,
 } from 'firebase-functions/v2/firestore';
 
@@ -31,12 +32,15 @@ import { handleCommentCreated, handleCommentDeleted } from './triggers/comments'
 import { handleReplyCreated, handleReplyDeleted } from './triggers/replies';
 import { handleUserReport } from './triggers/reports';
 import { saveReportSnapshot } from './triggers/reportSnapshot';
+import { handleSanctionUpdated } from './triggers/sanctions';
 import { handleUserReview } from './triggers/reviews';
 import { deleteUserAndArchive as deleteUserAndArchiveHandler } from './triggers/userManagement';
+import { SanctionDoc } from './types/sanction';
 
 // Scheduler functions
 import { hardDeleteExpiredPostsScheduler } from './schedulers/hardDeleteExpiredPostsScheduler';
 import { restoreSuspendedUserPostsScheduler } from './schedulers/restoreSuspendedUserPostsScheduler';
+import { expireUnacknowledgedWarningsScheduler } from './schedulers/expireUnacknowledgedWarningsScheduler';
 
 // ===============================
 // HTTP Functions
@@ -116,7 +120,7 @@ export const decideAppeal = functions.https.onCall(async (request) => {
 
 /**
  * 관리자 조치 취소(이의 신청 없이)
- * 신고 상세의 [숨김 해제]로 실수로 건 경고를 되돌린다
+ * 조치 상세의 [조치 취소]로 이의 신청 없는 유효한 조치를 되돌린다
  */
 export const cancelSanction = functions.https.onCall(async (request) => {
 	await assertAdmin(request.auth?.uid);
@@ -248,6 +252,18 @@ export const onReportWritten = onDocumentWritten('Reports/{reportId}', async (ev
 });
 
 /**
+ * 조치 변경 시 트리거
+ * 유저가 경고를 확인하면 관리자 처리 단계를 '처리 완료'로 옮긴다
+ */
+export const onSanctionUpdated = onDocumentUpdated('Sanctions/{sanctionId}', async (event) => {
+	const before = event.data?.before.data() as SanctionDoc | undefined;
+	const after = event.data?.after.data() as SanctionDoc | undefined;
+	if (!before || !after || !event.data) return;
+
+	await handleSanctionUpdated(event.data.after.ref, before, after);
+});
+
+/**
  * 리뷰 생성 시 트리거
  * 사용자 리뷰 정보 업데이트 및 뱃지 부여
  */
@@ -293,3 +309,4 @@ export const onUnblockUser = onDocumentDeleted(
 
 export { restoreSuspendedUserPostsScheduler };
 export { hardDeleteExpiredPostsScheduler };
+export { expireUnacknowledgedWarningsScheduler };

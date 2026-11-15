@@ -47,7 +47,6 @@ export type RootStackParamList = {
 	InquiryDetail: { sanctionId: string };
 	Search: undefined;
 	AdminHome: undefined;
-	AdminReviewUsers: undefined;
 	AdminReports: undefined;
 	AdminReportDetail: { reportId: string };
 	AdminChatViewer: { chatId: string; reporterId: string; reporteeId: string };
@@ -56,7 +55,8 @@ export type RootStackParamList = {
 	AdminUserDetail: { uid: string };
 	AdminUserRecords: { uid: string; kind: AdminUserRecordKind };
 	AdminErrors: undefined;
-	AdminAppealDetail: { sanctionId: string };
+	AdminSanctionDetail: { sanctionId: string };
+	AdminSuspend: { uid: string; reportId?: string; isWarning?: boolean }; // reportId: 근거 신고로 미리 선택할 신고, isWarning: 정지 대신 경고
 	DesignSystem: undefined;
 };
 
@@ -83,7 +83,8 @@ export type SignUpIslandNameRouteProp = RouteProp<RootStackParamList, 'SignUpIsl
 export type AdminReportDetailRouteProp = RouteProp<RootStackParamList, 'AdminReportDetail'>;
 export type AdminChatViewerRouteProp = RouteProp<RootStackParamList, 'AdminChatViewer'>;
 export type AdminUserDetailRouteProp = RouteProp<RootStackParamList, 'AdminUserDetail'>;
-export type AdminAppealDetailRouteProp = RouteProp<RootStackParamList, 'AdminAppealDetail'>;
+export type AdminSanctionDetailRouteProp = RouteProp<RootStackParamList, 'AdminSanctionDetail'>;
+export type AdminSuspendRouteProp = RouteProp<RootStackParamList, 'AdminSuspend'>;
 export type SanctionWarningRouteProp = RouteProp<RootStackParamList, 'SanctionWarning'>;
 export type AppealFormRouteProp = RouteProp<RootStackParamList, 'AppealForm'>;
 export type InquiryDetailRouteProp = RouteProp<RootStackParamList, 'InquiryDetail'>;

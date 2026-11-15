@@ -2,6 +2,7 @@ import {
 	collection,
 	deleteField,
 	doc,
+	endAt,
 	getDocs,
 	increment,
 	limit,
@@ -9,6 +10,7 @@ import {
 	query,
 	Query,
 	startAfter,
+	startAt,
 	Timestamp,
 	updateDoc,
 	where,
@@ -35,7 +37,13 @@ import { Collection, Doc, Post, PostDoc } from '@/types/post';
 import { Reply } from '@/types/reply';
 import { Report } from '@/types/report';
 import { ReviewWithId } from '@/types/review';
-import { AppealResult, IssueSanctionRequest, Sanction, SanctionKind } from '@/types/sanction';
+import {
+	AppealResult,
+	IssueSanctionRequest,
+	Sanction,
+	SanctionKind,
+	SanctionReviewStage,
+} from '@/types/sanction';
 import { UserInfo } from '@/types/user';
 import { toPost } from '@/utilities/toPost';
 
@@ -62,6 +70,8 @@ const toUserInfo = (user: UserInfo & { id: string }): UserInfo => {
 
 // ── 조회 ──────────────────────────────────
 
+// 처리된 신고 목록은 '처리 완료 > 조치 없음'에만 쓰므로, 조치에 연결된 신고는 메모리에서 거른다.
+// 커서는 거르기 전 마지막 문서라, 한 페이지가 모두 걸러져도 다음 페이지를 이어서 읽는다
 export const fetchReports = async ({
 	resolved,
 	lastDoc,
@@ -71,15 +81,81 @@ export const fetchReports = async ({
 }): Promise<Paginated<Report>> => {
 	return firestoreRequest(
 		'신고 목록 조회',
-		() =>
-			fetchPage<Report>(
+		async () => {
+			const page = await fetchPage<Report>(
 				query(
 					collection(db, 'Reports'),
 					where('resolved', '==', resolved),
 					orderBy('createdAt', 'desc'),
 				),
 				lastDoc,
+			);
+			if (!resolved) return page;
+
+			const unsanctionedReports = page.data.filter((report) => !report.sanctionId);
+			return { ...page, data: unsanctionedReports };
+		},
+		{ throwOnError: true },
+	);
+};
+
+export const fetchStageSanctions = async ({
+	stage,
+	lastDoc,
+}: {
+	stage: SanctionReviewStage;
+	lastDoc: Doc;
+}): Promise<Paginated<Sanction>> => {
+	return firestoreRequest(
+		'단계별 조치 목록 조회',
+		() =>
+			fetchPage<Sanction>(
+				query(
+					collection(db, 'Sanctions'),
+					where('reviewStage', '==', stage),
+					orderBy('createdAt', 'desc'),
+				),
+				lastDoc,
 			),
+		{ throwOnError: true },
+	);
+};
+
+const REPORT_TARGET_KEYS = ['collectionName', 'postId', 'commentId', 'replyId', 'chatId'] as const;
+
+// 유저가 받은 미처리 신고, 최신순. 미처리 신고는 많지 않아 페이지 없이 모두 읽는다
+// 등호 조건 둘로 읽고 정렬은 메모리에서 한다(복합 인덱스 불필요)
+const queryUnresolvedReceivedReports = async (uid: string): Promise<Report[]> => {
+	const snapshot = await getDocs(
+		query(
+			collection(db, 'Reports'),
+			where('reporteeId', '==', uid),
+			where('resolved', '==', false),
+		),
+	);
+	const unresolvedReports = snapshot.docs.map(
+		(reportDoc) => ({ id: reportDoc.id, ...reportDoc.data() }) as Report,
+	);
+	return unresolvedReports.sort((a, b) => b.createdAt.toMillis() - a.createdAt.toMillis());
+};
+
+// 계정 정지 화면의 근거 신고 목록
+export const fetchUnresolvedReceivedReports = async (uid: string): Promise<Report[]> => {
+	return firestoreRequest('받은 미처리 신고 조회', () => queryUnresolvedReceivedReports(uid), {
+		throwOnError: true,
+	});
+};
+
+// 신고 상세의 '근거 신고 N건': 같은 피신고자의 미처리 신고 중 대상이 완전히 같은 것 (issueSanction이 연결할 신고와 같은 기준)
+export const fetchUnresolvedReportsForTarget = async (report: Report): Promise<Report[]> => {
+	return firestoreRequest(
+		'같은 대상 미처리 신고 조회',
+		async () => {
+			const unresolvedReports = await queryUnresolvedReceivedReports(report.reporteeId);
+			return unresolvedReports.filter((candidate) =>
+				REPORT_TARGET_KEYS.every((key) => candidate[key] === report[key]),
+			);
+		},
 		{ throwOnError: true },
 	);
 };
@@ -170,63 +246,6 @@ export const fetchReport = async (reportId: string): Promise<Report | null> => {
 	);
 };
 
-export type NeedsReviewUser = {
-	user: UserInfo;
-	pendingAppealSanctionId: string | null; // 처리 대기 중인 이의 신청이 있으면 그 조치 ID
-	unresolvedReportCount: number;
-};
-
-// 검토 필요 유저: 처리 대기 중인 이의 신청이 있는 유저 + 처리되지 않은 신고를 받은 유저.
-// 대상이 많지 않아 페이지 없이 모두 읽고, 이의 신청 대기 → 미처리 신고 많은 순으로 정렬한다
-export const fetchNeedsReviewUsers = async (): Promise<NeedsReviewUser[]> => {
-	return firestoreRequest(
-		'검토 필요 유저 조회',
-		async () => {
-			const [pendingAppealsSnap, unresolvedReportsSnap] = await Promise.all([
-				getDocs(
-					query(collection(db, 'Sanctions'), where('appeal.status', '==', 'pending')),
-				),
-				getDocs(query(collection(db, 'Reports'), where('resolved', '==', false))),
-			]);
-
-			const pendingAppealByUser = new Map<string, string>();
-			pendingAppealsSnap.docs.forEach((sanctionDoc) => {
-				pendingAppealByUser.set(sanctionDoc.data().userId, sanctionDoc.id);
-			});
-			const unresolvedCountByUser = new Map<string, number>();
-			unresolvedReportsSnap.docs.forEach((reportDoc) => {
-				const reporteeId: string = reportDoc.data().reporteeId;
-				unresolvedCountByUser.set(
-					reporteeId,
-					(unresolvedCountByUser.get(reporteeId) ?? 0) + 1,
-				);
-			});
-
-			const userIds = [
-				...new Set([...pendingAppealByUser.keys(), ...unresolvedCountByUser.keys()]),
-			];
-			const users = await Promise.all(
-				userIds.map((uid) => getDocFromFirestore({ collection: 'Users', id: uid })),
-			);
-
-			const reviewUsers = users
-				.filter((user): user is UserInfo & { id: string } => !!user)
-				.map((user) => ({
-					user: toUserInfo(user),
-					pendingAppealSanctionId: pendingAppealByUser.get(user.id) ?? null,
-					unresolvedReportCount: unresolvedCountByUser.get(user.id) ?? 0,
-				}));
-
-			return reviewUsers.sort(
-				(a, b) =>
-					Number(!!b.pendingAppealSanctionId) - Number(!!a.pendingAppealSanctionId) ||
-					b.unresolvedReportCount - a.unresolvedReportCount,
-			);
-		},
-		{ throwOnError: true },
-	);
-};
-
 export const fetchUsers = async (lastDoc: Doc): Promise<Paginated<UserInfo>> => {
 	return firestoreRequest(
 		'유저 목록 조회',
@@ -237,6 +256,28 @@ export const fetchUsers = async (lastDoc: Doc): Promise<Paginated<UserInfo>> => 
 				lastDoc,
 			);
 			return { ...page, data: page.data.map(toUserInfo) };
+		},
+		{ throwOnError: true },
+	);
+};
+
+// 닉네임 앞부분 일치 검색. displayName 단일 필드 정렬이라 인덱스를 추가하지 않아도 된다
+export const searchUsersByDisplayName = async (keyword: string): Promise<UserInfo[]> => {
+	return firestoreRequest(
+		'유저 닉네임 검색',
+		async () => {
+			const snapshot = await getDocs(
+				query(
+					collection(db, 'Users'),
+					orderBy('displayName'),
+					startAt(keyword),
+					endAt(`${keyword}\uf8ff`),
+					limit(PAGE_SIZE),
+				),
+			);
+			return snapshot.docs.map((userDoc) =>
+				toUserInfo({ id: userDoc.id, ...userDoc.data() } as UserInfo & { id: string }),
+			);
 		},
 		{ throwOnError: true },
 	);
@@ -505,23 +546,6 @@ export const fetchReportsByIds = async (reportIds: string[]): Promise<Report[]> 
 				reportIds.map((id) => getDocFromFirestore({ collection: 'Reports', id })),
 			);
 			return reports.filter((report): report is Report => !!report);
-		},
-		{ throwOnError: true },
-	);
-};
-
-// 신고 상세의 [숨김 해제]가 되돌릴 경고: 이 신고를 근거로 한 유효한 경고 조치
-export const fetchActiveWarningForReport = async (reportId: string): Promise<Sanction | null> => {
-	return firestoreRequest(
-		'신고 경고 조치 조회',
-		async () => {
-			const snapshot = await getDocs(
-				query(collection(db, 'Sanctions'), where('reportIds', 'array-contains', reportId)),
-			);
-			const sanction = snapshot.docs
-				.map((sanctionDoc) => ({ id: sanctionDoc.id, ...sanctionDoc.data() }) as Sanction)
-				.find(({ kind, status }) => kind === 'warning' && status === 'active');
-			return sanction ?? null;
 		},
 		{ throwOnError: true },
 	);

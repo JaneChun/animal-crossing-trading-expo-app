@@ -1,6 +1,6 @@
 # 관리자(어드민)
 
-설정 화면 → "관리자" 섹션에서 들어가는 운영 화면(신고·검토 필요 유저·에러·일별 통계·유저·디자인 시스템). 코드: `src/screens/admin/`, `src/components/Admin/`, `src/hooks/admin/`, `src/firebase/services/adminService.ts`, `functions/src/admin/stats.ts`, `functions/src/notifications/report.ts`.
+설정 화면 → "관리자" 섹션에서 들어가는 운영 화면(신고·조치 관리·에러·일별 통계·유저·디자인 시스템). 코드: `src/screens/admin/`, `src/components/Admin/`, `src/hooks/admin/`, `src/firebase/services/adminService.ts`, `functions/src/admin/stats.ts`, `functions/src/admin/sanction.ts`, `functions/src/notifications/report.ts`.
 
 ## 관리자 지정
 
@@ -36,6 +36,31 @@
 - 신고 시점 `snapshot`(신고 대상 게시글·댓글·답글 문서 전체를 복사한 값)은 **`onReportWritten` 함수가 기록한다**(`functions/src/triggers/reportSnapshot.ts`). 앱(신고자)이 쓰면 내용을 조작할 수 있어서, 규칙이 신고자의 `snapshot` 쓰기를 막는다. 함수가 실행되기 전 1~2초 동안은 스냅샷이 비어 있다.
 - 함수는 `collectionName`이 `Boards`·`Communities`일 때만 원문을 읽는다. 신고자가 이 값을 임의로 쓸 수 있으므로, 제한하지 않으면 신고 문서를 통해 다른 컬렉션 문서의 `title`·`body`를 읽어 갈 수 있다.
 - 재신고는 병합 갱신이라 이번 신고에 없는 대상 필드를 `deleteField()`로 지운다. 이전 스냅샷은 함수가 새 대상 기준으로 덮어쓰거나 지운다. 지우지 않으면 이전 대상의 `postId`·`chatId`가 남아 관리자 화면이 대상 종류를 잘못 보여 준다.
+
+## 신고·조치 처리 단계
+
+신고·조치 관리 화면은 **검토 필요 → 확인 대기 → 답변 필요 → 처리 완료** 4개 탭이다. '검토 필요'는 신고(`Reports.resolved == false`), 나머지는 조치(`Sanctions.reviewStage`)를 읽는다.
+
+- `reviewStage`는 **Functions만 쓴다**. 앱은 경고 확인 시각(`acknowledgedAt`)만 기록하고(보안 규칙이 본인 update를 `acknowledgedAt`으로 제한), 단계는 트리거가 바꾼다.
+- 단계 이동:
+
+  | 시점 | 단계 | 코드 |
+  | --- | --- | --- |
+  | 경고 발급 | `awaitingUser` | `issueSanctionHandler` |
+  | 정지(7일·30일·영구) 발급 | `done` (정지 중에는 관리자가 할 일이 없음) | `issueSanctionHandler` |
+  | 유저가 경고 확인 | `awaitingUser`일 때만 `done` | `onSanctionUpdated` 트리거 |
+  | 경고 확인 기한(조치일 + 30일) 경과 | `awaitingUser`일 때만 `done` | `expireUnacknowledgedWarningsScheduler`(매일 0시 KST) |
+  | 이의 신청 접수 | `awaitingReply` ('처리 완료'였어도 돌아감) | `submitAppealHandler` 트랜잭션 |
+  | 이의 신청 결정·조치 취소 | `done` | `decideAppealHandler`, `cancelSanction` |
+
+- 트리거와 스케줄러는 트랜잭션 안에서 단계가 아직 `awaitingUser`인지 다시 보고 바꾼다. 확인과 이의 신청이 동시에 들어와도 '답변 필요'가 덮이지 않는다.
+- 근거 신고 연결: 앱이 근거로 고른 신고 ID(`reportId`)를 보내면, 서버가 **같은 피신고자의 미처리 신고 중 그 신고와 대상(`collectionName`·`postId`·`commentId`·`replyId`·`chatId`)이 모두 같은 신고**를 찾아 `resolved: true`, `sanctionId`를 쓰고 조치의 `reportIds`에 넣는다. 신고를 고르지 않은 조치('대상 없음')는 신고를 연결하지 않는다.
+  - 함정: 요청의 `target`만으로 연결하면 대상 필드가 없는 프로필 신고가 '대상 없음'과 구별되지 않아, 경고·정지 후에도 그 신고가 '검토 필요'에 남는다. 그래서 신고 ID를 받는다. 서버는 그 신고가 조치 대상 유저의 신고이고 `target`과 같은 대상인지 확인한다.
+- 경고와 정지는 같은 화면(`AdminSuspend`)을 쓴다. 신고 상세의 [경고]는 `isWarning`으로 열어 정지 기간 없이 [경고하기]만 보여 준다.
+- `Reports.sanctionId`는 신고자가 쓰지 못한다(규칙). 같은 신고자가 같은 유저를 다시 신고할 때 기존 신고가 조치에 연결되어 있으면 덮어쓰지 않고 새 신고를 만든다(`reportService.createReport`). 덮어쓰면 `resolved: false`로 돌아가 끝난 조치의 신고가 '검토 필요'에 다시 나타난다.
+- 조치에 연결된 신고는 신고 상세에서 [미처리로 되돌리기]를 보여 주지 않는다. 되돌리려면 조치 상세의 [조치 취소]를 쓴다(취소해도 신고는 처리 완료로 남는다).
+- '처리 완료 > 조치 없음'은 `resolved == true` 신고 페이지에서 `sanctionId` 있는 신고를 메모리에서 거른다. 한 페이지가 모두 걸러져도 커서는 거르기 전 마지막 문서라 다음 페이지를 이어 읽는다.
+- 단계별 조치 목록은 `Sanctions` `reviewStage` + `createdAt` desc 인덱스가 필요하다.
 
 ## 활동 시각 (`lastActiveAt`)
 

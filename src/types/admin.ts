@@ -44,7 +44,7 @@ export interface AdminBlockRecord {
 }
 
 // 유저 상세 내역 화면(AdminUserRecords) 종류
-export type AdminUserRecordKind = 'reports' | 'reviews' | 'blocks';
+export type AdminUserRecordKind = 'reports' | 'reviews' | 'blocks' | 'sanctions';
 
 export type UserReportDirection = 'received' | 'sent';
 export type UserReviewDirection = 'received' | 'sent';

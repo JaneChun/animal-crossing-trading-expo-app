@@ -1,11 +1,10 @@
-import { Ionicons } from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import AdminGuard from '@/components/Admin/AdminGuard';
-import { getReportCategoryBadge } from '@/components/Admin/reportMeta';
+import BasisReportsSection from '@/components/Admin/BasisReportsSection';
 import {
 	AppealResultSection,
 	AppealSection,
@@ -17,26 +16,27 @@ import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import Text from '@/components/ui/Text';
+import { useCancelSanction } from '@/hooks/admin/mutation/useCancelSanction';
 import { useDecideAppeal } from '@/hooks/admin/mutation/useDecideAppeal';
 import { useAdminSanction, useSanctionReports } from '@/hooks/admin/query/useAdminSanction';
 import { FontSizes, Spacing, Theme, useTheme, useThemedStyles } from '@/theme';
-import { AdminAppealDetailRouteProp } from '@/types/navigation';
-import { AppealResult } from '@/types/sanction';
-import { formatKstMonthDay } from '@/utilities/kstDate';
-import { navigateToAdminReportDetail } from '@/utilities/navigationHelpers';
+import { AdminSanctionDetailRouteProp } from '@/types/navigation';
+import { AppealResult, Sanction } from '@/types/sanction';
+import { formatKstDate } from '@/utilities/kstDate';
 
-const AdminAppealDetail = () => {
-	const { params } = useRoute<AdminAppealDetailRouteProp>();
+const AdminSanctionDetail = () => {
+	const { params } = useRoute<AdminSanctionDetailRouteProp>();
 
 	return (
 		<AdminGuard>
-			<AppealDetailContent sanctionId={params.sanctionId} />
+			<SanctionDetailContent sanctionId={params.sanctionId} />
 		</AdminGuard>
 	);
 };
 
-// 이의 신청 검토: 조치 내용·이의 신청·결과 안내(답변 입력)·근거 신고, [조치 유지]/[조치 취소]
-const AppealDetailContent = ({ sanctionId }: { sanctionId: string }) => {
+// 조치 상세: 조치 내용·(이의 신청이 없으면) 유저 반응·이의 신청·결과 안내(답변 입력)·근거 신고
+// 하단 버튼은 이의 신청 검토 중이면 [조치 유지]/[조치 취소], 이의 신청 없는 유효한 조치면 [조치 취소]
+const SanctionDetailContent = ({ sanctionId }: { sanctionId: string }) => {
 	const styles = useThemedStyles(makeStyles);
 	const { colors } = useTheme();
 	const [reply, setReply] = useState('');
@@ -50,6 +50,9 @@ const AppealDetailContent = ({ sanctionId }: { sanctionId: string }) => {
 		sanctionId,
 		userId: sanction?.userId ?? '',
 	});
+	const { mutate: cancelSanction, isPending: isCanceling } = useCancelSanction(
+		sanction?.userId ?? '',
+	);
 
 	if (isLoading) return <LoadingIndicator />;
 	if (!sanction) return <EmptyIndicator message="조치를 찾을 수 없습니다." />;
@@ -58,13 +61,30 @@ const AppealDetailContent = ({ sanctionId }: { sanctionId: string }) => {
 	const isPendingAppeal = appeal?.status === 'pending';
 	const trimmedReply = reply.trim();
 
+	const canCancelWithoutAppeal = !appeal && sanction.status === 'active';
+
 	const decide = (result: AppealResult) => decideAppeal({ result, reply: trimmedReply });
+
+	const onPressCancel = () => {
+		Alert.alert(
+			'조치를 취소할까요?',
+			'정지가 해제되고 숨긴 글이 다시 공개되며, 위반 횟수에서 빠집니다.',
+			[
+				{ text: '취소', style: 'cancel' },
+				{ text: '확인', style: 'destructive', onPress: () => cancelSanction(sanctionId) },
+			],
+		);
+	};
 
 	return (
 		<SafeAreaView style={styles.screen} edges={['bottom']}>
 			<ScrollView keyboardShouldPersistTaps="handled">
 				<View style={styles.sections}>
 					<SanctionSummarySection sanction={sanction} />
+					{/* 정지는 확인 개념이 없으므로 경고에만 그린다 */}
+					{!appeal && sanction.kind === 'warning' && (
+						<UserResponseSection sanction={sanction} />
+					)}
 					{appeal && <AppealSection appeal={appeal} showFullContent />}
 					{appeal && !isPendingAppeal && (
 						<AppealResultSection appeal={appeal} showResubmitNotice={false} />
@@ -95,36 +115,7 @@ const AppealDetailContent = ({ sanctionId }: { sanctionId: string }) => {
 					<>
 						<Divider variant="section" />
 						<View style={styles.reportsSection}>
-							<Text variant="body1" weight="semibold">
-								{`근거 신고 ${reports.length}건`}
-							</Text>
-							{reports.map((report, index) => (
-								<Pressable
-									key={report.id}
-									style={[styles.reportRow, index > 0 && styles.reportRowDivider]}
-									onPress={() =>
-										navigateToAdminReportDetail({ reportId: report.id })
-									}
-								>
-									<View style={styles.reportTexts}>
-										<Text
-											variant="body2"
-											color={report.detail ? 'primary' : 'tertiary'}
-											numberOfLines={1}
-										>
-											{report.detail || '상세 내용 없음'}
-										</Text>
-										<Text variant="caption" color="tertiary">
-											{`${getReportCategoryBadge(report.category).text} · ${formatKstMonthDay(report.createdAt.toDate())}`}
-										</Text>
-									</View>
-									<Ionicons
-										name="chevron-forward"
-										size={16}
-										color={colors.text.tertiary}
-									/>
-								</Pressable>
-							))}
+							<BasisReportsSection reports={reports} />
 						</View>
 					</>
 				)}
@@ -159,11 +150,43 @@ const AppealDetailContent = ({ sanctionId }: { sanctionId: string }) => {
 					</View>
 				</View>
 			)}
+
+			{canCancelWithoutAppeal && (
+				<View style={styles.footer}>
+					<Button
+						variant="dangerOutline"
+						size="lg"
+						isLoading={isCanceling}
+						onPress={onPressCancel}
+					>
+						조치 취소
+					</Button>
+				</View>
+			)}
 		</SafeAreaView>
 	);
 };
 
-export default AdminAppealDetail;
+// 경고를 받은 유저가 [정책을 확인했습니다]를 눌렀는지
+const UserResponseSection = ({ sanction }: { sanction: Sanction }) => {
+	const styles = useThemedStyles(makeStyles);
+	const acknowledgedAt = sanction.acknowledgedAt;
+
+	return (
+		<View>
+			<Text variant="body1" weight="semibold" style={styles.sectionTitle}>
+				유저 반응
+			</Text>
+			<Text variant="body2" color={acknowledgedAt ? 'secondary' : 'tertiary'}>
+				{acknowledgedAt
+					? `${formatKstDate(acknowledgedAt.toDate())} 정책 확인`
+					: '아직 확인하지 않았습니다'}
+			</Text>
+		</View>
+	);
+};
+
+export default AdminSanctionDetail;
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
@@ -194,20 +217,6 @@ const makeStyles = ({ colors }: Theme) =>
 		},
 		reportsSection: {
 			padding: PADDING,
-		},
-		reportRow: {
-			flexDirection: 'row',
-			alignItems: 'center',
-			gap: Spacing.s,
-			paddingVertical: Spacing.m,
-		},
-		reportRowDivider: {
-			borderTopWidth: 1,
-			borderColor: colors.border.default,
-		},
-		reportTexts: {
-			flex: 1,
-			minWidth: 0,
 		},
 		footer: {
 			paddingHorizontal: PADDING,

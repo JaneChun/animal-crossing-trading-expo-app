@@ -8,7 +8,6 @@ import { Theme, useThemedStyles } from '@/theme';
 import {
 	navigateToAdminErrors,
 	navigateToAdminReports,
-	navigateToAdminReviewUsers,
 	navigateToAdminStats,
 	navigateToAdminUsers,
 	navigateToDesignSystem,
@@ -25,10 +24,7 @@ const AdminHome = () => {
 						운영
 					</Text>
 					<SettingListItem borderRound="top" showChevron onPress={navigateToAdminReports}>
-						<Text variant="body1">신고 관리</Text>
-					</SettingListItem>
-					<SettingListItem showChevron onPress={navigateToAdminReviewUsers}>
-						<Text variant="body1">검토 필요 유저</Text>
+						<Text variant="body1">신고·조치 관리</Text>
 					</SettingListItem>
 					<SettingListItem
 						borderRound="bottom"
