@@ -2,7 +2,7 @@
 
 > 이슈: GitHub #73, #74, #75, #76, #77, #78
 > 작업 종류: 버그 수정
-> 상태: 진행중
+> 상태: 완료
 > 생성일: 2026-11-15
 
 ## 개요
@@ -55,13 +55,15 @@
 
 ## Phase 5: 프로필 수정 바텀시트 입력창 위 드래그 스크롤 (#76)
 
-- [ ] Android에서 입력창 위에서 시작한 드래그가 스크롤로 이어지지 않는 원인을 기기에서 확인한다 (`src/components/Profile/EditProfileModal.tsx`)
+- [x] Android에서 입력창 위에서 시작한 드래그가 스크롤로 이어지지 않는 원인을 기기에서 확인한다 (`src/components/Profile/EditProfileModal.tsx`)
   - 패턴: 입력은 Gorhom `BottomSheetTextInput`, 스크롤은 `KeyboardAwareScrollView`에 주입한 `BottomSheetScrollView`(RNGH 기반)다. 시트는 `contentHandlesKeyboard`로 키보드 여백을 `KeyboardAwareScrollView`에 맡긴다.
   - 패턴: 첫 가설은 RNGH 스크롤 제스처가 Android `EditText`의 터치를 넘겨받지 못한다는 것이다. 먼저 `BottomSheetTextInput`을 RN 기본 `TextInput`으로 바꿔 차이를 확인한다. 이 시트는 키보드 여백을 `KeyboardAwareScrollView`가 처리하므로, 바꿔도 키보드 동작이 유지되는지 함께 본다.
-- [ ] 확인한 원인에 맞춰 수정한다 (`src/components/Profile/EditProfileModal.tsx`, `src/components/Profile/NameInput.tsx`)
-- [ ] 같은 구조인 시트에 같은 수정을 적용한다 (`src/components/PostDetail/EditCommentModal.tsx`, `src/components/PostDetail/ReportModal.tsx`)
-- [ ] 원인과 해결 방식을 `agent_docs/architecture.md`의 바텀시트 기록에 추가한다
-- [ ] 검증: `npm run typecheck`, Android에서 닉네임·섬 이름·칭호·한마디 입력창 위 드래그 스크롤, 드래그 후 포커스 이동 없음, 키보드 위 입력 위치 확인, iOS 동일 확인
+- [x] 확인한 원인에 맞춰 수정한다 (`src/components/Profile/EditProfileModal.tsx`, `src/components/Profile/NameInput.tsx`)
+  - 결정: `EditProfileModal`의 입력 5개를 RN 기본 `TextInput`으로 바꾼다. `NameInput`은 `InputComponent`로 받으므로 고치지 않는다(Galaxy에서 드래그 스크롤·포커스·키보드 위치·시트 높이 복원 확인).
+- [x] 같은 구조인 시트에 같은 수정을 적용한다 (`src/components/PostDetail/EditCommentModal.tsx`, `src/components/PostDetail/ReportModal.tsx`)
+  - 결정: 두 시트 모두 바꾸지 않는다(실기기 확인). `EditCommentModal`은 RN `TextInput`으로 바꾸면 여러 줄 입력의 커서가 키보드 아래로 내려가고, `ReportModal`은 Gorhom 키보드 처리에 `BottomSheetTextInput`이 필요하다.
+- [x] 원인과 해결 방식을 `agent_docs/architecture.md`의 바텀시트 기록에 추가한다
+- [x] 검증: `npm run typecheck`, Android에서 닉네임·섬 이름·칭호·한마디 입력창 위 드래그 스크롤, 드래그 후 포커스 이동 없음, 키보드 위 입력 위치 확인, iOS 동일 확인
 
 ## 진행 기록
 
@@ -75,4 +77,16 @@
 - Phase 3 완료
 - 검증: `npm run typecheck` 통과, Galaxy 3버튼·제스처 모드에서 액션 시트 확인(사용자)
 - Phase 4 완료
-- 검증: `npm run typecheck` 통과, Galaxy 3버튼 모드에서 스택 프로필·탭 프로필 목록 끝 확인(사용자). iOS는 확인하지 않음
+- 검증: `npm run typecheck` 통과, Galaxy 3버튼 모드·iPhone에서 스택 프로필·탭 프로필 목록 끝 확인(사용자)
+- 결정: Android 댓글 수정 시트의 입력칸 안 스크롤은 별도 이슈로 분리(사용자 지시)
+- Phase 5 완료
+- 검증: `npm run typecheck` 통과, Galaxy·iPhone에서 프로필 수정 시트 입력창 위 드래그 스크롤·포커스·키보드 위치 확인(사용자)
+- 전체 구현 완료
+
+## 기기 확인
+
+- [x] 다크 모드에서 마켓·커뮤니티 새 글 작성과 글 수정의 제목·본문을 입력하면 글자가 밝은 색으로 보인다
+- [x] 새 글 작성에서 긴 본문을 입력하면 커서를 따라 스크롤되고, 하단 버튼은 키보드에 가려졌다가 키보드를 내리면 원래 자리에 보인다
+- [x] Android 3버튼·제스처 모드에서 `⋮`·게시판 선택·프로필 이미지 변경 액션 시트의 마지막 항목이 내비게이션 바 위에 보인다
+- [x] 댓글·채팅에서 연 프로필의 작성 글을 끝까지 내리면 `마지막 글입니다.`가 내비게이션 바 위에 보인다
+- [x] Android 프로필 수정 시트에서 입력창 위를 끌면 시트가 스크롤되고 포커스는 옮겨 가지 않는다
