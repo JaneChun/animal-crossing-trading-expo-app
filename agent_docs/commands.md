@@ -38,9 +38,11 @@ npx firebase deploy --only firestore:indexes  # firestore.indexes.json 반영 (a
 npm run dev:emulator:all          # Functions 빌드 → 에뮬레이터(데이터 유지) + 에뮬레이터 모드 Metro 한 번에 실행. 로그는 $TMPDIR/firebase-emulator.log
 npm run emulator:start            # firebase emulators:start (Functions 빌드 안 함 → 먼저 npm --prefix functions run build)
 npm run emulator:start-with-data  # 데이터 import + 종료 시 export (Functions 빌드 안 함)
-npm run emulator:stop             # 프로세스 kill + 포트(4000,8080,9099,5001,9199 등) 정리
+npm run emulator:stop             # SIGINT 한 번 → export가 끝날 때까지 대기 후 종료, 이후 포트에 남은 프로세스만 kill -9 (두 번째 신호나 kill -9는 export를 건너뛴다)
 npm run emulator:seed             # 에뮬레이터 Auth·Firestore·Storage를 비우고 카탈로그·주민·테스트 데이터 시드 (에뮬레이터가 떠 있어야 함)
 ```
+
+`emulator:stop`으로 종료할 때 `emulator-data/`에 저장되는 것은 `--export-on-exit`로 띄운 경우(`dev:emulator:all`, `emulator:start-with-data`)뿐이다. `emulator:start`로 띄웠다면 저장되지 않는다.
 
 시드 데이터를 다음 실행에도 쓰려면: `npm run dev:emulator:all` 실행 → 다른 터미널에서 `npm run emulator:seed` → Metro를 Ctrl+C로 종료하면 `emulator-data/`로 export된다. 시드 상세는 [testing.md](testing.md) 참조.
 
