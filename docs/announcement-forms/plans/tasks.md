@@ -64,7 +64,7 @@
 
 완료 확인: 에뮬레이터에서 `form` 없는 공지는 기존과 같고, `form`이 있는 공지에서 하단 버튼 → 시트 열기·닫기(끌기, 배경 탭, Android 뒤로가기)가 동작. 이 단계에서는 시트 안이 비어 있어도 된다
 
-- [ ] 공통 폼 시트 (`src/components/Announcement/AnnouncementFormSheet.tsx`)
+- [x] 공통 폼 시트 (`src/components/Announcement/AnnouncementFormSheet.tsx`)
   - props: `isVisible`, `onClose`, `title`, `submitLabel`, `submitDisabled`, `isSubmitting`, `onSubmit`, `children`(필드 영역)
   - 재사용: `CustomBottomSheet`(`title`만, `leftButton`·`rightButton` 없음), 제출 `Button` `variant="primary" size="lg" flex` + `isLoading`
   - 구조: 필드 영역은 스크롤, 제출 버튼은 그 아래 고정. 키보드가 열리면 버튼이 키보드·툴바 위로 올라와야 한다
@@ -75,7 +75,7 @@
   - 결정: 헤더에는 제목만 두고 취소 버튼은 없앤다. 제출은 시트 맨 아래 큰 버튼 (시안 댓글 사용자 지시)
   - 결정: 시트 틀만 공유하고 필드는 폼마다 따로 만든다 (사용자 지시)
   - 시트 높이(`snapPoints`)는 기기에서 키보드를 연 상태로 확인해 정한다. 기본 후보는 `EditCommentModal`의 `['95%', '100%']`
-- [ ] 공지 상세에 하단 버튼과 폼 연결 (`src/screens/AnnouncementDetail.tsx`)
+- [x] 공지 상세에 하단 버튼과 폼 연결 (`src/screens/AnnouncementDetail.tsx`)
   - `announcement.form`에 따라 하단 고정 버튼 영역 + 해당 폼 컴포넌트(Phase 4)를 렌더링한다
   - 시트 열림 여부와 테스터 신청 완료 여부는 화면 안 `useState` (기기 저장 없음)
   - 의견 버튼: 비로그인이면 시트를 열지 않고 `showToast('warn', ...)` + `navigateToLogin()` (`src/components/Home/PostList.tsx`의 `onPressAddPostButton`)
@@ -121,3 +121,5 @@
 - Phase 2 완료
 - 검증: `npm run typecheck`·eslint 통과
 - 결정: 문구는 시안 초안을 그대로 넣었다. 시안에 없는 오류 토스트는 `useCreateAnnouncement`의 '~ 중 오류가 발생했습니다.' 형식을 따랐고, 빈 이메일·100자 초과도 시안의 '올바른 이메일 형식이 아닙니다.' 하나로 표시한다 (문구 확정 전 임시)
+- Phase 3 완료
+- 검증: `npm run typecheck`·eslint 통과. 기기·시뮬레이터 확인(시트 열기·닫기, 키보드)은 사용자가 자리를 비워 하지 못했다 → `## 기기 확인`으로 넘긴다
