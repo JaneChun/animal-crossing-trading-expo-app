@@ -4,7 +4,8 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import AnnouncementFormSheet from '@/components/Announcement/AnnouncementFormSheet';
+import AndroidTesterSheet from '@/components/Announcement/AndroidTesterSheet';
+import FeedbackSheet from '@/components/Announcement/FeedbackSheet';
 import LinkifiedText from '@/components/Announcement/LinkifiedText';
 import Button from '@/components/ui/Button';
 import Divider from '@/components/ui/Divider';
@@ -101,17 +102,14 @@ const AnnouncementDetail = () => {
 							{isFormButtonDisabled ? '신청 완료' : FORM_BUTTON_LABELS[form]}
 						</Button>
 					</View>
-					<AnnouncementFormSheet
-						isVisible={isSheetVisible}
-						onClose={closeSheet}
-						title={FORM_BUTTON_LABELS[form]}
-						submitLabel="제출"
-						submitDisabled
-						isSubmitting={false}
-						onSubmit={() => setIsTesterSubmitted(true)}
-					>
-						{null}
-					</AnnouncementFormSheet>
+					{form === 'androidTester' && (
+						<AndroidTesterSheet
+							isVisible={isSheetVisible}
+							onClose={closeSheet}
+							onSubmitted={() => setIsTesterSubmitted(true)}
+						/>
+					)}
+					{form === 'feedback' && <FeedbackSheet isVisible={isSheetVisible} onClose={closeSheet} />}
 				</>
 			)}
 		</View>

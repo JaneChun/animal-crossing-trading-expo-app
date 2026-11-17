@@ -87,13 +87,14 @@
 
 완료 확인: 에뮬레이터에서 두 폼의 spec.md 상태를 라이트·다크, iOS·Android에서 확인. 키보드가 열린 상태에서 가려진 요소까지 스크롤로 닿는지, 입력 중 커서가 가려지지 않는지 작은 화면(iPhone SE)까지 확인. Firestore 에뮬레이터에 저장된 문서 확인
 
-- [ ] 테스터 신청 시트 (`src/components/Announcement/AndroidTesterSheet.tsx`) — 시안 ②③④
+- [x] 테스터 신청 시트 (`src/components/Announcement/AndroidTesterSheet.tsx`) — 시안 ②③④
   - `AnnouncementFormSheet` 안에 안내 문구, 이메일 입력, 동의 체크박스와 고지
   - 결정: 시트 안내 문구는 `body2`(14px), `text.secondary`로 쓴다. 크기·굵기를 키운 안을 비교한 뒤 처음 크기로 정했다 (사용자 지시). 의견 시트도 같다
   - 결정: 개인정보 고지(수집 항목·목적·보관 기간)는 배경 없이 `caption` `text.tertiary` 글씨로, 체크박스 문구와 왼쪽을 맞춰 동의 행 바로 아래에 둔다 (시안 댓글 사용자 지시)
   - 재사용: 이메일 입력 `ValidationInput`에 `InputComponent={BottomSheetTextInput}` (`src/components/Profile/NameInput.tsx`의 회색 입력칸 스타일), 동의 체크박스 `expo-checkbox` + `colors.brand.primary`·`borderRadius: '50%'` (`AdminAnnouncementEdit.tsx`의 숨기기 행)
   - 패턴: `FormProvider` + `Controller` (`AdminAnnouncementEdit.tsx`), 닫을 때 `reset()`
-- [ ] 의견 보내기 시트 (`src/components/Announcement/FeedbackSheet.tsx`) — 시안 ⑤
+  - 결정: 동의 행 전체를 눌러도 체크되게 했다. 체크박스(20pt)만으로는 터치 영역이 작다
+- [x] 의견 보내기 시트 (`src/components/Announcement/FeedbackSheet.tsx`) — 시안 ⑤
   - `AnnouncementFormSheet` 안에 안내 문구와 여러 줄 입력
   - 재사용: `BottomSheetTextInput` `multiline` (`EditCommentModal.tsx`), 오류 표시는 `ErrorMessage`
   - 결정: 입력 영역이 보이도록 이메일 칸과 같은 회색 칸(`bg.fill`, 반경 8, 안쪽 여백 12)으로 그린다. 테두리 없는 댓글 수정 입력은 입력칸인지 알아보기 어렵다 (시안 댓글 사용자 지시)
@@ -123,3 +124,21 @@
 - 결정: 문구는 시안 초안을 그대로 넣었다. 시안에 없는 오류 토스트는 `useCreateAnnouncement`의 '~ 중 오류가 발생했습니다.' 형식을 따랐고, 빈 이메일·100자 초과도 시안의 '올바른 이메일 형식이 아닙니다.' 하나로 표시한다 (문구 확정 전 임시)
 - Phase 3 완료
 - 검증: `npm run typecheck`·eslint 통과. 기기·시뮬레이터 확인(시트 열기·닫기, 키보드)은 사용자가 자리를 비워 하지 못했다 → `## 기기 확인`으로 넘긴다
+- Phase 4 완료
+- 검증: `npm run typecheck` 통과, `npm run lint` 오류 0 (새 경고는 `expo-checkbox` 기본 import 1건으로 기존 화면과 같다). 기기 확인은 하지 못했다
+- 블로커: 확인 필요 2건(중복 재신청 처리, 문구 확정)이 남아 상태를 `진행중`으로 둔다. 코드는 중복=A안, 문구=시안 초안으로 들어가 있다
+
+## 기기 확인
+
+- [ ] `form` 없는 공지 상세: 하단 버튼 없이 기존과 같다
+- [ ] 콘솔에서 `form: 'androidTester'`를 넣은 공지: 하단에 '테스터 신청하기' 버튼이 잎 배경 위에 홈 인디케이터·내비게이션 바에 가리지 않고 보인다
+- [ ] 버튼 탭 → '테스터 신청' 시트가 열리고, 끌어내리기·배경 탭·Android 뒤로가기로 닫힌다. 다시 열면 입력이 비어 있다
+- [ ] 동의 전 '신청' 비활성, 잘못된 이메일 입력 후 칸을 벗어나면 빨간 테두리와 '올바른 이메일 형식이 아닙니다.'
+- [ ] 이메일 칸에 포커스: 칸과 '신청' 버튼이 키보드·툴바 위에 보이고, 키보드를 연 채로 스크롤해 동의 체크박스·고지까지 닿는다 (iPhone SE·Android 포함)
+- [ ] 신청 성공: 시트가 닫히고 성공 토스트, 하단 버튼 '신청 완료' 비활성. Firestore 에뮬레이터 `AndroidTesterEmails/{소문자 이메일}` 문서 생성. 상세를 나갔다 오면 다시 활성
+- [ ] 같은 이메일 재신청: 성공과 같이 처리된다
+- [ ] `form: 'feedback'` 공지, 비로그인: '의견 보내기' 탭 → 경고 토스트 후 로그인 화면
+- [ ] 로그인 상태: '의견 보내기' 시트, 비어 있거나 공백만이면 '보내기' 비활성. 여러 줄 입력 시 커서가 키보드·툴바에 가려지지 않는다
+- [ ] 의견 전송 성공: 시트 닫힘, 성공 토스트, 하단 버튼 그대로 활성. `Feedbacks` 문서 생성
+- [ ] 두 시트를 다크 모드에서 확인: 입력칸이 시트 배경과 구분된다
+- [ ] 시트 높이 `['95%', '100%']`가 키보드를 연 상태에서 적절한지 확인
