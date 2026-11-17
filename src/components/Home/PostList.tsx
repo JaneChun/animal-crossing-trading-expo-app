@@ -1,10 +1,12 @@
 import { FontAwesome6 } from '@expo/vector-icons';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 
 import Text from '@/components/ui/Text';
 import { showLongToast, showToast } from '@/components/ui/Toast';
 import { auth } from '@/config/firebase';
+import { announcementsQueryKey } from '@/hooks/announcement/query/useAnnouncements';
 import { useInfinitePosts } from '@/hooks/post/query/useInfinitePosts';
 import { useAdConfig } from '@/stores/ads';
 import { useUserInfo } from '@/stores/auth';
@@ -27,8 +29,10 @@ const PostList = ({
 	filter,
 	isAddPostButtonVisible = false,
 	containerStyle,
+	ListHeaderComponent,
 }: PostListProps) => {
 	const styles = useThemedStyles(makeStyles);
+	const queryClient = useQueryClient();
 	const userInfo = useUserInfo();
 	const { isNativeAdsEnabled, nativeAdInterval } = useAdConfig();
 	const {
@@ -78,6 +82,12 @@ const PostList = ({
 		return item.type === 'ad' ? item.id : item.data.id;
 	}, []);
 
+	// 당겨서 새로고침하면 목록 머리의 공지도 함께 다시 조회한다
+	const onRefresh = () => {
+		refetch();
+		queryClient.invalidateQueries({ queryKey: announcementsQueryKey });
+	};
+
 	const fetchNext = useCallback(() => {
 		if (hasNextPage && !isFetchingNextPage) {
 			fetchNextPage();
@@ -108,8 +118,9 @@ const PostList = ({
 				maxToRenderPerBatch={15}
 				onEndReached={fetchNext}
 				onEndReachedThreshold={0.5}
-				onRefresh={refetch}
+				onRefresh={onRefresh}
 				refreshing={isFetching || isFetchingNextPage}
+				ListHeaderComponent={ListHeaderComponent}
 				ListFooterComponent={getListFooterComponent}
 			/>
 

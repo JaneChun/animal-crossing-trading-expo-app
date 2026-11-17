@@ -2,7 +2,14 @@ import { Feather } from '@expo/vector-icons';
 import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { ImagePickerAsset } from 'expo-image-picker';
 import { Timestamp } from 'firebase/firestore';
-import { ComponentProps, Dispatch, ReactNode, RefObject, SetStateAction } from 'react';
+import {
+	ComponentProps,
+	Dispatch,
+	ReactElement,
+	ReactNode,
+	RefObject,
+	SetStateAction,
+} from 'react';
 import {
 	GestureResponderEvent,
 	StyleProp,
@@ -45,6 +52,8 @@ export type PostListProps = {
 	filter?: Filter;
 	isAddPostButtonVisible?: boolean;
 	containerStyle?: StyleProp<ViewStyle>;
+	/** 목록 첫 줄에 붙는 머리 영역 (마켓·커뮤니티의 공지 줄) */
+	ListHeaderComponent?: ReactElement;
 };
 
 export type PostUnitProps<C extends Collection> = {

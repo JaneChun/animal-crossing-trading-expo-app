@@ -1,6 +1,7 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
 
+import AnnouncementTicker from '@/components/Announcement/AnnouncementTicker';
 import PostList from '@/components/Home/PostList';
 import SearchIcon from '@/components/Search/SearchIcon';
 import Categories from '@/components/ui/Categories';
@@ -36,6 +37,7 @@ const Community = () => {
 				filter={{ category }}
 				isAddPostButtonVisible
 				containerStyle={{ paddingHorizontal: PADDING }}
+				ListHeaderComponent={<AnnouncementTicker />}
 			/>
 		</Layout>
 	);
