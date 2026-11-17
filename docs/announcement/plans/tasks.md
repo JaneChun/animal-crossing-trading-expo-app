@@ -2,7 +2,7 @@
 
 > 이슈: 없음
 > 작업 종류: 기능 개발
-> 상태: 진행중
+> 상태: 완료
 > 생성일: 2026-11-15
 
 ## 개요
@@ -13,14 +13,6 @@
 - 제외: 삭제, 노출 기간, 순서 지정, 이미지 첨부, 푸시 알림, 읽음 처리, 유저용 공지 전체 목록
 - 설계와 결정 배경: [design.md](design.md) / 시안: https://claude.ai/artifact/NJpph1owzkyH7fSPt8GZ11 (보드 E, 상세 G′)
 - 코드 이름은 `Announcement`를 쓴다. `Notice`는 알림 탭(`src/screens/Notice.tsx`, `NoticeTab`)이 이미 쓰고 있다.
-
-## 확인 필요
-
-아래 문구는 기존 화면 문구를 본떠 계획에 임시로 적은 것이다. 그대로 쓸지, 바꿀지 정해 주세요.
-
-- [ ] 어드민 화면 제목 — '공지 관리' / '새 공지' / '공지 수정' — 막는 항목: Phase 5 화면 등록
-- [ ] 어드민 빈 목록 문구 — '게시 중인 공지가 없습니다.' / '숨긴 공지가 없습니다.' — 막는 항목: Phase 5 목록 화면
-- [ ] 공지 상세의 없는·숨긴 공지 문구 — '공지를 찾을 수 없습니다.' — 막는 항목: Phase 3 상세 화면
 
 ## Phase 1: 타입·데이터 레이어
 
@@ -68,7 +60,8 @@
   - 본문을 URL과 일반 텍스트로 나눠 렌더링, URL 탭 시 `Linking.openURL`
   - 재사용: `src/components/ui/Text.tsx` (variant·color 토큰)
   - 패턴: `Linking` 사용 예 `src/screens/Setting.tsx`
-- [ ] 공지 상세 화면 (`src/screens/AnnouncementDetail.tsx`) — 시안 보드 상세 G′ — **blocker**: '공지를 찾을 수 없습니다.' 문구 확정 대기 (임시 문구로 구현 완료)
+- [x] 공지 상세 화면 (`src/screens/AnnouncementDetail.tsx`) — 시안 보드 상세 G′
+  - 결정: 없는·숨긴 공지 안내 문구 '공지를 찾을 수 없습니다.' (사용자 확정, 게시글 상세 문구와 같은 형식)
   - 재사용: 없는 경우 `EmptyIndicator` (`src/screens/PostDetail.tsx`의 '게시글을 찾을 수 없습니다.' 처리와 같은 방식)
   - 잎 배경: `assets/images/splash_icon.png`를 스크롤 영역 밖 절대 위치로 배치(스크롤해도 고정), `pointerEvents="none"`, 접근성 숨김, 불투명도 라이트 0.26·다크는 기기에서 조정
   - 날짜 형식 `YYYY년 M월 D일` — 기존 날짜 유틸이 있으면 재사용 (`src/utilities/` 확인)
@@ -102,7 +95,8 @@
 
 완료 확인: 관리자 계정으로 작성 → 게시 중 탭·마켓 탭에 표시 → 숨기기 체크 후 저장 → 숨김 탭으로 이동·마켓 탭에서 사라짐 → 다시 게시
 
-- [ ] 공지 관리 목록 화면 (`src/screens/admin/AdminAnnouncements.tsx`) — 게시 중 / 숨김 두 탭 — **blocker**: 빈 목록 문구 확정 대기 (임시 문구로 구현 완료)
+- [x] 공지 관리 목록 화면 (`src/screens/admin/AdminAnnouncements.tsx`) — 게시 중 / 숨김 두 탭
+  - 결정: 빈 목록 문구 '게시 중인 공지가 없습니다.' / '숨긴 공지가 없습니다.' (사용자 확정)
   - 재사용: material top tab 설정 그대로 (`src/screens/admin/AdminReports.tsx`), `AdminGuard`
   - 재사용 검토: `src/components/Admin/InfiniteList.tsx` (빈 목록·로딩·오류 처리가 있음. 페이지네이션 없는 데이터에 쓸 수 있는지 확인)
   - 결정: `InfiniteList`를 `hasNextPage={false}`로 그대로 쓴다. 다음 페이지 요청이 생기지 않아 빈 목록·로딩·오류 처리만 재사용된다
@@ -117,8 +111,9 @@
 - [x] `AdminHome` '운영' 섹션에 '공지 관리' 행 추가 (`src/screens/admin/AdminHome.tsx`)
   - 패턴: `SettingListItem` + `borderRound` (섹션 첫·끝 행 처리 확인)
   - 결정: '검토 필요 유저'와 '에러 내역' 사이에 넣는다. 첫·끝 행의 `borderRound`를 건드리지 않아 `feat/sanction-appeal`과 충돌할 줄이 줄어든다
-- [ ] 화면 등록 (`src/types/navigation.d.ts`, `src/navigation/RootStackNavigator.tsx`, `src/utilities/navigationHelpers.ts`) — **blocker**: 화면 제목 확정 대기 (임시 제목으로 구현 완료)
+- [x] 화면 등록 (`src/types/navigation.d.ts`, `src/navigation/RootStackNavigator.tsx`, `src/utilities/navigationHelpers.ts`)
   - 라우트 `AdminAnnouncements: undefined`, `AdminAnnouncementEdit: { id?: string }`
+  - 결정: 화면 제목 '공지 관리' / '새 공지' / '공지 수정' (사용자 확정)
   - 결정: 관리자 라우트 블록 끝에 독립적으로 추가 (`feat/sanction-appeal` 병합 충돌 최소화, design.md)
 - [x] 관리자 기능 문서에 공지 관리 추가 (`agent_docs/features/admin.md`)
 
@@ -139,12 +134,21 @@
 - Phase 5 완료 (화면 제목·빈 목록 문구는 blocker로 남김)
 - 검증: `npm run typecheck` 통과, `npm run lint` 오류 0건(경고 47건은 기존 경고 + `expo-checkbox` 기본 import 경고 1건으로 약관 화면과 같은 형태), `npx jest src/__tests__` 65개 통과
 
+### 2026-11-17
+
+- 리뷰 반영: 카테고리 변경 시 공지 줄 유지, 공지 수정 중 재조회로 입력이 덮어써지는 문제, 공지 줄 퇴장 애니메이션 잔상, 상세 잎 배경 지연(`FastImage`)
+- 별도 이슈로 분리: 게시글 수정(`NewPost`)의 같은 덮어쓰기 문제 → #88
+- 전체 구현 완료
+
 ## 기기 확인
 
 - [ ] 에뮬레이터에 이 워크트리의 `firestore.rules`를 올렸을 때 규칙 오류 없이 시작된다
 - [ ] 로그아웃 상태로 마켓 탭을 열면, 게시 중 공지가 있을 때 목록 첫 줄에 '공지' 배지와 제목, 그 아래 화면 양끝까지 닿는 회색 띠가 보인다
 - [ ] 게시 중 공지가 0개면 공지 줄과 띠가 모두 보이지 않는다
-- [ ] 게시 중 공지가 1개면 전환 없이 고정되고, 3개면 4초마다 오른쪽에서 들어오며 마지막 다음은 첫 공지로 같은 방향으로 이어진다
+- [ ] 게시 중 공지가 1개면 전환 없이 고정되고, 3개면 5초마다 오른쪽에서 들어오며 마지막 다음은 첫 공지로 같은 방향으로 이어진다
+- [ ] 공지가 2개 이상일 때 공지 줄을 왼쪽으로 밀면 다음 공지, 오른쪽으로 밀면 이전 공지로 넘어가고, 밀었을 때는 상세로 이동하지 않는다
+- [ ] 앱을 처음 열 때 공지를 불러오는 동안 공지 줄 자리에 배지·제목 모양 스켈레톤이 보인다
+- [ ] 공지 상세에 들어가면 잎 배경이 본문과 함께 바로 보인다 (출시 빌드에 가까운 환경)
 - [ ] 다른 탭에 갔다 돌아오면 전환이 멈췄다가 이어지고, 관리자가 바꾼 공지가 반영된다
 - [ ] 목록을 내리면 공지 줄이 함께 올라가 사라지고, 당겨서 새로고침하면 공지도 다시 조회된다
 - [ ] 커뮤니티 탭에서 공지 줄이 카테고리 칩 아래·첫 글 위에 있고, 카테고리를 바꿔도 그대로다
