@@ -15,6 +15,7 @@
   - Algolia: `EXPO_PUBLIC_ALGOLIA_APP_ID`, `EXPO_PUBLIC_ALGOLIA_SEARCH_KEY`
   - 소셜 로그인: `EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY`, `EXPO_PUBLIC_NAVER_CLIENT_ID`, `EXPO_PUBLIC_NAVER_SECRET` 등
   - AdMob/EAS: `EXPO_PUBLIC_ADMOB_IOS_APP_ID`, `EXPO_PUBLIC_ADMOB_ANDROID_APP_ID`, `EXPO_PUBLIC_EAS_PROJECT_ID`, `GOOGLE_SERVICE_INFO_PLIST`, `GOOGLE_SERVICES_JSON`(상대 경로 `./google-services.json`)
+    - `EXPO_PUBLIC_EAS_PROJECT_ID`는 `extra.eas.projectId`에만 쓴다. EAS Update URL(`updates.url`)은 이 값이 빠지면 `https://u.expo.dev/undefined`가 네이티브에 들어가 스토어 빌드를 다시 해야 하므로, `app.config.js`에 프로젝트 ID를 직접 적어 두었다
   - iOS 서명: `APPLE_TEAM_ID` — 로컬 실기기 빌드용. 없으면 prebuild가 `DEVELOPMENT_TEAM`을 비워 Xcode에서 "requires a development team" 오류. EAS Build는 자체 자격 증명으로 서명하므로 불필요
 - `.env.local` (에뮬레이터용): `EXPO_PUBLIC_FIREBASE_*_EMULATOR_HOST`, `SEED_MY_UID`(시드 1번 유저를 본인 uid로 바꿀 때)
 - `EXPO_PUBLIC_USE_FIREBASE_EMULATOR`는 env 파일에 두지 않는다. `npm run dev:emulator`·`dev:emulator:all`이 셸에서만 `true`로 주입한다(아래 함정 참조).

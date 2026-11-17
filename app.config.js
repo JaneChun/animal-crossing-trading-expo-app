@@ -43,7 +43,8 @@ export default {
 			favicon: './assets/images/favicon.png',
 		},
 		updates: {
-			url: `https://u.expo.dev/${process.env.EXPO_PUBLIC_EAS_PROJECT_ID}`,
+			// env가 없으면 `.../undefined`가 네이티브에 들어가 OTA를 못 받으므로 공개 값인 프로젝트 ID를 직접 적는다
+			url: 'https://u.expo.dev/aa3bbe9f-a861-4452-9c4a-a98f64c418e2',
 		},
 		runtimeVersion: {
 			policy: 'appVersion',

@@ -32,6 +32,13 @@ npm run deploy:rules:storage   # firebase deploy --only storage
 npx firebase deploy --only firestore:indexes  # firestore.indexes.json 반영 (agent_docs/firebase-patterns.md 참조)
 ```
 
+> **EAS Update(OTA) 제약**
+> - runtime version은 `appVersion` 정책이라 `app.config.js`의 `version`이 곧 runtime version이다. 네이티브 의존성을 추가·변경하거나 Expo SDK를 올리면 반드시 `version`도 올린다. 올리지 않으면 새 네이티브 코드를 전제로 한 JS 번들이 이전 바이너리에 배포되어 실행 즉시 크래시가 난다.
+> - `fingerprint` 정책을 쓰지 않는 이유: `app.config.js`가 env 값(`GOOGLE_SERVICE_INFO_PLIST`, AdMob ID 등)을 config에 넣기 때문에, 로컬 `eas update`와 EAS 빌드 서버의 fingerprint가 달라져 업데이트가 조용히 전달되지 않을 수 있다.
+> - `update:*`는 로컬 작업 트리를 그대로 번들링한다. master를 최신으로 받고 커밋하지 않은 변경이 없는 상태에서만 실행한다.
+> - 테스트용 업데이트를 production 채널에 남겨 두면 스토어 사용자도 그 업데이트를 받는다. 확인이 끝나면 `npx eas-cli@latest update:rollback`으로 되돌린다.
+> - 앱은 첫 실행에서 업데이트를 백그라운드로 내려받기만 하므로, 반영을 확인하려면 앱을 최대 두 번 다시 실행해야 한다.
+
 > **iOS 제출**: Apple은 2026-04부터 iOS 26 SDK(Xcode 26) 빌드만 업로드 허용(오류 90725). EAS 빌드 이미지는 `eas.json`에 `image` 미지정 시 Expo SDK 버전 기본값을 따르므로, 제출 거부 시 Expo SDK·빌드 이미지 버전부터 확인.
 
 ## Firebase 에뮬레이터
