@@ -139,8 +139,9 @@ const TickerContent = ({ announcements }: { announcements: Announcement[] }) => 
 						</Text>
 					</View>
 					<View style={styles.titleViewport}>
-						{/* 첫 렌더링에서는 들어오는 애니메이션 없이 바로 보여 준다 */}
-						<LayoutAnimationConfig skipEntering>
+						{/* 첫 렌더링에서는 들어오는 애니메이션 없이 바로 보여 주고,
+						    공지 줄이 사라질 때(공지 0개, 개수 변경)는 이전 제목의 나가는 애니메이션을 생략해 잔상이 겹치지 않게 한다 */}
+						<LayoutAnimationConfig skipEntering skipExiting>
 							<Animated.View
 								key={current.id}
 								entering={slideAnimations[direction].entering}
