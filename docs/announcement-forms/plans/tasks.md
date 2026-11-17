@@ -46,17 +46,18 @@
 
 완료 확인: `npm run typecheck`, `npm run lint` 통과
 
-- [ ] 테스터 폼 스키마·훅 (`src/hooks/announcement/form/androidTesterFormSchema.ts`, `useAndroidTesterForm.ts`)
+- [x] 테스터 폼 스키마·훅 (`src/hooks/announcement/form/androidTesterFormSchema.ts`, `useAndroidTesterForm.ts`)
   - 필드 `email`(trim → 소문자 → 이메일 형식, 100자 이하), `agreed`(`true`여야 함). 기본값 `{ email: '', agreed: false }`
   - 패턴: Zod 스키마 + `z.infer` 타입, `zodResolver`, `mode: 'onTouched'`, `reValidateMode: 'onChange'` (`announcementFormSchema.ts`, `useAnnouncementForm.ts`)
-- [ ] 의견 폼 스키마·훅 (`src/hooks/announcement/form/feedbackFormSchema.ts`, `useFeedbackForm.ts`)
+- [x] 의견 폼 스키마·훅 (`src/hooks/announcement/form/feedbackFormSchema.ts`, `useFeedbackForm.ts`)
   - 필드 `body`(trim, 1~1000자). 기본값 `{ body: '' }`
   - 패턴: 위와 같음. 오류 문구 형식은 `newPostFormSchema.ts`의 `CommonFields.body`('본문을 입력해주세요.' / '본문은 최대 3000자까지 입력 가능합니다.')를 따른다
-- [ ] 테스터 신청 mutation 훅 (`src/hooks/announcement/mutation/useSubmitAndroidTesterEmail.ts`)
+- [x] 테스터 신청 mutation 훅 (`src/hooks/announcement/mutation/useSubmitAndroidTesterEmail.ts`)
   - 성공 시 `showToast('success', ...)`, 실패 시 `showToast('error', ...)`. 중복(`permission-denied`) 처리는 확인 필요 항목 결정을 따른다
   - 패턴: `useMutation` + 토스트 (`src/hooks/admin/mutation/useCreateAnnouncement.ts`)
   - 무효화할 쿼리 없음 (조회 화면이 없다)
-- [ ] 의견 전송 mutation 훅 (`src/hooks/announcement/mutation/useSubmitFeedback.ts`)
+  - 임시 적용: 중복은 A안(성공과 같은 처리)으로 구현했다. 사용자가 자리를 비운 동안 완료 지시를 받아 먼저 적용했고, 신청 여부가 드러나지 않는 쪽을 골랐다 — **blocker**: 확인 필요 1번 답에 따라 유지 또는 변경
+- [x] 의견 전송 mutation 훅 (`src/hooks/announcement/mutation/useSubmitFeedback.ts`)
   - 패턴: 위와 같음. `uid`는 `useUserInfo()`에서 가져온다
 
 ## Phase 3: 공통 하단 버튼·시트와 공지 상세 연결
@@ -117,3 +118,6 @@
 
 - Phase 1 완료
 - 검증: `npm run typecheck`·eslint 통과. `firebase emulators:exec --project demo-rules-check`(임시 에뮬레이터)로 규칙 13건 확인 — 테스터 비로그인·로그인 생성 성공, 중복·대문자·형식 오류·추가 필드·읽기 실패, 의견 로그인 생성 성공, 비로그인·다른 uid·빈 본문·1001자·비관리자 읽기 실패
+- Phase 2 완료
+- 검증: `npm run typecheck`·eslint 통과
+- 결정: 문구는 시안 초안을 그대로 넣었다. 시안에 없는 오류 토스트는 `useCreateAnnouncement`의 '~ 중 오류가 발생했습니다.' 형식을 따랐고, 빈 이메일·100자 초과도 시안의 '올바른 이메일 형식이 아닙니다.' 하나로 표시한다 (문구 확정 전 임시)
