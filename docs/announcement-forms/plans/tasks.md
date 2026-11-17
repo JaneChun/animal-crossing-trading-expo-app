@@ -2,7 +2,7 @@
 
 > 이슈: 없음
 > 작업 종류: 기능 수정
-> 상태: 진행중
+> 상태: 완료
 > 생성일: 2026-11-18
 > 참조: [공지사항 plans](../../announcement/plans/tasks.md)
 
@@ -18,11 +18,6 @@
 - 포함: 공지 `form` 필드, 공통 하단 버튼·시트, 테스터 신청 필드(개인정보 필수 동의), 의견 입력 필드, `AndroidTesterEmails`·`Feedbacks` 컬렉션과 규칙
 - 제외: 관리자 조회 화면, 관리자 공지 작성 화면의 폼 옵션, 완료 상태 기기 저장, 테스트 초대 발송, 의견 답변
 - 시안: https://claude.ai/artifact/FtfPogUazJroD4sC2wk6ZD
-
-## 확인 필요
-
-- [ ] 같은 이메일로 테스터 재신청해 규칙에 막혔을 때: A) 성공과 같은 처리(시트 닫기 + 성공 토스트) B) '이미 신청한 이메일입니다.' 오류 토스트 — 막는 항목: Phase 2 테스터 mutation 훅
-- [ ] 문구 확정 (하단 버튼, 시트 제목·제출 버튼, 안내 문구, placeholder, 동의 문구, 입력 오류, 성공·실패·로그인 토스트). 초안은 시안에 있다 — 막는 항목: Phase 2 스키마 오류 문구·토스트, Phase 3·4 시트와 버튼
 
 ## Phase 1: 타입·데이터 레이어
 
@@ -53,10 +48,10 @@
   - 필드 `body`(trim, 1~1000자). 기본값 `{ body: '' }`
   - 패턴: 위와 같음. 오류 문구 형식은 `newPostFormSchema.ts`의 `CommonFields.body`('본문을 입력해주세요.' / '본문은 최대 3000자까지 입력 가능합니다.')를 따른다
 - [x] 테스터 신청 mutation 훅 (`src/hooks/announcement/mutation/useSubmitAndroidTesterEmail.ts`)
-  - 성공 시 `showToast('success', ...)`, 실패 시 `showToast('error', ...)`. 중복(`permission-denied`) 처리는 확인 필요 항목 결정을 따른다
+  - 성공 시 `showToast('success', ...)`, 실패 시 `showToast('error', ...)`. 중복(`permission-denied`)은 성공과 같이 처리한다
   - 패턴: `useMutation` + 토스트 (`src/hooks/admin/mutation/useCreateAnnouncement.ts`)
   - 무효화할 쿼리 없음 (조회 화면이 없다)
-  - 임시 적용: 중복은 A안(성공과 같은 처리)으로 구현했다. 사용자가 자리를 비운 동안 완료 지시를 받아 먼저 적용했고, 신청 여부가 드러나지 않는 쪽을 골랐다 — **blocker**: 확인 필요 1번 답에 따라 유지 또는 변경
+  - 결정: 같은 이메일 재신청은 성공과 같이 처리한다. 오류로 알리면 특정 이메일의 신청 여부가 드러난다 (사용자 지시)
 - [x] 의견 전송 mutation 훅 (`src/hooks/announcement/mutation/useSubmitFeedback.ts`)
   - 패턴: 위와 같음. `uid`는 `useUserInfo()`에서 가져온다
 
@@ -121,12 +116,16 @@
 - 검증: `npm run typecheck`·eslint 통과. `firebase emulators:exec --project demo-rules-check`(임시 에뮬레이터)로 규칙 13건 확인 — 테스터 비로그인·로그인 생성 성공, 중복·대문자·형식 오류·추가 필드·읽기 실패, 의견 로그인 생성 성공, 비로그인·다른 uid·빈 본문·1001자·비관리자 읽기 실패
 - Phase 2 완료
 - 검증: `npm run typecheck`·eslint 통과
-- 결정: 문구는 시안 초안을 그대로 넣었다. 시안에 없는 오류 토스트는 `useCreateAnnouncement`의 '~ 중 오류가 발생했습니다.' 형식을 따랐고, 빈 이메일·100자 초과도 시안의 '올바른 이메일 형식이 아닙니다.' 하나로 표시한다 (문구 확정 전 임시)
+- 결정: 문구는 시안 초안을 그대로 넣었다. 시안에 없는 오류 토스트는 `useCreateAnnouncement`의 '~ 중 오류가 발생했습니다.' 형식을 따랐고, 빈 이메일·100자 초과도 시안의 '올바른 이메일 형식이 아닙니다.' 하나로 표시한다 (사용자 확정)
 - Phase 3 완료
 - 검증: `npm run typecheck`·eslint 통과. 기기·시뮬레이터 확인(시트 열기·닫기, 키보드)은 사용자가 자리를 비워 하지 못했다 → `## 기기 확인`으로 넘긴다
 - Phase 4 완료
 - 검증: `npm run typecheck` 통과, `npm run lint` 오류 0 (새 경고는 `expo-checkbox` 기본 import 1건으로 기존 화면과 같다). 기기 확인은 하지 못했다
-- 블로커: 확인 필요 2건(중복 재신청 처리, 문구 확정)이 남아 상태를 `진행중`으로 둔다. 코드는 중복=A안, 문구=시안 초안으로 들어가 있다
+
+### 2026-11-18
+
+- 결정: 중복 재신청은 성공과 같은 처리, 문구는 시안 초안과 임시로 넣은 오류 문구 그대로 확정 (사용자 지시)
+- 전체 구현 완료
 
 ## 기기 확인
 
