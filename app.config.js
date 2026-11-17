@@ -42,6 +42,12 @@ export default {
 			output: 'single',
 			favicon: './assets/images/favicon.png',
 		},
+		updates: {
+			url: `https://u.expo.dev/${process.env.EXPO_PUBLIC_EAS_PROJECT_ID}`,
+		},
+		runtimeVersion: {
+			policy: 'appVersion',
+		},
 		plugins: [
 			'expo-font',
 			[
