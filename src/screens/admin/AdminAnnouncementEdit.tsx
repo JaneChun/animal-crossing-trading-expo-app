@@ -10,6 +10,7 @@ import AdminGuard from '@/components/Admin/AdminGuard';
 import BodyInput from '@/components/NewPost/BodyInput';
 import TitleInput from '@/components/NewPost/TitleInput';
 import Button from '@/components/ui/Button';
+import EmptyIndicator from '@/components/ui/EmptyIndicator';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
 import LoadingIndicator from '@/components/ui/loading/LoadingIndicator';
 import Text from '@/components/ui/Text';
@@ -60,6 +61,8 @@ const AdminAnnouncementEdit = () => {
 	};
 
 	if (editingId && isLoading) return <LoadingIndicator />;
+	// 불러오지 못한 채 빈 폼으로 저장하면 기존 제목·본문을 덮어쓰고 숨김도 풀리므로 폼을 보여 주지 않는다
+	if (editingId && !announcement) return <EmptyIndicator message="공지를 찾을 수 없습니다." />;
 
 	return (
 		<AdminGuard>
