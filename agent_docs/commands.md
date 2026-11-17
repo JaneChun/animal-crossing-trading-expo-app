@@ -46,6 +46,8 @@ npm run emulator:seed             # 에뮬레이터 Auth·Firestore·Storage를 
 
 시드 데이터를 다음 실행에도 쓰려면: `npm run dev:emulator:all` 실행 → 다른 터미널에서 `npm run emulator:seed` → Metro를 Ctrl+C로 종료하면 `emulator-data/`로 export된다. 시드 상세는 [testing.md](testing.md) 참조.
 
+> **함정**: `--export-on-exit`는 시작 실패·타임아웃으로 종료될 때도 그 시점의 (빈/부분) 상태를 export해 `emulator-data/`를 덮어쓴다. 그래서 `dev:emulator:all`은 이 옵션을 쓰지 않고, "All emulators ready" 이후에만 종료 직전에 `firebase emulators:export`를 실행한다. `emulator:start-with-data`는 여전히 `--export-on-exit`를 쓰므로 같은 위험이 있다.
+
 ## Functions (`functions/`, 별도 npm 프로젝트)
 
 ```bash
