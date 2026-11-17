@@ -40,6 +40,7 @@ export type RootStackParamList = {
 	TermsOfService: undefined;
 	PrivacyPolicy: undefined;
 	Search: undefined;
+	AnnouncementDetail: { id: string };
 	AdminHome: undefined;
 	AdminReviewUsers: undefined;
 	AdminReports: undefined;
@@ -73,6 +74,7 @@ export type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
 export type ChatRoomRouteProp = RouteProp<RootStackParamList, 'ChatRoom'>;
 export type SignUpDisplayNameRouteProp = RouteProp<RootStackParamList, 'SignUpDisplayName'>;
 export type SignUpIslandNameRouteProp = RouteProp<RootStackParamList, 'SignUpIslandName'>;
+export type AnnouncementDetailRouteProp = RouteProp<RootStackParamList, 'AnnouncementDetail'>;
 export type AdminReportDetailRouteProp = RouteProp<RootStackParamList, 'AdminReportDetail'>;
 export type AdminChatViewerRouteProp = RouteProp<RootStackParamList, 'AdminChatViewer'>;
 export type AdminUserDetailRouteProp = RouteProp<RootStackParamList, 'AdminUserDetail'>;

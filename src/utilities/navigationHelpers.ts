@@ -14,6 +14,11 @@ export const navigateToSearch = () => {
 	navigate('Search');
 };
 
+// AnnouncementDetail/
+export const navigateToAnnouncementDetail = (id: string) => {
+	navigate('AnnouncementDetail', { id });
+};
+
 // NewPost/
 export const navigateToNewPost = (collectionName: Collection) => {
 	navigate('NewPost', {

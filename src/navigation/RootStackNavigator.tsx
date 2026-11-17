@@ -16,6 +16,7 @@ import AdminUserRecords from '@/screens/admin/AdminUserRecords';
 import AdminUsers from '@/screens/admin/AdminUsers';
 import DesignSystem from '@/screens/admin/DesignSystem';
 import AgreeToTermsAndConditions from '@/screens/AgreeToTermsAndConditions';
+import AnnouncementDetail from '@/screens/AnnouncementDetail';
 import Block from '@/screens/Block';
 import ChatRoom from '@/screens/ChatRoom';
 import DeleteAccount from '@/screens/DeleteAccount';
@@ -194,6 +195,11 @@ const RootStackNavigator = () => {
 					name="Search"
 					component={Search}
 					options={{ ...commonOptions, headerShown: false }}
+				/>
+				<RootStack.Screen
+					name="AnnouncementDetail"
+					component={AnnouncementDetail}
+					options={{ ...commonOptions, title: '공지사항' }}
 				/>
 
 				{/* 관리자 - 화면마다 AdminGuard로 role을 확인한다 */}
