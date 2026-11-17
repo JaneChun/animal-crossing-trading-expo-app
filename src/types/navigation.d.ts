@@ -52,6 +52,8 @@ export type RootStackParamList = {
 	AdminUserRecords: { uid: string; kind: AdminUserRecordKind };
 	AdminErrors: undefined;
 	DesignSystem: undefined;
+	AdminAnnouncements: undefined;
+	AdminAnnouncementEdit: { id?: string }; // 수정 시 id 전달
 };
 
 export type RootStackNavigation = NativeStackNavigationProp<RootStackParamList>;
@@ -79,3 +81,4 @@ export type AdminReportDetailRouteProp = RouteProp<RootStackParamList, 'AdminRep
 export type AdminChatViewerRouteProp = RouteProp<RootStackParamList, 'AdminChatViewer'>;
 export type AdminUserDetailRouteProp = RouteProp<RootStackParamList, 'AdminUserDetail'>;
 export type AdminUserRecordsRouteProp = RouteProp<RootStackParamList, 'AdminUserRecords'>;
+export type AdminAnnouncementEditRouteProp = RouteProp<RootStackParamList, 'AdminAnnouncementEdit'>;
