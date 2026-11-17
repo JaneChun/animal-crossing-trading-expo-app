@@ -1,5 +1,6 @@
 import { useRoute } from '@react-navigation/native';
-import { Image, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 import LinkifiedText from '@/components/Announcement/LinkifiedText';
 import Divider from '@/components/ui/Divider';
@@ -28,7 +29,8 @@ const AnnouncementDetail = () => {
 	return (
 		<View style={styles.screen}>
 			{/* 잎 배경: 스크롤 영역 밖에 두어 본문을 스크롤해도 화면에 고정된다 */}
-			<Image
+			{/* 스플래시 화면이 같은 이미지를 FastImage로 먼저 띄우므로, 메모리 캐시를 써서 본문과 함께 바로 표시된다 */}
+			<FastImage
 				source={splashIcon}
 				style={styles.leaf}
 				resizeMode="contain"
