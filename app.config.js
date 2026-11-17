@@ -4,7 +4,7 @@ export default {
 	expo: {
 		name: '모동숲 마켓',
 		slug: 'animal-crossing-trading-app',
-		version: '1.9.3',
+		version: '1.9.4',
 		orientation: 'portrait',
 		icon: './assets/images/app_icon.jpg',
 		scheme: 'animal-crossing-trading-app',
@@ -41,6 +41,13 @@ export default {
 			bundler: 'metro',
 			output: 'single',
 			favicon: './assets/images/favicon.png',
+		},
+		updates: {
+			// env가 없으면 `.../undefined`가 네이티브에 들어가 OTA를 못 받으므로 공개 값인 프로젝트 ID를 직접 적는다
+			url: 'https://u.expo.dev/aa3bbe9f-a861-4452-9c4a-a98f64c418e2',
+		},
+		runtimeVersion: {
+			policy: 'appVersion',
 		},
 		plugins: [
 			'expo-font',
