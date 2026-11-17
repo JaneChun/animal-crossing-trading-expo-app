@@ -171,6 +171,31 @@ service cloud.firestore {
       allow delete: if false; // 불가능 (숨김으로 대체)
     }
 
+    // AndroidTesterEmails
+    // 비로그인도 신청할 수 있다. 조회는 콘솔에서만 한다 (모집 종료 후 삭제)
+    match /AndroidTesterEmails/{email} {
+      allow create: if request.resource.data.keys().hasOnly(['email', 'createdAt']) &&
+        request.resource.data.email == email &&
+        email == email.lower() &&
+        email.size() <= 100 &&
+        email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$') &&
+        request.resource.data.createdAt == request.time;
+      allow read, update, delete: if false; // 불가능 (같은 이메일 재신청도 update로 막힌다)
+    }
+
+    // Feedbacks
+    match /Feedbacks/{feedbackId} {
+      allow create: if request.auth != null &&
+        request.resource.data.keys().hasOnly(['uid', 'body', 'createdAt']) &&
+        request.resource.data.uid == request.auth.uid &&
+        request.resource.data.body is string &&
+        request.resource.data.body.size() >= 1 &&
+        request.resource.data.body.size() <= 1000 &&
+        request.resource.data.createdAt == request.time;
+      allow read: if isAdmin(); // 관리자만
+      allow update, delete: if false; // 불가능
+    }
+
     // Functions
     // role은 콘솔에서 직접 지정한다 (agent_docs/features/admin.md)
     function isAdmin() {
