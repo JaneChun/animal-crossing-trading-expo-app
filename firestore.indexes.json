@@ -340,6 +340,24 @@
 					"order": "DESCENDING"
 				}
 			]
+		},
+		/**
+		 * 공지 목록(게시 중 공지 줄, 관리자 게시 중·숨김 탭): hidden + createdAt 내림차순
+		 * - src/firebase/services/announcementService.ts
+		 */
+		{
+			"collectionGroup": "Announcements",
+			"queryScope": "COLLECTION",
+			"fields": [
+				{
+					"fieldPath": "hidden",
+					"order": "ASCENDING"
+				},
+				{
+					"fieldPath": "createdAt",
+					"order": "DESCENDING"
+				}
+			]
 		}
 	],
 	/**
