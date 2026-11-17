@@ -24,6 +24,8 @@ npm run build:ios              # eas build --profile production --platform ios
 npm run build:ios:dev          # eas build --profile development --platform ios
 npm run build:android          # eas build --profile production --platform android
 npm run deploy:app             # eas submit -p ios --latest
+npm run update:preview         # eas update --channel preview --environment preview (OTA, preview 빌드 대상)
+npm run update:production      # eas update --channel production --environment production (OTA, 스토어·TestFlight 빌드 대상)
 npm run deploy:functions       # firebase deploy --only functions
 npm run deploy:rules:firestore # firebase deploy --only firestore:rules
 npm run deploy:rules:storage   # firebase deploy --only storage
