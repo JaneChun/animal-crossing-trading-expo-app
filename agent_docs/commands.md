@@ -35,7 +35,7 @@ npx firebase deploy --only firestore:indexes  # firestore.indexes.json 반영 (a
 ## Firebase 에뮬레이터
 
 ```bash
-npm run dev:emulator:all          # Functions 빌드 → 에뮬레이터(데이터 유지) + 에뮬레이터 모드 Metro 한 번에 실행. 로그는 $TMPDIR/firebase-emulator.log
+npm run dev:emulator:all          # (Functions 빌드 안 함 → src 변경 시 먼저 npm --prefix functions run build) 에뮬레이터(데이터 유지) + 에뮬레이터 모드 Metro 한 번에 실행. 로그는 $TMPDIR/firebase-emulator.log
 npm run emulator:start            # firebase emulators:start (Functions 빌드 안 함 → 먼저 npm --prefix functions run build)
 npm run emulator:start-with-data  # 데이터 import + 종료 시 export (Functions 빌드 안 함)
 npm run emulator:stop             # 프로세스 kill + 포트(4000,8080,9099,5001,9199 등) 정리
