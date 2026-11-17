@@ -70,6 +70,14 @@
 
 `variant="thin"`(높이 1, 리스트 구분)과 `variant="section"`(높이 8, 섹션 구분).
 
+### 이미지 (`react-native-fast-image`)
+
+새로 그리는 이미지는 RN `Image` 대신 `FastImage`를 쓴다. RN `Image`는 화면에 붙은 뒤 비동기로 디코딩해서, 같은 화면의 글자보다 이미지가 늦게 나타난다. `FastImage`는 메모리 캐시를 써서 이미 로드한 이미지를 바로 표시한다(예: 스플래시가 먼저 띄운 `splash_icon.png`를 재사용하는 `screens/AnnouncementDetail.tsx`의 잎 배경).
+
+- 예외: 이미지를 테마 색으로 칠해야 하면 RN `Image`의 `style.tintColor`를 쓴다. `FastImage`의 `tintColor`는 iOS에서 앱을 종료시킨다(아래 마이그레이션 레시피 참고).
+- 예외: `Image.resolveAssetSource` 같은 RN `Image`의 정적 유틸은 그대로 쓴다.
+- 기존 RN `Image`는 해당 화면을 고칠 일이 생겼을 때 함께 바꾼다.
+
 ### CustomBottomSheet 헤더 (`@/components/ui/CustomBottomSheet`)
 
 `leftButton`·`rightButton`은 `position: 'absolute'`로 헤더 양 끝에 놓이고, 제목은 `flex: 1`로 헤더 전체 너비를 차지한다. RN은 겹친 형제 뷰 중 나중에 그린 뷰가 터치를 받으므로, 버튼은 반드시 제목보다 나중에 렌더링해야 한다. 순서가 바뀌면 버튼은 보이지만 탭이 제목에 막혀 눌리지 않는다(#62).

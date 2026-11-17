@@ -40,6 +40,7 @@ export type RootStackParamList = {
 	TermsOfService: undefined;
 	PrivacyPolicy: undefined;
 	Search: undefined;
+	AnnouncementDetail: { id: string };
 	AdminHome: undefined;
 	AdminReviewUsers: undefined;
 	AdminReports: undefined;
@@ -51,6 +52,8 @@ export type RootStackParamList = {
 	AdminUserRecords: { uid: string; kind: AdminUserRecordKind };
 	AdminErrors: undefined;
 	DesignSystem: undefined;
+	AdminAnnouncements: undefined;
+	AdminAnnouncementEdit: { id?: string }; // 수정 시 id 전달
 };
 
 export type RootStackNavigation = NativeStackNavigationProp<RootStackParamList>;
@@ -73,7 +76,9 @@ export type ProfileRouteProp = RouteProp<RootStackParamList, 'Profile'>;
 export type ChatRoomRouteProp = RouteProp<RootStackParamList, 'ChatRoom'>;
 export type SignUpDisplayNameRouteProp = RouteProp<RootStackParamList, 'SignUpDisplayName'>;
 export type SignUpIslandNameRouteProp = RouteProp<RootStackParamList, 'SignUpIslandName'>;
+export type AnnouncementDetailRouteProp = RouteProp<RootStackParamList, 'AnnouncementDetail'>;
 export type AdminReportDetailRouteProp = RouteProp<RootStackParamList, 'AdminReportDetail'>;
 export type AdminChatViewerRouteProp = RouteProp<RootStackParamList, 'AdminChatViewer'>;
 export type AdminUserDetailRouteProp = RouteProp<RootStackParamList, 'AdminUserDetail'>;
 export type AdminUserRecordsRouteProp = RouteProp<RootStackParamList, 'AdminUserRecords'>;
+export type AdminAnnouncementEditRouteProp = RouteProp<RootStackParamList, 'AdminAnnouncementEdit'>;

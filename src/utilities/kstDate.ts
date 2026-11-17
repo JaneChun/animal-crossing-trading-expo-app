@@ -25,3 +25,9 @@ export const formatKstDateTime = (date: Date): string => {
 
 	return `${formatKstDate(date)} ${meridiem} ${hours12}:${minutes}`;
 };
+
+// KST 기준 "2026년 11월 15일"
+export const formatKstLongDate = (date: Date): string => {
+	const [year, month, day] = getKstDateString(date).split('-').map(Number);
+	return `${year}년 ${month}월 ${day}일`;
+};

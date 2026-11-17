@@ -6,6 +6,7 @@ import { PADDING } from '@/components/ui/layout/Layout';
 import Text from '@/components/ui/Text';
 import { Theme, useThemedStyles } from '@/theme';
 import {
+	navigateToAdminAnnouncements,
 	navigateToAdminErrors,
 	navigateToAdminReports,
 	navigateToAdminReviewUsers,
@@ -29,6 +30,9 @@ const AdminHome = () => {
 					</SettingListItem>
 					<SettingListItem showChevron onPress={navigateToAdminReviewUsers}>
 						<Text variant="body1">검토 필요 유저</Text>
+					</SettingListItem>
+					<SettingListItem showChevron onPress={navigateToAdminAnnouncements}>
+						<Text variant="body1">공지 관리</Text>
 					</SettingListItem>
 					<SettingListItem
 						borderRound="bottom"

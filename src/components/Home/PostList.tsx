@@ -1,10 +1,13 @@
 import { FontAwesome6 } from '@expo/vector-icons';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 
+import { PADDING } from '@/components/ui/layout/Layout';
 import Text from '@/components/ui/Text';
 import { showLongToast, showToast } from '@/components/ui/Toast';
 import { auth } from '@/config/firebase';
+import { announcementsQueryKey } from '@/hooks/announcement/query/useAnnouncements';
 import { useInfinitePosts } from '@/hooks/post/query/useInfinitePosts';
 import { useAdConfig } from '@/stores/ads';
 import { useUserInfo } from '@/stores/auth';
@@ -27,8 +30,10 @@ const PostList = ({
 	filter,
 	isAddPostButtonVisible = false,
 	containerStyle,
+	ListHeaderComponent,
 }: PostListProps) => {
 	const styles = useThemedStyles(makeStyles);
+	const queryClient = useQueryClient();
 	const userInfo = useUserInfo();
 	const { isNativeAdsEnabled, nativeAdInterval } = useAdConfig();
 	const {
@@ -78,6 +83,12 @@ const PostList = ({
 		return item.type === 'ad' ? item.id : item.data.id;
 	}, []);
 
+	// 당겨서 새로고침하면 목록 머리의 공지도 함께 다시 조회한다
+	const onRefresh = () => {
+		refetch();
+		queryClient.invalidateQueries({ queryKey: announcementsQueryKey });
+	};
+
 	const fetchNext = useCallback(() => {
 		if (hasNextPage && !isFetchingNextPage) {
 			fetchNextPage();
@@ -85,17 +96,13 @@ const PostList = ({
 	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
 	const getListFooterComponent = useMemo(() => {
-		if (hasNextPage) return null;
+		if (isLoading || hasNextPage) return null;
 		return (
 			<Text variant="body2" color="tertiary" style={styles.endText}>
 				마지막 글입니다.
 			</Text>
 		);
-	}, [hasNextPage, styles]);
-
-	if (isLoading) {
-		return <PostListSkeleton />;
-	}
+	}, [isLoading, hasNextPage, styles]);
 
 	return (
 		<>
@@ -108,12 +115,22 @@ const PostList = ({
 				maxToRenderPerBatch={15}
 				onEndReached={fetchNext}
 				onEndReachedThreshold={0.5}
-				onRefresh={refetch}
-				refreshing={isFetching || isFetchingNextPage}
+				onRefresh={onRefresh}
+				// 첫 로딩은 스켈레톤으로 보여 주므로 새로고침 표시를 띄우지 않는다
+				refreshing={!isLoading && (isFetching || isFetchingNextPage)}
+				ListHeaderComponent={ListHeaderComponent}
+				// 로딩 중에도 목록을 유지해야 머리 영역(공지 줄)이 언마운트되지 않는다
+				ListEmptyComponent={
+					isLoading ? (
+						<View style={styles.skeleton}>
+							<PostListSkeleton />
+						</View>
+					) : null
+				}
 				ListFooterComponent={getListFooterComponent}
 			/>
 
-			{isAddPostButtonVisible && (
+			{isAddPostButtonVisible && !isLoading && (
 				<Pressable
 					style={styles.addPostButton}
 					onPress={onPressAddPostButton}
@@ -129,6 +146,10 @@ const PostList = ({
 
 const makeStyles = ({ colors }: Theme) =>
 	StyleSheet.create({
+		// 스켈레톤이 자체 좌우 여백을 가지므로 목록(containerStyle)의 PADDING과 겹치지 않게 상쇄한다
+		skeleton: {
+			marginHorizontal: -PADDING,
+		},
 		endText: {
 			textAlign: 'center',
 			marginVertical: 16,

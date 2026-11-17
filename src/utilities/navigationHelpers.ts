@@ -14,6 +14,11 @@ export const navigateToSearch = () => {
 	navigate('Search');
 };
 
+// AnnouncementDetail/
+export const navigateToAnnouncementDetail = (id: string) => {
+	navigate('AnnouncementDetail', { id });
+};
+
 // NewPost/
 export const navigateToNewPost = (collectionName: Collection) => {
 	navigate('NewPost', {
@@ -209,4 +214,13 @@ export const navigateToAdminErrors = () => {
 
 export const navigateToDesignSystem = () => {
 	navigate('DesignSystem');
+};
+
+export const navigateToAdminAnnouncements = () => {
+	navigate('AdminAnnouncements');
+};
+
+// id가 없으면 새 공지 작성
+export const navigateToAdminAnnouncementEdit = (id?: string) => {
+	navigate('AdminAnnouncementEdit', { id });
 };

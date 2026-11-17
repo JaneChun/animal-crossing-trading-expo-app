@@ -1,6 +1,7 @@
 import { useFocusEffect, useIsFocused } from '@react-navigation/native';
 import { useCallback } from 'react';
 
+import AnnouncementTicker from '@/components/Announcement/AnnouncementTicker';
 import PostList from '@/components/Home/PostList';
 import SearchIcon from '@/components/Search/SearchIcon';
 import Layout, { PADDING } from '@/components/ui/layout/Layout';
@@ -26,6 +27,7 @@ const Home = () => {
 				collectionName="Boards"
 				isAddPostButtonVisible
 				containerStyle={{ paddingHorizontal: PADDING }}
+				ListHeaderComponent={<AnnouncementTicker />}
 			/>
 		</Layout>
 	);

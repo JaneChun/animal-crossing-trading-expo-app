@@ -1,6 +1,6 @@
 # 관리자(어드민)
 
-설정 화면 → "관리자" 섹션에서 들어가는 운영 화면(신고·검토 필요 유저·에러·일별 통계·유저·디자인 시스템). 코드: `src/screens/admin/`, `src/components/Admin/`, `src/hooks/admin/`, `src/firebase/services/adminService.ts`, `functions/src/admin/stats.ts`, `functions/src/notifications/report.ts`.
+설정 화면 → "관리자" 섹션에서 들어가는 운영 화면(신고·검토 필요 유저·공지·에러·일별 통계·유저·디자인 시스템). 코드: `src/screens/admin/`, `src/components/Admin/`, `src/hooks/admin/`, `src/firebase/services/adminService.ts`, `functions/src/admin/stats.ts`, `functions/src/notifications/report.ts`.
 
 ## 관리자 지정
 
@@ -53,3 +53,10 @@
 - 관리자는 게시글 상세(`usePost`)에서 숨김·삭제된 게시글도 본다. 이때 헤더 맨 위에 상태 배너(`getAdminOnlyBanner`)가 붙는다. 일반 유저에게는 이런 글이 조회되지 않으므로 배너에 관리자 검사가 따로 없다.
 - 열람은 `usePostDetail`의 `includeHidden` 옵션으로, 거르는 처리는 `queryFn`이 아니라 `select`에서 한다.
 - 쿼리 키를 나누지 않는 이유: 댓글 작성·삭제 등이 `['postDetail', collectionName, id]`에 `setQueryData`로 댓글 수를 바로 반영하는데, 키를 나누면 관리자 계정의 캐시에는 반영되지 않는다.
+
+## 공지 관리 (`Announcements`)
+
+- 게시 중 공지는 마켓·커뮤니티 목록 첫 줄(`AnnouncementTicker`)에 보인다. 관리자는 '공지 관리'에서 작성·수정하고, '숨기기' 체크로 숨기거나 다시 게시한다. 삭제는 없다(규칙도 막는다).
+- 읽기 규칙이 `hidden == false` 문서만 유저에게 허용한다. 유저 쿼리에 `where('hidden', '==', false)`가 없으면 쿼리 전체가 거부된다. 숨긴 공지의 상세 조회도 유저에게는 권한 오류가 나고, 화면은 '찾을 수 없음'으로 안내한다.
+- 목록 쿼리는 `hidden` + `createdAt` 내림차순 인덱스가 필요하다(`firestore.indexes.json`). 공지 줄은 조회에 실패해도 알림 없이 그리지 않으므로, 운영에 인덱스를 배포하지 않으면 오류 없이 공지 줄만 사라져 알아채기 어렵다.
+- 실시간 구독은 하지 않는다. 공지 줄은 탭 포커스·당겨서 새로고침 때 다시 조회하므로, 관리자가 숨긴 공지가 유저 화면에 잠시 남을 수 있다.

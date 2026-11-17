@@ -4,6 +4,8 @@ import { Platform } from 'react-native';
 import { UpdateModal } from '@/components/ui/UpdateModal';
 import { useVersionCheck } from '@/hooks/shared/useVersionCheck';
 import Account from '@/screens/Account';
+import AdminAnnouncementEdit from '@/screens/admin/AdminAnnouncementEdit';
+import AdminAnnouncements from '@/screens/admin/AdminAnnouncements';
 import AdminChatViewer from '@/screens/admin/AdminChatViewer';
 import AdminErrors from '@/screens/admin/AdminErrors';
 import AdminHome from '@/screens/admin/AdminHome';
@@ -16,6 +18,7 @@ import AdminUserRecords from '@/screens/admin/AdminUserRecords';
 import AdminUsers from '@/screens/admin/AdminUsers';
 import DesignSystem from '@/screens/admin/DesignSystem';
 import AgreeToTermsAndConditions from '@/screens/AgreeToTermsAndConditions';
+import AnnouncementDetail from '@/screens/AnnouncementDetail';
 import Block from '@/screens/Block';
 import ChatRoom from '@/screens/ChatRoom';
 import DeleteAccount from '@/screens/DeleteAccount';
@@ -195,6 +198,11 @@ const RootStackNavigator = () => {
 					component={Search}
 					options={{ ...commonOptions, headerShown: false }}
 				/>
+				<RootStack.Screen
+					name="AnnouncementDetail"
+					component={AnnouncementDetail}
+					options={{ ...commonOptions, title: '공지사항' }}
+				/>
 
 				{/* 관리자 - 화면마다 AdminGuard로 role을 확인한다 */}
 				<RootStack.Screen
@@ -251,6 +259,19 @@ const RootStackNavigator = () => {
 					name="DesignSystem"
 					component={DesignSystem}
 					options={{ ...commonOptions, title: '디자인 시스템' }}
+				/>
+				<RootStack.Screen
+					name="AdminAnnouncements"
+					component={AdminAnnouncements}
+					options={{ ...commonOptions, title: '공지 관리' }}
+				/>
+				<RootStack.Screen
+					name="AdminAnnouncementEdit"
+					component={AdminAnnouncementEdit}
+					options={({ route }) => ({
+						...commonOptions,
+						title: (route.params as { id?: string }).id ? '공지 수정' : '새 공지',
+					})}
 				/>
 			</RootStack.Navigator>
 

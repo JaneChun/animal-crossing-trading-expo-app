@@ -162,7 +162,15 @@ service cloud.firestore {
       allow read: if isAdmin(); // 관리자만
       allow update, delete: if false; // 불가능
     }
-    
+
+    // Announcements
+    // 유저 쿼리는 where('hidden', '==', false)를 걸어야 통과한다
+    match /Announcements/{announcementId} {
+      allow read: if resource.data.hidden == false || isAdmin(); // 누구나 게시 중 공지만, 관리자는 전체
+      allow create, update: if isAdmin(); // 관리자만
+      allow delete: if false; // 불가능 (숨김으로 대체)
+    }
+
     // Functions
     // role은 콘솔에서 직접 지정한다 (agent_docs/features/admin.md)
     function isAdmin() {

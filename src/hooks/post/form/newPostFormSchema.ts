@@ -9,7 +9,7 @@ import {
 } from '@/constants/post';
 import { CommunityType, CurrencyOption, MarketType } from '@/types/post';
 
-const CommonFields = {
+export const CommonFields = {
 	title: z
 		.string()
 		.min(1, '제목을 입력해주세요.')
