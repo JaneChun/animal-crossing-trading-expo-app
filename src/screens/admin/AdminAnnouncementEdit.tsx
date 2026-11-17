@@ -40,10 +40,14 @@ const AdminAnnouncementEdit = () => {
 	const { mutate: updateAnnouncement, isPending: isUpdating } = useUpdateAnnouncement(editingId);
 	const isSaving = isCreating || isUpdating;
 
-	// 수정할 공지를 불러오면 폼을 채운다
+	// 수정할 공지를 불러오면 폼을 채운다.
+	// 앱 복귀·네트워크 재연결로 다시 조회될 때 입력 중인 내용을 덮어쓰지 않도록 고친 칸은 유지한다
 	useEffect(() => {
 		if (!announcement) return;
-		reset({ title: announcement.title, body: announcement.body, hidden: announcement.hidden });
+		reset(
+			{ title: announcement.title, body: announcement.body, hidden: announcement.hidden },
+			{ keepDirtyValues: true },
+		);
 	}, [announcement, reset]);
 
 	// 실패하면 토스트만 띄우고 입력 내용과 화면을 유지한다 (mutation 훅의 onError)
