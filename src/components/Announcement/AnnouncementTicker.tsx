@@ -2,11 +2,14 @@ import { Feather } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
 	Easing,
 	LayoutAnimationConfig,
+	SlideInLeft,
 	SlideInRight,
 	SlideOutLeft,
+	SlideOutRight,
 } from 'react-native-reanimated';
 
 import Divider from '@/components/ui/Divider';
@@ -17,11 +20,25 @@ import { BorderRadius, Spacing, Theme, useThemedStyles } from '@/theme';
 import { Announcement } from '@/types/announcement';
 import { navigateToAnnouncementDetail } from '@/utilities/navigationHelpers';
 
-const ROTATE_INTERVAL_MS = 4000;
-const SLIDE_DURATION_MS = 450;
+const ROTATE_INTERVAL_MS = 5000;
+const SLIDE_DURATION_MS = 500;
+// 가로로 이만큼 움직여야 스와이프로 인식하고, 세로로 먼저 이만큼 움직이면 목록 스크롤에 양보한다
+const SWIPE_ACTIVE_OFFSET = 15;
 const slideEasing = Easing.inOut(Easing.ease);
-const slideIn = SlideInRight.duration(SLIDE_DURATION_MS).easing(slideEasing);
-const slideOut = SlideOutLeft.duration(SLIDE_DURATION_MS).easing(slideEasing);
+
+type SlideDirection = 'next' | 'prev';
+
+// next: 오른쪽에서 들어와 왼쪽으로 나간다. prev: 그 반대
+const slideAnimations = {
+	next: {
+		entering: SlideInRight.duration(SLIDE_DURATION_MS).easing(slideEasing),
+		exiting: SlideOutLeft.duration(SLIDE_DURATION_MS).easing(slideEasing),
+	},
+	prev: {
+		entering: SlideInLeft.duration(SLIDE_DURATION_MS).easing(slideEasing),
+		exiting: SlideOutRight.duration(SLIDE_DURATION_MS).easing(slideEasing),
+	},
+};
 
 // 마켓·커뮤니티 목록 머리에 붙는 한 줄 공지. 게시 중 공지가 없거나 조회 중·실패면 그리지 않는다
 const AnnouncementTicker = () => {
@@ -44,50 +61,83 @@ const AnnouncementTicker = () => {
 const TickerContent = ({ announcements }: { announcements: Announcement[] }) => {
 	const styles = useThemedStyles(makeStyles);
 	const [index, setIndex] = useState(0);
+	const [direction, setDirection] = useState<SlideDirection>('next');
 	const current = announcements[index];
+	const canRotate = announcements.length > 1;
 
-	// 화면이 포커스를 잃으면 전환을 멈추고, 돌아오면 이어서 전환한다
+	const goTo = useCallback(
+		(nextDirection: SlideDirection) => {
+			const step = nextDirection === 'next' ? 1 : -1;
+			const nextIndex = (index + step + announcements.length) % announcements.length;
+			const moveIndex = () => setIndex(nextIndex);
+
+			if (nextDirection === direction) {
+				moveIndex();
+				return;
+			}
+			// 나가는 공지는 마지막으로 렌더링된 exiting 애니메이션을 쓴다.
+			// 방향을 먼저 반영해 나가는 방향까지 바꾼 뒤, 다음 프레임에 공지를 넘긴다
+			setDirection(nextDirection);
+			requestAnimationFrame(moveIndex);
+		},
+		[announcements.length, direction, index],
+	);
+
+	// 화면이 포커스를 잃으면 전환을 멈추고, 돌아오면 이어서 전환한다.
+	// goTo는 index가 바뀔 때마다 새로 만들어져 타이머도 새로 시작하므로, 스와이프로 넘긴 직후에는 자동 전환이 바로 일어나지 않는다
 	useFocusEffect(
 		useCallback(() => {
-			if (announcements.length < 2) return;
+			if (!canRotate) return;
 
-			const timer = setInterval(() => {
-				setIndex((prev) => (prev + 1) % announcements.length);
-			}, ROTATE_INTERVAL_MS);
+			const timer = setTimeout(() => goTo('next'), ROTATE_INTERVAL_MS);
 
-			return () => clearInterval(timer);
-		}, [announcements.length]),
+			return () => clearTimeout(timer);
+		}, [canRotate, goTo]),
 	);
+
+	// 왼쪽으로 밀면 다음 공지, 오른쪽으로 밀면 이전 공지.
+	// 스와이프가 인식되면 gesture-handler가 Pressable의 터치를 취소하므로 상세 화면으로 이동하지 않는다
+	const swipe = Gesture.Pan()
+		.runOnJS(true)
+		.enabled(canRotate)
+		.activeOffsetX([-SWIPE_ACTIVE_OFFSET, SWIPE_ACTIVE_OFFSET])
+		.failOffsetY([-SWIPE_ACTIVE_OFFSET, SWIPE_ACTIVE_OFFSET])
+		.onEnd((event, success) => {
+			if (!success) return;
+			goTo(event.translationX < 0 ? 'next' : 'prev');
+		});
 
 	return (
 		<View style={styles.container}>
-			<Pressable
-				style={styles.row}
-				onPress={() => navigateToAnnouncementDetail(current.id)}
-				accessibilityRole="button"
-			>
-				<View style={styles.badge}>
-					<Feather name="volume-2" size={12} color={styles.badgeIcon.color} />
-					<Text variant="caption" weight="semibold" color="primaryBrand">
-						공지
-					</Text>
-				</View>
-				<View style={styles.titleViewport}>
-					{/* 첫 렌더링에서는 들어오는 애니메이션 없이 바로 보여 준다 */}
-					<LayoutAnimationConfig skipEntering>
-						<Animated.View
-							key={current.id}
-							entering={slideIn}
-							exiting={slideOut}
-							style={styles.titleSlot}
-						>
-							<Text variant="body2" numberOfLines={1}>
-								{current.title}
-							</Text>
-						</Animated.View>
-					</LayoutAnimationConfig>
-				</View>
-			</Pressable>
+			<GestureDetector gesture={swipe}>
+				<Pressable
+					style={styles.row}
+					onPress={() => navigateToAnnouncementDetail(current.id)}
+					accessibilityRole="button"
+				>
+					<View style={styles.badge}>
+						<Feather name="volume-2" size={12} color={styles.badgeIcon.color} />
+						<Text variant="caption" weight="semibold" color="primaryBrand">
+							공지
+						</Text>
+					</View>
+					<View style={styles.titleViewport}>
+						{/* 첫 렌더링에서는 들어오는 애니메이션 없이 바로 보여 준다 */}
+						<LayoutAnimationConfig skipEntering>
+							<Animated.View
+								key={current.id}
+								entering={slideAnimations[direction].entering}
+								exiting={slideAnimations[direction].exiting}
+								style={styles.titleSlot}
+							>
+								<Text variant="body2" numberOfLines={1}>
+									{current.title}
+								</Text>
+							</Animated.View>
+						</LayoutAnimationConfig>
+					</View>
+				</Pressable>
+			</GestureDetector>
 			<Divider variant="section" />
 		</View>
 	);
