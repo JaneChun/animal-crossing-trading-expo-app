@@ -89,6 +89,7 @@
   - 결정: `Badge`는 텍스트만 받아 아이콘을 넣을 수 없다. 공통 컴포넌트를 고치지 않고, 공지 줄 안에서 `Badge`와 같은 brand 색·여백으로 배지 모양을 그린다
   - 결정: 슬라이드는 Reanimated 레이아웃 애니메이션(`SlideInRight`/`SlideOutLeft`, 450ms ease-in-out)을 공지 id key로 교체해 구현. 첫 렌더링은 `LayoutAnimationConfig skipEntering`으로 애니메이션 없이 표시
   - 결정: 공지 개수가 바뀌면 내부 컴포넌트의 key(개수)가 바뀌어 첫 공지부터 다시 시작
+  - 결정: 첫 조회 중에는 공지 줄 모양의 스켈레톤을 보여 준다 (사용자 지시, 계획의 '스켈레톤 없음'에서 변경)
 - [x] `PostList`에 목록 머리 영역 prop 추가 (`src/components/Home/PostList.tsx`, `src/types/components.ts`의 `PostListProps`)
   - 현재: `FlatList`에 `ListFooterComponent`만 있고 `containerStyle`(좌우 `PADDING`)을 `style`로 받는다 → 머리 영역의 8px 띠를 화면 끝까지 그리려면 좌우 음수 여백이 필요
   - 결정: `ListHeaderComponent`를 옵션 prop으로 받는다. `MyPosts`와 검색은 넘기지 않는다

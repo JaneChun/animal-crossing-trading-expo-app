@@ -14,6 +14,7 @@ import Animated, {
 
 import Divider from '@/components/ui/Divider';
 import { PADDING } from '@/components/ui/layout/Layout';
+import { SkeletonBox } from '@/components/ui/skeleton';
 import Text from '@/components/ui/Text';
 import { useAnnouncements } from '@/hooks/announcement/query/useAnnouncements';
 import { BorderRadius, Spacing, Theme, useThemedStyles } from '@/theme';
@@ -40,9 +41,9 @@ const slideAnimations = {
 	},
 };
 
-// 마켓·커뮤니티 목록 머리에 붙는 한 줄 공지. 게시 중 공지가 없거나 조회 중·실패면 그리지 않는다
+// 마켓·커뮤니티 목록 머리에 붙는 한 줄 공지. 첫 조회 중에는 스켈레톤, 게시 중 공지가 없거나 조회에 실패하면 그리지 않는다
 const AnnouncementTicker = () => {
-	const { data: announcements = [], refetch } = useAnnouncements();
+	const { data: announcements = [], isLoading, refetch } = useAnnouncements();
 
 	// 탭 화면은 언마운트되지 않으므로, 탭에 다시 들어올 때 공지를 다시 조회한다.
 	// 이미 조회 중이면 새 요청을 만들지 않는다
@@ -52,10 +53,26 @@ const AnnouncementTicker = () => {
 		}, [refetch]),
 	);
 
+	if (isLoading) return <TickerSkeleton />;
 	if (announcements.length === 0) return null;
 
 	// 공지 개수가 바뀌면 key가 바뀌어 첫 공지부터 다시 보여 준다
 	return <TickerContent key={announcements.length} announcements={announcements} />;
+};
+
+// 공지 줄과 같은 높이·배치로 배지와 제목 자리를 표시한다
+const TickerSkeleton = () => {
+	const styles = useThemedStyles(makeStyles);
+
+	return (
+		<View style={styles.container}>
+			<View style={styles.row}>
+				<SkeletonBox width={48} height={24} borderRadius={BorderRadius.xs} />
+				<SkeletonBox width="60%" height={16} />
+			</View>
+			<Divider variant="section" />
+		</View>
+	);
 };
 
 const TickerContent = ({ announcements }: { announcements: Announcement[] }) => {
