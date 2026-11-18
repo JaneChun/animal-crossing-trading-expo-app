@@ -83,7 +83,7 @@ const makeStyles = ({ colors }: Theme) =>
 			paddingHorizontal: 16,
 			margin: 8,
 			fontSize: FontSizes.md,
-			color: colors.text.tertiary,
+			color: colors.text.primary,
 			minHeight: 42,
 			maxHeight: 90,
 		},
