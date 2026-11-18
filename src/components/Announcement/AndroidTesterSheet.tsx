@@ -114,7 +114,7 @@ const AndroidTesterSheet = ({ isVisible, onClose, onSubmitted }: AndroidTesterSh
 						이용 목적: Android 비공개 테스트 초대
 					</Text>
 					<Text variant="caption" color="tertiary">
-						보관 기간: 테스터 모집 종료 후 즉시 삭제
+						보관 기간: 테스터 모집 종료 후 삭제
 					</Text>
 				</View>
 			</AnnouncementFormSheet>
