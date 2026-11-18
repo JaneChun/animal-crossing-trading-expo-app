@@ -2,12 +2,12 @@ import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import { Controller } from 'react-hook-form';
 import { StyleSheet } from 'react-native';
 
-import ErrorMessage from '@/components/ui/ErrorMessage';
+import ValidationInput from '@/components/ui/inputs/ValidationInput';
 import Text from '@/components/ui/Text';
 import { FeedbackFormValues } from '@/hooks/announcement/form/feedbackFormSchema';
 import { useFeedbackForm } from '@/hooks/announcement/form/useFeedbackForm';
 import { useSubmitFeedback } from '@/hooks/announcement/mutation/useSubmitFeedback';
-import { BorderRadius, FontSizes, Spacing, Theme, useTheme, useThemedStyles } from '@/theme';
+import { BorderRadius, FontSizes, Spacing, Theme, useThemedStyles } from '@/theme';
 
 import AnnouncementFormSheet from './AnnouncementFormSheet';
 
@@ -18,7 +18,6 @@ type FeedbackSheetProps = {
 
 const FeedbackSheet = ({ isVisible, onClose }: FeedbackSheetProps) => {
 	const styles = useThemedStyles(makeStyles);
-	const { colors } = useTheme();
 	const {
 		control,
 		handleSubmit,
@@ -57,19 +56,19 @@ const FeedbackSheet = ({ isVisible, onClose }: FeedbackSheetProps) => {
 				control={control}
 				name="body"
 				render={({ field: { value, onChange, onBlur } }) => (
-					<BottomSheetTextInput
+					<ValidationInput
 						value={value}
 						onChangeText={onChange}
 						onBlur={onBlur}
 						placeholder="의견을 입력해 주세요."
-						placeholderTextColor={colors.text.tertiary}
 						accessibilityLabel="의견"
 						multiline
-						style={[styles.input, errors.body && { borderColor: colors.status.error }]}
+						inputStyle={styles.input}
+						errorMessage={errors.body?.message}
+						InputComponent={BottomSheetTextInput}
 					/>
 				)}
 			/>
-			{errors.body?.message && <ErrorMessage message={errors.body.message} />}
 		</AnnouncementFormSheet>
 	);
 };

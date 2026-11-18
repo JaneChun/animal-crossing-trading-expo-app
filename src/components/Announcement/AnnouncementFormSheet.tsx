@@ -58,7 +58,9 @@ const AnnouncementFormSheet = ({
 			    스크롤 몸통은 Gorhom, 커서 자동 스크롤은 keyboard-controller가 담당한다(EditCommentModal과 같은 방식) */}
 			<KeyboardAwareScrollView
 				// 캐스트: prop 타입과 Gorhom props 타입 불일치 회피(런타임 동작 동일)
-				ScrollViewComponent={BottomSheetScrollView as unknown as ComponentType<ScrollViewProps>}
+				ScrollViewComponent={
+					BottomSheetScrollView as unknown as ComponentType<ScrollViewProps>
+				}
 				// 커서를 키보드 위 툴바와 제출 버튼 영역보다 위에 둔다
 				bottomOffset={KEYBOARD_TOOLBAR_HEIGHT + BUTTON_AREA_HEIGHT + Spacing.s}
 				style={styles.fields}

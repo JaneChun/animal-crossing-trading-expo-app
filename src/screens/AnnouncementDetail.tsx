@@ -35,7 +35,7 @@ const FORM_BUTTON_LABELS: Record<AnnouncementForm, string> = {
 
 // form은 콘솔에서 직접 넣으므로, 정의되지 않은 값이면 버튼 없이 본문만 보여준다
 const isAnnouncementForm = (form: unknown): form is AnnouncementForm =>
-	typeof form === 'string' && form in FORM_BUTTON_LABELS;
+	typeof form === 'string' && Object.hasOwn(FORM_BUTTON_LABELS, form);
 
 const AnnouncementDetail = () => {
 	const styles = useThemedStyles(makeStyles);
@@ -109,7 +109,9 @@ const AnnouncementDetail = () => {
 							onSubmitted={() => setIsTesterSubmitted(true)}
 						/>
 					)}
-					{form === 'feedback' && <FeedbackSheet isVisible={isSheetVisible} onClose={closeSheet} />}
+					{form === 'feedback' && (
+						<FeedbackSheet isVisible={isSheetVisible} onClose={closeSheet} />
+					)}
 				</>
 			)}
 		</View>
