@@ -1,11 +1,16 @@
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { ReactNode } from 'react';
-import { Keyboard, StyleSheet, View } from 'react-native';
+import { ComponentType, ReactNode } from 'react';
+import { Keyboard, ScrollViewProps, StyleSheet, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 import Button from '@/components/ui/Button';
 import CustomBottomSheet from '@/components/ui/CustomBottomSheet';
 import { PADDING } from '@/components/ui/layout/Layout';
+import { KEYBOARD_TOOLBAR_HEIGHT } from '@/constants/keyboard';
 import { Spacing } from '@/theme';
+
+// 하단 제출 버튼 영역 높이(Button lg 52 + 위 여백)
+const BUTTON_AREA_HEIGHT = 52 + Spacing.s;
 
 type AnnouncementFormSheetProps = {
 	isVisible: boolean;
@@ -45,18 +50,23 @@ const AnnouncementFormSheet = ({
 			isVisible={isVisible}
 			onClose={handleClose}
 			snapPoints={['95%', '100%']}
-			// contentHandlesKeyboard를 끄면 시트가 키보드에 덮인 만큼 내용 높이를 줄여 제출 버튼이 키보드 위에 남는다.
-			// 그래서 필드 영역은 키보드 여백을 스스로 넣지 않는 BottomSheetScrollView로 둔다
+			// contentHandlesKeyboard를 끄면 시트가 키보드에 덮인 만큼 내용 높이를 줄여 제출 버튼이 키보드 위에 남는다
 			title={title}
 			bodyStyle={styles.body}
 		>
-			<BottomSheetScrollView
+			{/* BottomSheetScrollView만 쓰면 여러 줄 입력의 커서를 따라 스크롤하지 않아 커서 줄이 제출 버튼 뒤로 가려진다.
+			    스크롤 몸통은 Gorhom, 커서 자동 스크롤은 keyboard-controller가 담당한다(EditCommentModal과 같은 방식) */}
+			<KeyboardAwareScrollView
+				// 캐스트: prop 타입과 Gorhom props 타입 불일치 회피(런타임 동작 동일)
+				ScrollViewComponent={BottomSheetScrollView as unknown as ComponentType<ScrollViewProps>}
+				// 커서를 키보드 위 툴바와 제출 버튼 영역보다 위에 둔다
+				bottomOffset={KEYBOARD_TOOLBAR_HEIGHT + BUTTON_AREA_HEIGHT + Spacing.s}
 				style={styles.fields}
 				contentContainerStyle={styles.fieldsContent}
 				keyboardShouldPersistTaps="handled"
 			>
 				{children}
-			</BottomSheetScrollView>
+			</KeyboardAwareScrollView>
 			<View style={styles.buttonContainer}>
 				<Button
 					variant="primary"
