@@ -41,11 +41,11 @@ export const requestTrackingPermission = async (): Promise<void> => {
 		if (currentStatus !== PermissionStatus.UNDETERMINED) return;
 
 		for (let attempt = 1; attempt <= MAX_REQUEST_ATTEMPTS; attempt++) {
-			await waitUntilActive();
-			await delay(REQUEST_DELAY_MS);
-
-			// 지연 중에 백그라운드로 갔다면 다시 active가 될 때까지 기다린다
-			await waitUntilActive();
+			// 지연 중에 백그라운드로 갔다면 복귀 후 다시 지연 시간만큼 기다린다
+			do {
+				await waitUntilActive();
+				await delay(REQUEST_DELAY_MS);
+			} while (AppState.currentState !== 'active');
 
 			const { status } = await requestTrackingPermissionsAsync();
 			if (__DEV__) {

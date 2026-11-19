@@ -17,7 +17,7 @@ Provider 중첩 구조와 초기화 훅 목록은 `App.tsx`를 직접 읽고 파
 - React Query 컨텍스트에 의존하는 구독 훅(알림·채팅 등)은 `QueryClientProvider` 하위인 `AppContent`에서 실행해야 함.
 - **스플래시 표시/해제는 `RootStackNavigator`의 `isAppInitializing` 분기가 단일 소유** (`src/navigation/RootStackNavigator.tsx:45`) — 개별 훅에서 스플래시를 제어하지 말 것. 단, 이는 **JS 레벨 `SplashScreen` 컴포넌트** 얘기다. `App.tsx`의 `ExpoSplashScreen.hide()`(dev 전용)는 **네이티브 스플래시**로 별개 — 둘을 혼동해 한쪽을 "고치지" 말 것.
 - React Query 기본 설정(staleTime 등)은 `App.tsx`의 QueryClient 생성부 참조.
-- **실행 초기 권한 요청과 추적 SDK 초기화 순서는 `useStartupPermissions`만 관리** (`src/hooks/shared/useStartupPermissions.ts`) — ATT → Analytics 수집 시작 → AdMob 초기화 → 알림 권한 순서. 다른 훅에서 시스템 권한 팝업을 따로 요청하지 말 것.
+- **실행 초기 권한 요청과 추적 SDK 초기화 순서는 `useStartupPermissions`만 관리** (`src/hooks/shared/useStartupPermissions.ts`) — ATT 응답 → Analytics 수집 시작 → (AdMob 초기화·광고 설정 반영 ∥ 알림 권한 요청) 순서. 광고 설정은 반영 즉시 홈 목록이 네이티브 광고를 요청하므로 AdMob 초기화 뒤에 반영한다. 다른 훅에서 시스템 권한 팝업을 따로 요청하지 말 것.
   - ATT 팝업은 앱이 `active`일 때만 뜬다. 알림 팝업이 동시에 떠서 앱이 `inactive`가 되면 ATT 요청은 팝업 없이 `notDetermined`로 끝난다(이 문제로 Guideline 2.1 반려됨).
   - `firebase.json`의 `analytics_auto_collection_enabled: false`로 ATT 응답 전 수집을 막는다. 네이티브 설정이라 OTA로는 반영되지 않는다.
 - 전역 `KeyboardToolbar`는 화면 레이아웃을 확보하지 않는 오버레이다. 툴바 높이는 `KEYBOARD_TOOLBAR_HEIGHT`로 관리하고, `KeyboardAvoidingView`의 `keyboardVerticalOffset` 또는 `GiftedChat`의 `bottomOffset`에 더해 입력 영역이 가려지지 않게 한다. `CustomBottomSheet`는 `useGenericKeyboardHandler`로 툴바 높이만큼 하단 공간을 확보한다(키보드가 없으면 `insets.bottom`만큼). `useReanimatedKeyboardAnimation`은 Android 입력 모드를 `adjustResize`로 변경해 Gorhom의 키보드 처리와 충돌할 수 있으므로 바텀시트에서 사용하지 않는다.
