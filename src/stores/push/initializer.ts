@@ -1,13 +1,11 @@
 import * as ExpoNotifications from 'expo-notifications';
 import { useEffect } from 'react';
 
-import { registerForPushNotificationsAsync } from '@/utilities/registerForPushNotificationsAsync';
-
 import { addNotificationResponseHandler } from './notificationResponse';
 import { usePushNotificationStore } from './store';
 
 export const usePushNotificationInitializer = () => {
-	const { setExpoPushToken, setNotification, setError } = usePushNotificationStore();
+	const { setNotification } = usePushNotificationStore();
 
 	// 🔹 Push 알림 핸들러 설정
 	useEffect(() => {
@@ -22,14 +20,8 @@ export const usePushNotificationInitializer = () => {
 		});
 	}, []);
 
-	// 🔹 Push Token 등록 및 알림 리스너 설정
+	// 🔹 알림 리스너 설정 (Push Token 등록은 ATT 이후에 해야 해서 useStartupPermissions에서 처리)
 	useEffect(() => {
-		// Push Token 등록 & 저장
-		registerForPushNotificationsAsync().then(
-			(token) => setExpoPushToken(token ?? null),
-			(error) => setError(error),
-		);
-
 		// 앱이 foreground에서 실행 중일 때 알림 수신 리스너
 		const notificationListener = ExpoNotifications.addNotificationReceivedListener(
 			(notification) => {
@@ -44,5 +36,5 @@ export const usePushNotificationInitializer = () => {
 			notificationListener.remove();
 			responseListener.remove();
 		};
-	}, [setExpoPushToken, setNotification, setError]);
+	}, [setNotification]);
 };

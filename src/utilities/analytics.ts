@@ -20,6 +20,13 @@ const log = (name: string, params?: AnalyticsParams) => {
 		.catch(() => {});
 };
 
+// ATT 응답 전에는 수집하지 않도록 firebase.json에서 자동 수집을 꺼 두고, 응답 후 이 함수로 켠다
+export const enableAnalyticsCollection = () => {
+	analytics()
+		.setAnalyticsCollectionEnabled(true)
+		.catch(() => {});
+};
+
 // P0 — 인증
 export const logLogin = (method: LoginMethod) => log('login', { method });
 
