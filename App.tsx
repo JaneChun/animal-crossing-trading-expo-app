@@ -15,11 +15,11 @@ import { toastConfig } from '@/components/ui/Toast';
 import { useAppLifecycle } from '@/hooks/shared/useAppLifecycle';
 import { useAppState } from '@/hooks/shared/useAppState';
 import { useOnlineManager } from '@/hooks/shared/useOnlineManager';
+import { useStartupPermissions } from '@/hooks/shared/useStartupPermissions';
 import { useSuspensionGuard } from '@/hooks/shared/useSuspensionGuard';
 import { navigationRef } from '@/navigation/RootNavigation';
 import RootStackNavigator from '@/navigation/RootStackNavigator';
 import ErrorBoundary from '@/screens/ErrorBoundary';
-import { useAdMobInitializer } from '@/stores/ads';
 import { useAuthInitializer } from '@/stores/auth';
 import { useBlockSubscriptionInitializer } from '@/stores/block';
 import { useChatSubscriptionInitializer } from '@/stores/chat';
@@ -77,7 +77,7 @@ export default function App() {
 	}, []);
 
 	useAuthInitializer();
-	useAdMobInitializer();
+	useStartupPermissions();
 	usePushNotificationInitializer();
 	useBlockSubscriptionInitializer();
 	useOnboardingInitializer();
